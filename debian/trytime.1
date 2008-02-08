@@ -1,0 +1,53 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH TRYTIME 1 "September 2000" "rrdtool"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+trytime \- a program to experiment with at-style time specifications as
+implemented by rrdtool
+.SH SYNOPSIS
+.B trytime
+[--start=\fItimespec\fP]
+[--end=\fItimespec\fP]
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B trytime
+command.  This manual page was written for the Debian GNU/Linux
+distribution because the original program does not have a manual page.
+It was derived from the file \fBcontrib/trytime/README\fP from the
+rrdtool distribution, which can be found in
+\fB/usr/share/rrdtool/trytime/README\fP on Debian systems.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+\fBtrytime\fP is a small program that allows you to play with at-style
+time specifications without actually bothering any of the rrd
+databases.  It takes either single at-style specification or two of
+those (for start and end time, just like rrdtool fetch or graph do)
+and reports what it thinks of it. The diagnostic is as close as
+possible to that of rrdtool compiled for at-style time specification
+support.
+
+To learn what's possible with at-style time specifications, see
+the \fBAT-STYLE TIME SPECIFICATION\fP section in the
+.BR rrdfetch (1)
+documentation.
+
+.SH AUTHOR
+This manual page was written by Matt Zimmerman <mdz@debian.org>, for
+the Debian GNU/Linux system (but may be used by others).

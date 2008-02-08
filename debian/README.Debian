@@ -1,0 +1,31 @@
+RRDtool for Debian
+------------------
+
+The RRDtool distribution is split into several packages:
+
+Package: rrdtool
+	Command-line utilities and documentation
+
+Package: librrd2
+	Shared libraries
+
+Package: librrd2-dev
+	Static libraries and headers
+
+Package: librrds-perl
+	Perl interface, using a shared library (RRDs)
+
+Package: librrdp-perl
+	Perl interface, using command pipes to the rrdtool program (RRDp)
+
+Package: rrdtool-tcl
+	TCL interface
+
+Package: python-rrd
+	Python interface
+
+More examples and useful applications can be found at the upstream site
+at http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/pub/contrib/
+
+ -- Matt Zimmerman <mdz@csh.rit.edu>, Fri, 10 Sep 1999 10:53:19 -0700
+    Josip Rodin <joy-packages@debian.org>, Mon, 06 Nov 2006 21:10:23 +0100

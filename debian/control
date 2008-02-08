@@ -1,0 +1,168 @@
+Source: rrdtool
+Section: utils
+Priority: optional
+Maintainer: RRDtool team <fix@me.com>
+Uploaders: Bernd Zeimetz <bzed@debian.org>
+Standards-Version: 3.7.3
+Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev,
+ zlib1g-dev, libpng12-dev, libart-2.0-dev, libfreetype6-dev,
+ tcl-dev,
+ perl (>= 5.8.0),
+ python-all-dev (>= 2.3.5-10), python-support (>= 0.4),
+ ruby1.8-dev, ruby1.9-dev
+Homepage: http://oss.oetiker.ch/rrdtool/
+Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
+Vcs-Git: http://git.snow-crash.org/git/pkg-rrdtool.git/
+
+Package: rrdtool
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: librrds-perl
+Description: Time-series data storage and display system (programs)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ RRDtool is often used via various wrappers that can poll data from devices
+ and feed data into RRDs, as well as provide a friendlier user interface and
+ customized graphs.
+ .
+ This package contains command-line programs used to access and manipulate
+ RRDs.
+
+Package: librrd2
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ttf-dejavu (>= 2.1-1), ${misc:Depends}
+Conflicts: rrdtool (<< 1.0.42-1), librrds-perl (<< 1.0.42-1)
+Description: Time-series data storage and display system (runtime library)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains shared libraries used to access and manipulate RRDs.
+
+Package: librrd2-dev
+Architecture: any
+Section: libdevel
+Depends: librrd2 (= ${Source-Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
+Conflicts: librrd0-dev, librrd0
+Replaces: librrd0
+Description: Time-series data storage and display system (development)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains header files and libraries used to develop software
+ that uses RRDs.
+
+Package: librrds-perl
+Architecture: any
+Section: perl
+Depends: ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Description: Time-series data storage and display system (Perl interface, shared)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Perl interface to RRDs using a shared library.
+
+Package: librrdp-perl
+Architecture: all
+Section: perl
+Depends: ${perl:Depends}, rrdtool, ${misc:Depends}
+Description: Time-series data storage and display system (Perl interface, piped)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Perl interface to RRDs using command pipes.
+
+Package: rrdtool-tcl
+Architecture: any
+Section: utils
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Time-series data storage and display system (Tcl interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Tcl interface to RRDs.
+
+Package: python-rrd
+Architecture: any
+Section: python
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python2.3-rrd, python2.4-rrd
+Replaces: python2.3-rrd, python2.4-rrd
+Provides: ${python:Provides}
+Description: Time-series data storage and display system (Python interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Python interface to RRDs.
+
+Package: librrd-ruby
+Architecture: all
+Section: interpreters
+Depends: ${rubydefault:Depends}
+Description: Time-series data storage and display system (Ruby interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This is a dummy package which depends on the package for Debian's default
+ Ruby version.
+
+Package: librrd-ruby1.8
+Architecture: any
+Section: interpreters
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Time-series data storage and display system (Ruby 1.9 interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Ruby 1.8 interface to RRDs.
+
+Package: librrd-ruby1.9
+Architecture: any
+Section: interpreters
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Time-series data storage and display system (Ruby 1.9 interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Ruby 1.9 interface to RRDs.

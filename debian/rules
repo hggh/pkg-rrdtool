@@ -1,0 +1,183 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+Makefile.am:librrd_la_LDFLAGS         = -version-info 2:12:0
+Makefile.am:librrd_th_la_LDFLAGS         = $(MULTITHREAD_LDFLAGS) -version-info 2:11:0
+
+
+
+#library versions
+LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
+                           sed 's,^[^0-9]*,,g;s,:,.,g')
+LIB_major := $(shell echo $(LIB_version) | sed 's,\..*,,g')
+LIB_TH_version := $(shell grep '^librrd_th_la_LDFLAGS' src/Makefile.am | \
+                           sed 's,^[^0-9]*,,g;s,:,.,g')
+LIB_major := $(shell echo $(LIB_th_version) | sed 's,\..*,,g')
+
+
+
+#Ruby versions to build for
+RUBY_VERS := 1.8 1.9
+RUBY_DEFAULT_VERS := 1.8
+
+#Python versions to build for. The work-around-doko way.
+PY_VERS := $(shell set -e; \
+                   for py in `pysupport-parseversions debian/pyversions`; do \
+                       if [ -x /usr/bin/python$$py ]; then echo $$py; fi;    \
+                   done)
+
+#let's help configure to figure out our host/build system
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+  CONFFLAGS += --build $(DEB_HOST_GNU_TYPE)
+else
+  CONFFLAGS += --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+endif
+
+#we build the bindings manually from debian/rules
+CONFFLAGS += --disable-python --disable-ruby
+
+#set the right paths
+CONFFLAGS += --prefix=/usr --docdir=/usr/share/doc/rrdtool
+
+#let's take care of optimization + debug builds
+CFLAGS += -Wall -g
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+        CFLAGS += -O0
+else
+        CFLAGS += -O2
+endif
+
+LDFLAGS="-Wl,-z,defs"
+
+configure: config.status
+config.status:
+
+ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+	cp -f /usr/share/misc/config.sub config.sub
+endif
+ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+	cp -f /usr/share/misc/config.guess config.guess
+endif
+
+	LDFLAGS="$(LDFLAGS)"
+	CFLAGS="$(CFLAGS)" \
+	RRDDOCDIR=/usr/share/doc/rrdtool \
+	  ./configure $(CONFFLAGS)
+
+build: build-arch build-indep
+
+build-arch: build-arch-stamp
+build-arch-stamp: config.status
+
+	#configure forgets to set TCL_INC_DIR.
+	make TCL_INC_DIR=/usr/include/tcl
+	touch $@
+
+build-indep: build-indep-stamp
+build-indep-stamp: config.status
+
+clean:
+	dh_testdir
+	dh_testroot
+
+        #sanity check if debian/control lists the right package name
+        grep -q '^Package: librrd$(LIB_major)' debian/control
+
+	[ ! -f Makefile ] || make distclean
+
+ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+	rm -f config.sub
+endif
+ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+	rm -f config.guess
+endif
+	rm -f build-arch-stamp build-indep-stamp config.status
+
+	find . -name \*.pyc | xargs rm -f
+
+	dh_clean
+
+install: install-indep install-arch
+install-indep:
+	dh_testdir
+	dh_testroot
+	dh_clean -k -s
+	dh_installdirs -s
+
+
+	dh_install -s
+
+install-arch:
+	dh_testdir
+	dh_testroot
+	dh_clean -k -s
+	dh_installdirs -s
+
+	make install DESTDIR=$(CURDIR)/debian/tmp
+
+	#build and install python
+	set -e ;\
+	cd bindings/python ;\
+	for pv in $(PY_VERS); do \
+	  BUILDLIBDIR=../../src/.libs python$$pv setup.py build ;\
+	  python$$pv setup.py install --root=$(CURDIR)/debian/python-rrd ;\
+	  python$$pv setup.py clean ;\
+	done
+
+	set -e; \
+	cd bindings/ruby ;\
+	for rbv in $(RUBY_VERS); do \
+	  ruby$$rbv extconf.rb ;\
+	  make ;\
+	  make install sitelibdir=$(CURDIR)/debian/librrd-ruby$$rbv`ruby$$rbv -r rbconfig -e 'print Config::CONFIG["rubylibdir"]'` \
+	               sitearchdir=$(CURDIR)/debian/librrd-ruby$$rbv`ruby$$rbv -r rbconfig -e 'print Config::CONFIG["archdir"]'` ;\
+	  make distclean ;\
+	done
+
+
+
+binary-indep:
+	dh_testdir
+	dh_testroot
+	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
+	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
+	dh_installchangelogs
+	dh_installdocs -s -Nlibrrd-ruby
+	dh_link -s -Nlibrrd-ruby
+	dh_perl -s
+	dh_compress -s
+	dh_fixperms -s
+	dh_installdeb -s
+	dh_gencontrol -s
+	dh_md5sums -s
+	dh_builddeb -s
+	
+
+binary-arch: build-arch install-arch
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -a CHANGES
+	dh_installdocs -a
+#	dh_installexamples -a
+	dh_pysupport -ppython-rrd
+	dh_perl -a
+	dh_installman -a
+	dh_link -a
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_makeshlibs -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+
+binary: binary-arch binary-indep
+.PHONY: build clean binary-indep binary-arch binary install install-arch install-indep configure
