@@ -145,6 +145,8 @@ install-arch: $(PY_VERS:%=install-python%)
 	  make distclean ;\
 	done
 
+	dh_install -s --sourcedir=$(CURDIR)/debian/tmp
+
 install-python%:
 	cd bindings/python && python$* setup.py install --root=$(CURDIR)/debian/python-rrd
 
