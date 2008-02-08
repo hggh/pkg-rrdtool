@@ -44,6 +44,12 @@ CONFFLAGS += --disable-python --disable-ruby
 #set the right paths
 CONFFLAGS += --prefix=/usr --docdir=/usr/share/doc/rrdtool
 
+#install perl libs in vendor mode
+CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor
+
+
+
+
 #let's take care of optimization + debug builds
 CFLAGS += -Wall -g
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -69,19 +75,23 @@ endif
 	RRDDOCDIR=/usr/share/doc/rrdtool \
 	  ./configure $(CONFFLAGS)
 
-build: build-arch build-indep
+build: build-arch build-indep 
 
-build-arch: build-arch-stamp
-build-arch-stamp: config.status
+build-arch: build-arch-stamp $(PY_VERS:%=build-python%)
+build-arch-stamp: config.status 
 
 	#configure forgets to set TCL_INC_DIR.
 	make TCL_INC_DIR=/usr/include/tcl
 	touch $@
 
+build-python%: build-arch-stamp
+	cd bindings/python && env BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build
+	touch $@
+
 build-indep: build-indep-stamp
 build-indep-stamp: config.status
 
-clean:
+clean: $(PY_VERS:%=clean-python%)
 	dh_testdir
 	dh_testroot
 
@@ -102,6 +112,10 @@ endif
 
 	dh_clean
 
+clean-python%:
+	cd bindings/python && python$* setup.py clean
+	rm -f build-python$*
+
 install: install-indep install-arch
 install-indep:
 	dh_testdir
@@ -112,7 +126,7 @@ install-indep:
 
 	dh_install -s
 
-install-arch:
+install-arch: $(PY_VERS:%=install-python%)
 	dh_testdir
 	dh_testroot
 	dh_clean -k -s
@@ -120,15 +134,7 @@ install-arch:
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
 
-	#build and install python
-	set -e ;\
-	cd bindings/python ;\
-	for pv in $(PY_VERS); do \
-	  BUILDLIBDIR=../../src/.libs python$$pv setup.py build ;\
-	  python$$pv setup.py install --root=$(CURDIR)/debian/python-rrd ;\
-	  python$$pv setup.py clean ;\
-	done
-
+	#build and install ruby
 	set -e; \
 	cd bindings/ruby ;\
 	for rbv in $(RUBY_VERS); do \
@@ -139,6 +145,8 @@ install-arch:
 	  make distclean ;\
 	done
 
+install-python%:
+	cd bindings/python && python$* setup.py install --root=$(CURDIR)/debian/python-rrd
 
 
 binary-indep:
@@ -180,4 +188,4 @@ binary-arch: build-arch install-arch
 
 
 binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-arch install-indep configure
+.PHONY: build clean binary-indep binary-arch binary install install-arch install-indep configure install-python% clean-python%
