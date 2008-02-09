@@ -137,6 +137,7 @@ install-common-stamp: build-arch-stamp
 	dh_clean -k
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
+	find debian/tmp
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 
 	touch $@
@@ -166,7 +167,6 @@ install-python%: install-common-stamp
 binary-indep: build-indep install-indep
 	dh_testdir
 	dh_testroot
-	dh_clean -k -i
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
 	dh_link -plibrrd2-dev /usr/share/doc/librrd-dev /usr/share/doc/librrd2-dev
 	dh_link -ppython-rrd /usr/share/doc/python-rrdtool /usr/share/doc/python-rrd
