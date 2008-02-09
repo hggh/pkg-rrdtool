@@ -4,10 +4,6 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-Makefile.am:librrd_la_LDFLAGS         = -version-info 2:12:0
-Makefile.am:librrd_th_la_LDFLAGS         = $(MULTITHREAD_LDFLAGS) -version-info 2:11:0
-
-
 
 #library versions
 LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
@@ -15,7 +11,7 @@ LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
 LIB_major := $(shell echo $(LIB_version) | sed 's,\..*,,g')
 LIB_TH_version := $(shell grep '^librrd_th_la_LDFLAGS' src/Makefile.am | \
                            sed 's,^[^0-9]*,,g;s,:,.,g')
-LIB_major := $(shell echo $(LIB_th_version) | sed 's,\..*,,g')
+LIB_TH_major := $(shell echo $(LIB_th_version) | sed 's,\..*,,g')
 
 
 
@@ -85,7 +81,9 @@ build-arch-stamp: config.status
 	touch $@
 
 build-python%: build-arch-stamp
-	cd bindings/python && env BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build
+	set -e ;\
+	 cd bindings/python ;\
+	 BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build
 	touch $@
 
 build-indep: build-indep-stamp
@@ -118,7 +116,9 @@ endif
 	dh_clean
 
 clean-python%:
-	cd bindings/python && python$* setup.py clean
+	set -e ;\
+	 cd bindings/python ;\
+	 python$* setup.py clean
 	rm -f build-python$*
 
 install: install-indep install-arch
@@ -157,7 +157,9 @@ install-python%:
 	dh_testdir
 	dh_testroot
 	dh_clean -k -s
-	cd bindings/python && python$* setup.py install --root=$(CURDIR)/debian/python-rrd
+	set -e ;\
+	 cd bindings/python ;\
+	 python$* setup.py install --root=$(CURDIR)/debian/python-rrd
 
 
 binary-indep:
@@ -187,6 +189,10 @@ binary-arch: build-arch install-arch
 	dh_pysupport -ppython-rrd
 	dh_perl -a
 	dh_installman -a
+	dh_link -plibrrd-dev librrd.so.$(LIB_version) /usr/lib/librrd.so
+	dh_link -plibrrd-dev librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
+	dh_link -plibrrd$(LIB_major) librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
+	dh_link -plibrrd$(LIB_major) librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so.$(LIB_TH_major)
 	dh_link -a
 	dh_strip -a
 	dh_compress -a
