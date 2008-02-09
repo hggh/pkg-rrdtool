@@ -121,15 +121,7 @@ clean-python%:
 	 python$* setup.py clean
 	rm -f build-python$*
 
-install: install-indep install-arch
-install-indep:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -ppython-rrd
-	dh_installdirs -s
-
-
-	dh_install -s
+install: install-arch
 
 install-arch: $(PY_VERS:%=install-python%)
 	dh_testdir
@@ -165,19 +157,19 @@ install-python%:
 binary-indep:
 	dh_testdir
 	dh_testroot
-	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
+	dh_clean -k -i
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
 	dh_link -plibrrd2-dev /usr/share/doc/librrd-dev /usr/share/doc/librrd2-dev
 	dh_installchangelogs
-	dh_installdocs -s -Nlibrrd-ruby -Nlibrrd2-dev
-	dh_link -s -Nlibrrd-ruby -Nlibrrd2-dev
-	dh_perl -s
-	dh_compress -s
-	dh_fixperms -s
-	dh_installdeb -s
-	dh_gencontrol -s
-	dh_md5sums -s
-	dh_builddeb -s
+	dh_installdocs -i -Nlibrrd-ruby -Nlibrrd2-dev
+	dh_link -i -Nlibrrd-ruby -Nlibrrd2-dev
+	dh_perl -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
 	
 
 binary-arch: build-arch install-arch
@@ -189,6 +181,7 @@ binary-arch: build-arch install-arch
 	dh_pysupport -ppython-rrd
 	dh_perl -a
 	dh_installman -a
+	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_link -plibrrd-dev /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so
 	dh_link -plibrrd-dev /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
 	dh_link -plibrrd$(LIB_major) /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
@@ -208,5 +201,5 @@ binary-arch: build-arch install-arch
 binary: binary-arch binary-indep
 .PHONY: build clean configure \
         binary-indep binary-arch binary \
-        install install-arch install-indep \
+        install install-arch \
         install-python% clean-python%
