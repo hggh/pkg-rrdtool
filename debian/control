@@ -60,7 +60,7 @@ Description: Transitional dummy package
  extracted data to enforce a certain data density, allowing for useful
  graphical representation of data values.
  .
- This package is a transitional dummy package to easy the transition towards
+ This package is a transitional dummy package to ease the transition towards
  a -dev package name without encoded soname. It can be safely removed.
 
 Package: librrd-dev
@@ -123,13 +123,13 @@ Description: Time-series data storage and display system (Tcl interface)
  .
  This package contains a Tcl interface to RRDs.
 
-Package: python-rrd
+Package: python-rrdtool
 Architecture: any
 Section: python
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
-Conflicts: python2.3-rrd, python2.4-rrd
-Replaces: python2.3-rrd, python2.4-rrd
-Provides: ${python:Provides}
+Conflicts: python2.3-rrd, python2.4-rrd, python-rrd (<< 1.2.26)
+Replaces: python2.3-rrd, python2.4-rrd, python-rrd (<< 1.2.26)
+Provides: ${python:Provides}, python-rrd
 Description: Time-series data storage and display system (Python interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
@@ -139,6 +139,21 @@ Description: Time-series data storage and display system (Python interface)
  graphical representation of data values.
  .
  This package contains a Python interface to RRDs.
+
+Package: python-rrd
+Architecture: all
+Section: python
+Depends: python-rrdtool
+Description: Transitional dummy package
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package is a transitional dummy package to rename the package to
+ python-rrdtool as required by the Python policy.  It can be safely removed.
 
 Package: librrd-ruby
 Architecture: all

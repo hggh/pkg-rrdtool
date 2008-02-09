@@ -130,7 +130,7 @@ install: install-arch
 install-arch: $(PY_VERS:%=install-python%)
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s -Npython-rrd
+	dh_clean -k -s -Npython-rrdtool
 	dh_installdirs -s
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
@@ -154,7 +154,7 @@ install-python%:
 	dh_testroot
 	set -e ;\
 	 cd bindings/python ;\
-	 python$* setup.py install --root=$(CURDIR)/debian/python-rrd
+	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool
 
 
 binary-indep:
@@ -163,9 +163,10 @@ binary-indep:
 	dh_clean -k -i
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
 	dh_link -plibrrd2-dev /usr/share/doc/librrd-dev /usr/share/doc/librrd2-dev
-	dh_installchangelogs
-	dh_installdocs -i -Nlibrrd-ruby -Nlibrrd2-dev
-	dh_link -i -Nlibrrd-ruby -Nlibrrd2-dev
+	dh_link -ppython-rrd /usr/share/doc/python-rrdtool /usr/share/doc/python-rrd
+	dh_installchangelogs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
+	dh_installdocs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
+	dh_link -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
 	dh_perl -i
 	dh_compress -i
 	dh_fixperms -i
@@ -181,7 +182,7 @@ binary-arch: build-arch install-arch
 	dh_installchangelogs -a CHANGES
 	dh_installdocs -a
 #	dh_installexamples -a
-	dh_pysupport -ppython-rrd
+	dh_pysupport -ppython-rrdtool
 	dh_perl -a
 	dh_installman -a
 	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars

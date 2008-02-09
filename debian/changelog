@@ -19,8 +19,12 @@ rrdtool (1.2.26-1) unstable; urgency=low
     - debian/watch:
         * File redone to meet version 3 of uscan and to work again, using the
           new location of the upstream source.
+    - Renaming packages using transitional packages:
+        * librrd2-dev to librrd-dev as it was done on almost all other library
+          packages now.
+        * python-rrd to python-rrdtool to follow the Python policy.
 
- -- Bernd Zeimetz <bzed@debian.org>  Sat, 09 Feb 2008 21:47:40 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 09 Feb 2008 23:03:45 +0100
 
 rrdtool (1.2.19-1) unstable; urgency=low
 
