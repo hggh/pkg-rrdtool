@@ -61,7 +61,7 @@ Description: Transitional dummy package
  graphical representation of data values.
  .
  This package is a transitional dummy package to easy the transition towards
- a -dev package name without encoded soname. 
+ a -dev package name without encoded soname. It can be safely removed.
 
 Package: librrd-dev
 Architecture: any
@@ -69,6 +69,7 @@ Section: libdevel
 Depends: librrd2 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
 Conflicts: librrd0-dev, librrd0, librrd2-dev (<< 1.2.26)
 Replaces: librrd0, librrd2-dev (<< 1.2.26)
+Provides: librrd2-dev
 Description: Time-series data storage and display system (development)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
