@@ -14,9 +14,13 @@ rrdtool (1.2.26-1) unstable; urgency=low
         * Building ruby modules now (Closes: #453304).
         * Change the Python binary package to conform with the Python policy,
           using python-support.
-        * Bump Standards Version to 3.7.3
+        * Bump Standards Version to 3.7.3.
+        * Using and depending on quilt to handle patches.
+    - debian/watch:
+        * File redone to meet version 3 of uscan and to work again, using the
+          new location of the upstream source.
 
- -- Bernd Zeimetz <bzed@debian.org>  Wed, 06 Feb 2008 17:24:40 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 09 Feb 2008 21:47:40 +0100
 
 rrdtool (1.2.19-1) unstable; urgency=low
 

@@ -4,6 +4,9 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+#we use quilt
+include /usr/share/quilt/quilt.make
+
 
 #library versions
 LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
@@ -57,7 +60,7 @@ endif
 LDFLAGS="-Wl,-z,defs"
 
 configure: config.status
-config.status:
+config.status: $(QUILT_STAMPFN)
 
 ifneq "$(wildcard /usr/share/misc/config.sub)" ""
 	cp -f /usr/share/misc/config.sub config.sub
@@ -89,7 +92,8 @@ build-python%: build-arch-stamp
 build-indep: build-indep-stamp
 build-indep-stamp: config.status
 
-clean: $(PY_VERS:%=clean-python%)
+clean: clean-patched
+clean-patched: unpatch $(PY_VERS:%=clean-python%)
 	dh_testdir
 	dh_testroot
 	#sanity check if debian/control lists the right package name
@@ -115,7 +119,7 @@ endif
 
 	dh_clean
 
-clean-python%:
+clean-python%: unpatch
 	set -e ;\
 	 cd bindings/python ;\
 	 python$* setup.py clean
@@ -201,4 +205,4 @@ binary: binary-arch binary-indep
 .PHONY: build clean configure \
         binary-indep binary-arch binary \
         install install-arch \
-        install-python% clean-python%
+        install-python% clean-python% unpatch

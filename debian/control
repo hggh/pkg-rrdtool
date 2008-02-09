@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian RRDtool Team <rrdtool@ml.snow-crash.org>
 Uploaders: Alexander Wirt <formorer@debian.org>, Bernd Zeimetz <bzed@debian.org>
 Standards-Version: 3.7.3
-Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev,
+Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
  zlib1g-dev, libpng12-dev, libart-2.0-dev, libfreetype6-dev,
  tcl-dev,
  perl (>= 5.8.0),
