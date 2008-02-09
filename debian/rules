@@ -89,8 +89,8 @@ build-python%: build-arch-stamp
 	 BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build
 	touch $@
 
-build-indep: build-indep-stamp
-build-indep-stamp: config.status
+build-indep: build-arch-stamp
+	#indep stuff is built in build-arch-stamp, too.
 
 clean: clean-patched
 clean-patched: unpatch $(PY_VERS:%=clean-python%)
@@ -107,7 +107,7 @@ endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	rm -f config.guess
 endif
-	rm -f build-arch-stamp build-indep-stamp config.status
+	rm -f build-arch-stamp build-indep-stamp config.status install-common-stamp
 	find . -name \*.pyc | xargs rm -f
 	rm -rf bindings/python/build
 
@@ -125,16 +125,23 @@ clean-python%: unpatch
 	 python$* setup.py clean
 	rm -f build-python$*
 
-install: install-arch
 
-install-arch: $(PY_VERS:%=install-python%)
+install: install-arch install-indep
+
+install-indep: build-indep install-common-stamp
+	#nothing to do
+
+install-common-stamp: build-arch-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s -Npython-rrdtool
-	dh_installdirs -s
+	dh_clean -k
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
+	dh_install --sourcedir=$(CURDIR)/debian/tmp
 
+	touch $@
+
+install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	#build and install ruby
 	set -e; \
 	cd bindings/ruby ;\
@@ -146,10 +153,9 @@ install-arch: $(PY_VERS:%=install-python%)
 	  make distclean ;\
 	done
 
-	dh_install -s --sourcedir=$(CURDIR)/debian/tmp
 	dh_installexamples -s
 
-install-python%:
+install-python%: install-common-stamp
 	dh_testdir
 	dh_testroot
 	set -e ;\
@@ -157,7 +163,7 @@ install-python%:
 	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool
 
 
-binary-indep:
+binary-indep: build-indep install-indep
 	dh_testdir
 	dh_testroot
 	dh_clean -k -i
