@@ -148,7 +148,6 @@ install-arch: $(PY_VERS:%=install-python%)
 install-python%:
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s
 	set -e ;\
 	 cd bindings/python ;\
 	 python$* setup.py install --root=$(CURDIR)/debian/python-rrd
