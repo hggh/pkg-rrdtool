@@ -165,9 +165,10 @@ binary-indep:
 	dh_testroot
 	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
+	dh_link -plibrrd2-dev /usr/share/doc/librrd-dev /usr/share/doc/librrd2-dev
 	dh_installchangelogs
-	dh_installdocs -s -Nlibrrd-ruby
-	dh_link -s -Nlibrrd-ruby
+	dh_installdocs -s -Nlibrrd-ruby -Nlibrrd2-dev
+	dh_link -s -Nlibrrd-ruby -Nlibrrd2-dev
 	dh_perl -s
 	dh_compress -s
 	dh_fixperms -s

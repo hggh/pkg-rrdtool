@@ -2,7 +2,7 @@ Source: rrdtool
 Section: utils
 Priority: optional
 Maintainer: Debian RRDtool Team <rrdtool@ml.snow-crash.org>
-Uploaders: Alexander Wirt <formorer@debian.org, Bernd Zeimetz <bzed@debian.org>
+Uploaders: Alexander Wirt <formorer@debian.org>, Bernd Zeimetz <bzed@debian.org>
 Standards-Version: 3.7.3
 Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev,
  zlib1g-dev, libpng12-dev, libart-2.0-dev, libfreetype6-dev,
@@ -49,11 +49,26 @@ Description: Time-series data storage and display system (runtime library)
  This package contains shared libraries used to access and manipulate RRDs.
 
 Package: librrd2-dev
+Architecture: all
+Section: libdevel
+Depends: librrd-dev
+Description: Transitional dummy package
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package is a transitional dummy package to easy the transition towards
+ a -dev package name without encoded soname. 
+
+Package: librrd-dev
 Architecture: any
 Section: libdevel
-Depends: librrd2 (= ${Source-Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
-Conflicts: librrd0-dev, librrd0
-Replaces: librrd0
+Depends: librrd2 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
+Conflicts: librrd0-dev, librrd0, librrd2-dev (<< 1.2.26)
+Replaces: librrd0, librrd2-dev (<< 1.2.26)
 Description: Time-series data storage and display system (development)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
