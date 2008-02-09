@@ -109,6 +109,9 @@ endif
 	rm -f build-arch-stamp build-indep-stamp config.status
 
 	find . -name \*.pyc | xargs rm -f
+	rm -rf bindings/python/build
+
+	rm -rf bindings/perl-piped/blib bindings/perl-shared/blib
 
 	dh_clean
 
@@ -146,6 +149,7 @@ install-arch: $(PY_VERS:%=install-python%)
 	done
 
 	dh_install -s --sourcedir=$(CURDIR)/debian/tmp
+	dh_installexamples -s
 
 install-python%:
 	cd bindings/python && python$* setup.py install --root=$(CURDIR)/debian/python-rrd
