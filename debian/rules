@@ -11,7 +11,7 @@ LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
 LIB_major := $(shell echo $(LIB_version) | sed 's,\..*,,g')
 LIB_TH_version := $(shell grep '^librrd_th_la_LDFLAGS' src/Makefile.am | \
                            sed 's,^[^0-9]*,,g;s,:,.,g')
-LIB_TH_major := $(shell echo $(LIB_th_version) | sed 's,\..*,,g')
+LIB_TH_major := $(shell echo $(LIB_TH_version) | sed 's,\..*,,g')
 
 
 
