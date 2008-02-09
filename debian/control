@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev,
  ruby1.8-dev, ruby1.9-dev
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
-Vcs-Git: http://git.snow-crash.org/git/pkg-rrdtool.git/
+Vcs-Git: git://git.snow-crash.org/pkg-rrdtool.git/
 
 Package: rrdtool
 Architecture: any
