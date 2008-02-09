@@ -94,9 +94,8 @@ build-indep-stamp: config.status
 clean: $(PY_VERS:%=clean-python%)
 	dh_testdir
 	dh_testroot
-
-        #sanity check if debian/control lists the right package name
-        grep -q '^Package: librrd$(LIB_major)' debian/control
+	#sanity check if debian/control lists the right package name
+	grep -q '^Package: librrd$(LIB_major)' debian/control
 
 	[ ! -f Makefile ] || make distclean
 
@@ -107,11 +106,14 @@ ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	rm -f config.guess
 endif
 	rm -f build-arch-stamp build-indep-stamp config.status
-
 	find . -name \*.pyc | xargs rm -f
 	rm -rf bindings/python/build
 
-	rm -rf bindings/perl-piped/blib bindings/perl-shared/blib
+	#clean what the Makefiles do not clean....
+	rm -rf bindings/perl-piped/blib bindings/perl-shared/blib \
+	       bindings/perl-piped/Makefile.old bindings/perl-shared/Makefile.old
+	rm -f bindings/tcl/pkgIndex.tcl bindings/tcl/tclrrd*.so
+	rm -f examples/cgi-demo.cgi
 
 	dh_clean
 
@@ -194,4 +196,7 @@ binary-arch: build-arch install-arch
 
 
 binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-arch install-indep configure install-python% clean-python%
+.PHONY: build clean configure \
+        binary-indep binary-arch binary \
+        install install-arch install-indep \
+        install-python% clean-python%
