@@ -125,7 +125,7 @@ install: install-indep install-arch
 install-indep:
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s
+	dh_clean -k -ppython-rrd
 	dh_installdirs -s
 
 
@@ -134,7 +134,7 @@ install-indep:
 install-arch: $(PY_VERS:%=install-python%)
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s
+	dh_clean -k -s -Npython-rrd
 	dh_installdirs -s
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
@@ -154,6 +154,9 @@ install-arch: $(PY_VERS:%=install-python%)
 	dh_installexamples -s
 
 install-python%:
+	dh_testdir
+	dh_testroot
+	dh_clean -k -s
 	cd bindings/python && python$* setup.py install --root=$(CURDIR)/debian/python-rrd
 
 
