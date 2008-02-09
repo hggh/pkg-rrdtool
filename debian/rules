@@ -7,10 +7,10 @@
 
 #library versions
 LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
-                           sed 's,^[^0-9]*,,g;s,:,.,g')
+                           sed 's,^[^0-9]*,,g;s,\([0-9]*\):\([0-9]*\):\([0-9]*\),\1.\3.\2,g')
 LIB_major := $(shell echo $(LIB_version) | sed 's,\..*,,g')
 LIB_TH_version := $(shell grep '^librrd_th_la_LDFLAGS' src/Makefile.am | \
-                           sed 's,^[^0-9]*,,g;s,:,.,g')
+                           sed 's,^[^0-9]*,,g;s,\([0-9]*\):\([0-9]*\):\([0-9]*\),\1.\3.\2,g')
 LIB_TH_major := $(shell echo $(LIB_TH_version) | sed 's,\..*,,g')
 
 
@@ -189,10 +189,10 @@ binary-arch: build-arch install-arch
 	dh_pysupport -ppython-rrd
 	dh_perl -a
 	dh_installman -a
-	dh_link -plibrrd-dev librrd.so.$(LIB_version) /usr/lib/librrd.so
-	dh_link -plibrrd-dev librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
-	dh_link -plibrrd$(LIB_major) librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
-	dh_link -plibrrd$(LIB_major) librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so.$(LIB_TH_major)
+	dh_link -plibrrd-dev /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so
+	dh_link -plibrrd-dev /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
+	dh_link -plibrrd$(LIB_major) /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
+	dh_link -plibrrd$(LIB_major) /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so.$(LIB_TH_major)
 	dh_link -a
 	dh_strip -a
 	dh_compress -a
