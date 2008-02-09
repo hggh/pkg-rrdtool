@@ -116,6 +116,7 @@ librrd.so.2 librrd2 #MINVER#
  rrd_dump_r@Base 1.2.15
  rrd_fetch@Base 1.2.15
  rrd_fetch_fn@Base 1.2.15
+ rrd_fetch_r@Base 1.2.26
  rrd_first@Base 1.2.15
  rrd_first_r@Base 1.2.15
  rrd_free@Base 1.2.15
@@ -124,7 +125,7 @@ librrd.so.2 librrd2 #MINVER#
  rrd_get_context@Base 1.2.15
  rrd_get_error@Base 1.2.15
  rrd_graph@Base 1.2.15
- rrd_graph_check_vname@Base 1.2.15
+#MISSING: 1.2.26-1# rrd_graph_check_vname@Base 1.2.15
  rrd_graph_color@Base 1.2.15
  rrd_graph_init@Base 1.2.15
  rrd_graph_options@Base 1.2.15
@@ -313,6 +314,7 @@ librrd_th.so.2 librrd2 #MINVER#
  rrd_dump_r@Base 1.2.15
  rrd_fetch@Base 1.2.15
  rrd_fetch_fn@Base 1.2.15
+ rrd_fetch_r@Base 1.2.26
  rrd_first@Base 1.2.15
  rrd_first_r@Base 1.2.15
  rrd_free@Base 1.2.15
@@ -321,7 +323,7 @@ librrd_th.so.2 librrd2 #MINVER#
  rrd_get_context@Base 1.2.15
  rrd_get_error@Base 1.2.15
  rrd_graph@Base 1.2.15
- rrd_graph_check_vname@Base 1.2.15
+#MISSING: 1.2.26-1# rrd_graph_check_vname@Base 1.2.15
  rrd_graph_color@Base 1.2.15
  rrd_graph_init@Base 1.2.15
  rrd_graph_options@Base 1.2.15
