@@ -1,1 +1,2 @@
 debian/tmp/usr/share/rrdtool/examples/*
+bindings/ruby/test.rb
