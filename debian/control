@@ -1,8 +1,8 @@
 Source: rrdtool
 Section: utils
 Priority: optional
-Maintainer: RRDtool team <fix@me.com>
-Uploaders: Bernd Zeimetz <bzed@debian.org>
+Maintainer: Debian RRDtool Team <rrdtool@ml.snow-crash.org>
+Uploaders: Alexander Wirt <formorer@debian.org, Bernd Zeimetz <bzed@debian.org>
 Standards-Version: 3.7.3
 Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev,
  zlib1g-dev, libpng12-dev, libart-2.0-dev, libfreetype6-dev,

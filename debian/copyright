@@ -2,9 +2,7 @@ Originally this package was debianized by Matt Zimmerman <mdz@debian.org> on
 Fri, 10 Sep 1999 10:53:19 -0700. The packaging was overhauled and all parts,
 except debian/control and debian/changelog, were droppend and redone by
 Bernd Zeimetz <bzed@debian.org> on Wed, 06 Feb 2008 19:14:48 +0100 for the
-RRDtool packaging team.
-
-**** FIXME ****
+RRDtool packaging team <rrdtool@ml.snow-crash.org>.
 
 
 The upstream source was downloaded from:

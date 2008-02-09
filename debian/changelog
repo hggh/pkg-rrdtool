@@ -1,8 +1,9 @@
 rrdtool (1.2.26-1) unstable; urgency=low
 
-  * New upstream version (Closes: #FIXME).
+  * New upstream version (Closes: #431060).
   * Package hijacked as announced on debian-devel@lists.debian.org
-    (FIIIIXXXXMMMEEEEEE) due to the old maintainer being MIA.
+    (Message-ID: <47A7A2A4.3020106@bzed.de>) due to the old maintainer
+    being MIA.
   * Complete overhaul of the packaging:
     - debian/rules completely rewritten
     - debian/copyright redone as it didn't even list upstream's copyright
@@ -10,7 +11,7 @@ rrdtool (1.2.26-1) unstable; urgency=low
     - debian/post{inst,rm}: removed, debhelper takes care of this.
     - debian/control:
         * Update of Maintainer, Standards-Version, Uploaders
-        * Building ruby modules now.
+        * Building ruby modules now (Closes: #453304).
         * Change the Python binary package to conform with the Python policy,
           using python-support.
         * Bump Standards Version to 3.7.3
