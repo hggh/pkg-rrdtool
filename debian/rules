@@ -167,6 +167,7 @@ binary-indep:
 	dh_installchangelogs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
 	dh_installdocs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
 	dh_link -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
+	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_perl -i
 	dh_compress -i
 	dh_fixperms -i
@@ -185,7 +186,6 @@ binary-arch: build-arch install-arch
 	dh_pysupport -ppython-rrdtool
 	dh_perl -a
 	dh_installman -a
-	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_link -plibrrd-dev /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so
 	dh_link -plibrrd-dev /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
 	dh_link -plibrrd$(LIB_major) /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
