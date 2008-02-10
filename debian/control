@@ -49,27 +49,12 @@ Description: Time-series data storage and display system (runtime library)
  This package contains shared libraries used to access and manipulate RRDs.
 
 Package: librrd2-dev
-Architecture: all
-Section: libdevel
-Depends: librrd-dev
-Description: Transitional dummy package
- The Round Robin Database Tool (RRDtool) is a system to store and display
- time-series data (e.g. network bandwidth, machine-room temperature,
- server load average). It stores the data in Round Robin Databases (RRDs),
- a very compact way that will not expand over time. RRDtool processes the
- extracted data to enforce a certain data density, allowing for useful
- graphical representation of data values.
- .
- This package is a transitional dummy package to ease the transition towards
- a -dev package name without encoded soname. It can be safely removed.
-
-Package: librrd-dev
 Architecture: any
 Section: libdevel
 Depends: librrd2 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
 Conflicts: librrd0-dev, librrd0, librrd2-dev (<< 1.2.26)
 Replaces: librrd0, librrd2-dev (<< 1.2.26)
-Provides: librrd2-dev
+Provides: librrd-dev
 Description: Time-series data storage and display system (development)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
