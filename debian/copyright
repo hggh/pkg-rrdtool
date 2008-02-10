@@ -140,6 +140,9 @@ Files with different copyrights/licenses:
    The symlink /usr/share/common-licenses/LGPL  points to the latest version
    of the LGPL.
 
+ * bindings/ruby/:
+
+    Author: Miles Egan <miles@caddr.com>
 
  * bindings/tcl/{ifOctets.tcl.in,tclrrd.c}:
    
@@ -149,7 +152,35 @@ Files with different copyrights/licenses:
        Thread-safe code in tclrrd.c:
        Copyright (c) 2005 Oleg Derevenetz, CenterTelecom Voronezh ISP.
 
+ * doc/bin_dec_hex.pod, doc/cdeftutorial.pod, doc/rrdgraph.pod,
+   doc/rrdgraph_data.pod, doc/rrdgraph_examples.pod, doc/rrdgraph_graph.pod,
+   doc/rrdgraph_rpn.pod, doc/rrdresize.pod, doc/rrdtutorial.pod:
 
+    Author: Alex van den Bogaerdt <alex@ergens.op.het.net>
+
+ * doc/rpntutorial.pod:
+
+    Author: Steve Rader <rader@wiscnet.net>
+
+ * doc/rrdfirst.pod:
+
+    Author: Burton Strauss <Burton@ntopSupport.com>
+
+ * doc/rrdlast.pod:
+
+    Author: Russ Wright <rwwright@home.com>
+
+ * doc/rrdlastupdate.pod:
+
+    Author: Andy Riebs <andy.riebs@hp.com>
+
+ * doc/rrdthreads.pod:
+
+    Author: Peter Stamfest <peter@stamfest.at>
+
+ * doc/rrd-beginners.pod:
+
+    Author: Ketan Patel <k2pattu@yahoo.com>
 
  * src/DejaVuSansMono-Roman.ttf:
 
@@ -288,8 +319,27 @@ Files with different copyrights/licenses:
     write to the Free Software Foundation, Inc.,
     51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
- * src/rrd_not_thread_safe.c, rrd_thread_safe.c:
+ * src/rrd_hw.c:
+
+    Copyright (C) 1997-2007 Tobias Oetiker
+    Initial version by Jake Brutlag, WebTV Networks, 5/1/00
+
+ * src/rrd_is_thread_safe.h, src/rrd_not_thread_safe.c, src/rrd_thread_safe.c,
+   src/rrd_thread_safe_nt.c:
 
     Copyright 1997-2007 Tobias Oetiker
     Copyright 2003 Peter Stamfest <peter@stamfest.at>
+
+ * src/rrd_last.c:
+
+    Copyright (C) 1997-2007 Tobias Oetiker
+    Initial version by Russ Wright, @Home Network, 9/28/98
+
+ * src/strftime.c:
+
+    Written 6 september 1989 by Jim Nutt.
+    Released into the public domain by Jim Nutt.
+
+    Modified 21 october 1989 by Rob Duff.
+    Modified 08 december 2004 by Tobias Oetiker.
 
