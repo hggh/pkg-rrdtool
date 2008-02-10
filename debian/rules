@@ -196,8 +196,8 @@ binary-arch: build-arch install-arch
 	dh_pysupport -ppython-rrdtool
 	dh_perl -a
 	dh_installman -a
-	dh_link -plibrrd-dev /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so
-	dh_link -plibrrd-dev /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
+	dh_link -plibrrd2-dev /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so
+	dh_link -plibrrd2-dev /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so
 	dh_link -plibrrd$(LIB_major) /usr/lib/librrd.so.$(LIB_version) /usr/lib/librrd.so.$(LIB_major)
 	dh_link -plibrrd$(LIB_major) /usr/lib/librrd_th.so.$(LIB_TH_version) /usr/lib/librrd_th.so.$(LIB_TH_major)
 	dh_link -a
