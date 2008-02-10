@@ -97,7 +97,7 @@ Description: Time-series data storage and display system (Perl interface, piped)
 Package: rrdtool-tcl
 Architecture: any
 Section: utils
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, tcl (>= 8.4) | tclsh
 Description: Time-series data storage and display system (Tcl interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
