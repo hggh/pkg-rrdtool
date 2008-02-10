@@ -14,6 +14,7 @@ rrdtool (1.2.26-1) unstable; urgency=low
         * Building ruby modules now (Closes: #453304).
         * Change the Python binary package to conform with the Python policy,
           using python-support.
+        * Make rrdtool-tcl compliant with policy
         * Bump Standards Version to 3.7.3.
         * Using and depending on quilt to handle patches.
     - debian/watch:
