@@ -14,17 +14,15 @@ rrdtool (1.2.26-1) unstable; urgency=low
         * Update of Maintainer, Standards-Version, Uploaders
         * Building ruby modules now (Closes: #453304).
         * Change the Python binary package to conform with the Python policy,
-          using python-support.
+          using python-support. Also renaming the package to follow the Python
+          policy.
         * Make rrdtool-tcl compliant with policy
         * Bump Standards Version to 3.7.3.
         * Using and depending on quilt to handle patches.
+        * Adding Provides: librrd-dev to librrd2-dev.
     - debian/watch:
         * File redone to meet version 3 of uscan and to work again, using the
           new location of the upstream source.
-    - Renaming packages using transitional packages:
-        * librrd2-dev to librrd-dev as it was done on almost all other library
-          packages now.
-        * python-rrd to python-rrdtool to follow the Python policy.
 
   [ Alexander Wirt ]
   * Removed rpath from perl and tcl modules

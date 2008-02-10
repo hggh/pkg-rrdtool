@@ -44,8 +44,7 @@ CONFFLAGS += --disable-python --disable-ruby
 CONFFLAGS += --prefix=/usr --docdir=/usr/share/doc/rrdtool
 
 #install perl libs in vendor mode
-CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor
-
+CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor 
 
 
 
@@ -169,11 +168,10 @@ binary-indep: build-indep install-indep
 	dh_testdir
 	dh_testroot
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
-	dh_link -plibrrd2-dev /usr/share/doc/librrd-dev /usr/share/doc/librrd2-dev
 	dh_link -ppython-rrd /usr/share/doc/python-rrdtool /usr/share/doc/python-rrd
-	dh_installchangelogs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
-	dh_installdocs -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
-	dh_link -i -Nlibrrd-ruby -Nlibrrd2-dev -Npython-rrd
+	dh_installchangelogs -i -Nlibrrd-ruby -Npython-rrd
+	dh_installdocs -i -Nlibrrd-ruby -Npython-rrd
+	dh_link -i -Nlibrrd-ruby -Npython-rrd
 	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_perl -i
 	dh_compress -i
