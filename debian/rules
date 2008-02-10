@@ -80,6 +80,8 @@ build-arch-stamp: config.status
 
 	#configure forgets to set TCL_INC_DIR.
 	make TCL_INC_DIR=/usr/include/tcl
+	#Fix library path to tcl bindings
+	sed -i -e 's|lib/|lib/tcltk/rrdtool-tcl/|' bindings/tcl/pkgIndex.tcl
 	touch $@
 
 build-python%: build-arch-stamp
@@ -184,6 +186,7 @@ binary-arch: build-arch install-arch
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs -a CHANGES
+	dh_installdocs -A CONTRIBUTORS
 	dh_installdocs -a
 #	dh_installexamples -a
 	dh_pysupport -ppython-rrdtool

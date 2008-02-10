@@ -15,6 +15,7 @@ rrdtool (1.2.26-1) unstable; urgency=low
         * Change the Python binary package to conform with the Python policy,
           using python-support. Also renaming the package to follow the Python
           policy.
+        * Make rrdtool-tcl compliant with policy
         * Bump Standards Version to 3.7.3.
         * Using and depending on quilt to handle patches.
         * Adding Provides: librrd-dev to librrd2-dev.
