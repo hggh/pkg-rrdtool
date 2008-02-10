@@ -188,6 +188,7 @@ binary-arch: build-arch install-arch
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs -a CHANGES
+	dh_installdocs -A CONTRIBUTORS
 	dh_installdocs -a
 #	dh_installexamples -a
 	dh_pysupport -ppython-rrdtool
