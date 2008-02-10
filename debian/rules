@@ -28,6 +28,10 @@ PY_VERS := $(shell set -e; \
                        if [ -x /usr/bin/python$$py ]; then echo $$py; fi;    \
                    done)
 
+#tcl version we're building for
+TCL_VERS := $(shell dpkg -s tcl | grep ^Depends | sed 's,.*tcl\([0-9.]*\).*,\1,')
+
+
 #let's help configure to figure out our host/build system
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
@@ -188,7 +192,7 @@ binary-arch: build-arch install-arch
 	dh_installchangelogs -a CHANGES
 	dh_installdocs -A CONTRIBUTORS
 	dh_installdocs -a
-#	dh_installexamples -a
+	echo 'tcl:Depends=tcl$(TCL_VERS) | tclsh' >> debian/rrdtool-tcl.substvars
 	dh_pysupport -ppython-rrdtool
 	dh_perl -a
 	dh_installman -a
