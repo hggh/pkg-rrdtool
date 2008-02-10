@@ -1,2 +1,3 @@
 debian/tmp/usr/share/rrdtool/examples/*
 bindings/ruby/test.rb
+bindings/tcl/ifOctets.tcl
