@@ -1,5 +1,6 @@
 rrdtool (1.2.26-1) unstable; urgency=low
 
+  [ Bernd Zeimetz ]
   * New upstream version (Closes: #431060).
   * Package hijacked as announced on debian-devel@lists.debian.org
     (Message-ID: <47A7A2A4.3020106@bzed.de>) due to the old maintainer
@@ -25,7 +26,10 @@ rrdtool (1.2.26-1) unstable; urgency=low
           packages now.
         * python-rrd to python-rrdtool to follow the Python policy.
 
- -- Bernd Zeimetz <bzed@debian.org>  Sat, 09 Feb 2008 23:03:45 +0100
+  [ Alexander Wirt ]
+  * Removed rpath from perl and tcl modules
+
+ -- Alexander Wirt <formorer@debian.org>  Sun, 10 Feb 2008 22:19:36 +0100
 
 rrdtool (1.2.19-1) unstable; urgency=low
 
