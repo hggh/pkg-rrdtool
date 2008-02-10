@@ -137,7 +137,6 @@ install-common-stamp: build-arch-stamp
 	dh_clean -k
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
-	find debian/tmp
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 
 	touch $@
