@@ -1,0 +1,15 @@
+Index: rrdtool/bindings/ruby/extconf.rb
+===================================================================
+--- rrdtool.orig/bindings/ruby/extconf.rb	2008-02-10 14:43:00.000000000 +0100
++++ rrdtool/bindings/ruby/extconf.rb	2008-02-10 14:43:08.000000000 +0100
+@@ -3,9 +3,7 @@
+ 
+ require 'mkmf'
+ 
+-if /linux/ =~ RUBY_PLATFORM
+-   $LDFLAGS += '-Wl,--rpath -Wl,$(EPREFIX)/lib'
+-elsif /solaris/ =~ RUBY_PLATFORM
++if /solaris/ =~ RUBY_PLATFORM
+    $LDFLAGS += '-R$(EPREFIX)/lib'
+ elsif /hpux/ =~ RUBY_PLATFORM
+    $LDFLAGS += '+b$(EPREFIX)/lib'
