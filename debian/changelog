@@ -26,9 +26,9 @@ rrdtool (1.2.26-1) unstable; urgency=low
 
   [ Alexander Wirt ]
   * Removed rpath from perl and tcl modules
-  * Let rrdtool-tcl depend on tcl 8.4  
+  * Let rrdtool-tcl depend on tcl 8.4
 
- -- Alexander Wirt <formorer@debian.org>  Sun, 10 Feb 2008 23:15:35 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 11 Feb 2008 12:14:19 +0100
 
 rrdtool (1.2.19-1) unstable; urgency=low
 
