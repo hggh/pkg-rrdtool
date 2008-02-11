@@ -121,7 +121,7 @@ endif
 	       bindings/perl-piped/Makefile.old bindings/perl-shared/Makefile.old
 	rm -f bindings/tcl/pkgIndex.tcl bindings/tcl/tclrrd*.so
 	rm -f examples/cgi-demo.cgi
-	rm -rf src/.libs src/.deps
+	rm -rf src/.libs src/.deps doc/*.html doc/*.1 doc/*.txt
 
 	dh_clean
 
