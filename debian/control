@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
  tcl-dev,
  perl (>= 5.8.0),
  python-all-dev (>= 2.3.5-10), python-support (>= 0.4),
- ruby1.8-dev, ruby1.9-dev
+ ruby1.8, ruby1.8-dev, ruby1.9, ruby1.9-dev
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
 Vcs-Git: git://git.snow-crash.org/pkg-rrdtool.git/
