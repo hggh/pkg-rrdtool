@@ -18,8 +18,12 @@
 	<li><a href="#name">NAME</a></li>
 	<li><a href="#synopsis">SYNOPSIS</a></li>
 	<li><a href="#description">DESCRIPTION</a></li>
-	<li><a href="#print">PRINT</a></li>
-	<li><a href="#graph">GRAPH</a></li>
+	<ul>
+
+		<li><a href="#print">PRINT</a></li>
+		<li><a href="#graph">GRAPH</a></li>
+	</ul>
+
 	<li><a href="#notes_on_legend_arguments">NOTES on legend arguments</a></li>
 	<ul>
 
@@ -63,8 +67,7 @@ If you don't use any graph elements, no graph is generated.
 Similarly, no report is generated if you don't use print options.</p>
 <p>
 </p>
-<hr />
-<h1><a name="print">PRINT</a></h1>
+<h2><a name="print">PRINT</a></h2>
 <dl>
 <dt><strong><a name="item_print_3avname_3aformat_5b_3astrftime_5d"><strong>PRINT:</strong><em>vname</em><strong>:</strong><em>format</em>[<strong>:strftime</strong>]</a></strong>
 
@@ -81,197 +84,112 @@ can be:</p>
 <dd>
 <p>For printing values:</p>
 </dd>
-<dl>
-<dt><strong><a name="item___"><strong>%%</strong></a></strong>
-
 <dd>
-<p>just prints a literal '%' character</p>
+<p><strong>%%</strong> - just prints a literal '%' character</p>
 </dd>
-</li>
-<dt><strong><a name="item_____le"><strong>%#.#le</strong></a></strong>
-
 <dd>
-<p>prints numbers like 1.2346e+04. The optional integers # denote field
+<p><strong>%#.#le</strong> - prints numbers like 1.2346e+04. The optional integers # denote field
 width and decimal precision.</p>
 </dd>
-</li>
-<dt><strong><a name="item_____lf"><strong>%#.#lf</strong></a></strong>
-
 <dd>
-<p>prints numbers like 12345.6789, with optional field width
+<p><strong>%#.#lf</strong> - prints numbers like 12345.6789, with optional field width
 and precision.</p>
 </dd>
-</li>
-<dt><strong><a name="item__s"><strong>%s</strong></a></strong>
-
 <dd>
-<p>place this after <strong>%le</strong>, <strong>%lf</strong> or <strong>%lg</strong>. This will be replaced by the
+<p><strong>%s</strong> - place this after <strong>%le</strong>, <strong>%lf</strong> or <strong>%lg</strong>. This will be replaced by the
 appropriate SI magnitude unit and the value will be scaled
 accordingly (123456 -&gt; 123.456 k).</p>
 </dd>
-</li>
-<dt><strong><a name="item__s"><strong>%S</strong></a></strong>
-
 <dd>
-<p>is similar to <strong>%s</strong>. It does, however, use a previously defined
+<p><strong>%S</strong> - is similar to <strong>%s</strong>. It does, however, use a previously defined
 magnitude unit. If there is no such unit yet, it tries to define
 one (just like <strong>%s</strong>) unless the value is zero, in which case the magnitude
 unit stays undefined. Thus, formatter strings using <strong>%S</strong> and no <strong>%s</strong>
 will all use the same magnitude unit except for zero values.</p>
 </dd>
-</li>
-</dl>
+<dd>
 <p>If you PRINT a VDEF value, you can also print the time associated with it by appending the string
 <strong>:strftime</strong> to the format. Note that rrdtool uses the strftime function of your OSs clibrary. This means that
 the conversion specifier may vary. Check the manual page if you are uncertain. The following is a list of
 conversion specifiers usually supported across the board.</p>
-<dl>
-<dt><strong><a name="item__a"><strong>%a</strong></a></strong>
-
-<dd>
-<p>The abbreviated weekday name according to the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__a"><strong>%A</strong></a></strong>
-
 <dd>
-<p>The full weekday name according to the current locale.</p>
+<p><strong>%a</strong> - The abbreviated weekday name according to the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__b"><strong>%b</strong></a></strong>
-
 <dd>
-<p>The abbreviated month name according to the current locale.</p>
+<p><strong>%A</strong> - The full weekday name according to the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__b"><strong>%B</strong></a></strong>
-
 <dd>
-<p>The full month name according to the current locale.</p>
+<p><strong>%b</strong> - The abbreviated month name according to the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__c"><strong>%c</strong></a></strong>
-
 <dd>
-<p>The preferred date and time representation for the current locale.</p>
+<p><strong>%B</strong> - The full month name according to the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__d"><strong>%d</strong></a></strong>
-
 <dd>
-<p>The day of the month as a decimal number (range 01 to 31).</p>
+<p><strong>%c</strong> - The preferred date and time representation for the current locale.</p>
 </dd>
-</li>
-<dt><strong><a name="item__h"><strong>%H</strong></a></strong>
-
 <dd>
-<p>The hour as a decimal number using a 24-hour clock (range 00 to 23).</p>
+<p><strong>%d</strong> - The day of the month as a decimal number (range 01 to 31).</p>
 </dd>
-</li>
-<dt><strong><a name="item__i"><strong>%I</strong></a></strong>
-
 <dd>
-<p>The hour as a decimal number using a 12-hour clock (range 01 to 12).</p>
+<p><strong>%H</strong> - The hour as a decimal number using a 24-hour clock (range 00 to 23).</p>
 </dd>
-</li>
-<dt><strong><a name="item__j"><strong>%j</strong></a></strong>
-
 <dd>
-<p>The day of the year as a decimal number (range 001 to 366).</p>
+<p><strong>%I</strong> - The hour as a decimal number using a 12-hour clock (range 01 to 12).</p>
 </dd>
-</li>
-<dt><strong><a name="item__m"><strong>%m</strong></a></strong>
-
 <dd>
-<p>The month as a decimal number (range 01 to 12).</p>
+<p><strong>%j</strong> - The day of the year as a decimal number (range 001 to 366).</p>
 </dd>
-</li>
-<dt><strong><a name="item__m"><strong>%M</strong></a></strong>
-
 <dd>
-<p>The minute as a decimal number (range 00 to 59).</p>
+<p><strong>%m</strong> - The month as a decimal number (range 01 to 12).</p>
 </dd>
-</li>
-<dt><strong><a name="item__p"><strong>%p</strong></a></strong>
-
 <dd>
-<p>Either `AM' or `PM' according to the given time value, or the corresponding
+<p><strong>%M</strong> - The minute as a decimal number (range 00 to 59).</p>
+</dd>
+<dd>
+<p><strong>%p</strong> - Either `AM' or `PM' according to the given time value, or the corresponding
 strings for the current locale.  Noon is treated as `pm' and midnight as
 `am'.  Note that in many locales and `pm' notation is unsupported and in
 such cases %p will return an empty string.</p>
 </dd>
-</li>
-<dt><strong><strong>%S</strong></strong>
-
 <dd>
-<p>The second as a decimal number (range 00 to 61).</p>
+<p><strong>%S</strong> - The second as a decimal number (range 00 to 61).</p>
 </dd>
-</li>
-<dt><strong><a name="item__u"><strong>%U</strong></a></strong>
-
 <dd>
-<p>The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the
+<p><strong>%U</strong> - The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the
 first Sunday as the first day of week 01. See also %V and %W.</p>
 </dd>
-</li>
-<dt><strong><a name="item__v"><strong>%V</strong></a></strong>
-
 <dd>
-<p>The ISO 8601:1988 week number of the current year as a decimal number, range 01 to  53,  where
+<p><strong>%V</strong> - The ISO 8601:1988 week number of the current year as a decimal number, range 01 to  53,  where
 week  1 is the first week that has at least 4 days in the current year, and with Monday as the
 first day of the week. See also %U and %W.</p>
 </dd>
-</li>
-<dt><strong><a name="item__w"><strong>%w</strong></a></strong>
-
 <dd>
-<p>The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also %u.</p>
+<p><strong>%w</strong> - The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also %u.</p>
 </dd>
-</li>
-<dt><strong><a name="item__w"><strong>%W</strong></a></strong>
-
 <dd>
-<p>The week number of the current year as a decimal number, range 00 to  53,  starting  with  the
+<p><strong>%W</strong> - The week number of the current year as a decimal number, range 00 to  53,  starting  with  the
 first Monday as the first day of week 01.</p>
 </dd>
-</li>
-<dt><strong><a name="item__x"><strong>%x</strong></a></strong>
-
 <dd>
-<p>The preferred date representation for the current locale without the time.</p>
+<p><strong>%x</strong> - The preferred date representation for the current locale without the time.</p>
+</dd>
+<dd>
+<p><strong>%X</strong> - The preferred time representation for the current locale without the date.</p>
+</dd>
+<dd>
+<p><strong>%y</strong> - The year as a decimal number without a century (range 00 to 99).</p>
+</dd>
+<dd>
+<p><strong>%Y</strong> - The year as a decimal number including the century.</p>
+</dd>
+<dd>
+<p><strong>%Z</strong> - The time zone or name or abbreviation.</p>
+</dd>
+<dd>
+<p><strong>%%</strong> - A literal `%' character.</p>
 </dd>
 </li>
-<dt><strong><a name="item__x"><strong>%X</strong></a></strong>
-
-<dd>
-<p>The preferred time representation for the current locale without the date.</p>
-</dd>
-</li>
-<dt><strong><a name="item__y"><strong>%y</strong></a></strong>
-
-<dd>
-<p>The year as a decimal number without a century (range 00 to 99).</p>
-</dd>
-</li>
-<dt><strong><a name="item__y"><strong>%Y</strong></a></strong>
-
-<dd>
-<p>The year as a decimal number including the century.</p>
-</dd>
-</li>
-<dt><strong><a name="item__z"><strong>%Z</strong></a></strong>
-
-<dd>
-<p>The time zone or name or abbreviation.</p>
-</dd>
-</li>
-<dt><strong><strong>%%</strong></strong>
-
-<dd>
-<p>A literal `%' character.</p>
-</dd>
-</li>
-</dl>
 <dt><strong><a name="item_print_3avname_3acf_3aformat"><strong>PRINT:</strong><em>vname</em><strong>:</strong><em>CF</em><strong>:</strong><em>format</em></a></strong>
 
 <dd>
@@ -282,8 +200,7 @@ The first form of this command is to be used with <strong>CDEF</strong> <em>vnam
 </dl>
 <p>
 </p>
-<hr />
-<h1><a name="graph">GRAPH</a></h1>
+<h2><a name="graph">GRAPH</a></h2>
 <dl>
 <dt><strong><a name="item_gprint_3avname_3aformat"><strong>GPRINT</strong><strong>:</strong><em>vname</em><strong>:</strong><em>format</em></a></strong>
 

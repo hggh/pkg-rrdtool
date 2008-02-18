@@ -1,17 +1,14 @@
 /*****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1235 2007-11-20 00:15:07Z oetiker $
+ * $Id: rrd_update.c 1286 2008-02-17 10:08:10Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
 #include <sys/types.h>
 #include <fcntl.h>
-#ifdef HAVE_MMAP
-# include <sys/mman.h>
-#endif
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
  #include <sys/locking.h>
@@ -32,12 +29,15 @@
  */
 #include <sys/timeb.h>
 
-#ifndef __MINGW32__
+#if (defined(__MINGW32__) && \
+       ((__MINGW32_MAJOR_VERSION == 3 && __MINGW32_MINOR_VERSION >= 12) || __MINGW32_MAJOR_VERSION > 3))
+#include <sys/time.h>
+#else
+
 struct timeval {
 	time_t tv_sec; /* seconds */
 	long tv_usec;  /* microseconds */
 };
-#endif
 
 struct __timezone {
 	int  tz_minuteswest; /* minutes W of Greenwich */
@@ -56,7 +56,9 @@ static int gettimeofday(struct timeval *t, struct __timezone *tz) {
 	return 0;
 }
 
+#endif /* mingw32 3.4.5 */
 #endif
+
 /*
  * normilize time as returned by gettimeofday. usec part must
  * be always >= 0
@@ -427,10 +429,10 @@ _rrd_update(const char *filename, const char *tmplt, int argc, const char **argv
         fclose(rrd_file);
 	return(-1);
     }
-#ifdef HAVE_MADVISE
+#ifdef USE_MADVISE
     /* when we use mmaping we tell the kernel the mmap equivalent
        of POSIX_FADV_RANDOM */
-    madvise(rrd_mmaped_file,rrd_filesize,POSIX_MADV_RANDOM);
+    madvise(rrd_mmaped_file,rrd_filesize,MADV_RANDOM);
 #endif
 #endif
     /* loop through the arguments. */

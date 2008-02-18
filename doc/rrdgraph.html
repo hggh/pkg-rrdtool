@@ -71,7 +71,7 @@ well become unknown!</p>
 it. For instance, you might be collecting <strong>bytes</strong> per second, but
 want to display <strong>bits</strong> per second. This is what the <strong><a href="././rrdgraph_data.html#cdef">data calculation</a></strong> command is designed for. After
 <strong>consolidating</strong> the data, a copy is made and this copy is modified
-using a rather powerful <strong><a href="././rrdgraph_rpn.html">RPN</a></strong> command set.</p>
+using a rather powerful <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> command set.</p>
 <p>When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the <strong>rrdtool graph</strong> sequence.</p>
 <p>
@@ -102,7 +102,7 @@ this case, no other output is generated.</p>
 <strong>RRA</strong> the data should come from.  Defaults are: 1 day ago until
 now, with the best possible resolution. <strong>Start</strong> and <strong>end</strong> can
 be specified in several formats, see
-<a href="././rrdfetch.html">AT-STYLE TIME SPECIFICATION</a> and <a href="././rrdgraph_examples.html">the rrdgraph_examples manpage</a>.
+<a href="././rrdfetch.html">the rrdfetch manpage</a> and <a href="././rrdgraph_examples.html">the rrdgraph_examples manpage</a>.
 By default, <strong>rrdtool graph</strong> calculates the width of one pixel in
 the time domain and tries to get data from an <strong>RRA</strong> with that
 resolution.  With the <strong>step</strong> option you can alter this behaviour.
@@ -200,10 +200,7 @@ and for linear scales where <strong>--alt-autoscale</strong> is needed.
 Using <strong>--no-gridfit</strong> disables modification of the scale.</p>
 </dd>
 </li>
-<dt><strong><a name="item_grid">Grid</a></strong>
-
-<dl>
-<dt><strong><a name="item_x_2daxis">X-Axis</a></strong>
+<dt><strong><a name="item_x_2dgrid">X-Grid</a></strong>
 
 <dd>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
@@ -249,7 +246,7 @@ each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.</p>
 </dd>
 </li>
-<dt><strong><a name="item_y_2daxis">Y-Axis</a></strong>
+<dt><strong><a name="item_y_2dgrid">Y-Grid</a></strong>
 
 <dd>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <em>grid step</em><strong>:</strong><em>label factor</em>]</p>
@@ -322,7 +319,6 @@ the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, SI notation is used by default.</p>
 </dd>
 </li>
-</dl>
 <dt><strong><a name="item_miscellaneous">Miscellaneous</a></strong>
 
 <dd>

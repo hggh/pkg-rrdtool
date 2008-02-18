@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2007-11-20" "1.2.26" "rrdtool"
+.TH RRDGRAPH 1 "2008-02-17" "1.2.27" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
@@ -170,7 +170,7 @@ Sometimes data is not exactly in the format you would like to display
 it. For instance, you might be collecting \fBbytes\fR per second, but
 want to display \fBbits\fR per second. This is what the \fBdata calculation\fR command is designed for. After
 \&\fBconsolidating\fR the data, a copy is made and this copy is modified
-using a rather powerful \fB\s-1RPN\s0\fR command set.
+using a rather powerful rrdgraph_rpn command set.
 .PP
 When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the \fBrrdtool graph\fR sequence.
@@ -193,7 +193,7 @@ The start and end of the time series you would like to display, and which
 \&\fB\s-1RRA\s0\fR the data should come from.  Defaults are: 1 day ago until
 now, with the best possible resolution. \fBStart\fR and \fBend\fR can
 be specified in several formats, see
-AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 and rrdgraph_examples.
+rrdfetch and rrdgraph_examples.
 By default, \fBrrdtool graph\fR calculates the width of one pixel in
 the time domain and tries to get data from an \fB\s-1RRA\s0\fR with that
 resolution.  With the \fBstep\fR option you can alter this behaviour.
@@ -268,13 +268,8 @@ integer number of pixels and also start on an integer pixel value.
 This might extend the scale too much for some logarithmic scales
 and for linear scales where \fB\-\-alt\-autoscale\fR is needed.
 Using \fB\-\-no\-gridfit\fR disables modification of the scale.
-.IP "Grid" 4
-.IX Item "Grid"
-.RS 4
-.PD 0
-.IP "X\-Axis" 4
-.IX Item "X-Axis"
-.PD
+.IP "X\-Grid" 4
+.IX Item "X-Grid"
 [\fB\-x\fR|\fB\-\-x\-grid\fR \fI\s-1GTM\s0\fR\fB:\fR\fI\s-1GST\s0\fR\fB:\fR\fI\s-1MTM\s0\fR\fB:\fR\fI\s-1MST\s0\fR\fB:\fR\fI\s-1LTM\s0\fR\fB:\fR\fI\s-1LST\s0\fR\fB:\fR\fI\s-1LPR\s0\fR\fB:\fR\fI\s-1LFM\s0\fR]
 .Sp
 [\fB\-x\fR|\fB\-\-x\-grid\fR \fBnone\fR]
@@ -311,8 +306,8 @@ lines as they specify exactly that time.
 This places grid lines every 8 hours, major grid lines and labels
 each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.
-.IP "Y\-Axis" 4
-.IX Item "Y-Axis"
+.IP "Y\-Grid" 4
+.IX Item "Y-Grid"
 [\fB\-y\fR|\fB\-\-y\-grid\fR \fIgrid step\fR\fB:\fR\fIlabel factor\fR]
 .Sp
 [\fB\-y\fR|\fB\-\-y\-grid\fR \fBnone\fR]
@@ -367,9 +362,6 @@ fideling with the y\-axis labeling.
 With this option y\-axis values on logarithmic graphs will be scaled to 
 the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, \s-1SI\s0 notation is used by default.
-.RE
-.RS 4
-.RE
 .IP "Miscellaneous" 4
 .IX Item "Miscellaneous"
 [\fB\-z\fR|\fB\-\-lazy\fR]

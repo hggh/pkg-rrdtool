@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_format.c  RRD Database Format helper functions
  *****************************************************************************
- * $Id: rrd_format.c 1235 2007-11-20 00:15:07Z oetiker $
+ * $Id: rrd_format.c 1286 2008-02-17 10:08:10Z oetiker $
  * $Log$
  * Revision 1.5  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net

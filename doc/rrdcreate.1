@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCREATE 1"
-.TH RRDCREATE 1 "2007-11-20" "1.2.26" "rrdtool"
+.TH RRDCREATE 1 "2008-02-17" "1.2.27" "rrdtool"
 .SH "NAME"
 rrdcreate \- Set up a new Round Robin Database
 .SH "SYNOPSIS"
@@ -144,12 +144,12 @@ rrdcreate \- Set up a new Round Robin Database
 The create function of RRDtool lets you set up new Round Robin
 Database (\fB\s-1RRD\s0\fR) files.  The file is created at its final, full size
 and filled with \fI*UNKNOWN*\fR data.
-.IP "\fIfilename\fR" 8
+.IP "\fIfilename\fR" 4
 .IX Item "filename"
 The name of the \fB\s-1RRD\s0\fR you want to create. \fB\s-1RRD\s0\fR files should end
 with the extension \fI.rrd\fR. However, \fBRRDtool\fR will accept any
 filename.
-.IP "\fB\-\-start\fR|\fB\-b\fR \fIstart time\fR (default: now \- 10s)" 8
+.IP "\fB\-\-start\fR|\fB\-b\fR \fIstart time\fR (default: now \- 10s)" 4
 .IX Item "--start|-b start time (default: now - 10s)"
 Specifies the time in seconds since 1970\-01\-01 \s-1UTC\s0 when the first
 value should be added to the \fB\s-1RRD\s0\fR. \fBRRDtool\fR will not accept
@@ -157,11 +157,11 @@ any data timed before or at the time specified.
 .Sp
 See also AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 section in the
 \&\fIrrdfetch\fR documentation for other ways to specify time.
-.IP "\fB\-\-step\fR|\fB\-s\fR \fIstep\fR (default: 300 seconds)" 8
+.IP "\fB\-\-step\fR|\fB\-s\fR \fIstep\fR (default: 300 seconds)" 4
 .IX Item "--step|-s step (default: 300 seconds)"
 Specifies the base interval in seconds with which data will be fed
 into the \fB\s-1RRD\s0\fR.
-.IP "\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst arguments\fR" 8
+.IP "\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst arguments\fR" 4
 .IX Item "DS:ds-name:DST:dst arguments"
 A single \fB\s-1RRD\s0\fR can accept input from several data sources (\fB\s-1DS\s0\fR),
 for example incoming and outgoing traffic on a specific communication
@@ -185,7 +185,7 @@ For \s-1COMPUTE\s0 data sources, the format is:
 In order to decide which data source type to use, review the
 definitions that follow. Also consult the section on \*(L"\s-1HOW\s0 \s-1TO\s0 \s-1MEASURE\s0\*(R"
 for further insight.
-.RS 8
+.RS 4
 .IP "\fB\s-1GAUGE\s0\fR" 4
 .IX Item "GAUGE"
 is for things like temperatures or number of people in a room or the
@@ -207,9 +207,9 @@ example, to measure the rate of people entering or leaving a
 room. Internally, derive works exactly like \s-1COUNTER\s0 but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use \s-1DERIVE\s0 and combine it with a \s-1MIN\s0 value of 0.
-.RS 4
-.IP "\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0" 4
-.IX Item "NOTE on COUNTER vs DERIVE"
+.Sp
+\&\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0
+.Sp
 by Don Baarda <don.baarda@baesystems.com>
 .Sp
 If you cannot tolerate ever mistaking the occasional counter reset for a
@@ -226,9 +226,6 @@ for high bandwidth interfaces and a 32bit counter, \s-1DERIVE\s0 with min=0 is
 probably preferable. If you are using a 64bit counter, just about any max
 setting will eliminate the possibility of mistaking a reset for a counter
 wrap.
-.RE
-.RS 4
-.RE
 .IP "\fB\s-1ABSOLUTE\s0\fR" 4
 .IX Item "ABSOLUTE"
 is for counters which get reset upon reading. This is used for fast counters
@@ -247,7 +244,7 @@ of the \s-1COMPUTE\s0 data source (that is the rpn-expression is only applied
 to generate PDPs). In database software, such data sets are referred
 to as \*(L"virtual\*(R" or \*(L"computed\*(R" columns.
 .RE
-.RS 8
+.RS 4
 .Sp
 \&\fIheartbeat\fR defines the maximum number of seconds that may pass
 between two updates of this data source before the value of the
@@ -275,7 +272,7 @@ names of data source listed previously in the create command. This is
 similar to the restriction that \fB\s-1CDEF\s0\fRs must refer only to \fB\s-1DEF\s0\fRs
 and \fB\s-1CDEF\s0\fRs previously defined in the same graph command.
 .RE
-.IP "\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf arguments\fR" 8
+.IP "\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf arguments\fR" 4
 .IX Item "RRA:CF:cf arguments"
 The purpose of an \fB\s-1RRD\s0\fR is to store data in the round robin archives
 (\fB\s-1RRA\s0\fR). An archive consists of a number of data values or statistics for

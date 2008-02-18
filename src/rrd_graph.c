@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -51,7 +51,7 @@ xlab_t xlab[] = {
     {10,                0,   TMT_MINUTE,5,  TMT_MINUTE,20, TMT_MINUTE,20,        0,"%H:%M"},
     {30,                0,   TMT_MINUTE,10, TMT_HOUR,1,    TMT_HOUR,1,           0,"%H:%M"},
     {60,                0,   TMT_MINUTE,30, TMT_HOUR,2,    TMT_HOUR,2,           0,"%H:%M"},
-    {60,          24*3600,   TMT_MINUTE,30, TMT_HOUR,2,    TMT_HOUR,4,           0,"%a %H:%M"},
+    {60,          24*3600,   TMT_MINUTE,30, TMT_HOUR,2,    TMT_HOUR,6,           0,"%a %H:%M"},
     {180,               0,   TMT_HOUR,1,    TMT_HOUR,6,    TMT_HOUR,6,           0,"%H:%M"},
     {180,         24*3600,   TMT_HOUR,1,    TMT_HOUR,6,    TMT_HOUR,12,          0,"%a %H:%M"},
     /*{300,             0,   TMT_HOUR,3,    TMT_HOUR,12,   TMT_HOUR,12,    12*3600,"%a %p"},  this looks silly*/
@@ -3498,19 +3498,24 @@ rrd_graph_options(int argc, char *argv[],image_desc_t *im)
         case 'n':{
             char prop[15];
             double size = 1;
-            char font[1024] = "";
-
+            int end;
             if(sscanf(optarg,
-                                "%10[A-Z]:%lf:%1000s",
-                                prop,&size,font) >= 2){
+                                "%10[A-Z]:%lf%n",
+                                prop,&size,&end) >= 2){                                
                 int sindex,propidx;
                 if((sindex=text_prop_conv(prop)) != -1){
                   for (propidx=sindex;propidx<TEXT_PROP_LAST;propidx++){                        
                         if (size > 0){
                               im->text_prop[propidx].size=size;              
-                      }
-                       if (strlen(font) > 0){
-                          strcpy(im->text_prop[propidx].font,font);
+                      }        
+                       if (strlen(prop) > end){
+                          if (prop[end] == ':'){
+                             strncpy(im->text_prop[propidx].font,prop+end+1,255);
+                             im->text_prop[propidx].font[255] = '\0';
+                          } else {
+                             rrd_set_error("expected after font size in '%s'",prop);
+                            return;
+                          }
                       }
                       if (propidx==sindex && sindex != 0) break;
                   }
