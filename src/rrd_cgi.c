@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_cgi.c  RRD Web Page Generator
  *****************************************************************************/
@@ -1287,7 +1287,7 @@ s_var **rrdcgiReadVariables(void)
 	if (i<numargs) {
 
 	    /* try to find out if there's already such a variable */
-	    for (k=0; k<i && (strncmp (result[k]->name,cp, esp-cp) || !(strlen (result[k]->name) == esp-cp)); k++);
+	    for (k=0; k<i && (strncmp (result[k]->name,cp, esp-cp) || !(strlen (result[k]->name) == (size_t)(esp-cp))); k++);
 
 	    if (k == i) {	/* No such variable yet */
 		if ((result[i] = (s_var *)malloc(sizeof(s_var))) == NULL)

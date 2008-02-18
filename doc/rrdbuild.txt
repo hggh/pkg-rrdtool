@@ -30,12 +30,12 @@ DDEESSCCRRIIPPTTIIOONN
        (bash,zsh):
 
         BUILD_DIR=/tmp/rrdbuild
-        INSTALL_DIR=/usr/local/rrdtool-1.2.26
+        INSTALL_DIR=/usr/local/rrdtool-1.2.27
 
        Or if you run tcsh:
 
         set BUILD_DIR=/tmp/rrdbuild
-        set INSTALL_DIR=/usr/local/rrdtool-1.2.26
+        set INSTALL_DIR=/usr/local/rrdtool-1.2.27
 
        If your _/_t_m_p is mounted with the option noexec (RHEL seems todo that)
        you have to choose a different directory!
@@ -50,9 +50,9 @@ DDEESSCCRRIIPPTTIIOONN
        ttaarr and mmaakkee are actually GGNNUU ttaarr and GGNNUU mmaakkee respectively. It could
        be that they are installed as ggttaarr and ggmmaakkee on your system.
 
-        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.26.tar.gz
-        tar zxf rrdtool-1.2.26.tar.gz
-        cd rrdtool-1.2.26
+        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.27.tar.gz
+        tar zxf rrdtool-1.2.27.tar.gz
+        cd rrdtool-1.2.27
         ./configure --prefix=$INSTALL_DIR && make && make install
 
        Ok, this was very optimistic. This try will probably have ended with
@@ -171,7 +171,7 @@ DDEESSCCRRIIPPTTIIOONN
        python and tcl setups that would prevent rrdtool from building if they
        are included in their current state.
 
-        cd $BUILD_DIR/rrdtool-1.2.26
+        cd $BUILD_DIR/rrdtool-1.2.27
         ./configure --prefix=$INSTALL_DIR --disable-python --disable-tcl
         make clean
         make
@@ -190,4 +190,4 @@ AAUUTTHHOORR
 
 
 
-1.2.26                            2007-11-20                       RRDBUILD(1)
+1.2.27                            2008-02-17                       RRDBUILD(1)

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,7 +7,7 @@
  * rrd_not_thread_safe.c   Contains routines used when thread safety is not
  *                         an issue
  *****************************************************************************
- * $Id: rrd_not_thread_safe.c 1235 2007-11-20 00:15:07Z oetiker $
+ * $Id: rrd_not_thread_safe.c 1286 2008-02-17 10:08:10Z oetiker $
  *************************************************************************** */
 #include "rrd.h"
 #include "rrd_tool.h"

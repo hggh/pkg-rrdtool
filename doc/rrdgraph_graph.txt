@@ -35,7 +35,9 @@ DDEESSCCRRIIPPTTIIOONN
        don't use any graph elements, no graph is generated.  Similarly, no
        report is generated if you don't use print options.
 
-PPRRIINNTT
+       PPRRIINNTT
+
+
        PPRRIINNTT::_v_n_a_m_e::_f_o_r_m_a_t[::ssttrrffttiimmee]
            Depending on the context, either the value component or the time
            component of a VVDDEEFF is printed using _f_o_r_m_a_t. It is an error to
@@ -47,26 +49,24 @@ PPRRIINNTT
 
            For printing values:
 
-           %%%%  just prints a literal '%' character
+           %%%% - just prints a literal '%' character
 
-           %%##..##llee
-               prints numbers like 1.2346e+04. The optional integers # denote
-               field width and decimal precision.
+           %%##..##llee - prints numbers like 1.2346e+04. The optional integers #
+           denote field width and decimal precision.
 
-           %%##..##llff
-               prints numbers like 12345.6789, with optional field width and
-               precision.
+           %%##..##llff - prints numbers like 12345.6789, with optional field width
+           and precision.
 
-           %%ss  place this after %%llee, %%llff or %%llgg. This will be replaced by the
-               appropriate SI magnitude unit and the value will be scaled
-               accordingly (123456 -> 123.456 k).
+           %%ss - place this after %%llee, %%llff or %%llgg. This will be replaced by the
+           appropriate SI magnitude unit and the value will be scaled accord-
+           ingly (123456 -> 123.456 k).
 
-           %%SS  is similar to %%ss. It does, however, use a previously defined
-               magnitude unit. If there is no such unit yet, it tries to
-               define one (just like %%ss) unless the value is zero, in which
-               case the magnitude unit stays undefined. Thus, formatter
-               strings using %%SS and no %%ss will all use the same magnitude unit
-               except for zero values.
+           %%SS - is similar to %%ss. It does, however, use a previously defined
+           magnitude unit. If there is no such unit yet, it tries to define
+           one (just like %%ss) unless the value is zero, in which case the
+           magnitude unit stays undefined. Thus, formatter strings using %%SS
+           and no %%ss will all use the same magnitude unit except for zero val-
+           ues.
 
            If you PRINT a VDEF value, you can also print the time associated
            with it by appending the string ::ssttrrffttiimmee to the format. Note that
@@ -75,75 +75,77 @@ PPRRIINNTT
            you are uncertain. The following is a list of conversion specifiers
            usually supported across the board.
 
-           %%aa  The abbreviated weekday name according to the current locale.
+           %%aa - The abbreviated weekday name according to the current locale.
 
-           %%AA  The full weekday name according to the current locale.
+           %%AA - The full weekday name according to the current locale.
 
-           %%bb  The abbreviated month name according to the current locale.
+           %%bb - The abbreviated month name according to the current locale.
 
-           %%BB  The full month name according to the current locale.
+           %%BB - The full month name according to the current locale.
 
-           %%cc  The preferred date and time representation for the current
-               locale.
+           %%cc - The preferred date and time representation for the current
+           locale.
 
-           %%dd  The day of the month as a decimal number (range 01 to 31).
+           %%dd - The day of the month as a decimal number (range 01 to 31).
 
-           %%HH  The hour as a decimal number using a 24-hour clock (range 00 to
-               23).
+           %%HH - The hour as a decimal number using a 24-hour clock (range 00
+           to 23).
 
-           %%II  The hour as a decimal number using a 12-hour clock (range 01 to
-               12).
+           %%II - The hour as a decimal number using a 12-hour clock (range 01
+           to 12).
 
-           %%jj  The day of the year as a decimal number (range 001 to 366).
+           %%jj - The day of the year as a decimal number (range 001 to 366).
 
-           %%mm  The month as a decimal number (range 01 to 12).
+           %%mm - The month as a decimal number (range 01 to 12).
 
-           %%MM  The minute as a decimal number (range 00 to 59).
+           %%MM - The minute as a decimal number (range 00 to 59).
 
-           %%pp  Either `AM' or `PM' according to the given time value, or the
-               corresponding strings for the current locale.  Noon is treated
-               as `pm' and midnight as `am'.  Note that in many locales and
-               `pm' notation is unsupported and in such cases %p will return
-               an empty string.
+           %%pp - Either `AM' or `PM' according to the given time value, or the
+           corresponding strings for the current locale.  Noon is treated as
+           `pm' and midnight as `am'.  Note that in many locales and `pm'
+           notation is unsupported and in such cases %p will return an empty
+           string.
 
-           %%SS  The second as a decimal number (range 00 to 61).
+           %%SS - The second as a decimal number (range 00 to 61).
 
-           %%UU  The  week  number  of  the current year as a decimal number,
-               range 00 to 53, starting with the first Sunday as the first day
-               of week 01. See also %V and %W.
+           %%UU - The  week  number  of  the current year as a decimal number,
+           range 00 to 53, starting with the first Sunday as the first day of
+           week 01. See also %V and %W.
 
-           %%VV  The ISO 8601:1988 week number of the current year as a decimal
-               number, range 01 to  53,  where week  1 is the first week that
-               has at least 4 days in the current year, and with Monday as the
-               first day of the week. See also %U and %W.
+           %%VV - The ISO 8601:1988 week number of the current year as a decimal
+           number, range 01 to  53,  where week  1 is the first week that has
+           at least 4 days in the current year, and with Monday as the first
+           day of the week. See also %U and %W.
 
-           %%ww  The day of the week as a decimal, range 0 to 6, Sunday being 0.
-               See also %u.
+           %%ww - The day of the week as a decimal, range 0 to 6, Sunday being
+           0.  See also %u.
 
-           %%WW  The week number of the current year as a decimal number, range
-               00 to  53,  starting  with  the first Monday as the first day
-               of week 01.
+           %%WW - The week number of the current year as a decimal number, range
+           00 to  53,  starting  with  the first Monday as the first day of
+           week 01.
 
-           %%xx  The preferred date representation for the current locale with-
-               out the time.
+           %%xx - The preferred date representation for the current locale with-
+           out the time.
 
-           %%XX  The preferred time representation for the current locale with-
-               out the date.
+           %%XX - The preferred time representation for the current locale with-
+           out the date.
 
-           %%yy  The year as a decimal number without a century (range 00 to
-               99).
+           %%yy - The year as a decimal number without a century (range 00 to
+           99).
 
-           %%YY  The year as a decimal number including the century.
+           %%YY - The year as a decimal number including the century.
 
-           %%ZZ  The time zone or name or abbreviation.
+           %%ZZ - The time zone or name or abbreviation.
 
-           %%%%  A literal `%' character.
+           %%%% - A literal `%' character.
 
        PPRRIINNTT::_v_n_a_m_e::_C_F::_f_o_r_m_a_t
            _D_e_p_r_e_c_a_t_e_d_. _U_s_e _t_h_e _n_e_w _f_o_r_m _o_f _t_h_i_s _c_o_m_m_a_n_d _i_n _n_e_w _s_c_r_i_p_t_s_.  The
            first form of this command is to be used with CCDDEEFF _v_n_a_m_es.
 
-GGRRAAPPHH
+       GGRRAAPPHH
+
+
        GGPPRRIINNTT::_v_n_a_m_e::_f_o_r_m_a_t
            This is the same as "PRINT", but printed inside the graph.
 
@@ -276,4 +278,4 @@ AAUUTTHHOORR
 
 
 
-1.2.26                            2007-11-20                 RRDGRAPH_GRAPH(1)
+1.2.27                            2008-02-17                 RRDGRAPH_GRAPH(1)

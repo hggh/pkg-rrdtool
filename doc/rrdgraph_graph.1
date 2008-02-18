@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_GRAPH 1"
-.TH RRDGRAPH_GRAPH 1 "2007-11-20" "1.2.26" "rrdtool"
+.TH RRDGRAPH_GRAPH 1 "2008-02-17" "1.2.27" "rrdtool"
 .SH "NAME"
 rrdgraph_graph \- rrdtool graph command reference
 .SH "SYNOPSIS"
@@ -162,8 +162,8 @@ rrdgraph_graph \- rrdtool graph command reference
 These instructions allow you to generate your image or report.
 If you don't use any graph elements, no graph is generated.
 Similarly, no report is generated if you don't use print options.
-.SH "PRINT"
-.IX Header "PRINT"
+.Sh "\s-1PRINT\s0"
+.IX Subsection "PRINT"
 .IP "\fB\s-1PRINT:\s0\fR\fIvname\fR\fB:\fR\fIformat\fR[\fB:strftime\fR]" 4
 .IX Item "PRINT:vname:format[:strftime]"
 Depending on the context, either the value component or the time
@@ -175,122 +175,88 @@ The percent character introduces a formatter string. This string
 can be:
 .Sp
 For printing values:
-.RS 4
-.IP "\fB%%\fR" 4
-.IX Item "%%"
-just prints a literal '%' character
-.IP "\fB%#.#le\fR" 4
-.IX Item "%#.#le"
-prints numbers like 1.2346e+04. The optional integers # denote field
+.Sp
+\&\fB%%\fR \- just prints a literal '%' character
+.Sp
+\&\fB%#.#le\fR \- prints numbers like 1.2346e+04. The optional integers # denote field
 width and decimal precision.
-.IP "\fB%#.#lf\fR" 4
-.IX Item "%#.#lf"
-prints numbers like 12345.6789, with optional field width
+.Sp
+\&\fB%#.#lf\fR \- prints numbers like 12345.6789, with optional field width
 and precision.
-.IP "\fB%s\fR" 4
-.IX Item "%s"
-place this after \fB%le\fR, \fB%lf\fR or \fB%lg\fR. This will be replaced by the
+.Sp
+\&\fB%s\fR \- place this after \fB%le\fR, \fB%lf\fR or \fB%lg\fR. This will be replaced by the
 appropriate \s-1SI\s0 magnitude unit and the value will be scaled
 accordingly (123456 \-> 123.456 k).
-.IP "\fB%S\fR" 4
-.IX Item "%S"
-is similar to \fB%s\fR. It does, however, use a previously defined
+.Sp
+\&\fB%S\fR \- is similar to \fB%s\fR. It does, however, use a previously defined
 magnitude unit. If there is no such unit yet, it tries to define
 one (just like \fB%s\fR) unless the value is zero, in which case the magnitude
 unit stays undefined. Thus, formatter strings using \fB%S\fR and no \fB%s\fR
 will all use the same magnitude unit except for zero values.
-.RE
-.RS 4
 .Sp
 If you \s-1PRINT\s0 a \s-1VDEF\s0 value, you can also print the time associated with it by appending the string
 \&\fB:strftime\fR to the format. Note that rrdtool uses the strftime function of your OSs clibrary. This means that
 the conversion specifier may vary. Check the manual page if you are uncertain. The following is a list of
 conversion specifiers usually supported across the board. 
-.IP "\fB%a\fR" 4
-.IX Item "%a"
-The abbreviated weekday name according to the current locale.
-.IP "\fB%A\fR" 4
-.IX Item "%A"
-The full weekday name according to the current locale.
-.IP "\fB%b\fR" 4
-.IX Item "%b"
-The abbreviated month name according to the current locale.
-.IP "\fB%B\fR" 4
-.IX Item "%B"
-The full month name according to the current locale.
-.IP "\fB%c\fR" 4
-.IX Item "%c"
-The preferred date and time representation for the current locale.
-.IP "\fB%d\fR" 4
-.IX Item "%d"
-The day of the month as a decimal number (range 01 to 31).
-.IP "\fB%H\fR" 4
-.IX Item "%H"
-The hour as a decimal number using a 24\-hour clock (range 00 to 23).
-.IP "\fB%I\fR" 4
-.IX Item "%I"
-The hour as a decimal number using a 12\-hour clock (range 01 to 12).
-.IP "\fB%j\fR" 4
-.IX Item "%j"
-The day of the year as a decimal number (range 001 to 366).
-.IP "\fB%m\fR" 4
-.IX Item "%m"
-The month as a decimal number (range 01 to 12).
-.IP "\fB%M\fR" 4
-.IX Item "%M"
-The minute as a decimal number (range 00 to 59).
-.IP "\fB%p\fR" 4
-.IX Item "%p"
-Either `\s-1AM\s0' or `\s-1PM\s0' according to the given time value, or the corresponding
+.Sp
+\&\fB%a\fR \- The abbreviated weekday name according to the current locale.
+.Sp
+\&\fB%A\fR \- The full weekday name according to the current locale.
+.Sp
+\&\fB%b\fR \- The abbreviated month name according to the current locale.
+.Sp
+\&\fB%B\fR \- The full month name according to the current locale.
+.Sp
+\&\fB%c\fR \- The preferred date and time representation for the current locale.
+.Sp
+\&\fB%d\fR \- The day of the month as a decimal number (range 01 to 31).
+.Sp
+\&\fB%H\fR \- The hour as a decimal number using a 24\-hour clock (range 00 to 23).
+.Sp
+\&\fB%I\fR \- The hour as a decimal number using a 12\-hour clock (range 01 to 12).
+.Sp
+\&\fB%j\fR \- The day of the year as a decimal number (range 001 to 366).
+.Sp
+\&\fB%m\fR \- The month as a decimal number (range 01 to 12).
+.Sp
+\&\fB%M\fR \- The minute as a decimal number (range 00 to 59).
+.Sp
+\&\fB%p\fR \- Either `\s-1AM\s0' or `\s-1PM\s0' according to the given time value, or the corresponding
 strings for the current locale.  Noon is treated as `pm' and midnight as
 `am'.  Note that in many locales and `pm' notation is unsupported and in
 such cases \f(CW%p\fR will return an empty string.
-.IP "\fB%S\fR" 4
-.IX Item "%S"
-The second as a decimal number (range 00 to 61).
-.IP "\fB%U\fR" 4
-.IX Item "%U"
-The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the
+.Sp
+\&\fB%S\fR \- The second as a decimal number (range 00 to 61).
+.Sp
+\&\fB%U\fR \- The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the
 first Sunday as the first day of week 01. See also \f(CW%V\fR and \f(CW%W\fR.
-.IP "\fB%V\fR" 4
-.IX Item "%V"
-The \s-1ISO\s0 8601:1988 week number of the current year as a decimal number, range 01 to  53,  where
+.Sp
+\&\fB%V\fR \- The \s-1ISO\s0 8601:1988 week number of the current year as a decimal number, range 01 to  53,  where
 week  1 is the first week that has at least 4 days in the current year, and with Monday as the
 first day of the week. See also \f(CW%U\fR and \f(CW%W\fR.
-.IP "\fB%w\fR" 4
-.IX Item "%w"
-The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also \f(CW%u\fR.
-.IP "\fB%W\fR" 4
-.IX Item "%W"
-The week number of the current year as a decimal number, range 00 to  53,  starting  with  the
+.Sp
+\&\fB%w\fR \- The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also \f(CW%u\fR.
+.Sp
+\&\fB%W\fR \- The week number of the current year as a decimal number, range 00 to  53,  starting  with  the
 first Monday as the first day of week 01.
-.IP "\fB%x\fR" 4
-.IX Item "%x"
-The preferred date representation for the current locale without the time.
-.IP "\fB%X\fR" 4
-.IX Item "%X"
-The preferred time representation for the current locale without the date.
-.IP "\fB%y\fR" 4
-.IX Item "%y"
-The year as a decimal number without a century (range 00 to 99).
-.IP "\fB%Y\fR" 4
-.IX Item "%Y"
-The year as a decimal number including the century.
-.IP "\fB%Z\fR" 4
-.IX Item "%Z"
-The time zone or name or abbreviation.
-.IP "\fB%%\fR" 4
-.IX Item "%%"
-A literal `%' character.
-.RE
-.RS 4
-.RE
+.Sp
+\&\fB%x\fR \- The preferred date representation for the current locale without the time.
+.Sp
+\&\fB%X\fR \- The preferred time representation for the current locale without the date.
+.Sp
+\&\fB%y\fR \- The year as a decimal number without a century (range 00 to 99).
+.Sp
+\&\fB%Y\fR \- The year as a decimal number including the century.
+.Sp
+\&\fB%Z\fR \- The time zone or name or abbreviation.
+.Sp
+\&\fB%%\fR \- A literal `%' character.
 .IP "\fB\s-1PRINT:\s0\fR\fIvname\fR\fB:\fR\fI\s-1CF\s0\fR\fB:\fR\fIformat\fR" 4
 .IX Item "PRINT:vname:CF:format"
 \&\fIDeprecated. Use the new form of this command in new scripts.\fR
 The first form of this command is to be used with \fB\s-1CDEF\s0\fR \fIvname\fRs.
-.SH "GRAPH"
-.IX Header "GRAPH"
+.Sh "\s-1GRAPH\s0"
+.IX Subsection "GRAPH"
 .IP "\fB\s-1GPRINT\s0\fR\fB:\fR\fIvname\fR\fB:\fR\fIformat\fR" 4
 .IX Item "GPRINT:vname:format"
 This is the same as \f(CW\*(C`PRINT\*(C'\fR, but printed inside the graph.

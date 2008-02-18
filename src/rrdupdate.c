@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.26  Copyright by Tobi Oetiker, 1997-2007
+ * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrdupdate.c  Main program for the (standalone) rrdupdate utility
  *****************************************************************************
- * $Id: rrdupdate.c 1235 2007-11-20 00:15:07Z oetiker $
+ * $Id: rrdupdate.c 1286 2008-02-17 10:08:10Z oetiker $
  *****************************************************************************/
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__) && !defined(HAVE_CONFIG_H)
@@ -20,7 +20,7 @@ int
 main(int argc, char **argv){
         rrd_update(argc,argv);
         if (rrd_test_error()) {
-                printf("RRDtool " PACKAGE_VERSION "  Copyright by Tobi Oetiker, 1997-2007\n\n"
+                printf("RRDtool " PACKAGE_VERSION "  Copyright by Tobi Oetiker, 1997-2008\n\n"
                         "Usage: rrdupdate filename\n"
                         "\t\t\t[--template|-t ds-name:ds-name:...]\n"
                         "\t\t\ttime|N:value[:value...]\n\n"

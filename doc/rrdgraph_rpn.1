@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_RPN 1"
-.TH RRDGRAPH_RPN 1 "2007-11-20" "1.2.26" "rrdtool"
+.TH RRDGRAPH_RPN 1 "2008-02-17" "1.2.27" "rrdtool"
 .SH "NAME"
 rrdgraph_rpn \- About RPN Math in rrdtool graph
 .SH "SYNOPSIS"
@@ -191,8 +191,6 @@ otherwise the value popped second is pushed back. This does, indeed,
 mean that any value other than 0 is considered to be true.
 .Sp
 Example: \f(CW\*(C`A,B,C,IF\*(C'\fR should be read as \f(CW\*(C`if (A) then (B) else (C)\*(C'\fR
-.Sp
-\&\&
 .IP "Comparing values" 4
 .IX Item "Comparing values"
 \&\fB\s-1MIN\s0, \s-1MAX\s0\fR
@@ -215,8 +213,6 @@ will always return an \fIunknown\fR
 .Sp
 Example: \f(CW\*(C`CDEF:a=alpha,0,100,LIMIT\*(C'\fR will return \fIunknown\fR if
 alpha is lower than 0 or if it is higher than 100.
-.Sp
-\&\&
 .IP "Arithmetics" 4
 .IX Item "Arithmetics"
 \&\fB+, \-, *, /, %\fR
@@ -356,8 +352,6 @@ in the examples section below on how to use this.
 .Sp
 Duplicate the top element, remove the top element, exchange the two
 top elements.
-.Sp
-\&\&
 .SH "VARIABLES"
 .IX Header "VARIABLES"
 These operators work only on \fB\s-1VDEF\s0\fR statements. Note that currently \s-1ONLY\s0 these work for \fB\s-1VDEF\s0\fR.

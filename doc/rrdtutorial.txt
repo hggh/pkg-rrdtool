@@ -116,7 +116,7 @@ TTUUTTOORRIIAALL
        more important, some background information of how it works.
 
        You will need to know something about hexadecimal numbers. If you don't
-       then start with reading bin_dec_hex before you continue here.
+       then start with reading bin_dec_hex tutorial before you continue here.
 
        YYoouurr ffiirrsstt RRoouunndd RRoobbiinn DDaattaabbaassee
 
@@ -1149,4 +1149,4 @@ AAUUTTHHOORR
 
 
 
-1.2.26                            2007-11-20                    RRDTUTORIAL(1)
+1.2.27                            2008-02-17                    RRDTUTORIAL(1)

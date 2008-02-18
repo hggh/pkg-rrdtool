@@ -67,11 +67,11 @@ ones before you can build RRDtool.</p>
 Depending on the shell you are using, you can do either (bash,zsh):</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.2.26</pre>
+ INSTALL_DIR=/usr/local/rrdtool-1.2.27</pre>
 <p>Or if you run tcsh:</p>
 <pre>
  set BUILD_DIR=/tmp/rrdbuild
- set INSTALL_DIR=/usr/local/rrdtool-1.2.26</pre>
+ set INSTALL_DIR=/usr/local/rrdtool-1.2.27</pre>
 <p>If your <em>/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -83,9 +83,9 @@ pre-installed. Note that these instructions assume that your copies of
 <strong>tar</strong> and <strong>make</strong> are actually <strong>GNU tar</strong> and <strong>GNU make</strong> respectively. It
 could be that they are installed as <strong>gtar</strong> and <strong>gmake</strong> on your system.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.26.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.26.tar.gz</a>
- tar zxf rrdtool-1.2.26.tar.gz
- cd rrdtool-1.2.26
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.27.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.27.tar.gz</a>
+ tar zxf rrdtool-1.2.27.tar.gz
+ cd rrdtool-1.2.27
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
 <strong>configure</strong> complaining about several missing libraries. If you are on a
@@ -216,7 +216,7 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.2.26
+ cd $BUILD_DIR/rrdtool-1.2.27
  ./configure --prefix=$INSTALL_DIR --disable-python --disable-tcl
  make clean
  make

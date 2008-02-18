@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDBUILD 1"
-.TH RRDBUILD 1 "2007-11-20" "1.2.26" "rrdtool"
+.TH RRDBUILD 1 "2008-02-17" "1.2.27" "rrdtool"
 .SH "NAME"
 rrdbuild \- Instructions for building RRDtool
 .SH "DESCRIPTION"
@@ -157,14 +157,14 @@ Depending on the shell you are using, you can do either (bash,zsh):
 .PP
 .Vb 2
 \& BUILD_DIR=/tmp/rrdbuild
-\& INSTALL_DIR=/usr/local/rrdtool\-1.2.26
+\& INSTALL_DIR=/usr/local/rrdtool\-1.2.27
 .Ve
 .PP
 Or if you run tcsh:
 .PP
 .Vb 2
 \& set BUILD_DIR=/tmp/rrdbuild
-\& set INSTALL_DIR=/usr/local/rrdtool\-1.2.26
+\& set INSTALL_DIR=/usr/local/rrdtool\-1.2.27
 .Ve
 .PP
 If your \fI/tmp\fR is mounted with the option noexec (\s-1RHEL\s0 seems todo that) you have to choose
@@ -183,9 +183,9 @@ pre\-installed. Note that these instructions assume that your copies of
 could be that they are installed as \fBgtar\fR and \fBgmake\fR on your system.
 .PP
 .Vb 4
-\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.2.26.tar.gz
-\& tar zxf rrdtool\-1.2.26.tar.gz
-\& cd rrdtool\-1.2.26
+\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.2.27.tar.gz
+\& tar zxf rrdtool\-1.2.27.tar.gz
+\& cd rrdtool\-1.2.27
 \& ./configure \-\-prefix=$INSTALL_DIR && make && make install
 .Ve
 .PP
@@ -322,7 +322,7 @@ tcl setups that would prevent rrdtool from building if they are included in
 their current state.
 .PP
 .Vb 5
-\& cd $BUILD_DIR/rrdtool\-1.2.26
+\& cd $BUILD_DIR/rrdtool\-1.2.27
 \& ./configure \-\-prefix=$INSTALL_DIR \-\-disable\-python \-\-disable\-tcl
 \& make clean
 \& make

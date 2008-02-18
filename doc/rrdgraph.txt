@@ -35,7 +35,7 @@ OOVVEERRVVIIEEWW
        it. For instance, you might be collecting bbyytteess per second, but want to
        display bbiittss per second. This is what the ddaattaa ccaallccuullaattiioonn command is
        designed for. After ccoonnssoolliiddaattiinngg the data, a copy is made and this
-       copy is modified using a rather powerful RRPPNN command set.
+       copy is modified using a rather powerful rrdgraph_rpn command set.
 
        When you are done fetching and processing the data, it is time to graph
        it (or print it).  This ends the rrrrddttooooll ggrraapphh sequence.
@@ -55,13 +55,13 @@ OOPPTTIIOONNSS
            The start and end of the time series you would like to display, and
            which RRRRAA the data should come from.  Defaults are: 1 day ago until
            now, with the best possible resolution. SSttaarrtt and eenndd can be speci-
-           fied in several formats, see AT-STYLE TIME SPECIFICATION and rrd-
-           graph_examples.  By default, rrrrddttooooll ggrraapphh calculates the width of
-           one pixel in the time domain and tries to get data from an RRRRAA with
-           that resolution.  With the sstteepp option you can alter this
-           behaviour.  If you want rrrrddttooooll ggrraapphh to get data at a one-hour
-           resolution from the RRRRDD, set sstteepp to 3'600. Note: a step smaller
-           than one pixel will silently be ignored.
+           fied in several formats, see rrdfetch and rrdgraph_examples.  By
+           default, rrrrddttooooll ggrraapphh calculates the width of one pixel in the
+           time domain and tries to get data from an RRRRAA with that resolution.
+           With the sstteepp option you can alter this behaviour.  If you want
+           rrrrddttooooll ggrraapphh to get data at a one-hour resolution from the RRRRDD,
+           set sstteepp to 3'600. Note: a step smaller than one pixel will
+           silently be ignored.
 
        Labels
            [--tt|----ttiittllee _s_t_r_i_n_g] [--vv|----vveerrttiiccaall--llaabbeell _s_t_r_i_n_g]
@@ -129,103 +129,99 @@ OOPPTTIIOONNSS
            ear scales where ----aalltt--aauuttoossccaallee is needed.  Using ----nnoo--ggrriiddffiitt
            disables modification of the scale.
 
-       Grid
-           X-Axis
-               [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
+       X-Grid
+           [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
 
-               [--xx|----xx--ggrriidd nnoonnee]
+           [--xx|----xx--ggrriidd nnoonnee]
 
-               The x-axis label is quite complex to configure. If you don't
-               have very special needs it is probably best to rely on the
-               autoconfiguration to get this right. You can specify the string
-               "none" to suppress the grid and labels altogether.
+           The x-axis label is quite complex to configure. If you don't have
+           very special needs it is probably best to rely on the autoconfigu-
+           ration to get this right. You can specify the string "none" to sup-
+           press the grid and labels altogether.
 
-               The grid is defined by specifying a certain amount of time in
-               the _?_T_M positions. You can choose from "SECOND", "MINUTE",
-               "HOUR", "DAY", "WEEK", "MONTH" or "YEAR". Then you define how
-               many of these should pass between each line or label.  This
-               pair (_?_T_M_:_?_S_T) needs to be specified for the base grid (_G_?_?),
-               the major grid (_M_?_?) and the labels (_L_?_?). For the labels you
-               also must define a precision in _L_P_R and a _s_t_r_f_t_i_m_e format
-               string in _L_F_M.  _L_P_R defines where each label will be placed. If
-               it is zero, the label will be placed right under the corre-
-               sponding line (useful for hours, dates etcetera).  If you spec-
-               ify a number of seconds here the label is centered on this
-               interval (useful for Monday, January etcetera).
+           The grid is defined by specifying a certain amount of time in the
+           _?_T_M positions. You can choose from "SECOND", "MINUTE", "HOUR",
+           "DAY", "WEEK", "MONTH" or "YEAR". Then you define how many of these
+           should pass between each line or label.  This pair (_?_T_M_:_?_S_T) needs
+           to be specified for the base grid (_G_?_?), the major grid (_M_?_?) and
+           the labels (_L_?_?). For the labels you also must define a precision
+           in _L_P_R and a _s_t_r_f_t_i_m_e format string in _L_F_M.  _L_P_R defines where each
+           label will be placed. If it is zero, the label will be placed right
+           under the corresponding line (useful for hours, dates etcetera).
+           If you specify a number of seconds here the label is centered on
+           this interval (useful for Monday, January etcetera).
 
-                --x-grid MINUTE:10:HOUR:1:HOUR:4:0:%X
+            --x-grid MINUTE:10:HOUR:1:HOUR:4:0:%X
 
-               This places grid lines every 10 minutes, major grid lines every
-               hour, and labels every 4 hours. The labels are placed under the
-               major grid lines as they specify exactly that time.
+           This places grid lines every 10 minutes, major grid lines every
+           hour, and labels every 4 hours. The labels are placed under the
+           major grid lines as they specify exactly that time.
 
-                --x-grid HOUR:8:DAY:1:DAY:1:0:%A
+            --x-grid HOUR:8:DAY:1:DAY:1:0:%A
 
-               This places grid lines every 8 hours, major grid lines and
-               labels each day. The labels are placed exactly between two
-               major grid lines as they specify the complete day and not just
-               midnight.
+           This places grid lines every 8 hours, major grid lines and labels
+           each day. The labels are placed exactly between two major grid
+           lines as they specify the complete day and not just midnight.
 
-           Y-Axis
-               [--yy|----yy--ggrriidd _g_r_i_d _s_t_e_p::_l_a_b_e_l _f_a_c_t_o_r]
+       Y-Grid
+           [--yy|----yy--ggrriidd _g_r_i_d _s_t_e_p::_l_a_b_e_l _f_a_c_t_o_r]
 
-               [--yy|----yy--ggrriidd nnoonnee]
+           [--yy|----yy--ggrriidd nnoonnee]
 
-               Y-axis grid lines appear at each _g_r_i_d _s_t_e_p interval.  Labels
-               are placed every _l_a_b_e_l _f_a_c_t_o_r lines.  You can specify "-y none"
-               to suppress the grid and labels altogether.  The default for
-               this option is to automatically select sensible values.
+           Y-axis grid lines appear at each _g_r_i_d _s_t_e_p interval.  Labels are
+           placed every _l_a_b_e_l _f_a_c_t_o_r lines.  You can specify "-y none" to sup-
+           press the grid and labels altogether.  The default for this option
+           is to automatically select sensible values.
 
-               If you have set --y-grid to 'none' not only the labels get
-               supressed, also the space reserved for the labels is removed.
-               You can still add space manually if you use the --units-length
-               command to explicitly reserve space.
+           If you have set --y-grid to 'none' not only the labels get
+           supressed, also the space reserved for the labels is removed. You
+           can still add space manually if you use the --units-length command
+           to explicitly reserve space.
 
-               [--YY|----aalltt--yy--ggrriidd]
+           [--YY|----aalltt--yy--ggrriidd]
 
-               Place the Y grid dynamically based on the graph's Y range. The
-               algorithm ensures that you always have a grid, that there are
-               enough but not too many grid lines, and that the grid is met-
-               ric. That is the grid lines are placed every 1, 2, 5 or 10
-               units. This parameter will also ensure that you get enough dec-
-               imals displayed even if your graph goes from 69.998 to 70.001.
-               (contributed by Sasha Mikheev).
+           Place the Y grid dynamically based on the graph's Y range. The
+           algorithm ensures that you always have a grid, that there are
+           enough but not too many grid lines, and that the grid is metric.
+           That is the grid lines are placed every 1, 2, 5 or 10 units. This
+           parameter will also ensure that you get enough decimals displayed
+           even if your graph goes from 69.998 to 70.001.  (contributed by
+           Sasha Mikheev).
 
-               [--oo|----llooggaarriitthhmmiicc]
+           [--oo|----llooggaarriitthhmmiicc]
 
-               Logarithmic y-axis scaling.
+           Logarithmic y-axis scaling.
 
-               [--XX|----uunniittss--eexxppoonneenntt _v_a_l_u_e]
+           [--XX|----uunniittss--eexxppoonneenntt _v_a_l_u_e]
 
-               This sets the 10**exponent scaling of the y-axis values. Nor-
-               mally, values will be scaled to the appropriate units (k, M,
-               etc.).  However, you may wish to display units always in k
-               (Kilo, 10e3) even if the data is in the M (Mega, 10e6) range,
-               for instance. Value should be an integer which is a multiple of
-               3 between -18 and 18 inclusively.  It is the exponent on the
-               units you wish to use. For example, use 3 to display the y-axis
-               values in k (Kilo, 10e3, thousands), use -6 to display the
-               y-axis values in u (Micro, 10e-6, millionths).  Use a value of
-               0 to prevent any scaling of the y-axis values.
+           This sets the 10**exponent scaling of the y-axis values. Normally,
+           values will be scaled to the appropriate units (k, M, etc.).  How-
+           ever, you may wish to display units always in k (Kilo, 10e3) even
+           if the data is in the M (Mega, 10e6) range, for instance. Value
+           should be an integer which is a multiple of 3 between -18 and 18
+           inclusively.  It is the exponent on the units you wish to use. For
+           example, use 3 to display the y-axis values in k (Kilo, 10e3, thou-
+           sands), use -6 to display the y-axis values in u (Micro, 10e-6,
+           millionths).  Use a value of 0 to prevent any scaling of the y-axis
+           values.
 
-               This option is very effective at confusing the heck out of the
-               default rrdtool autoscaler and grid painter. If rrdtool detects
-               that it is not successful in labeling the graph under the given
-               circumstances, it will switch to the more robust ----aalltt--yy--ggrriidd
-               mode.
+           This option is very effective at confusing the heck out of the
+           default rrdtool autoscaler and grid painter. If rrdtool detects
+           that it is not successful in labeling the graph under the given
+           circumstances, it will switch to the more robust ----aalltt--yy--ggrriidd mode.
 
-               [--LL|----uunniittss--lleennggtthh _v_a_l_u_e]
+           [--LL|----uunniittss--lleennggtthh _v_a_l_u_e]
 
-               How many digits should rrdtool assume the y-axis labels to be?
-               You may have to use this option to make enough space once you
-               start fideling with the y-axis labeling.
+           How many digits should rrdtool assume the y-axis labels to be? You
+           may have to use this option to make enough space once you start
+           fideling with the y-axis labeling.
 
-               [----uunniittss==ssii]
+           [----uunniittss==ssii]
 
-               With this option y-axis values on logarithmic graphs will be
-               scaled to the appropriate units (k, M, etc.) instead of using
-               exponential notation.  Note that for linear graphs, SI notation
-               is used by default.
+           With this option y-axis values on logarithmic graphs will be scaled
+           to the appropriate units (k, M, etc.) instead of using exponential
+           notation.  Note that for linear graphs, SI notation is used by
+           default.
 
        Miscellaneous
            [--zz|----llaazzyy]
@@ -377,4 +373,4 @@ AAUUTTHHOORR
 
 
 
-1.2.26                            2007-11-20                       RRDGRAPH(1)
+1.2.27                            2008-02-17                       RRDGRAPH(1)

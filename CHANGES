@@ -1,3 +1,75 @@
+2008-02-17 10:09  oetiker
+
+	* rrdtool-1.2-release: prepare for the release of rrdtool-1.2.27
+
+2008-02-17 10:08  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/Makefile.am,
+	  src/gdpng.c, src/pngsize.c, src/rrd.h, src/rrd_afm.c,
+	  src/rrd_afm.h, src/rrd_afm_data.c, src/rrd_afm_data.h,
+	  src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_gfx.h, src/rrd_graph.c,
+	  src/rrd_graph_helper.c, src/rrd_hw.c, src/rrd_hw.h,
+	  src/rrd_info.c, src/rrd_is_thread_safe.h, src/rrd_last.c,
+	  src/rrd_lastupdate.c, src/rrd_not_thread_safe.c, src/rrd_open.c,
+	  src/rrd_resize.c, src/rrd_restore.c, src/rrd_rpncalc.c,
+	  src/rrd_rpncalc.h, src/rrd_stat.c, src/rrd_thread_safe.c,
+	  src/rrd_thread_safe_nt.c, src/rrd_tool.c, src/rrd_tool.h,
+	  src/rrd_tune.c, src/rrd_update.c, src/rrd_version.c,
+	  src/rrd_xport.c, src/rrd_xport.h, src/rrdupdate.c: prepare for
+	  1.2.27 release
+
+2008-02-14 07:25  oetiker
+
+	* doc/rrdcreate.pod, doc/rrdgraph.pod, doc/rrdgraph_graph.pod,
+	  doc/rrdgraph_rpn.pod, doc/rrdtutorial.pod: fixes for better web
+	  rendering
+
+2008-02-04 18:17  oetiker
+
+	* COPYRIGHT: added ZPL 2.1 to floss exception
+
+2008-02-01 06:52  oetiker
+
+	* src/rrd_graph.c, trunk/program/src/rrd_graph.c: fixed parsing of
+	  fontnames with embeded spaces
+
+2008-01-14 16:47  oetiker
+
+	* bindings/tcl/tclrrd.c, configure.ac, src/rrd_cgi.c: * fix fadvice
+	  and madvice inclusion ... again * fix rrdcgi warning * fix
+	  warnings in tcl bindings -- Peter Breitenlohner peb mppmu.mpg.de
+
+2008-01-12 18:36  oetiker
+
+	* src/rrd_graph.c: weekday and time are too tight
+
+2007-12-08 22:17  oetiker
+
+	* configure.ac: fixing the solaris build
+
+2007-11-23 18:18  oetiker
+
+	* netware/Makefile, src/rrd_update.c, win32/Makefile: updates for
+	  netware and mingw32 ... allows for crosscompilation
+
+2007-11-22 12:33  oetiker
+
+	* src/rrd_update.c: make update compile for mingw32 3.4.5
+
+2007-11-21 10:51  oetiker
+
+	* configure.ac: fixedspellingfor netbsd
+
+2007-11-21 06:57  oetiker
+
+	* bindings/perl-shared/Makefile.PL, configure.ac, src/rrd_tool.h,
+	  src/rrd_update.c: * improve portability of compile environment to
+	  netbsd and solaris
+
 2007-11-20 00:15  oetiker
 
 	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,

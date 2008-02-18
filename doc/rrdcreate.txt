@@ -15,172 +15,166 @@ DDEESSCCRRIIPPTTIIOONN
        with _*_U_N_K_N_O_W_N_* data.
 
        _f_i_l_e_n_a_m_e
-               The name of the RRRRDD you want to create. RRRRDD files should end
-               with the extension _._r_r_d. However, RRRRDDttooooll will accept any file-
-               name.
+           The name of the RRRRDD you want to create. RRRRDD files should end with
+           the extension _._r_r_d. However, RRRRDDttooooll will accept any filename.
 
        ----ssttaarrtt|--bb _s_t_a_r_t _t_i_m_e (default: now - 10s)
-               Specifies the time in seconds since 1970-01-01 UTC when the
-               first value should be added to the RRRRDD. RRRRDDttooooll will not accept
-               any data timed before or at the time specified.
+           Specifies the time in seconds since 1970-01-01 UTC when the first
+           value should be added to the RRRRDD. RRRRDDttooooll will not accept any data
+           timed before or at the time specified.
 
-               See also AT-STYLE TIME SPECIFICATION section in the _r_r_d_f_e_t_c_h
-               documentation for other ways to specify time.
+           See also AT-STYLE TIME SPECIFICATION section in the _r_r_d_f_e_t_c_h docu-
+           mentation for other ways to specify time.
 
        ----sstteepp|--ss _s_t_e_p (default: 300 seconds)
-               Specifies the base interval in seconds with which data will be
-               fed into the RRRRDD.
+           Specifies the base interval in seconds with which data will be fed
+           into the RRRRDD.
 
        DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s
-               A single RRRRDD can accept input from several data sources (DDSS),
-               for example incoming and outgoing traffic on a specific commu-
-               nication line. With the DDSS configuration option you must define
-               some basic properties of each data source you want to store in
-               the RRRRDD.
+           A single RRRRDD can accept input from several data sources (DDSS), for
+           example incoming and outgoing traffic on a specific communication
+           line. With the DDSS configuration option you must define some basic
+           properties of each data source you want to store in the RRRRDD.
 
-               _d_s_-_n_a_m_e is the name you will use to reference this particular
-               data source from an RRRRDD. A _d_s_-_n_a_m_e must be 1 to 19 characters
-               long in the characters [a-zA-Z0-9_].
+           _d_s_-_n_a_m_e is the name you will use to reference this particular data
+           source from an RRRRDD. A _d_s_-_n_a_m_e must be 1 to 19 characters long in
+           the characters [a-zA-Z0-9_].
 
-               _D_S_T defines the Data Source Type. The remaining arguments of a
-               data source entry depend on the data source type. For GAUGE,
-               COUNTER, DERIVE, and ABSOLUTE the format for a data source
-               entry is:
+           _D_S_T defines the Data Source Type. The remaining arguments of a data
+           source entry depend on the data source type. For GAUGE, COUNTER,
+           DERIVE, and ABSOLUTE the format for a data source entry is:
 
-               DDSS::_d_s_-_n_a_m_e::_G_A_U_G_E _| _C_O_U_N_T_E_R _| _D_E_R_I_V_E _| _A_B_S_O_L_U_T_E::_h_e_a_r_t_-
-               _b_e_a_t::_m_i_n::_m_a_x
+           DDSS::_d_s_-_n_a_m_e::_G_A_U_G_E _| _C_O_U_N_T_E_R _| _D_E_R_I_V_E _| _A_B_S_O_L_U_T_E::_h_e_a_r_t_b_e_a_t::_m_i_n::_m_a_x
 
-               For COMPUTE data sources, the format is:
+           For COMPUTE data sources, the format is:
 
-               DDSS::_d_s_-_n_a_m_e::_C_O_M_P_U_T_E::_r_p_n_-_e_x_p_r_e_s_s_i_o_n
+           DDSS::_d_s_-_n_a_m_e::_C_O_M_P_U_T_E::_r_p_n_-_e_x_p_r_e_s_s_i_o_n
 
-               In order to decide which data source type to use, review the
-               definitions that follow. Also consult the section on "HOW TO
-               MEASURE" for further insight.
+           In order to decide which data source type to use, review the defi-
+           nitions that follow. Also consult the section on "HOW TO MEASURE"
+           for further insight.
 
-               GGAAUUGGEE
-                   is for things like temperatures or number of people in a
-                   room or the value of a RedHat share.
+           GGAAUUGGEE
+               is for things like temperatures or number of people in a room
+               or the value of a RedHat share.
 
-               CCOOUUNNTTEERR
-                   is for continuous incrementing counters like the ifInOctets
-                   counter in a router. The CCOOUUNNTTEERR data source assumes that
-                   the counter never decreases, except when a counter over-
-                   flows.  The update function takes the overflow into
-                   account.  The counter is stored as a per-second rate. When
-                   the counter overflows, RRDtool checks if the overflow hap-
-                   pened at the 32bit or 64bit border and acts accordingly by
-                   adding an appropriate value to the result.
+           CCOOUUNNTTEERR
+               is for continuous incrementing counters like the ifInOctets
+               counter in a router. The CCOOUUNNTTEERR data source assumes that the
+               counter never decreases, except when a counter overflows.  The
+               update function takes the overflow into account.  The counter
+               is stored as a per-second rate. When the counter overflows,
+               RRDtool checks if the overflow happened at the 32bit or 64bit
+               border and acts accordingly by adding an appropriate value to
+               the result.
 
-               DDEERRIIVVEE
-                   will store the derivative of the line going from the last
-                   to the current value of the data source. This can be useful
-                   for gauges, for example, to measure the rate of people
-                   entering or leaving a room. Internally, derive works
-                   exactly like COUNTER but without overflow checks. So if
-                   your counter does not reset at 32 or 64 bit you might want
-                   to use DERIVE and combine it with a MIN value of 0.
+           DDEERRIIVVEE
+               will store the derivative of the line going from the last to
+               the current value of the data source. This can be useful for
+               gauges, for example, to measure the rate of people entering or
+               leaving a room. Internally, derive works exactly like COUNTER
+               but without overflow checks. So if your counter does not reset
+               at 32 or 64 bit you might want to use DERIVE and combine it
+               with a MIN value of 0.
 
-                   NOTE on COUNTER vs DERIVE
-                       by Don Baarda <don.baarda@baesystems.com>
+               NOTE on COUNTER vs DERIVE
 
-                       If you cannot tolerate ever mistaking the occasional
-                       counter reset for a legitimate counter wrap, and would
-                       prefer "Unknowns" for all legitimate counter wraps and
-                       resets, always use DERIVE with min=0. Otherwise, using
-                       COUNTER with a suitable max will return correct values
-                       for all legitimate counter wraps, mark some counter
-                       resets as "Unknown", but can mistake some counter
-                       resets for a legitimate counter wrap.
+               by Don Baarda <don.baarda@baesystems.com>
 
-                       For a 5 minute step and 32-bit counter, the probability
-                       of mistaking a counter reset for a legitimate wrap is
-                       arguably about 0.8% per 1Mbps of maximum bandwidth.
-                       Note that this equates to 80% for 100Mbps interfaces,
-                       so for high bandwidth interfaces and a 32bit counter,
-                       DERIVE with min=0 is probably preferable. If you are
-                       using a 64bit counter, just about any max setting will
-                       eliminate the possibility of mistaking a reset for a
-                       counter wrap.
+               If you cannot tolerate ever mistaking the occasional counter
+               reset for a legitimate counter wrap, and would prefer
+               "Unknowns" for all legitimate counter wraps and resets, always
+               use DERIVE with min=0. Otherwise, using COUNTER with a suitable
+               max will return correct values for all legitimate counter
+               wraps, mark some counter resets as "Unknown", but can mistake
+               some counter resets for a legitimate counter wrap.
 
-               AABBSSOOLLUUTTEE
-                   is for counters which get reset upon reading. This is used
-                   for fast counters which tend to overflow. So instead of
-                   reading them normally you reset them after every read to
-                   make sure you have a maximum time available before the next
-                   overflow. Another usage is for things you count like number
-                   of messages since the last update.
+               For a 5 minute step and 32-bit counter, the probability of mis-
+               taking a counter reset for a legitimate wrap is arguably about
+               0.8% per 1Mbps of maximum bandwidth. Note that this equates to
+               80% for 100Mbps interfaces, so for high bandwidth interfaces
+               and a 32bit counter, DERIVE with min=0 is probably preferable.
+               If you are using a 64bit counter, just about any max setting
+               will eliminate the possibility of mistaking a reset for a
+               counter wrap.
 
-               CCOOMMPPUUTTEE
-                   is for storing the result of a formula applied to other
-                   data sources in the RRRRDD. This data source is not supplied a
-                   value on update, but rather its Primary Data Points (PDPs)
-                   are computed from the PDPs of the data sources according to
-                   the rpn-expression that defines the formula. Consolidation
-                   functions are then applied normally to the PDPs of the COM-
-                   PUTE data source (that is the rpn-expression is only
-                   applied to generate PDPs). In database software, such data
-                   sets are referred to as "virtual" or "computed" columns.
+           AABBSSOOLLUUTTEE
+               is for counters which get reset upon reading. This is used for
+               fast counters which tend to overflow. So instead of reading
+               them normally you reset them after every read to make sure you
+               have a maximum time available before the next overflow. Another
+               usage is for things you count like number of messages since the
+               last update.
 
-               _h_e_a_r_t_b_e_a_t defines the maximum number of seconds that may pass
-               between two updates of this data source before the value of the
-               data source is assumed to be _*_U_N_K_N_O_W_N_*.
+           CCOOMMPPUUTTEE
+               is for storing the result of a formula applied to other data
+               sources in the RRRRDD. This data source is not supplied a value on
+               update, but rather its Primary Data Points (PDPs) are computed
+               from the PDPs of the data sources according to the rpn-expres-
+               sion that defines the formula. Consolidation functions are then
+               applied normally to the PDPs of the COMPUTE data source (that
+               is the rpn-expression is only applied to generate PDPs). In
+               database software, such data sets are referred to as "virtual"
+               or "computed" columns.
 
-               _m_i_n and _m_a_x define the expected range values for data supplied
-               by a data source. If _m_i_n and/or _m_a_x any value outside the
-               defined range will be regarded as _*_U_N_K_N_O_W_N_*. If you do not know
-               or care about min and max, set them to U for unknown. Note that
-               min and max always refer to the processed values of the DS. For
-               a traffic-CCOOUUNNTTEERR type DS this would be the maximum and minimum
-               data-rate expected from the device.
+           _h_e_a_r_t_b_e_a_t defines the maximum number of seconds that may pass
+           between two updates of this data source before the value of the
+           data source is assumed to be _*_U_N_K_N_O_W_N_*.
 
-               _I_f _i_n_f_o_r_m_a_t_i_o_n _o_n _m_i_n_i_m_a_l_/_m_a_x_i_m_a_l _e_x_p_e_c_t_e_d _v_a_l_u_e_s _i_s _a_v_a_i_l_a_b_l_e_,
-               _a_l_w_a_y_s _s_e_t _t_h_e _m_i_n _a_n_d_/_o_r _m_a_x _p_r_o_p_e_r_t_i_e_s_. _T_h_i_s _w_i_l_l _h_e_l_p _R_R_D_-
-               _t_o_o_l _i_n _d_o_i_n_g _a _s_i_m_p_l_e _s_a_n_i_t_y _c_h_e_c_k _o_n _t_h_e _d_a_t_a _s_u_p_p_l_i_e_d _w_h_e_n
-               _r_u_n_n_i_n_g _u_p_d_a_t_e_.
+           _m_i_n and _m_a_x define the expected range values for data supplied by a
+           data source. If _m_i_n and/or _m_a_x any value outside the defined range
+           will be regarded as _*_U_N_K_N_O_W_N_*. If you do not know or care about min
+           and max, set them to U for unknown. Note that min and max always
+           refer to the processed values of the DS. For a traffic-CCOOUUNNTTEERR type
+           DS this would be the maximum and minimum data-rate expected from
+           the device.
 
-               _r_p_n_-_e_x_p_r_e_s_s_i_o_n defines the formula used to compute the PDPs of
-               a COMPUTE data source from other data sources in the same
-               <RRD>. It is similar to defining a CCDDEEFF argument for the graph
-               command. Please refer to that manual page for a list and
-               description of RPN operations supported. For COMPUTE data
-               sources, the following RPN operations are not supported: COUNT,
-               PREV, TIME, and LTIME. In addition, in defining the RPN expres-
-               sion, the COMPUTE data source may only refer to the names of
-               data source listed previously in the create command. This is
-               similar to the restriction that CCDDEEFFs must refer only to DDEEFFs
-               and CCDDEEFFs previously defined in the same graph command.
+           _I_f _i_n_f_o_r_m_a_t_i_o_n _o_n _m_i_n_i_m_a_l_/_m_a_x_i_m_a_l _e_x_p_e_c_t_e_d _v_a_l_u_e_s _i_s _a_v_a_i_l_a_b_l_e_,
+           _a_l_w_a_y_s _s_e_t _t_h_e _m_i_n _a_n_d_/_o_r _m_a_x _p_r_o_p_e_r_t_i_e_s_. _T_h_i_s _w_i_l_l _h_e_l_p _R_R_D_t_o_o_l _i_n
+           _d_o_i_n_g _a _s_i_m_p_l_e _s_a_n_i_t_y _c_h_e_c_k _o_n _t_h_e _d_a_t_a _s_u_p_p_l_i_e_d _w_h_e_n _r_u_n_n_i_n_g
+           _u_p_d_a_t_e_.
+
+           _r_p_n_-_e_x_p_r_e_s_s_i_o_n defines the formula used to compute the PDPs of a
+           COMPUTE data source from other data sources in the same <RRD>. It
+           is similar to defining a CCDDEEFF argument for the graph command.
+           Please refer to that manual page for a list and description of RPN
+           operations supported. For COMPUTE data sources, the following RPN
+           operations are not supported: COUNT, PREV, TIME, and LTIME. In
+           addition, in defining the RPN expression, the COMPUTE data source
+           may only refer to the names of data source listed previously in the
+           create command. This is similar to the restriction that CCDDEEFFs must
+           refer only to DDEEFFs and CCDDEEFFs previously defined in the same graph
+           command.
 
        RRRRAA::_C_F::_c_f _a_r_g_u_m_e_n_t_s
-               The purpose of an RRRRDD is to store data in the round robin
-               archives (RRRRAA). An archive consists of a number of data values
-               or statistics for each of the defined data-sources (DDSS) and is
-               defined with an RRRRAA line.
+           The purpose of an RRRRDD is to store data in the round robin archives
+           (RRRRAA). An archive consists of a number of data values or statistics
+           for each of the defined data-sources (DDSS) and is defined with an
+           RRRRAA line.
 
-               When data is entered into an RRRRDD, it is first fit into time
-               slots of the length defined with the --ss option, thus becoming a
-               _p_r_i_m_a_r_y _d_a_t_a _p_o_i_n_t.
+           When data is entered into an RRRRDD, it is first fit into time slots
+           of the length defined with the --ss option, thus becoming a _p_r_i_m_a_r_y
+           _d_a_t_a _p_o_i_n_t.
 
-               The data is also processed with the consolidation function (_C_F)
-               of the archive. There are several consolidation functions that
-               consolidate primary data points via an aggregate function:
-               AAVVEERRAAGGEE, MMIINN, MMAAXX, LLAASSTT. The format of RRRRAA line for these con-
-               solidation functions is:
+           The data is also processed with the consolidation function (_C_F) of
+           the archive. There are several consolidation functions that consol-
+           idate primary data points via an aggregate function: AAVVEERRAAGGEE, MMIINN,
+           MMAAXX, LLAASSTT. The format of RRRRAA line for these consolidation functions
+           is:
 
-               RRRRAA::_A_V_E_R_A_G_E _| _M_I_N _| _M_A_X _| _L_A_S_T::_x_f_f::_s_t_e_p_s::_r_o_w_s
+           RRRRAA::_A_V_E_R_A_G_E _| _M_I_N _| _M_A_X _| _L_A_S_T::_x_f_f::_s_t_e_p_s::_r_o_w_s
 
-               _x_f_f The xfiles factor defines what part of a consolidation
-               interval may be made up from _*_U_N_K_N_O_W_N_* data while the consoli-
-               dated value is still regarded as known. It is given as the
-               ratio of allowed _*_U_N_K_N_O_W_N_* PDPs to the number of PDPs in the
-               interval. Thus, it ranges from 0 to 1 (exclusive).
+           _x_f_f The xfiles factor defines what part of a consolidation interval
+           may be made up from _*_U_N_K_N_O_W_N_* data while the consolidated value is
+           still regarded as known. It is given as the ratio of allowed
+           _*_U_N_K_N_O_W_N_* PDPs to the number of PDPs in the interval. Thus, it
+           ranges from 0 to 1 (exclusive).
 
-               _s_t_e_p_s defines how many of these _p_r_i_m_a_r_y _d_a_t_a _p_o_i_n_t_s are used to
-               build a _c_o_n_s_o_l_i_d_a_t_e_d _d_a_t_a _p_o_i_n_t which then goes into the
-               archive.
+           _s_t_e_p_s defines how many of these _p_r_i_m_a_r_y _d_a_t_a _p_o_i_n_t_s are used to
+           build a _c_o_n_s_o_l_i_d_a_t_e_d _d_a_t_a _p_o_i_n_t which then goes into the archive.
 
-               _r_o_w_s defines how many generations of data values are kept in an
-               RRRRAA.
+           _r_o_w_s defines how many generations of data values are kept in an
+           RRRRAA.
 
 AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn wwiitthh HHoolltt--WWiinntteerrss FFoorreeccaassttiinngg
        In addition to the aggregate functions, there are a set of specialized
@@ -504,4 +498,4 @@ AAUUTTHHOORR
 
 
 
-1.2.26                            2007-11-20                      RRDCREATE(1)
+1.2.27                            2008-02-17                      RRDCREATE(1)
