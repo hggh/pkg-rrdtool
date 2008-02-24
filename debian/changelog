@@ -1,5 +1,6 @@
 rrdtool (1.2.27-1) unstable; urgency=low
 
+  [ Bernd Zeimetz ]
   * New upstream release.
   * debian/rules, debian/librrd2.install:
     - Install rrdtool's ttf and configure rrd to use it.
@@ -13,7 +14,11 @@ rrdtool (1.2.27-1) unstable; urgency=low
     - Builds with -O2 segfault on arm, so disable it on arm for now until the
       bug is properly debugged, which will take some time (Closes: #447041).
 
- -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 20:23:31 +0100
+  [ Sebastian Harl ]
+  * Adding debian/patches/typo by David Martínez Moreno to fix some typos
+    (Closes: #432340).
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 18:44:41 +0100
 
 rrdtool (1.2.26-1) unstable; urgency=low
 
