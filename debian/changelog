@@ -2,6 +2,7 @@ rrdtool (1.2.27-1) unstable; urgency=low
 
   [ Bernd Zeimetz ]
   * New upstream release.
+    - Finally allows + as leading characters in the input (Closes: #283935).
   * debian/rules, debian/librrd2.install:
     - Install rrdtool's ttf and configure rrd to use it.
   * debian/patches:
@@ -18,7 +19,7 @@ rrdtool (1.2.27-1) unstable; urgency=low
   * Adding debian/patches/typo by David Martínez Moreno to fix some typos
     (Closes: #432340).
 
- -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 18:44:41 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 23:48:24 +0100
 
 rrdtool (1.2.26-1) unstable; urgency=low
 
