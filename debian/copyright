@@ -18,7 +18,7 @@ Copyright:
  A tool for fast logging of numerical data graphical display
  of this data.
 
- Copyright (c) 1998-2006 Tobias Oetiker
+ Copyright (c) 1998-2008 Tobias Oetiker
  All rights reserved.
  
  GNU GPL License
@@ -323,18 +323,18 @@ Files with different copyrights/licenses:
 
  * src/rrd_hw.c:
 
-    Copyright (C) 1997-2007 Tobias Oetiker
+    Copyright (C) 1997-2008 Tobias Oetiker
     Initial version by Jake Brutlag, WebTV Networks, 5/1/00
 
  * src/rrd_is_thread_safe.h, src/rrd_not_thread_safe.c, src/rrd_thread_safe.c,
    src/rrd_thread_safe_nt.c:
 
-    Copyright 1997-2007 Tobias Oetiker
+    Copyright 1997-2008 Tobias Oetiker
     Copyright 2003 Peter Stamfest <peter@stamfest.at>
 
  * src/rrd_last.c:
 
-    Copyright (C) 1997-2007 Tobias Oetiker
+    Copyright (C) 1997-2008 Tobias Oetiker
     Initial version by Russ Wright, @Home Network, 9/28/98
 
  * src/strftime.c:
