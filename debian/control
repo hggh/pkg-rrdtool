@@ -36,7 +36,7 @@ Description: Time-series data storage and display system (programs)
 Package: librrd2
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ttf-dejavu (>= 2.1-1), ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: rrdtool (<< 1.0.42-1), librrds-perl (<< 1.0.42-1)
 Description: Time-series data storage and display system (runtime library)
  The Round Robin Database Tool (RRDtool) is a system to store and display
