@@ -9,11 +9,11 @@ rrdtool (1.2.27-1) unstable; urgency=low
       case that produces a SIGFPE (Closes: #428778). Patch created by
       David Martínez Moreno.
   * debian/control:
-    - Removing the ttf-dejavu dependency from librrd2.
+    - Removing the ttf-dejavu dependency from librrd2 (Closes: #390617).
     - Builds with -O2 segfault on arm, so disable it on arm for now until the
       bug is properly debugged, which will take some time (Closes: #447041).
 
- -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 17:40:39 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 20:23:31 +0100
 
 rrdtool (1.2.26-1) unstable; urgency=low
 
