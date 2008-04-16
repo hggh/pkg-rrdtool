@@ -1,3 +1,13 @@
+rrdtool (1.2.27-2) unstable; urgency=low
+
+  * Renamed global definition of LDFLAGS to LINKER_FLAGS in debian/rules to
+    work around a broken behavior of dpkg which would use those flags
+    unconditionally whenever invoking the linker, which is not wanted e.g.
+    when compiling the python bindings (Closes: #476022).
+  * Actually pass the linker flags to configure.
+
+ -- Sebastian Harl <sh@tokkee.org>  Wed, 16 Apr 2008 15:50:54 +0200
+
 rrdtool (1.2.27-1) unstable; urgency=low
 
   [ Bernd Zeimetz ]

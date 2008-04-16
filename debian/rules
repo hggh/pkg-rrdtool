@@ -62,7 +62,8 @@ ifneq ($(DEB_HOST_GNU_TYPE), arm)
 endif
 endif
 
-LDFLAGS="-Wl,-z,defs"
+# work-around for a broken dpkg - do not rename this to LDFLAGS :-/
+LINKER_FLAGS=-Wl,-z,defs
 
 configure: config.status
 config.status: $(QUILT_STAMPFN)
@@ -74,7 +75,7 @@ ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
 
-	LDFLAGS="$(LDFLAGS)"
+	LDFLAGS="$(LINKER_FLAGS)" \
 	CFLAGS="$(CFLAGS)" \
 	RRDDOCDIR=/usr/share/doc/rrdtool \
 	  ./configure $(CONFFLAGS)
