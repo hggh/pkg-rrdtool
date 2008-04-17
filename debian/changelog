@@ -1,3 +1,12 @@
+rrdtool (1.2.27-3) UNRELEASED; urgency=low
+
+  * debian/rules:
+    - Adding an option to point configure to the right path to tcl. This is
+      not needed for Lenny, but we also add it here to make coming backports
+      more simple.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Thu, 17 Apr 2008 19:28:55 +0200
+
 rrdtool (1.2.27-2) unstable; urgency=low
 
   * Renamed global definition of LDFLAGS to LINKER_FLAGS in debian/rules to
