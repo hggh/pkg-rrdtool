@@ -50,6 +50,8 @@ CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor
 #path to our ttf font
 CONFFLAGS += --with-rrd-default-font=/usr/share/rrdtool/librrd$(LIB_major)/DejaVuSansMono-Roman.ttf
 
+#path to tcl
+CONFFLAGS += --with-tcllib=/usr/lib/tcl$(TCL_VERS)
 
 #let's take care of optimization + debug builds
 CFLAGS += -Wall -g
