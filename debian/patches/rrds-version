@@ -1,0 +1,14 @@
+diff --git a/bindings/perl-shared/RRDs.pm b/bindings/perl-shared/RRDs.pm
+index 44b4d8c..ceb0ad6 100644
+--- a/bindings/perl-shared/RRDs.pm
++++ b/bindings/perl-shared/RRDs.pm
+@@ -7,7 +7,8 @@ use vars qw(@ISA $VERSION);
+ 
+ require DynaLoader;
+ 
+-$VERSION=1.2027;
++# DynaLoader::bootstrap expects a string
++$VERSION='1.2027';
+ 
+ bootstrap RRDs $VERSION;
+ 
