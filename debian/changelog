@@ -4,8 +4,10 @@ rrdtool (1.2.27-3) UNRELEASED; urgency=low
     - Adding an option to point configure to the right path to tcl. This is
       not needed for Lenny, but we also add it here to make coming backports
       more simple.
+  * debian/patches/implicit-decl-fix:
+    - Patching the implicit declaration in rrd_update.c in a nicer way.
 
- -- Bernd Zeimetz <bzed@debian.org>  Thu, 17 Apr 2008 19:28:55 +0200
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 20 Apr 2008 02:09:20 +0200
 
 rrdtool (1.2.27-2) unstable; urgency=low
 
