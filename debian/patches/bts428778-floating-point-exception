@@ -1,20 +1,19 @@
-Index: rrdtool/src/rrd_create.c
-===================================================================
---- rrdtool.orig/src/rrd_create.c	2008-02-24 16:12:49.000000000 +0100
-+++ rrdtool/src/rrd_create.c	2008-02-24 16:13:34.000000000 +0100
-@@ -619,6 +619,15 @@
-            default:
-                /* can not be zero because we don't know anything ... */
-                rrd->cdp_prep->scratch[CDP_val].u_val = DNAN;
-+               /* If the step is 0, we're going to have a BIG Floating Point Exception (i.e. SIGFPE). */
-+               /* Example: (( 1202705167 - 67 ) % ( 300 * 0 )) / 300 */
-+               if (rrd->rra_def[i].pdp_cnt == 0)
-+               {
-+                   rrd_set_error("Invalid step: must be greater than 0.");
-+                   rrd_free(rrd);
-+                   fclose(rrd_file);
-+                   return(-1);
-+               }
-                /* startup missing pdp count */
-                rrd->cdp_prep->scratch[CDP_unkn_pdp_cnt].u_cnt = 
-                    ((rrd->live_head->last_up -
+diff a/src/rrd_create.c b/src/rrd_create.c
+--- a/src/rrd_create.c
++++ b/src/rrd_create.c
+@@ -740,6 +740,15 @@ int rrd_create_fn(
+         default:
+             /* can not be zero because we don't know anything ... */
+             rrd->cdp_prep->scratch[CDP_val].u_val = DNAN;
++            /* If the step is 0, we're going to have a BIG Floating Point Exception (i.e. SIGFPE). */
++            /* Example: (( 1202705167 - 67 ) % ( 300 * 0 )) / 300 */
++            if (rrd->rra_def[i].pdp_cnt == 0)
++            {
++                rrd_set_error("Invalid step: must be greater than 0.");
++                rrd_free(rrd);
++                fclose(rrd_file);
++                return(-1);
++            }
+             /* startup missing pdp count */
+             rrd->cdp_prep->scratch[CDP_unkn_pdp_cnt].u_cnt =
+                 ((rrd->live_head->last_up -

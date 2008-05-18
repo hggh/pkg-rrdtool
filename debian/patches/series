@@ -3,4 +3,3 @@ setup.py-module-name
 no-rpath-for-ruby
 no-rpath-for-perl
 implicit-decl-fix
-typos

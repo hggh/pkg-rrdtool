@@ -37,6 +37,7 @@ Package: librrd2
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: ttf-dejavu | ttf-bitstream-vera
 Conflicts: rrdtool (<< 1.0.42-1), librrds-perl (<< 1.0.42-1)
 Description: Time-series data storage and display system (runtime library)
  The Round Robin Database Tool (RRDtool) is a system to store and display

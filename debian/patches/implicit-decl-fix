@@ -1,31 +1,12 @@
-Index: rrdtool/src/rrd_tool.c
-===================================================================
---- rrdtool.orig/src/rrd_tool.c	2008-02-24 14:05:10.000000000 +0100
-+++ rrdtool/src/rrd_tool.c	2008-02-24 14:24:37.000000000 +0100
-@@ -4,6 +4,8 @@
-  * rrd_tool.c  Startup wrapper
-  *****************************************************************************/
+diff a/src/rrd_tool.c b/src/rrd_tool.c
+--- a/src/rrd_tool.c
++++ b/src/rrd_tool.c
+@@ -12,6 +12,8 @@
+ #endif
+ #endif
  
 +#include <unistd.h>
 +
  #include "rrd_tool.h"
  #include "rrd_xport.h"
- 
-Index: rrdtool/src/rrd_update.c
-===================================================================
---- rrdtool.orig/src/rrd_update.c	2008-02-24 14:05:10.000000000 +0100
-+++ rrdtool/src/rrd_update.c	2008-02-24 14:28:33.000000000 +0100
-@@ -432,7 +432,12 @@
- #ifdef USE_MADVISE
-     /* when we use mmaping we tell the kernel the mmap equivalent
-        of POSIX_FADV_RANDOM */
--    madvise(rrd_mmaped_file,rrd_filesize,MADV_RANDOM);
-+#ifdef __USE_BSD
-+      madvise(rrd_mmaped_file,rrd_filesize,MADV_RANDOM);
-+#endif
-+#ifdef __USE_XOPEN2K
-+    posix_madvise(rrd_mmaped_file,rrd_filesize,MADV_RANDOM);
-+#endif
- #endif
- #endif
-     /* loop through the arguments. */
+ #include "rrd_i18n.h"

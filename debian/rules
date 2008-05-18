@@ -47,9 +47,6 @@ CONFFLAGS += --prefix=/usr --docdir=/usr/share/doc/rrdtool
 #install perl libs in vendor mode
 CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor 
 
-#path to our ttf font
-CONFFLAGS += --with-rrd-default-font=/usr/share/rrdtool/librrd$(LIB_major)/DejaVuSansMono-Roman.ttf
-
 #path to tcl
 CONFFLAGS += --with-tcllib=/usr/lib/tcl$(TCL_VERS)
 
@@ -127,6 +124,7 @@ endif
 	rm -f bindings/tcl/pkgIndex.tcl bindings/tcl/tclrrd*.so
 	rm -f examples/cgi-demo.cgi
 	rm -rf src/.libs src/.deps doc/*.html doc/*.1 doc/*.txt
+	rm -f intltool-extract intltool-merge intltool-update
 
 	dh_clean
 
