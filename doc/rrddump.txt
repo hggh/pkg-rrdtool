@@ -6,11 +6,11 @@ NNAAMMEE
        rrddump - dump the contents of an RRD to XML format
 
 SSYYNNOOPPSSIISS
-       rrrrddttooooll dduummpp _f_i_l_e_n_a_m_e_._r_r_d > _f_i_l_e_n_a_m_e_._x_m_l
+       rrrrddttooooll dduummpp [----nnoo--hheeaaddeerr|--nn] _f_i_l_e_n_a_m_e_._r_r_d > _f_i_l_e_n_a_m_e_._x_m_l
 
        or
 
-       rrrrddttooooll dduummpp _f_i_l_e_n_a_m_e_._r_r_d _f_i_l_e_n_a_m_e_._x_m_l
+       rrrrddttooooll dduummpp [----nnoo--hheeaaddeerr|--nn] _f_i_l_e_n_a_m_e_._r_r_d _f_i_l_e_n_a_m_e_._x_m_l
 
 DDEESSCCRRIIPPTTIIOONN
        The dduummpp function writes the contents of an RRRRDD in human readable (?)
@@ -25,6 +25,12 @@ DDEESSCCRRIIPPTTIIOONN
        _f_i_l_e_n_a_m_e_._x_m_l
                The (optional) filename that you want to write the XML output
                to.  If not specified, the XML will be printed to stdout.
+
+       [----nnoo--hheeaaddeerr|--nn]
+               In rrdtool 1.3, the dump function started producing correct
+               xml-headers.  Unfortunately the rrdtool restore function from
+               the 1.2 series can not handle these headers. With this option
+               you can supress the creatinon of the xml headers.
 
 EEXXAAMMPPLLEESS
        To transfer an RRD between architectures, follow these steps:
@@ -42,4 +48,4 @@ AAUUTTHHOORR
 
 
 
-1.2.27                            2008-02-17                        RRDDUMP(1)
+1.3rc4                            2008-05-16                        RRDDUMP(1)

@@ -20,6 +20,11 @@
 	<li><a href="#description">DESCRIPTION</a></li>
 	<li><a href="#overview">OVERVIEW</a></li>
 	<li><a href="#options">OPTIONS</a></li>
+	<ul>
+
+		<li><a href="#graphv">graphv</a></li>
+	</ul>
+
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
@@ -34,7 +39,7 @@
 </p>
 <hr />
 <h1><a name="synopsis">SYNOPSIS</a></h1>
-<p><strong>rrdtool graph</strong> <em>filename</em>
+<p><strong>rrdtool graph|graphv</strong> <em>filename</em>
 [<em><a href="././rrdgraph.html#options">option</a></em> ...]
 [<em><a href="././rrdgraph_data.html#def">data definition</a></em> ...]
 [<em><a href="././rrdgraph_data.html#cdef">data calculation</a></em> ...]
@@ -71,7 +76,7 @@ well become unknown!</p>
 it. For instance, you might be collecting <strong>bytes</strong> per second, but
 want to display <strong>bits</strong> per second. This is what the <strong><a href="././rrdgraph_data.html#cdef">data calculation</a></strong> command is designed for. After
 <strong>consolidating</strong> the data, a copy is made and this copy is modified
-using a rather powerful <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> command set.</p>
+using a rather powerful <strong><a href="././rrdgraph_rpn.html">RPN</a></strong> command set.</p>
 <p>When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the <strong>rrdtool graph</strong> sequence.</p>
 <p>
@@ -79,6 +84,15 @@ graph it (or print it).  This ends the <strong>rrdtool graph</strong> sequence.<
 <hr />
 <h1><a name="options">OPTIONS</a></h1>
 <dl>
+<dt><strong><a name="item_graphv"><strong>graphv</strong></a></strong>
+
+<dd>
+<p>This alternate version of <strong>graph</strong> takes the same arguments and performs the
+same function. The <em>v</em> stands for <em>verbose</em>, which describes the output
+returned. <strong>graphv</strong> will return a lot of information about the graph using
+the same format as rrdtool info (key = value). See the bottom of the document for more information.</p>
+</dd>
+</li>
 <dt><strong><a name="item_filename">filename</a></strong>
 
 <dd>
@@ -102,7 +116,7 @@ this case, no other output is generated.</p>
 <strong>RRA</strong> the data should come from.  Defaults are: 1 day ago until
 now, with the best possible resolution. <strong>Start</strong> and <strong>end</strong> can
 be specified in several formats, see
-<a href="././rrdfetch.html">the rrdfetch manpage</a> and <a href="././rrdgraph_examples.html">the rrdgraph_examples manpage</a>.
+<a href="././rrdfetch.html">AT-STYLE TIME SPECIFICATION</a> and <a href="././rrdgraph_examples.html">the rrdgraph_examples manpage</a>.
 By default, <strong>rrdtool graph</strong> calculates the width of one pixel in
 the time domain and tries to get data from an <strong>RRA</strong> with that
 resolution.  With the <strong>step</strong> option you can alter this behaviour.
@@ -127,11 +141,17 @@ placed string at the left hand side of the graph.</p>
 <dd>
 <p>[<strong>-w</strong>|<strong>--width</strong> <em>pixels</em>]
 [<strong>-h</strong>|<strong>--height</strong> <em>pixels</em>]
-[<strong>-j</strong>|<strong>--only-graph</strong>]</p>
+[<strong>-j</strong>|<strong>--only-graph</strong>]
+[<strong>-D</strong>|<strong>--full-size-mode</strong>]</p>
 </dd>
 <dd>
-<p>The width and height of the <strong>canvas</strong> (the part of the graph with
+<p>By default, the width and height of the <strong>canvas</strong> (the part with
 the actual data and such). This defaults to 400 pixels by 100 pixels.</p>
+</dd>
+<dd>
+<p>If you specify the <strong>--full-size-mode</strong> option, the width and height
+specify the final dimensions of the output image and the canvas
+is automatically resized to fit.</p>
 </dd>
 <dd>
 <p>If you specify the <strong>--only-graph</strong> option and set the height &lt; 32
@@ -191,16 +211,19 @@ and thus the throughput may be higher than the WAN line speed.</p>
 <p>[<strong>-N</strong>|<strong>--no-gridfit</strong>]</p>
 </dd>
 <dd>
-<p>In order to avoid anti-aliasing effects gridlines are placed on
-integer pixel values. This is by default done by extending
-the scale so that gridlines happens to be spaced using an
-integer number of pixels and also start on an integer pixel value.
-This might extend the scale too much for some logarithmic scales
-and for linear scales where <strong>--alt-autoscale</strong> is needed.
-Using <strong>--no-gridfit</strong> disables modification of the scale.</p>
+<p>In order to avoid anti-aliasing blurring effects rrdtool snaps
+points to device resolution pixels, this results in a crisper
+aperance. If this is not to your liking, you can use this switch
+to turn this behaviour off.</p>
+</dd>
+<dd>
+<p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
 </dd>
 </li>
-<dt><strong><a name="item_x_2dgrid">X-Grid</a></strong>
+<dt><strong><a name="item_grid">Grid</a></strong>
+
+<dl>
+<dt><strong><a name="item_x_2daxis">X-Axis</a></strong>
 
 <dd>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
@@ -238,7 +261,7 @@ lines as they specify exactly that time.</p>
 </dd>
 <dd>
 <pre>
- --x-grid HOUR:8:DAY:1:DAY:1:0:%A</pre>
+ --x-grid HOUR:8:DAY:1:DAY:1:86400:%A</pre>
 </dd>
 <dd>
 <p>This places grid lines every 8 hours, major grid lines and labels
@@ -246,7 +269,7 @@ each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.</p>
 </dd>
 </li>
-<dt><strong><a name="item_y_2dgrid">Y-Grid</a></strong>
+<dt><strong><a name="item_y_2daxis">Y-Axis</a></strong>
 
 <dd>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <em>grid step</em><strong>:</strong><em>label factor</em>]</p>
@@ -319,6 +342,7 @@ the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, SI notation is used by default.</p>
 </dd>
 </li>
+</dl>
 <dt><strong><a name="item_miscellaneous">Miscellaneous</a></strong>
 
 <dd>
@@ -378,7 +402,7 @@ elements, <code>TITLE</code> for the title, <code>AXIS</code> for the axis label
 for the vertical unit label, <code>LEGEND</code> for the graph legend.</p>
 </dd>
 <dd>
-<p>Use Times for the title: <code>--font TITLE:13:/usr/lib/fonts/times.ttf</code></p>
+<p>Use Times for the title: <code>--font TITLE:13:Times</code></p>
 </dd>
 <dd>
 <p>If you do not give a font string you can modify just the sice of the default font:
@@ -387,30 +411,62 @@ for the vertical unit label, <code>LEGEND</code> for the graph legend.</p>
 <dd>
 <p>If you specify the size 0 then you can modify just the font without touching
 the size. This is especially usefull for altering the default font without
-resetting the default fontsizes: <code>--font DEFAULT:0:/usr/lib/fonts/times.ttf</code>.</p>
+resetting the default fontsizes: <code>--font DEFAULT:0:Courier</code>.</p>
 </dd>
 <dd>
 <p>RRDtool comes with a preset default font. You can set the environment
 variable <code>RRD_DEFAULT_FONT</code> if you want to change this.</p>
 </dd>
 <dd>
-<p>Truetype fonts are only supported for PNG output. See below.</p>
+<p>RRDtool uses Pango for its font handling. This means you can to use
+the full Pango syntax when selecting your font:</p>
 </dd>
 <dd>
-<p>[<strong>-R</strong>|<strong>--font-render-mode</strong> {<em>normal</em>,<em>light</em>,<em>mono</em>}]</p>
+<p>The font name has the form ``[<em>FAMILY-LIST</em>] [<em>STYLE-OPTIONS</em>] [<em>SIZE</em>]'',
+where <em>FAMILY-LIST</em> is a comma separated list of families optionally
+terminated by a comma, <em>STYLE_OPTIONS</em> is a whitespace separated list of
+words where each WORD describes one of style, variant, weight, stretch, or
+gravity, and <em>SIZE</em> is a decimal number (size in points) or optionally
+followed by the unit modifier ``px'' for absolute size. Any one of the options
+may be absent.</p>
 </dd>
 <dd>
-<p>This lets you customize the strength of the font smoothing,
-or disable it entirely using <em>mono</em>. By default, <em>normal</em>
-font smoothing is used.</p>
+<p>[<strong>-R</strong>|<strong>--font-render-mode</strong> {<strong>normal</strong>,<strong>light</strong>,<strong>mono</strong>}]</p>
+</dd>
+<dd>
+<p>There are 3 font render modes:</p>
+</dd>
+<dd>
+<p><strong>normal</strong>: Full Hinting and Antialiasing (default)</p>
+</dd>
+<dd>
+<p><strong>light</strong>: Slight Hinting and Antialiasing</p>
+</dd>
+<dd>
+<p><strong>mono</strong>: Full Hinting and NO Antialiasing</p>
 </dd>
 <dd>
 <p>[<strong>-B</strong>|<strong>--font-smoothing-threshold</strong> <em>size</em>]</p>
 </dd>
 <dd>
+<p>(this gets ignored in 1.3 for now!)</p>
+</dd>
+<dd>
 <p>This specifies the largest font size which will be rendered
 bitmapped, that is, without any font smoothing. By default,
 no text is rendered bitmapped.</p>
+</dd>
+<dd>
+<p>[<strong>-G</strong>|<strong>--graph-render-mode</strong> {<strong>normal</strong>,<strong>mono</strong>}]</p>
+</dd>
+<dd>
+<p>There are 2 render modes:</p>
+</dd>
+<dd>
+<p><strong>normal</strong>: Graphs are fully Antialiased (default)</p>
+</dd>
+<dd>
+<p><strong>mono</strong>: No Antialiasing</p>
 </dd>
 <dd>
 <p>[<strong>-E</strong>|<strong>--slope-mode</strong>]</p>
@@ -432,6 +488,9 @@ Times-Bold, Times-BoldItalic, Times-Italic, Times-Roman, and ZapfDingbats.</p>
 </dd>
 <dd>
 <p>[<strong>-i</strong>|<strong>--interlaced</strong>]</p>
+</dd>
+<dd>
+<p>(this gets ignored in 1.3 for now!)</p>
 </dd>
 <dd>
 <p>If images are interlaced they become visible on browsers more quickly.</p>
@@ -497,7 +556,63 @@ at least one print statement to generate a report.
 See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exact format.</p>
 </dd>
 </li>
+<dt><strong><a name="item_markup">Markup</a></strong>
+
+<dd>
+<p>All text in rrdtool is rendered using Pango markup. This means text can contain embeded markup instructions.
+Simple html markup using 
+</p>
+</dd>
+<dd>
+<pre>
+
+ &lt;span key=&quot;value&quot;&gt;text&lt;/span&gt;</pre>
+</dd>
+<dd>
+<p>can be used. Apart from the verbose syntax, there are also the following short tags available.</p>
+</dd>
+<dd>
+<pre>
+ b     Bold
+ big   Makes font relatively larger, equivalent to &lt;span size=&quot;larger&quot;&gt;
+ i     Italic
+ s     Strikethrough
+ sub   Subscript
+ sup   Superscript
+ small Makes font relatively smaller, equivalent to &lt;span size=&quot;smaller&quot;&gt;
+ tt    Monospace font
+ u     Underline 
+ 
+More details on <a href="http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html">http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html</a>.</pre>
+</dd>
+</li>
 </dl>
+<p>
+</p>
+<h2><a name="graphv">graphv</a></h2>
+<p>Calling rrdtool with the graphv option will return information in the
+rrdtool info format. On the command line this means that all output will be
+in key=value format. When used from the perl and ruby bindings a hash
+pointer will be returned from the call.</p>
+<p>When the filename '-' is given, the contents of the graph itself will also
+be returned through this interface (hash key 'image'). On the command line
+the output will look like this:</p>
+<pre>
+ print[0] = &quot;0.020833&quot;
+ print[1] = &quot;0.0440833&quot;
+ graph_left = 51
+ graph_top = 22
+ graph_width = 400
+ graph_height = 100
+ image_width = 481
+ image_height = 154
+ value_min = 0.0000000000e+00
+ value_max = 4.0000000000e-02
+ image = BLOB_SIZE:8196
+ [... 8196 bytes of image data ...]</pre>
+<p>There is more information returned than in the standard interface.
+Especially the 'graph_*' keys are new. They help applications that want to
+know what is where on the graph.</p>
 <p>
 </p>
 <hr />
@@ -512,7 +627,9 @@ See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exa
 <hr />
 <h1><a name="author">AUTHOR</a></h1>
 <p>Program by Tobias Oetiker &lt;<a href="mailto:tobi@oetiker.ch">tobi@oetiker.ch</a>&gt;</p>
-<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;</p>
+<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;
+
+</p>
 
 </body>
 

@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCREATE 1"
-.TH RRDCREATE 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDCREATE 1 "2008-05-12" "1.3rc4" "rrdtool"
 .SH "NAME"
 rrdcreate \- Set up a new Round Robin Database
 .SH "SYNOPSIS"
@@ -144,12 +144,12 @@ rrdcreate \- Set up a new Round Robin Database
 The create function of RRDtool lets you set up new Round Robin
 Database (\fB\s-1RRD\s0\fR) files.  The file is created at its final, full size
 and filled with \fI*UNKNOWN*\fR data.
-.IP "\fIfilename\fR" 4
+.IP "\fIfilename\fR" 8
 .IX Item "filename"
 The name of the \fB\s-1RRD\s0\fR you want to create. \fB\s-1RRD\s0\fR files should end
 with the extension \fI.rrd\fR. However, \fBRRDtool\fR will accept any
 filename.
-.IP "\fB\-\-start\fR|\fB\-b\fR \fIstart time\fR (default: now \- 10s)" 4
+.IP "\fB\-\-start\fR|\fB\-b\fR \fIstart time\fR (default: now \- 10s)" 8
 .IX Item "--start|-b start time (default: now - 10s)"
 Specifies the time in seconds since 1970\-01\-01 \s-1UTC\s0 when the first
 value should be added to the \fB\s-1RRD\s0\fR. \fBRRDtool\fR will not accept
@@ -157,11 +157,11 @@ any data timed before or at the time specified.
 .Sp
 See also AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 section in the
 \&\fIrrdfetch\fR documentation for other ways to specify time.
-.IP "\fB\-\-step\fR|\fB\-s\fR \fIstep\fR (default: 300 seconds)" 4
+.IP "\fB\-\-step\fR|\fB\-s\fR \fIstep\fR (default: 300 seconds)" 8
 .IX Item "--step|-s step (default: 300 seconds)"
 Specifies the base interval in seconds with which data will be fed
 into the \fB\s-1RRD\s0\fR.
-.IP "\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst arguments\fR" 4
+.IP "\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst arguments\fR" 8
 .IX Item "DS:ds-name:DST:dst arguments"
 A single \fB\s-1RRD\s0\fR can accept input from several data sources (\fB\s-1DS\s0\fR),
 for example incoming and outgoing traffic on a specific communication
@@ -185,7 +185,7 @@ For \s-1COMPUTE\s0 data sources, the format is:
 In order to decide which data source type to use, review the
 definitions that follow. Also consult the section on \*(L"\s-1HOW\s0 \s-1TO\s0 \s-1MEASURE\s0\*(R"
 for further insight.
-.RS 4
+.RS 8
 .IP "\fB\s-1GAUGE\s0\fR" 4
 .IX Item "GAUGE"
 is for things like temperatures or number of people in a room or the
@@ -207,9 +207,9 @@ example, to measure the rate of people entering or leaving a
 room. Internally, derive works exactly like \s-1COUNTER\s0 but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use \s-1DERIVE\s0 and combine it with a \s-1MIN\s0 value of 0.
-.Sp
-\&\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0
-.Sp
+.RS 4
+.IP "\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0" 4
+.IX Item "NOTE on COUNTER vs DERIVE"
 by Don Baarda <don.baarda@baesystems.com>
 .Sp
 If you cannot tolerate ever mistaking the occasional counter reset for a
@@ -226,6 +226,9 @@ for high bandwidth interfaces and a 32bit counter, \s-1DERIVE\s0 with min=0 is
 probably preferable. If you are using a 64bit counter, just about any max
 setting will eliminate the possibility of mistaking a reset for a counter
 wrap.
+.RE
+.RS 4
+.RE
 .IP "\fB\s-1ABSOLUTE\s0\fR" 4
 .IX Item "ABSOLUTE"
 is for counters which get reset upon reading. This is used for fast counters
@@ -244,7 +247,7 @@ of the \s-1COMPUTE\s0 data source (that is the rpn-expression is only applied
 to generate PDPs). In database software, such data sets are referred
 to as \*(L"virtual\*(R" or \*(L"computed\*(R" columns.
 .RE
-.RS 4
+.RS 8
 .Sp
 \&\fIheartbeat\fR defines the maximum number of seconds that may pass
 between two updates of this data source before the value of the
@@ -272,7 +275,7 @@ names of data source listed previously in the create command. This is
 similar to the restriction that \fB\s-1CDEF\s0\fRs must refer only to \fB\s-1DEF\s0\fRs
 and \fB\s-1CDEF\s0\fRs previously defined in the same graph command.
 .RE
-.IP "\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf arguments\fR" 4
+.IP "\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf arguments\fR" 8
 .IX Item "RRA:CF:cf arguments"
 The purpose of an \fB\s-1RRD\s0\fR is to store data in the round robin archives
 (\fB\s-1RRA\s0\fR). An archive consists of a number of data values or statistics for
@@ -285,7 +288,29 @@ data point\fR.
 The data is also processed with the consolidation function (\fI\s-1CF\s0\fR) of
 the archive. There are several consolidation functions that
 consolidate primary data points via an aggregate function: \fB\s-1AVERAGE\s0\fR,
-\&\fB\s-1MIN\s0\fR, \fB\s-1MAX\s0\fR, \fB\s-1LAST\s0\fR. The format of \fB\s-1RRA\s0\fR line for these
+\&\fB\s-1MIN\s0\fR, \fB\s-1MAX\s0\fR, \fB\s-1LAST\s0\fR. 
+.RS 8
+.IP "\s-1AVERAGE\s0" 4
+.IX Item "AVERAGE"
+the average of the data points is stored.
+.IP "\s-1MIN\s0" 4
+.IX Item "MIN"
+the smallest of the data points is stored.
+.IP "\s-1MAX\s0" 4
+.IX Item "MAX"
+the largest of the data points is stored.
+.IP "\s-1LAST\s0" 4
+.IX Item "LAST"
+the last data points is used.
+.RE
+.RS 8
+.Sp
+Note that data aggregation inevitably leads to loss of precision and
+information. The trick is to pick the aggregate function such that the
+\&\fIinteresting\fR properties of your data is kept across the aggregation
+process.
+.Sp
+The format of \fB\s-1RRA\s0\fR line for these
 consolidation functions is:
 .Sp
 \&\fB\s-1RRA:\s0\fR\fI\s-1AVERAGE\s0 | \s-1MIN\s0 | \s-1MAX\s0 | \s-1LAST\s0\fR\fB:\fR\fIxff\fR\fB:\fR\fIsteps\fR\fB:\fR\fIrows\fR
@@ -299,6 +324,7 @@ to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).
 a \fIconsolidated data point\fR which then goes into the archive.
 .Sp
 \&\fIrows\fR defines how many generations of data values are kept in an \fB\s-1RRA\s0\fR.
+.RE
 .SH "Aberrant Behavior Detection with Holt-Winters Forecasting"
 .IX Header "Aberrant Behavior Detection with Holt-Winters Forecasting"
 In addition to the aggregate functions, there are a set of specialized
@@ -308,9 +334,11 @@ flagging aberrant behavior in the data source time series:
 .IP "\(bu" 4
 \&\fB\s-1RRA:\s0\fR\fI\s-1HWPREDICT\s0\fR\fB:\fR\fIrows\fR\fB:\fR\fIalpha\fR\fB:\fR\fIbeta\fR\fB:\fR\fIseasonal period\fR[\fB:\fR\fIrra-num\fR]
 .IP "\(bu" 4
-\&\fB\s-1RRA:\s0\fR\fI\s-1SEASONAL\s0\fR\fB:\fR\fIseasonal period\fR\fB:\fR\fIgamma\fR\fB:\fR\fIrra-num\fR
+\&\fB\s-1RRA:\s0\fR\fI\s-1MHWPREDICT\s0\fR\fB:\fR\fIrows\fR\fB:\fR\fIalpha\fR\fB:\fR\fIbeta\fR\fB:\fR\fIseasonal period\fR[\fB:\fR\fIrra-num\fR]
 .IP "\(bu" 4
-\&\fB\s-1RRA:\s0\fR\fI\s-1DEVSEASONAL\s0\fR\fB:\fR\fIseasonal period\fR\fB:\fR\fIgamma\fR\fB:\fR\fIrra-num\fR
+\&\fB\s-1RRA:\s0\fR\fI\s-1SEASONAL\s0\fR\fB:\fR\fIseasonal period\fR\fB:\fR\fIgamma\fR\fB:\fR\fIrra-num\fR[\fB:smoothing\-window=\fR\fIfraction\fR]
+.IP "\(bu" 4
+\&\fB\s-1RRA:\s0\fR\fI\s-1DEVSEASONAL\s0\fR\fB:\fR\fIseasonal period\fR\fB:\fR\fIgamma\fR\fB:\fR\fIrra-num\fR[\fB:smoothing\-window=\fR\fIfraction\fR]
 .IP "\(bu" 4
 \&\fB\s-1RRA:\s0\fR\fI\s-1DEVPREDICT\s0\fR\fB:\fR\fIrows\fR\fB:\fR\fIrra-num\fR
 .IP "\(bu" 4
@@ -319,19 +347,32 @@ flagging aberrant behavior in the data source time series:
 These \fBRRAs\fR differ from the true consolidation functions in several ways.
 First, each of the \fB\s-1RRA\s0\fRs is updated once for every primary data point.
 Second, these \fBRRAs\fR are interdependent. To generate real-time confidence
-bounds, a matched set of \s-1HWPREDICT\s0, \s-1SEASONAL\s0, \s-1DEVSEASONAL\s0, and
-\&\s-1DEVPREDICT\s0 must exist. Generating smoothed values of the primary data points
-requires both a \s-1HWPREDICT\s0 \fB\s-1RRA\s0\fR and \s-1SEASONAL\s0 \fB\s-1RRA\s0\fR. Aberrant behavior
-detection requires \s-1FAILURES\s0, \s-1HWPREDICT\s0, \s-1DEVSEASONAL\s0, and \s-1SEASONAL\s0.
+bounds, a matched set of \s-1SEASONAL\s0, \s-1DEVSEASONAL\s0, \s-1DEVPREDICT\s0, and either
+\&\s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0 must exist. Generating smoothed values of the primary
+data points requires a \s-1SEASONAL\s0 \fB\s-1RRA\s0\fR and either an \s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0 
+\&\fB\s-1RRA\s0\fR. Aberrant behavior detection requires \s-1FAILURES\s0, \s-1DEVSEASONAL\s0, \s-1SEASONAL\s0,
+and either \s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0.
 .PP
-The actual predicted, or smoothed, values are stored in the \s-1HWPREDICT\s0
-\&\fB\s-1RRA\s0\fR. The predicted deviations are stored in \s-1DEVPREDICT\s0 (think a standard
-deviation which can be scaled to yield a confidence band). The \s-1FAILURES\s0
-\&\fB\s-1RRA\s0\fR stores binary indicators. A 1 marks the indexed observation as
-failure; that is, the number of confidence bounds violations in the
-preceding window of observations met or exceeded a specified threshold. An
-example of using these \fBRRAs\fR to graph confidence bounds and failures
-appears in rrdgraph.
+The predicted, or smoothed, values are stored in the \s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0
+\&\fB\s-1RRA\s0\fR. \s-1HWPREDICT\s0 and \s-1MHWPREDICT\s0 are actually two variations on the
+Holt-Winters method. They are interchangeable. Both attempt to decompose data
+into three components: a baseline, a trend, and a seasonal coefficient.
+\&\s-1HWPREDICT\s0 adds its seasonal coefficient to the baseline to form a prediction, whereas
+\&\s-1MHWPREDICT\s0 multiplies its seasonal coefficient by the baseline to form a
+prediction. The difference is noticeable when the baseline changes
+significantly in the course of a season; \s-1HWPREDICT\s0 will predict the seasonality
+to stay constant as the baseline changes, but \s-1MHWPREDICT\s0 will predict the
+seasonality to grow or shrink in proportion to the baseline. The proper choice
+of method depends on the thing being modeled. For simplicity, the rest of this
+discussion will refer to \s-1HWPREDICT\s0, but \s-1MHWPREDICT\s0 may be substituted in its
+place.
+.PP
+The predicted deviations are stored in \s-1DEVPREDICT\s0 (think a standard deviation
+which can be scaled to yield a confidence band). The \s-1FAILURES\s0 \fB\s-1RRA\s0\fR stores 
+binary indicators. A 1 marks the indexed observation as failure; that is, the 
+number of confidence bounds violations in the preceding window of observations 
+met or exceeded a specified threshold. An example of using these \fBRRAs\fR to graph 
+confidence bounds and failures appears in rrdgraph.
 .PP
 The \s-1SEASONAL\s0 and \s-1DEVSEASONAL\s0 \fBRRAs\fR store the seasonal coefficients for the
 Holt-Winters forecasting algorithm and the seasonal deviations, respectively.
@@ -391,6 +432,13 @@ If \s-1SEASONAL\s0 and \s-1DEVSEASONAL\s0 \fBRRAs\fR are created explicitly, \fI
 be the same for both. Note that \fIgamma\fR can also be changed via the
 \&\fBRRDtool\fR \fItune\fR command.
 .PP
+\&\fIsmoothing-window\fR specifies the fraction of a season that should be
+averaged around each point. By default, the value of \fIsmoothing-window\fR is
+0.05, which means each value in \s-1SEASONAL\s0 and \s-1DEVSEASONAL\s0 will be occasionally
+replaced by averaging it with its (\fIseasonal period\fR*0.05) nearest neighbors.
+Setting \fIsmoothing-window\fR to zero will disable the running-average smoother
+altogether.
+.PP
 \&\fIrra-num\fR provides the links between related \fBRRAs\fR. If \s-1HWPREDICT\s0 is
 specified alone and the other \fBRRAs\fR are created implicitly, then
 there is no need to worry about this argument. If \fBRRAs\fR are created
@@ -426,28 +474,24 @@ Here is an explanation by Don Baarda on the inner workings of RRDtool.
 It may help you to sort out why all this *UNKNOWN* data is popping
 up in your databases:
 .PP
-RRDtool gets fed samples at arbitrary times. From these it builds Primary
-Data Points (PDPs) at exact times on every \*(L"step\*(R" interval. The PDPs are
-then accumulated into RRAs.
+RRDtool gets fed samples/updates at arbitrary times. From these it builds Primary
+Data Points (PDPs) on every \*(L"step\*(R" interval. The PDPs are
+then accumulated into the RRAs.
 .PP
 The \*(L"heartbeat\*(R" defines the maximum acceptable interval between
-samples. If the interval between samples is less than \*(L"heartbeat\*(R",
+samples/updates. If the interval between samples is less than \*(L"heartbeat\*(R",
 then an average rate is calculated and applied for that interval. If
 the interval between samples is longer than \*(L"heartbeat\*(R", then that
 entire interval is considered \*(L"unknown\*(R". Note that there are other
 things that can make a sample interval \*(L"unknown\*(R", such as the rate
-exceeding limits, or even an \*(L"unknown\*(R" input sample.
+exceeding limits, or a sample that was explicitly marked as unknown.
 .PP
 The known rates during a \s-1PDP\s0's \*(L"step\*(R" interval are used to calculate
-an average rate for that \s-1PDP\s0. Also, if the total \*(L"unknown\*(R" time during
-the \*(L"step\*(R" interval exceeds the \*(L"heartbeat\*(R", the entire \s-1PDP\s0 is marked
+an average rate for that \s-1PDP\s0. If the total \*(L"unknown\*(R" time accounts for
+more than \fBhalf\fR the \*(L"step\*(R", the entire \s-1PDP\s0 is marked
 as \*(L"unknown\*(R". This means that a mixture of known and \*(L"unknown\*(R" sample
-times in a single \s-1PDP\s0 \*(L"step\*(R" may or may not add up to enough \*(L"unknown\*(R"
-time to exceed \*(L"heartbeat\*(R" and hence mark the whole \s-1PDP\s0 \*(L"unknown\*(R". So
-\&\*(L"heartbeat\*(R" is not only the maximum acceptable interval between
-samples, but also the maximum acceptable amount of \*(L"unknown\*(R" time per
-\&\s-1PDP\s0 (obviously this is only significant if you have \*(L"heartbeat\*(R" less
-than \*(L"step\*(R").
+times in a single \s-1PDP\s0 \*(L"step\*(R" may or may not add up to enough \*(L"known\*(R"
+time to warrent for a known \s-1PDP\s0.
 .PP
 The \*(L"heartbeat\*(R" can be short (unusual) or long (typical) relative to
 the \*(L"step\*(R" interval between PDPs. A short \*(L"heartbeat\*(R" means you
@@ -480,7 +524,7 @@ same average rate. \fI\-\- Don Baarda <don.baarda@baesystems.com>\fR
 \&       u|15|/     "swt" expired
 \&       u|16|
 \&        |17|\-\-\-\-* sample4, restart "hb", create "pdp" for step1 = 
-\&        |18|   /  = unknown due to 10 "u" labled secs > "hb"
+\&        |18|   /  = unknown due to 10 "u" labled secs > 0.5 * step
 \&        |19|  /
 \&        |20| /
 \&        |21|\-\-\-\-* sample5, restart "hb"

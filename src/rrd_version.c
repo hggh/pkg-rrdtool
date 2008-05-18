@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_version Return
  *****************************************************************************
@@ -8,16 +8,14 @@
 
 #include "rrd_tool.h"
 
-double
-rrd_version(void)
+double rrd_version(
+    void)
 {
-  return NUMVERS;
+    return NUMVERS;
 }
 
-char *
-rrd_strversion(void)
+char     *rrd_strversion(
+    void)
 {
-  return PACKAGE_VERSION;
+    return PACKAGE_VERSION;
 }
-
-

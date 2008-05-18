@@ -18,6 +18,8 @@ S<[B<--alpha> I<adaption-parameter>]>
 S<[B<--beta> I<adaption-parameter>]>
 S<[B<--gamma> I<adaption-parameter>]>
 S<[B<--gamma-deviation> I<adaption-parameter>]>
+S<[B<--smoothing-window> I<fraction-of-season>]>
+S<[B<--smoothing-window-deviation> I<fraction-of-season>]>
 S<[B<--aberrant-reset> I<ds-name>]>
 
 =head1 DESCRIPTION
@@ -117,18 +119,29 @@ B<RRA>. This parameter must be between 0 and 1.
 Alter the seasonal deviation adaptation parameter for the DEVSEASONAL
 B<RRA>. This parameter must be between 0 and 1.
 
+=item S<B<--smoothing-window> I<fraction-of-season>>
+
+Alter the size of the smoothing window for the SEASONAL B<RRA>. This must
+be between 0 and 1.
+
+=item S<B<--smoothing-window-deviation> I<fraction-of-season>>
+
+Alter the size of the smoothing window for the DEVSEASONAL B<RRA>. This must
+be between 0 and 1.
+
 =item S<B<--aberrant-reset> I<ds-name>>
 
 This option causes the aberrant behavior detection algorithm to reset
 for the specified data source; that is, forget all it is has learnt so far.
-Specifically, for the HWPREDICT B<RRA>, it sets the intercept and slope
-coefficients to unknown. For the SEASONAL B<RRA>, it sets all seasonal
+Specifically, for the HWPREDICT or MHWPREDICT B<RRA>, it sets the intercept and
+slope coefficients to unknown. For the SEASONAL B<RRA>, it sets all seasonal
 coefficients to unknown. For the DEVSEASONAL B<RRA>, it sets all seasonal
-deviation coefficients to unknown. For the FAILURES B<RRA>, it erases
-the violation history. Note that reset does not erase past predictions
-(the values of the HWPREDICT B<RRA>), predicted deviations (the values of the
-DEVPREDICT B<RRA>), or failure history (the values of the FAILURES B<RRA>).
-This option will function even if not all the listed B<RRAs> are present.
+deviation coefficients to unknown. For the FAILURES B<RRA>, it erases the
+violation history. Note that reset does not erase past predictions
+(the values of the HWPREDICT or MHWPREDICT B<RRA>), predicted deviations (the
+values of the DEVPREDICT B<RRA>), or failure history (the values of the 
+FAILURES B<RRA>).  This option will function even if not all the listed 
+B<RRAs> are present.
 
 Due to the implementation of this option, there is an indirect impact on
 other data sources in the RRD. A smoothing algorithm is applied to

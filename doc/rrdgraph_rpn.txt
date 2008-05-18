@@ -63,6 +63,8 @@ OOPPEERRAATTOORRSS
 
            Example: "A,B,C,IF" should be read as "if (A) then (B) else (C)"
 
+
+
        Comparing values
            MMIINN,, MMAAXX
 
@@ -85,10 +87,18 @@ OOPPEERRAATTOORRSS
            Example: "CDEF:a=alpha,0,100,LIMIT" will return _u_n_k_n_o_w_n if alpha is
            lower than 0 or if it is higher than 100.
 
+
+
        Arithmetics
            ++,, --,, **,, //,, %%
 
            Add, subtract, multiply, divide, modulo
+
+           AADDDDNNAANN
+
+           NAN-safe addition. If one parameter is NAN/UNKNOWN it'll be treated
+           as zero. If both parameters are NAN/UNKNOWN, NAN/UNKNOWN will be
+           returned.
 
            SSIINN,, CCOOSS,, LLOOGG,, EEXXPP,, SSQQRRTT
 
@@ -139,7 +149,7 @@ OOPPEERRAATTOORRSS
 
            Example: "CDEF:x=a,b,c,d,4,AVG"
 
-           TTRREENNDD
+           TTRREENNDD,, TTRREENNDDNNAANN
 
            Create a "sliding window" average of another data series.
 
@@ -160,6 +170,11 @@ OOPPEERRAATTOORRSS
                 Value at sample (t0) will be the average between (t0-delay) and (t0)
                 Value at sample (t1) will be the average between (t1-delay) and (t1)
                 Value at sample (t2) will be the average between (t2-delay) and (t2)
+
+           TRENDNAN is - in contrast to TREND - NAN-safe. If you use TREND and
+           one source value is NAN the complete sliding window is affected.
+           The TRENDNAN operation ignores all NAN-values in a sliding window
+           and computes the average of the remaining values.
 
        Special values
            UUNNKKNN
@@ -219,6 +234,8 @@ OOPPEERRAATTOORRSS
            Duplicate the top element, remove the top element, exchange the two
            top elements.
 
+
+
 VVAARRIIAABBLLEESS
        These operators work only on VVDDEEFF statements. Note that currently ONLY
        these work for VVDDEEFF.
@@ -228,6 +245,11 @@ VVAARRIIAABBLLEESS
            first occurrence of that value in the time component.
 
            Example: "VDEF:avg=mydata,AVERAGE"
+
+       STDEV
+           Returns the standard deviation of the values.
+
+           Example: "VDEF:stdev=mydata,STDEV"
 
        LAST, FIRST
            Return the last/first value including its time.  The time for FIRST
@@ -284,4 +306,4 @@ AAUUTTHHOORR
 
 
 
-1.2.27                            2008-02-17                   RRDGRAPH_RPN(1)
+1.3rc4                            2008-03-15                   RRDGRAPH_RPN(1)

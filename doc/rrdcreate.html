@@ -139,9 +139,9 @@ room. Internally, derive works exactly like COUNTER but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use DERIVE and combine it with a MIN value of 0.</p>
 </dd>
-<dd>
-<p>NOTE on COUNTER vs DERIVE</p>
-</dd>
+<dl>
+<dt><strong><a name="item_note_on_counter_vs_derive">NOTE on COUNTER vs DERIVE</a></strong>
+
 <dd>
 <p>by Don Baarda &lt;<a href="mailto:don.baarda@baesystems.com">don.baarda@baesystems.com</a>&gt;</p>
 </dd>
@@ -163,6 +163,7 @@ setting will eliminate the possibility of mistaking a reset for a counter
 wrap.</p>
 </dd>
 </li>
+</dl>
 <dt><strong><a name="item_absolute"><strong>ABSOLUTE</strong></a></strong>
 
 <dd>
@@ -225,26 +226,48 @@ data point</em>.</p>
 <p>The data is also processed with the consolidation function (<em>CF</em>) of
 the archive. There are several consolidation functions that
 consolidate primary data points via an aggregate function: <strong>AVERAGE</strong>,
-<strong>MIN</strong>, <strong>MAX</strong>, <strong>LAST</strong>. The format of <strong>RRA</strong> line for these
+<strong>MIN</strong>, <strong>MAX</strong>, <strong>LAST</strong>.</p>
+</dd>
+<dl>
+<dt><strong><a name="item_average">AVERAGE</a></strong>
+
+<dd>
+<p>the average of the data points is stored.</p>
+</dd>
+</li>
+<dt><strong><a name="item_min">MIN</a></strong>
+
+<dd>
+<p>the smallest of the data points is stored.</p>
+</dd>
+</li>
+<dt><strong><a name="item_max">MAX</a></strong>
+
+<dd>
+<p>the largest of the data points is stored.</p>
+</dd>
+</li>
+<dt><strong><a name="item_last">LAST</a></strong>
+
+<dd>
+<p>the last data points is used.</p>
+</dd>
+</li>
+</dl>
+<p>Note that data aggregation inevitably leads to loss of precision and
+information. The trick is to pick the aggregate function such that the
+<em>interesting</em> properties of your data is kept across the aggregation
+process.</p>
+<p>The format of <strong>RRA</strong> line for these
 consolidation functions is:</p>
-</dd>
-<dd>
 <p><strong>RRA:</strong><em>AVERAGE | MIN | MAX | LAST</em><strong>:</strong><em>xff</em><strong>:</strong><em>steps</em><strong>:</strong><em>rows</em></p>
-</dd>
-<dd>
 <p><em>xff</em> The xfiles factor defines what part of a consolidation interval may
 be made up from <em>*UNKNOWN*</em> data while the consolidated value is still
 regarded as known. It is given as the ratio of allowed <em>*UNKNOWN*</em> PDPs
 to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).</p>
-</dd>
-<dd>
 <p><em>steps</em> defines how many of these <em>primary data points</em> are used to build
 a <em>consolidated data point</em> which then goes into the archive.</p>
-</dd>
-<dd>
 <p><em>rows</em> defines how many generations of data values are kept in an <strong>RRA</strong>.</p>
-</dd>
-</li>
 </dl>
 <p>
 </p>
@@ -259,10 +282,13 @@ flagging aberrant behavior in the data source time series:</p>
 <p><strong>RRA:</strong><em>HWPREDICT</em><strong>:</strong><em>rows</em><strong>:</strong><em>alpha</em><strong>:</strong><em>beta</em><strong>:</strong><em>seasonal period</em>[<strong>:</strong><em>rra-num</em>]</p>
 </li>
 <li>
-<p><strong>RRA:</strong><em>SEASONAL</em><strong>:</strong><em>seasonal period</em><strong>:</strong><em>gamma</em><strong>:</strong><em>rra-num</em></p>
+<p><strong>RRA:</strong><em>MHWPREDICT</em><strong>:</strong><em>rows</em><strong>:</strong><em>alpha</em><strong>:</strong><em>beta</em><strong>:</strong><em>seasonal period</em>[<strong>:</strong><em>rra-num</em>]</p>
 </li>
 <li>
-<p><strong>RRA:</strong><em>DEVSEASONAL</em><strong>:</strong><em>seasonal period</em><strong>:</strong><em>gamma</em><strong>:</strong><em>rra-num</em></p>
+<p><strong>RRA:</strong><em>SEASONAL</em><strong>:</strong><em>seasonal period</em><strong>:</strong><em>gamma</em><strong>:</strong><em>rra-num</em>[<strong>:smoothing-window=</strong><em>fraction</em>]</p>
+</li>
+<li>
+<p><strong>RRA:</strong><em>DEVSEASONAL</em><strong>:</strong><em>seasonal period</em><strong>:</strong><em>gamma</em><strong>:</strong><em>rra-num</em>[<strong>:smoothing-window=</strong><em>fraction</em>]</p>
 </li>
 <li>
 <p><strong>RRA:</strong><em>DEVPREDICT</em><strong>:</strong><em>rows</em><strong>:</strong><em>rra-num</em></p>
@@ -274,18 +300,30 @@ flagging aberrant behavior in the data source time series:</p>
 <p>These <strong>RRAs</strong> differ from the true consolidation functions in several ways.
 First, each of the <strong>RRA</strong>s is updated once for every primary data point.
 Second, these <strong>RRAs</strong> are interdependent. To generate real-time confidence
-bounds, a matched set of HWPREDICT, SEASONAL, DEVSEASONAL, and
-DEVPREDICT must exist. Generating smoothed values of the primary data points
-requires both a HWPREDICT <strong>RRA</strong> and SEASONAL <strong>RRA</strong>. Aberrant behavior
-detection requires FAILURES, HWPREDICT, DEVSEASONAL, and SEASONAL.</p>
-<p>The actual predicted, or smoothed, values are stored in the HWPREDICT
-<strong>RRA</strong>. The predicted deviations are stored in DEVPREDICT (think a standard
-deviation which can be scaled to yield a confidence band). The FAILURES
-<strong>RRA</strong> stores binary indicators. A 1 marks the indexed observation as
-failure; that is, the number of confidence bounds violations in the
-preceding window of observations met or exceeded a specified threshold. An
-example of using these <strong>RRAs</strong> to graph confidence bounds and failures
-appears in <a href="././rrdgraph.html">the rrdgraph manpage</a>.</p>
+bounds, a matched set of SEASONAL, DEVSEASONAL, DEVPREDICT, and either
+HWPREDICT or MHWPREDICT must exist. Generating smoothed values of the primary
+data points requires a SEASONAL <strong>RRA</strong> and either an HWPREDICT or MHWPREDICT 
+<strong>RRA</strong>. Aberrant behavior detection requires FAILURES, DEVSEASONAL, SEASONAL,
+and either HWPREDICT or MHWPREDICT.</p>
+<p>The predicted, or smoothed, values are stored in the HWPREDICT or MHWPREDICT
+<strong>RRA</strong>. HWPREDICT and MHWPREDICT are actually two variations on the
+Holt-Winters method. They are interchangeable. Both attempt to decompose data
+into three components: a baseline, a trend, and a seasonal coefficient.
+HWPREDICT adds its seasonal coefficient to the baseline to form a prediction, whereas
+MHWPREDICT multiplies its seasonal coefficient by the baseline to form a
+prediction. The difference is noticeable when the baseline changes
+significantly in the course of a season; HWPREDICT will predict the seasonality
+to stay constant as the baseline changes, but MHWPREDICT will predict the
+seasonality to grow or shrink in proportion to the baseline. The proper choice
+of method depends on the thing being modeled. For simplicity, the rest of this
+discussion will refer to HWPREDICT, but MHWPREDICT may be substituted in its
+place.</p>
+<p>The predicted deviations are stored in DEVPREDICT (think a standard deviation
+which can be scaled to yield a confidence band). The FAILURES <strong>RRA</strong> stores 
+binary indicators. A 1 marks the indexed observation as failure; that is, the 
+number of confidence bounds violations in the preceding window of observations 
+met or exceeded a specified threshold. An example of using these <strong>RRAs</strong> to graph 
+confidence bounds and failures appears in <a href="././rrdgraph.html">the rrdgraph manpage</a>.</p>
 <p>The SEASONAL and DEVSEASONAL <strong>RRAs</strong> store the seasonal coefficients for the
 Holt-Winters forecasting algorithm and the seasonal deviations, respectively.
 There is one entry per observation time point in the seasonal cycle. For
@@ -336,6 +374,12 @@ coefficient.</p>
 <p>If SEASONAL and DEVSEASONAL <strong>RRAs</strong> are created explicitly, <em>gamma</em> need not
 be the same for both. Note that <em>gamma</em> can also be changed via the
 <strong>RRDtool</strong> <em>tune</em> command.</p>
+<p><em>smoothing-window</em> specifies the fraction of a season that should be
+averaged around each point. By default, the value of <em>smoothing-window</em> is
+0.05, which means each value in SEASONAL and DEVSEASONAL will be occasionally
+replaced by averaging it with its (<em>seasonal period</em>*0.05) nearest neighbors.
+Setting <em>smoothing-window</em> to zero will disable the running-average smoother
+altogether.</p>
 <p><em>rra-num</em> provides the links between related <strong>RRAs</strong>. If HWPREDICT is
 specified alone and the other <strong>RRAs</strong> are created implicitly, then
 there is no need to worry about this argument. If <strong>RRAs</strong> are created
@@ -377,26 +421,22 @@ default value is 9.</p>
 <p>Here is an explanation by Don Baarda on the inner workings of RRDtool.
 It may help you to sort out why all this *UNKNOWN* data is popping
 up in your databases:</p>
-<p>RRDtool gets fed samples at arbitrary times. From these it builds Primary
-Data Points (PDPs) at exact times on every ``step'' interval. The PDPs are
-then accumulated into RRAs.</p>
+<p>RRDtool gets fed samples/updates at arbitrary times. From these it builds Primary
+Data Points (PDPs) on every ``step'' interval. The PDPs are
+then accumulated into the RRAs.</p>
 <p>The ``heartbeat'' defines the maximum acceptable interval between
-samples. If the interval between samples is less than ``heartbeat'',
+samples/updates. If the interval between samples is less than ``heartbeat'',
 then an average rate is calculated and applied for that interval. If
 the interval between samples is longer than ``heartbeat'', then that
 entire interval is considered ``unknown''. Note that there are other
 things that can make a sample interval ``unknown'', such as the rate
-exceeding limits, or even an ``unknown'' input sample.</p>
+exceeding limits, or a sample that was explicitly marked as unknown.</p>
 <p>The known rates during a PDP's ``step'' interval are used to calculate
-an average rate for that PDP. Also, if the total ``unknown'' time during
-the ``step'' interval exceeds the ``heartbeat'', the entire PDP is marked
+an average rate for that PDP. If the total ``unknown'' time accounts for
+more than <strong>half</strong> the ``step'', the entire PDP is marked
 as ``unknown''. This means that a mixture of known and ``unknown'' sample
-times in a single PDP ``step'' may or may not add up to enough ``unknown''
-time to exceed ``heartbeat'' and hence mark the whole PDP ``unknown''. So
-``heartbeat'' is not only the maximum acceptable interval between
-samples, but also the maximum acceptable amount of ``unknown'' time per
-PDP (obviously this is only significant if you have ``heartbeat'' less
-than ``step'').</p>
+times in a single PDP ``step'' may or may not add up to enough ``known''
+time to warrent for a known PDP.</p>
 <p>The ``heartbeat'' can be short (unusual) or long (typical) relative to
 the ``step'' interval between PDPs. A short ``heartbeat'' means you
 require multiple samples per PDP, and if you don't get them mark the
@@ -427,7 +467,7 @@ same average rate. <em>-- Don Baarda &lt;<a href="mailto:don.baarda@baesystems.c
        u|15|/     &quot;swt&quot; expired
        u|16|
         |17|----* sample4, restart &quot;hb&quot;, create &quot;pdp&quot; for step1 = 
-        |18|   /  = unknown due to 10 &quot;u&quot; labled secs &gt; &quot;hb&quot;
+        |18|   /  = unknown due to 10 &quot;u&quot; labled secs &gt; 0.5 * step
         |19|  /
         |20| /
         |21|----* sample5, restart &quot;hb&quot;

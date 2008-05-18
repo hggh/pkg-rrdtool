@@ -47,6 +47,8 @@
 [<strong>--beta</strong>&nbsp;<em>adaption-parameter</em>]
 [<strong>--gamma</strong>&nbsp;<em>adaption-parameter</em>]
 [<strong>--gamma-deviation</strong>&nbsp;<em>adaption-parameter</em>]
+[<strong>--smoothing-window</strong>&nbsp;<em>fraction-of-season</em>]
+[<strong>--smoothing-window-deviation</strong>&nbsp;<em>fraction-of-season</em>]
 [<strong>--aberrant-reset</strong>&nbsp;<em>ds-name</em>]</p>
 <p>
 </p>
@@ -171,19 +173,34 @@ algorithm. This parameter must be between 0 and 1.</p>
 <strong>RRA</strong>. This parameter must be between 0 and 1.</p>
 </dd>
 </li>
+<dt><strong><a name="item__2d_2dsmoothing_2dwindow_fraction_2dof_2dseason"><strong>--smoothing-window</strong>&nbsp;<em>fraction-of-season</em></a></strong>
+
+<dd>
+<p>Alter the size of the smoothing window for the SEASONAL <strong>RRA</strong>. This must
+be between 0 and 1.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dsmoothing_2dwindow_2ddeviation_fraction_2dof"><strong>--smoothing-window-deviation</strong>&nbsp;<em>fraction-of-season</em></a></strong>
+
+<dd>
+<p>Alter the size of the smoothing window for the DEVSEASONAL <strong>RRA</strong>. This must
+be between 0 and 1.</p>
+</dd>
+</li>
 <dt><strong><a name="item__2d_2daberrant_2dreset_ds_2dname"><strong>--aberrant-reset</strong>&nbsp;<em>ds-name</em></a></strong>
 
 <dd>
 <p>This option causes the aberrant behavior detection algorithm to reset
 for the specified data source; that is, forget all it is has learnt so far.
-Specifically, for the HWPREDICT <strong>RRA</strong>, it sets the intercept and slope
-coefficients to unknown. For the SEASONAL <strong>RRA</strong>, it sets all seasonal
+Specifically, for the HWPREDICT or MHWPREDICT <strong>RRA</strong>, it sets the intercept and
+slope coefficients to unknown. For the SEASONAL <strong>RRA</strong>, it sets all seasonal
 coefficients to unknown. For the DEVSEASONAL <strong>RRA</strong>, it sets all seasonal
-deviation coefficients to unknown. For the FAILURES <strong>RRA</strong>, it erases
-the violation history. Note that reset does not erase past predictions
-(the values of the HWPREDICT <strong>RRA</strong>), predicted deviations (the values of the
-DEVPREDICT <strong>RRA</strong>), or failure history (the values of the FAILURES <strong>RRA</strong>).
-This option will function even if not all the listed <strong>RRAs</strong> are present.</p>
+deviation coefficients to unknown. For the FAILURES <strong>RRA</strong>, it erases the
+violation history. Note that reset does not erase past predictions
+(the values of the HWPREDICT or MHWPREDICT <strong>RRA</strong>), predicted deviations (the
+values of the DEVPREDICT <strong>RRA</strong>), or failure history (the values of the 
+FAILURES <strong>RRA</strong>).  This option will function even if not all the listed 
+<strong>RRAs</strong> are present.</p>
 </dd>
 <dd>
 <p>Due to the implementation of this option, there is an indirect impact on

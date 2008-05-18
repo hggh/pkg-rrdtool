@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrdupdate.c  Main program for the (standalone) rrdupdate utility
  *****************************************************************************
- * $Id: rrdupdate.c 1286 2008-02-17 10:08:10Z oetiker $
+ * $Id: rrdupdate.c 1366 2008-05-18 13:06:44Z oetiker $
  *****************************************************************************/
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__) && !defined(HAVE_CONFIG_H)
@@ -16,20 +16,23 @@
 
 #include "rrd.h"
 
-int 
-main(int argc, char **argv){
-        rrd_update(argc,argv);
-        if (rrd_test_error()) {
-                printf("RRDtool " PACKAGE_VERSION "  Copyright by Tobi Oetiker, 1997-2008\n\n"
-                        "Usage: rrdupdate filename\n"
-                        "\t\t\t[--template|-t ds-name:ds-name:...]\n"
-                        "\t\t\ttime|N:value[:value...]\n\n"
-                        "\t\t\tat-time@value[:value...]\n\n"
-                        "\t\t\t[ time:value[:value...] ..]\n\n");
-                                   
-                printf("ERROR: %s\n",rrd_get_error());
-                rrd_clear_error();                                                            
-                return 1;
-        }
-        return 0;
+int main(
+    int argc,
+    char **argv)
+{
+    rrd_update(argc, argv);
+    if (rrd_test_error()) {
+        printf("RRDtool " PACKAGE_VERSION
+               "  Copyright by Tobi Oetiker, 1997-2008\n\n"
+               "Usage: rrdupdate filename\n"
+               "\t\t\t[--template|-t ds-name:ds-name:...]\n"
+               "\t\t\ttime|N:value[:value...]\n\n"
+               "\t\t\tat-time@value[:value...]\n\n"
+               "\t\t\t[ time:value[:value...] ..]\n\n");
+
+        printf("ERROR: %s\n", rrd_get_error());
+        rrd_clear_error();
+        return 1;
+    }
+    return 0;
 }
