@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1028 $
- * @(#) $Id: fnv.h 1028 2007-04-02 06:21:19Z oetiker $
+ * @(#) $Revision: 1306 $
+ * @(#) $Id: fnv.h 1306 2008-03-15 10:39:48Z oetiker $
  * @(#) $Source$
  *
  ***
@@ -99,10 +99,16 @@ typedef unsigned long Fnv32_t;
  */
 #define FNV1_32_INIT ((Fnv32_t)0x811c9dc5)
 
-Fnv32_t fnv_32_buf(const void *, size_t, Fnv32_t);
+Fnv32_t   fnv_32_buf(
+    const void *,
+    size_t,
+    Fnv32_t);
 
-Fnv32_t fnv_32_str(const char *, Fnv32_t );
+Fnv32_t   fnv_32_str(
+    const char *,
+    Fnv32_t);
 
-unsigned long FnvHash(const char *);
+unsigned long FnvHash(
+    const char *);
 
-#endif /* __FNV_H__ */
+#endif                          /* __FNV_H__ */

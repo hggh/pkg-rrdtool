@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDGRAPH 1 "2008-04-21" "1.3rc4" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-\&\fBrrdtool graph\fR \fIfilename\fR
+\&\fBrrdtool graph|graphv\fR \fIfilename\fR
 [\fIoption\fR ...]
 [\fIdata definition\fR ...]
 [\fIdata calculation\fR ...]
@@ -170,12 +170,18 @@ Sometimes data is not exactly in the format you would like to display
 it. For instance, you might be collecting \fBbytes\fR per second, but
 want to display \fBbits\fR per second. This is what the \fBdata calculation\fR command is designed for. After
 \&\fBconsolidating\fR the data, a copy is made and this copy is modified
-using a rather powerful rrdgraph_rpn command set.
+using a rather powerful \fB\s-1RPN\s0\fR command set.
 .PP
 When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the \fBrrdtool graph\fR sequence.
 .SH "OPTIONS"
 .IX Header "OPTIONS"
+.IP "\fBgraphv\fR" 4
+.IX Item "graphv"
+This alternate version of \fBgraph\fR takes the same arguments and performs the
+same function. The \fIv\fR stands for \fIverbose\fR, which describes the output
+returned. \fBgraphv\fR will return a lot of information about the graph using
+the same format as rrdtool info (key = value). See the bottom of the document for more information.
 .IP "filename" 4
 .IX Item "filename"
 The name and path of the graph to generate. It is recommended to
@@ -193,7 +199,7 @@ The start and end of the time series you would like to display, and which
 \&\fB\s-1RRA\s0\fR the data should come from.  Defaults are: 1 day ago until
 now, with the best possible resolution. \fBStart\fR and \fBend\fR can
 be specified in several formats, see
-rrdfetch and rrdgraph_examples.
+AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 and rrdgraph_examples.
 By default, \fBrrdtool graph\fR calculates the width of one pixel in
 the time domain and tries to get data from an \fB\s-1RRA\s0\fR with that
 resolution.  With the \fBstep\fR option you can alter this behaviour.
@@ -212,9 +218,14 @@ placed string at the left hand side of the graph.
 [\fB\-w\fR|\fB\-\-width\fR \fIpixels\fR]
 [\fB\-h\fR|\fB\-\-height\fR \fIpixels\fR]
 [\fB\-j\fR|\fB\-\-only\-graph\fR]
+[\fB\-D\fR|\fB\-\-full\-size\-mode\fR]
 .Sp
-The width and height of the \fBcanvas\fR (the part of the graph with
+By default, the width and height of the \fBcanvas\fR (the part with
 the actual data and such). This defaults to 400 pixels by 100 pixels.
+.Sp
+If you specify the \fB\-\-full\-size\-mode\fR option, the width and height
+specify the final dimensions of the output image and the canvas
+is automatically resized to fit.
 .Sp
 If you specify the \fB\-\-only\-graph\fR option and set the height < 32
 pixels you will get a tiny graph image (thumbnail) to use as an icon
@@ -261,15 +272,19 @@ and thus the throughput may be higher than the \s-1WAN\s0 line speed.
 .Sp
 [\fB\-N\fR|\fB\-\-no\-gridfit\fR]
 .Sp
-In order to avoid anti-aliasing effects gridlines are placed on
-integer pixel values. This is by default done by extending
-the scale so that gridlines happens to be spaced using an
-integer number of pixels and also start on an integer pixel value.
-This might extend the scale too much for some logarithmic scales
-and for linear scales where \fB\-\-alt\-autoscale\fR is needed.
-Using \fB\-\-no\-gridfit\fR disables modification of the scale.
-.IP "X\-Grid" 4
-.IX Item "X-Grid"
+In order to avoid anti-aliasing blurring effects rrdtool snaps
+points to device resolution pixels, this results in a crisper
+aperance. If this is not to your liking, you can use this switch
+to turn this behaviour off.
+.Sp
+Gridfitting is turned off for \s-1PDF\s0, \s-1EPS\s0, \s-1SVG\s0 output by default.
+.IP "Grid" 4
+.IX Item "Grid"
+.RS 4
+.PD 0
+.IP "X\-Axis" 4
+.IX Item "X-Axis"
+.PD
 [\fB\-x\fR|\fB\-\-x\-grid\fR \fI\s-1GTM\s0\fR\fB:\fR\fI\s-1GST\s0\fR\fB:\fR\fI\s-1MTM\s0\fR\fB:\fR\fI\s-1MST\s0\fR\fB:\fR\fI\s-1LTM\s0\fR\fB:\fR\fI\s-1LST\s0\fR\fB:\fR\fI\s-1LPR\s0\fR\fB:\fR\fI\s-1LFM\s0\fR]
 .Sp
 [\fB\-x\fR|\fB\-\-x\-grid\fR \fBnone\fR]
@@ -300,14 +315,14 @@ and labels every 4 hours. The labels are placed under the major grid
 lines as they specify exactly that time.
 .Sp
 .Vb 1
-\& \-\-x\-grid HOUR:8:DAY:1:DAY:1:0:%A
+\& \-\-x\-grid HOUR:8:DAY:1:DAY:1:86400:%A
 .Ve
 .Sp
 This places grid lines every 8 hours, major grid lines and labels
 each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.
-.IP "Y\-Grid" 4
-.IX Item "Y-Grid"
+.IP "Y\-Axis" 4
+.IX Item "Y-Axis"
 [\fB\-y\fR|\fB\-\-y\-grid\fR \fIgrid step\fR\fB:\fR\fIlabel factor\fR]
 .Sp
 [\fB\-y\fR|\fB\-\-y\-grid\fR \fBnone\fR]
@@ -362,6 +377,9 @@ fideling with the y\-axis labeling.
 With this option y\-axis values on logarithmic graphs will be scaled to 
 the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, \s-1SI\s0 notation is used by default.
+.RE
+.RS 4
+.RE
 .IP "Miscellaneous" 4
 .IX Item "Miscellaneous"
 [\fB\-z\fR|\fB\-\-lazy\fR]
@@ -409,31 +427,54 @@ elements on the \s-1RRD\s0 graphs. \f(CW\*(C`DEFAULT\*(C'\fR sets the default va
 elements, \f(CW\*(C`TITLE\*(C'\fR for the title, \f(CW\*(C`AXIS\*(C'\fR for the axis labels, \f(CW\*(C`UNIT\*(C'\fR
 for the vertical unit label, \f(CW\*(C`LEGEND\*(C'\fR for the graph legend.
 .Sp
-Use Times for the title: \f(CW\*(C`\-\-font TITLE:13:/usr/lib/fonts/times.ttf\*(C'\fR
+Use Times for the title: \f(CW\*(C`\-\-font TITLE:13:Times\*(C'\fR
 .Sp
 If you do not give a font string you can modify just the sice of the default font:
 \&\f(CW\*(C`\-\-font TITLE:13:\*(C'\fR.
 .Sp
 If you specify the size 0 then you can modify just the font without touching
 the size. This is especially usefull for altering the default font without
-resetting the default fontsizes: \f(CW\*(C`\-\-font DEFAULT:0:/usr/lib/fonts/times.ttf\*(C'\fR.
+resetting the default fontsizes: \f(CW\*(C`\-\-font DEFAULT:0:Courier\*(C'\fR.
 .Sp
 RRDtool comes with a preset default font. You can set the environment
 variable \f(CW\*(C`RRD_DEFAULT_FONT\*(C'\fR if you want to change this.
 .Sp
-Truetype fonts are only supported for \s-1PNG\s0 output. See below.
+RRDtool uses Pango for its font handling. This means you can to use
+the full Pango syntax when selecting your font:
 .Sp
-[\fB\-R\fR|\fB\-\-font\-render\-mode\fR {\fInormal\fR,\fIlight\fR,\fImono\fR}]
+The font name has the form "[\fIFAMILY-LIST\fR] [\fISTYLE-OPTIONS\fR] [\fI\s-1SIZE\s0\fR]",
+where \fIFAMILY-LIST\fR is a comma separated list of families optionally
+terminated by a comma, \fI\s-1STYLE_OPTIONS\s0\fR is a whitespace separated list of
+words where each \s-1WORD\s0 describes one of style, variant, weight, stretch, or
+gravity, and \fI\s-1SIZE\s0\fR is a decimal number (size in points) or optionally
+followed by the unit modifier \*(L"px\*(R" for absolute size. Any one of the options
+may be absent.
 .Sp
-This lets you customize the strength of the font smoothing,
-or disable it entirely using \fImono\fR. By default, \fInormal\fR
-font smoothing is used.
+[\fB\-R\fR|\fB\-\-font\-render\-mode\fR {\fBnormal\fR,\fBlight\fR,\fBmono\fR}]
+.Sp
+There are 3 font render modes:
+.Sp
+\&\fBnormal\fR: Full Hinting and Antialiasing (default)
+.Sp
+\&\fBlight\fR: Slight Hinting and Antialiasing
+.Sp
+\&\fBmono\fR: Full Hinting and \s-1NO\s0 Antialiasing
 .Sp
 [\fB\-B\fR|\fB\-\-font\-smoothing\-threshold\fR \fIsize\fR]
+.Sp
+(this gets ignored in 1.3 for now!)
 .Sp
 This specifies the largest font size which will be rendered
 bitmapped, that is, without any font smoothing. By default,
 no text is rendered bitmapped.
+.Sp
+[\fB\-G\fR|\fB\-\-graph\-render\-mode\fR {\fBnormal\fR,\fBmono\fR}]
+.Sp
+There are 2 render modes:
+.Sp
+\&\fBnormal\fR: Graphs are fully Antialiased (default)
+.Sp
+\&\fBmono\fR: No Antialiasing
 .Sp
 [\fB\-E\fR|\fB\-\-slope\-mode\fR]
 .Sp
@@ -450,6 +491,8 @@ Helvetica\-BoldOblique, Helvetica\-Oblique, Helvetica, Symbol,
 Times\-Bold, Times\-BoldItalic, Times\-Italic, Times\-Roman, and ZapfDingbats.
 .Sp
 [\fB\-i\fR|\fB\-\-interlaced\fR]
+.Sp
+(this gets ignored in 1.3 for now!)
 .Sp
 If images are interlaced they become visible on browsers more quickly.
 .Sp
@@ -493,6 +536,59 @@ See rrdgraph_data and rrdgraph_rpn for the exact format.
 You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See rrdgraph_graph for the exact format.
+.IP "Markup" 4
+.IX Item "Markup"
+All text in rrdtool is rendered using Pango markup. This means text can contain embeded markup instructions.
+Simple html markup using 
+.Sp
+.Vb 1
+\& <span key="value">text</span>
+.Ve
+.Sp
+can be used. Apart from the verbose syntax, there are also the following short tags available.
+.Sp
+.Vb 9
+\& b     Bold
+\& big   Makes font relatively larger, equivalent to <span size="larger">
+\& i     Italic
+\& s     Strikethrough
+\& sub   Subscript
+\& sup   Superscript
+\& small Makes font relatively smaller, equivalent to <span size="smaller">
+\& tt    Monospace font
+\& u     Underline
+.Ve
+.Sp
+More details on http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html.
+.Sh "graphv"
+.IX Subsection "graphv"
+Calling rrdtool with the graphv option will return information in the
+rrdtool info format. On the command line this means that all output will be
+in key=value format. When used from the perl and ruby bindings a hash
+pointer will be returned from the call.
+.PP
+When the filename '\-' is given, the contents of the graph itself will also
+be returned through this interface (hash key 'image'). On the command line
+the output will look like this:
+.PP
+.Vb 12
+\& print[0] = "0.020833"
+\& print[1] = "0.0440833"
+\& graph_left = 51
+\& graph_top = 22
+\& graph_width = 400
+\& graph_height = 100
+\& image_width = 481
+\& image_height = 154
+\& value_min = 0.0000000000e+00
+\& value_max = 4.0000000000e\-02
+\& image = BLOB_SIZE:8196
+\& [... 8196 bytes of image data ...]
+.Ve
+.PP
+There is more information returned than in the standard interface.
+Especially the 'graph_*' keys are new. They help applications that want to
+know what is where on the graph.
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
 rrdgraph gives an overview of how \fBrrdtool graph\fR works.

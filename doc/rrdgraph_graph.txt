@@ -12,17 +12,23 @@ SSYYNNOOPPSSIISS
 
        CCOOMMMMEENNTT::_t_e_x_t
 
-       VVRRUULLEE::_t_i_m_e##_c_o_l_o_r[::_l_e_g_e_n_d]
+       VVRRUULLEE::_t_i_m_e##_c_o_l_o_r[::_l_e_g_-
+       _e_n_d][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_s_e_t]]
 
-       HHRRUULLEE::_v_a_l_u_e##_c_o_l_o_r[::_l_e_g_e_n_d]
+       HHRRUULLEE::_v_a_l_u_e##_c_o_l_o_r[::_l_e_g_-
+       _e_n_d][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_s_e_t]]
 
-       LLIINNEE[_w_i_d_t_h]::_v_a_l_u_e[##_c_o_l_o_r][::[_l_e_g_e_n_d][::SSTTAACCKK]]
+       LLIINNEE[_w_i_d_t_h]::_v_a_l_u_e[##_c_o_l_o_r][::[_l_e_g_-
+       _e_n_d][::SSTTAACCKK]][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_-
+       _s_e_t]]
 
        AARREEAA::_v_a_l_u_e[##_c_o_l_o_r][::[_l_e_g_e_n_d][::SSTTAACCKK]]
 
        TTIICCKK::_v_n_a_m_e##_r_r_g_g_b_b[_a_a][::_f_r_a_c_t_i_o_n[::_l_e_g_e_n_d]]
 
        SSHHIIFFTT::_v_n_a_m_e::_o_f_f_s_e_t
+
+       TTEEXXTTAALLIIGGNN::{lleefftt|rriigghhtt|jjuussttiiffiieedd|cceenntteerr}
 
        PPRRIINNTT::_v_n_a_m_e::_C_F::_f_o_r_m_a_t (deprecated)
 
@@ -35,9 +41,7 @@ DDEESSCCRRIIPPTTIIOONN
        don't use any graph elements, no graph is generated.  Similarly, no
        report is generated if you don't use print options.
 
-       PPRRIINNTT
-
-
+PPRRIINNTT
        PPRRIINNTT::_v_n_a_m_e::_f_o_r_m_a_t[::ssttrrffttiimmee]
            Depending on the context, either the value component or the time
            component of a VVDDEEFF is printed using _f_o_r_m_a_t. It is an error to
@@ -49,24 +53,26 @@ DDEESSCCRRIIPPTTIIOONN
 
            For printing values:
 
-           %%%% - just prints a literal '%' character
+           %%%%  just prints a literal '%' character
 
-           %%##..##llee - prints numbers like 1.2346e+04. The optional integers #
-           denote field width and decimal precision.
+           %%##..##llee
+               prints numbers like 1.2346e+04. The optional integers # denote
+               field width and decimal precision.
 
-           %%##..##llff - prints numbers like 12345.6789, with optional field width
-           and precision.
+           %%##..##llff
+               prints numbers like 12345.6789, with optional field width and
+               precision.
 
-           %%ss - place this after %%llee, %%llff or %%llgg. This will be replaced by the
-           appropriate SI magnitude unit and the value will be scaled accord-
-           ingly (123456 -> 123.456 k).
+           %%ss  place this after %%llee, %%llff or %%llgg. This will be replaced by the
+               appropriate SI magnitude unit and the value will be scaled
+               accordingly (123456 -> 123.456 k).
 
-           %%SS - is similar to %%ss. It does, however, use a previously defined
-           magnitude unit. If there is no such unit yet, it tries to define
-           one (just like %%ss) unless the value is zero, in which case the
-           magnitude unit stays undefined. Thus, formatter strings using %%SS
-           and no %%ss will all use the same magnitude unit except for zero val-
-           ues.
+           %%SS  is similar to %%ss. It does, however, use a previously defined
+               magnitude unit. If there is no such unit yet, it tries to
+               define one (just like %%ss) unless the value is zero, in which
+               case the magnitude unit stays undefined. Thus, formatter
+               strings using %%SS and no %%ss will all use the same magnitude unit
+               except for zero values.
 
            If you PRINT a VDEF value, you can also print the time associated
            with it by appending the string ::ssttrrffttiimmee to the format. Note that
@@ -75,77 +81,75 @@ DDEESSCCRRIIPPTTIIOONN
            you are uncertain. The following is a list of conversion specifiers
            usually supported across the board.
 
-           %%aa - The abbreviated weekday name according to the current locale.
+           %%aa  The abbreviated weekday name according to the current locale.
 
-           %%AA - The full weekday name according to the current locale.
+           %%AA  The full weekday name according to the current locale.
 
-           %%bb - The abbreviated month name according to the current locale.
+           %%bb  The abbreviated month name according to the current locale.
 
-           %%BB - The full month name according to the current locale.
+           %%BB  The full month name according to the current locale.
 
-           %%cc - The preferred date and time representation for the current
-           locale.
+           %%cc  The preferred date and time representation for the current
+               locale.
 
-           %%dd - The day of the month as a decimal number (range 01 to 31).
+           %%dd  The day of the month as a decimal number (range 01 to 31).
 
-           %%HH - The hour as a decimal number using a 24-hour clock (range 00
-           to 23).
+           %%HH  The hour as a decimal number using a 24-hour clock (range 00 to
+               23).
 
-           %%II - The hour as a decimal number using a 12-hour clock (range 01
-           to 12).
+           %%II  The hour as a decimal number using a 12-hour clock (range 01 to
+               12).
 
-           %%jj - The day of the year as a decimal number (range 001 to 366).
+           %%jj  The day of the year as a decimal number (range 001 to 366).
 
-           %%mm - The month as a decimal number (range 01 to 12).
+           %%mm  The month as a decimal number (range 01 to 12).
 
-           %%MM - The minute as a decimal number (range 00 to 59).
+           %%MM  The minute as a decimal number (range 00 to 59).
 
-           %%pp - Either `AM' or `PM' according to the given time value, or the
-           corresponding strings for the current locale.  Noon is treated as
-           `pm' and midnight as `am'.  Note that in many locales and `pm'
-           notation is unsupported and in such cases %p will return an empty
-           string.
+           %%pp  Either `AM' or `PM' according to the given time value, or the
+               corresponding strings for the current locale.  Noon is treated
+               as `pm' and midnight as `am'.  Note that in many locales and
+               `pm' notation is unsupported and in such cases %p will return
+               an empty string.
 
-           %%SS - The second as a decimal number (range 00 to 61).
+           %%SS  The second as a decimal number (range 00 to 61).
 
-           %%UU - The  week  number  of  the current year as a decimal number,
-           range 00 to 53, starting with the first Sunday as the first day of
-           week 01. See also %V and %W.
+           %%UU  The  week  number  of  the current year as a decimal number,
+               range 00 to 53, starting with the first Sunday as the first day
+               of week 01. See also %V and %W.
 
-           %%VV - The ISO 8601:1988 week number of the current year as a decimal
-           number, range 01 to  53,  where week  1 is the first week that has
-           at least 4 days in the current year, and with Monday as the first
-           day of the week. See also %U and %W.
+           %%VV  The ISO 8601:1988 week number of the current year as a decimal
+               number, range 01 to  53,  where week  1 is the first week that
+               has at least 4 days in the current year, and with Monday as the
+               first day of the week. See also %U and %W.
 
-           %%ww - The day of the week as a decimal, range 0 to 6, Sunday being
-           0.  See also %u.
+           %%ww  The day of the week as a decimal, range 0 to 6, Sunday being 0.
+               See also %u.
 
-           %%WW - The week number of the current year as a decimal number, range
-           00 to  53,  starting  with  the first Monday as the first day of
-           week 01.
+           %%WW  The week number of the current year as a decimal number, range
+               00 to  53,  starting  with  the first Monday as the first day
+               of week 01.
 
-           %%xx - The preferred date representation for the current locale with-
-           out the time.
+           %%xx  The preferred date representation for the current locale with-
+               out the time.
 
-           %%XX - The preferred time representation for the current locale with-
-           out the date.
+           %%XX  The preferred time representation for the current locale with-
+               out the date.
 
-           %%yy - The year as a decimal number without a century (range 00 to
-           99).
+           %%yy  The year as a decimal number without a century (range 00 to
+               99).
 
-           %%YY - The year as a decimal number including the century.
+           %%YY  The year as a decimal number including the century.
 
-           %%ZZ - The time zone or name or abbreviation.
+           %%ZZ  The time zone or name or abbreviation.
 
-           %%%% - A literal `%' character.
+           %%%%  A literal `%' character.
 
        PPRRIINNTT::_v_n_a_m_e::_C_F::_f_o_r_m_a_t
            _D_e_p_r_e_c_a_t_e_d_. _U_s_e _t_h_e _n_e_w _f_o_r_m _o_f _t_h_i_s _c_o_m_m_a_n_d _i_n _n_e_w _s_c_r_i_p_t_s_.  The
            first form of this command is to be used with CCDDEEFF _v_n_a_m_es.
 
-       GGRRAAPPHH
-
-
+GGRRAAPPHH
        GGPPRRIINNTT::_v_n_a_m_e::_f_o_r_m_a_t
            This is the same as "PRINT", but printed inside the graph.
 
@@ -159,20 +163,25 @@ DDEESSCCRRIIPPTTIIOONN
            the same way you have to escape them in **PPRRIINNTT commands by writing
            ''\\::''.
 
-       VVRRUULLEE::_t_i_m_e##_c_o_l_o_r [::_l_e_g_e_n_d ]
+       VVRRUULLEE::_t_i_m_e##_c_o_l_o_r[::_l_e_g_-
+       _e_n_d][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_s_e_t]]
            Draw a vertical line at _t_i_m_e.  Its color is composed from three
            hexadecimal numbers specifying the rgb color components (00 is off,
            FF is maximum) red, green and blue followed by an optional alpha.
            Optionally, a legend box and string is printed in the legend sec-
            tion. _t_i_m_e may be a number or a variable from a VVDDEEFF. It is an
-           error to use _v_n_a_m_es from DDEEFF or CCDDEEFF here.
+           error to use _v_n_a_m_es from DDEEFF or CCDDEEFF here.  Dashed lines can be
+           drawn using the ddaasshheess modifier. See LLIINNEE for more details.
 
-       HHRRUULLEE::_v_a_l_u_e##_c_o_l_o_r [ :_l_e_g_e_n_d ]
+       HHRRUULLEE::_v_a_l_u_e##_c_o_l_o_r[::_l_e_g_-
+       _e_n_d][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_s_e_t]]
            Draw a horizontal line at _v_a_l_u_e.  HRULE acts much like LINE except
            that will have no effect on the scale of the graph. If a HRULE is
            outside the graphing area it will just not be visible.
 
-       LLIINNEE[_w_i_d_t_h]::_v_a_l_u_e[##_c_o_l_o_r][::[_l_e_g_e_n_d][::SSTTAACCKK]]
+       LLIINNEE[_w_i_d_t_h]::_v_a_l_u_e[##_c_o_l_o_r][::[_l_e_g_-
+       _e_n_d][::SSTTAACCKK]][::ddaasshheess[==_o_n___s[,_o_f_f___s[,_o_n___s,_o_f_f___s]...]][::ddaasshh--ooffffsseett==_o_f_f_-
+       _s_e_t]]
            Draw a line of the specified width onto the graph. _w_i_d_t_h can be a
            floating point number. If the color is not specified, the drawing
            is done 'invisibly'. This is useful when stacking something else on
@@ -181,6 +190,15 @@ DDEESSCCRRIIPPTTIIOONN
            be generated by DDEEFF, VVDDEEFF, and CCDDEEFF.  If the optional SSTTAACCKK modi-
            fier is used, this line is stacked on top of the previous element
            which can be a LLIINNEE or an AARREEAA.
+
+           The ddaasshheess modifier enables dashed line style. Without any further
+           options a symmetric dashed line with a segment length of 5 pixels
+           will be drawn. The dash pattern can be changed if the ddaasshheess==
+           parameter is followed by either one value or an even number (1, 2,
+           4, 6, ...) of positive values. Each value provides the length of
+           alternate _o_n___s and _o_f_f___s portions of the stroke. The ddaasshh--ooffffsseett
+           parameter specifies an _o_f_f_s_e_t into the pattern at which the stroke
+           begins.
 
            When you do not specify a color, you cannot specify a legend.
            Should you want to use STACK, use the "LINEx:<value>::STACK" form.
@@ -205,6 +223,13 @@ DDEESSCCRRIIPPTTIIOONN
            to tell the viewer of your graph you did this ...  As with the
            other graphing elements, you can specify a number or a variable
            here.
+
+       TTEEXXTTAALLIIGGNN::{lleefftt|rriigghhtt|jjuussttiiffiieedd|cceenntteerr}
+           Labels are placed below the graph. When they overflow to the left,
+           they wrap to the next line. By default, lines are justified left
+           and right. The TTEEXXTTAALLIIGGNN function lets you change this default.
+           This is a command and not an option, so that you can change the
+           default several times in your argument list.
 
        SSTTAACCKK::_v_n_a_m_e##_c_o_l_o_r[::_l_e_g_e_n_d]
            _D_e_p_r_e_c_a_t_e_d_.  _U_s_e _t_h_e _SS_TT_AA_CC_KK _m_o_d_i_f_i_e_r_s _o_n _t_h_e _o_t_h_e_r _c_o_m_m_a_n_d_s_.
@@ -263,6 +288,119 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
        characters or the sequence \\tt to line-up legend elements. Note that the
        tabs inserted are relative to the start of the current legend element!
 
+       Since RRDtool 1.3 is using Pango for rending text, you can use Pango
+       markup.  Pango uses the xml ssppaann tags for inline formatting instruc-
+       tions.:
+
+       A simple example of a marked-up string might be:
+
+        <span foreground="blue" size="x-large">Blue text</span> is <i>cool</i>!
+
+       The complete list of attributes for the span tag (taken from the pango
+       documentation):
+
+       ffoonntt__ddeesscc
+           A font description string, such as "Sans Italic 12"; note that any
+           other span attributes will override this description. So if you
+           have "Sans Italic" and also a style="normal" attribute, you will
+           get Sans normal, not italic.
+
+       ffoonntt__ffaammiillyy
+           A font family name
+
+       ffaaccee
+           Synonym for font_family
+
+       ssiizzee
+           Font size in 1024ths of a point, or one of the absolute sizes
+           'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large',
+           'xx-large', or one of the relative sizes 'smaller' or 'larger'. If
+           you want to specify a absolute size, it's usually easier to take
+           advantage of the ability to specify a partial font description
+           using 'font_desc'; you can use font_desc='12.5' rather than
+           size='12800'.
+
+       ssttyyllee
+           One of 'normal', 'oblique', 'italic'
+
+       wweeiigghhtt
+           One of 'ultralight', 'light', 'normal', 'bold', 'ultrabold',
+           'heavy', or a numeric weight
+
+       vvaarriiaanntt
+           'normal' or 'smallcaps'
+
+       ssttrreettcchh
+           One of 'ultracondensed', 'extracondensed', 'condensed', 'semicon-
+           densed', 'normal', 'semiexpanded', 'expanded', 'extraexpanded',
+           'ultraexpanded'
+
+       ffoorreeggrroouunndd
+           An RGB color specification such as '#00FF00' or a color name such
+           as 'red'
+
+       bbaacckkggrroouunndd
+           An RGB color specification such as '#00FF00' or a color name such
+           as 'red'
+
+       uunnddeerrlliinnee
+           One of 'none', 'single', 'double', 'low', 'error'
+
+       uunnddeerrlliinnee__ccoolloorr
+           The color of underlines; an RGB color specification such as
+           '#00FF00' or a color name such as 'red'
+
+       rriissee
+           Vertical displacement, in 10000ths of an em. Can be negative for
+           subscript, positive for superscript.
+
+       ssttrriikkeetthhrroouugghh
+           'true' or 'false' whether to strike through the text
+
+       ssttrriikkeetthhrroouugghh__ccoolloorr
+           The color of strikethrough lines; an RGB color specification such
+           as '#00FF00' or a color name such as 'red'
+
+       ffaallllbbaacckk
+           'true' or 'false' whether to enable fallback. If disabled, then
+           characters will only be used from the closest matching font on the
+           system. No fallback will be done to other fonts on the system that
+           might contain the characters in the text. Fallback is enabled by
+           default. Most applications should not disable fallback.
+
+       llaanngg
+           A language code, indicating the text language
+
+       lleetttteerr__ssppaacciinngg
+           Inter-letter spacing in 1024ths of a point.
+
+       ggrraavviittyy
+           One of 'south', 'east', 'north', 'west', 'auto'.
+
+       ggrraavviittyy__hhiinntt
+           One of 'natural', 'strong', 'line'.
+
+       To save you some typing, there are also some shortcuts:
+
+       bb   Bold
+
+       bbiigg Makes font relatively larger, equivalent to <span size="larger">
+
+       ii   Italic
+
+       ss   Strikethrough
+
+       ssuubb Subscript
+
+       ssuupp Superscript
+
+       ssmmaallll
+           Makes font relatively smaller, equivalent to <span size="smaller">
+
+       tttt  Monospace font
+
+       uu   Underline
+
 SSEEEE AALLSSOO
        rrdgraph gives an overview of how rrrrddttooooll ggrraapphh works.  rrdgraph_data
        describes DDEEFF,CCDDEEFF and VVDDEEFF in detail.  rrdgraph_rpn describes the RRPPNN
@@ -278,4 +416,4 @@ AAUUTTHHOORR
 
 
 
-1.2.27                            2008-02-17                 RRDGRAPH_GRAPH(1)
+1.3rc4                            2008-03-15                 RRDGRAPH_GRAPH(1)

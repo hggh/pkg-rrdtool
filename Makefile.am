@@ -2,12 +2,20 @@
 RSYNC = rsync --rsh=ssh
 
 # build the following subdirectories
-SUBDIRS = src doc examples bindings
+if BUILD_LIBINTL
+PO=po
+else
+PO=
+endif
 
-  # the following files are not mentioned in any other Makefile
+SUBDIRS = $(PO) src examples doc bindings
+
+ # the following files are not mentioned in any other Makefile
 EXTRA_DIST = COPYRIGHT CHANGES WIN32-BUILD-TIPS.txt TODO CONTRIBUTORS THREADS \
-	     rrdtool.spec favicon.ico win32/config.h win32/rrd.dsp win32/rrd.vcproj \
-	     win32/rrdtool.dsp win32/rrdtool.dsw win32/rrdtool.vcproj win32/Makefile \
+             intltool-extract.in  intltool-merge.in    intltool-update.in \
+	     rrdtool.spec favicon.ico win32/config.h win32/rrd.dsp \
+	     win32/rrd.vcproj win32/rrdtool.dsp win32/rrdtool.dsw \
+	     win32/rrdtool.vcproj win32/Makefile \
 	     win32/rrd_config.h.msvc netware/Makefile
 
 	     
@@ -46,5 +54,9 @@ site-tcl-install: all
 
 site-python-install: all
 	cd bindings/python && $(PYTHON) setup.py install
+
+# find . -name "*.c" -or -name "*.h" | xargs perl -0777 -n -e 'while (s/typedef\s+(?:unsigned\s+|signed\s+|unival\s+)?\S+\s+\*?([^{}\s;(]+)//){print "-T$1\n"}'
+indent:
+	find ./ -name "*.[ch]" | xargs indent
 
 ##END##

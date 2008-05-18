@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDTUNE 1"
-.TH RRDTUNE 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDTUNE 1 "2008-03-15" "1.3rc4" "rrdtool"
 .SH "NAME"
 rrdtune \- Modify some basic properties of a Round Robin Database
 .SH "SYNOPSIS"
@@ -148,6 +148,8 @@ rrdtune \- Modify some basic properties of a Round Robin Database
 [\fB\-\-beta\fR\ \fIadaption-parameter\fR]
 [\fB\-\-gamma\fR\ \fIadaption-parameter\fR]
 [\fB\-\-gamma\-deviation\fR\ \fIadaption-parameter\fR]
+[\fB\-\-smoothing\-window\fR\ \fIfraction-of-season\fR]
+[\fB\-\-smoothing\-window\-deviation\fR\ \fIfraction-of-season\fR]
 [\fB\-\-aberrant\-reset\fR\ \fIds-name\fR]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
@@ -229,18 +231,27 @@ Alter the seasonal coefficient adaptation parameter for the \s-1SEASONAL\s0
 .IX Item "--gamma-deviationadaption-parameter"
 Alter the seasonal deviation adaptation parameter for the \s-1DEVSEASONAL\s0
 \&\fB\s-1RRA\s0\fR. This parameter must be between 0 and 1.
+.IP "\fB\-\-smoothing\-window\fR\ \fIfraction-of-season\fR" 8
+.IX Item "--smoothing-windowfraction-of-season"
+Alter the size of the smoothing window for the \s-1SEASONAL\s0 \fB\s-1RRA\s0\fR. This must
+be between 0 and 1.
+.IP "\fB\-\-smoothing\-window\-deviation\fR\ \fIfraction-of-season\fR" 8
+.IX Item "--smoothing-window-deviationfraction-of-season"
+Alter the size of the smoothing window for the \s-1DEVSEASONAL\s0 \fB\s-1RRA\s0\fR. This must
+be between 0 and 1.
 .IP "\fB\-\-aberrant\-reset\fR\ \fIds-name\fR" 8
 .IX Item "--aberrant-resetds-name"
 This option causes the aberrant behavior detection algorithm to reset
 for the specified data source; that is, forget all it is has learnt so far.
-Specifically, for the \s-1HWPREDICT\s0 \fB\s-1RRA\s0\fR, it sets the intercept and slope
-coefficients to unknown. For the \s-1SEASONAL\s0 \fB\s-1RRA\s0\fR, it sets all seasonal
+Specifically, for the \s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0 \fB\s-1RRA\s0\fR, it sets the intercept and
+slope coefficients to unknown. For the \s-1SEASONAL\s0 \fB\s-1RRA\s0\fR, it sets all seasonal
 coefficients to unknown. For the \s-1DEVSEASONAL\s0 \fB\s-1RRA\s0\fR, it sets all seasonal
-deviation coefficients to unknown. For the \s-1FAILURES\s0 \fB\s-1RRA\s0\fR, it erases
-the violation history. Note that reset does not erase past predictions
-(the values of the \s-1HWPREDICT\s0 \fB\s-1RRA\s0\fR), predicted deviations (the values of the
-\&\s-1DEVPREDICT\s0 \fB\s-1RRA\s0\fR), or failure history (the values of the \s-1FAILURES\s0 \fB\s-1RRA\s0\fR).
-This option will function even if not all the listed \fBRRAs\fR are present.
+deviation coefficients to unknown. For the \s-1FAILURES\s0 \fB\s-1RRA\s0\fR, it erases the
+violation history. Note that reset does not erase past predictions
+(the values of the \s-1HWPREDICT\s0 or \s-1MHWPREDICT\s0 \fB\s-1RRA\s0\fR), predicted deviations (the
+values of the \s-1DEVPREDICT\s0 \fB\s-1RRA\s0\fR), or failure history (the values of the 
+\&\s-1FAILURES\s0 \fB\s-1RRA\s0\fR).  This option will function even if not all the listed 
+\&\fBRRAs\fR are present.
 .Sp
 Due to the implementation of this option, there is an indirect impact on
 other data sources in the \s-1RRD\s0. A smoothing algorithm is applied to

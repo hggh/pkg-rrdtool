@@ -7,17 +7,19 @@
 
 Summary: Round Robin Database Tool to store and display time-series data
 Name: rrdtool
-Version: 1.2.27
-Release: 5%{?dist}
+Version: 1.3rc4
+Release: 0.1%{?dist}
 License: GPL
 Group: Applications/Databases
 URL: http://oss.oetiker.ch/rrdtool/
-Source0: http://oss.oetiker.ch/%{name}/pub/%{name}-%{version}.tar.gz
+#Source0: http://oss.oetiker.ch/%{name}/pub/%{name}-%{version}.tar.gz
+Source0: http://oss.oetiker.ch/rrdtool/pub/beta/rrdtool-trunk-svn-snap.tar.gz
 Source1: php4-svn%{php_rrd_svn}.tar.gz
 Patch0: rrdtool-1.2.13-php.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gcc-c++, openssl-devel, freetype-devel
-BuildRequires: libpng-devel, zlib-devel, libart_lgpl-devel >= 2.0
+BuildRequires: libpng-devel, zlib-devel, cairo-devel
+BuildRequires: perl-ExtUtils-MakeMaker
 %if "%{?fedora}" >= "7"
 BuildRequires: perl-devel
 %endif
@@ -128,7 +130,8 @@ The %{name}-ruby package includes RRDtool bindings for Ruby.
 %endif
 
 %prep
-%setup -q
+#setup -q
+%setup -q -n %{name}-%{version}
 %setup -q -T -D -a 1
 # Patch based on http://oss.oetiker.ch/rrdtool/pub/contrib/php_rrdtool.tgz
 %if %{with_php}
@@ -146,6 +149,11 @@ The %{name}-ruby package includes RRDtool bindings for Ruby.
     configure Makefile.in php4/configure php4/ltconfig*
 
 %build
+intltoolize --automake -c -f
+aclocal
+autoheader
+autoconf
+automake -a -c -f
 %configure \
     --with-perl-options='INSTALLDIRS="vendor"' \
 %if %{with_tcl}
@@ -303,6 +311,9 @@ find examples/ -type f -exec chmod 0644 {} \;
 %endif
 
 %changelog
+* Fri Jun 15 2007 Jarod Wilson <jwilson@redhat.com> 1.2.999050724000-0.1
+- Update for rrdtool pre-1.3 snapshot
+
 * Mon May 21 2007 Jarod Wilson <jwilson@redhat.com> 1.2.23-5
 - BR: ruby so %%ruby_sitearch gets set
 

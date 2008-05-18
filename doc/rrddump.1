@@ -129,16 +129,16 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDDUMP 1"
-.TH RRDDUMP 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDDUMP 1 "2008-05-16" "1.3rc4" "rrdtool"
 .SH "NAME"
 rrddump \- dump the contents of an RRD to XML format
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-\&\fBrrdtool\fR \fBdump\fR \fIfilename.rrd\fR > \fIfilename.xml\fR
+\&\fBrrdtool\fR \fBdump\fR [\fB\-\-no\-header\fR|\fB\-n\fR] \fIfilename.rrd\fR > \fIfilename.xml\fR
 .PP
 or 
 .PP
-\&\fBrrdtool\fR \fBdump\fR \fIfilename.rrd\fR \fIfilename.xml\fR
+\&\fBrrdtool\fR \fBdump\fR [\fB\-\-no\-header\fR|\fB\-n\fR] \fIfilename.rrd\fR \fIfilename.xml\fR
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 The \fBdump\fR function writes the contents of an \fB\s-1RRD\s0\fR in human
@@ -154,6 +154,12 @@ The name of the \fB\s-1RRD\s0\fR you want to dump.
 .IX Item "filename.xml"
 The (optional) filename that you want to write the \s-1XML\s0 output to.
 If not specified, the \s-1XML\s0 will be printed to stdout.
+.IP "[\fB\-\-no\-header\fR|\fB\-n\fR]" 8
+.IX Item "[--no-header|-n]"
+In rrdtool 1.3, the dump function started producing correct xml\-headers.
+Unfortunately the rrdtool restore function from the 1.2 series can not
+handle these headers. With this option you can supress the creatinon of
+the xml headers.
 .SH "EXAMPLES"
 .IX Header "EXAMPLES"
 To transfer an \s-1RRD\s0 between architectures, follow these steps:
