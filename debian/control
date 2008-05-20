@@ -5,7 +5,7 @@ Maintainer: Debian RRDtool Team <rrdtool@ml.snow-crash.org>
 Uploaders: Sebastian Harl <sh@tokkee.org>, Alexander Wirt <formorer@debian.org>, Bernd Zeimetz <bzed@debian.org>
 Standards-Version: 3.7.3
 Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
- zlib1g-dev, libpng12-dev, libart-2.0-dev, libfreetype6-dev,
+ zlib1g-dev, libpng12-dev, libcairo2-dev, libpango1.0-dev, libfreetype6-dev,
  tcl-dev,
  perl (>= 5.8.0),
  python-all-dev (>= 2.3.5-10), python-support (>= 0.4),
@@ -52,7 +52,7 @@ Description: Time-series data storage and display system (runtime library)
 Package: librrd2-dev
 Architecture: any
 Section: libdevel
-Depends: librrd2 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libart-2.0-dev, libfreetype6-dev, ${misc:Depends}
+Depends: librrd2 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libcairo2-dev, libpango1.0-dev, libfreetype6-dev, ${misc:Depends}
 Conflicts: librrd0-dev, librrd0
 Replaces: librrd0
 Provides: librrd-dev
