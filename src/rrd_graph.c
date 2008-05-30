@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -200,16 +200,6 @@ double ytr(
         } else {
             yval = im->yorigin - pixie * (log10(value) - log10(im->minval));
         }
-    }
-    /* make sure we don't return anything too unreasonable. GD lib can
-       get terribly slow when drawing lines outside its scope. This is 
-       especially problematic in connection with the rigid option */
-    if (!im->rigid) {
-        /* keep yval as-is */
-    } else if (yval > im->yorigin) {
-        yval = im->yorigin + 0.00001;
-    } else if (yval < im->yorigin - im->ysize) {
-        yval = im->yorigin - im->ysize - 0.00001;
     }
     return yval;
 }
@@ -1122,6 +1112,10 @@ int data_calc(
     return 0;
 }
 
+/* from http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm */
+/* yes we are loosing precision by doing tos with floats instead of doubles
+   but it seems more stable this way. */
+
 static int AlmostEqual2sComplement(
     float A,
     float B,
@@ -1256,7 +1250,7 @@ int data_proc(
 
     if (im->logarithmic) {
         if (isnan(minval) || isnan(maxval) || maxval <= 0) {
-            minval = 0.0; /* catching this right away below */
+            minval = 0.0;   /* catching this right away below */
             maxval = 5.1;
         }
         /* in logarithm mode, where minval is smaller or equal 
@@ -1271,7 +1265,7 @@ int data_proc(
         }
     }
 
-    /* adjust min and max values given by the user*/
+    /* adjust min and max values given by the user */
     /* for logscale we add something on top */
     if (isnan(im->minval)
         || ((!im->rigid) && im->minval > minval)
@@ -1618,7 +1612,8 @@ int leg_place(
     int       border = im->text_prop[TEXT_PROP_LEGEND].size * 2.0;
     int       fill = 0, fill_last;
     int       leg_c = 0;
-    int       leg_x = border, leg_y = im->yimg;
+    int       leg_x = border;
+    int       leg_y = im->yimg;
     int       leg_y_prev = im->yimg;
     int       leg_cc;
     int       glue = 0;
@@ -1626,6 +1621,7 @@ int leg_place(
     char      prt_fctn; /*special printfunctions */
     char      default_txtalign = TXA_JUSTIFIED; /*default line orientation */
     int      *legspace;
+    char     *tab;
 
     if (!(im->extra_flags & NOLEGEND) & !(im->extra_flags & ONLY_GRAPH)) {
         if ((legspace = malloc(im->gdes_c * sizeof(int))) == NULL) {
@@ -1654,13 +1650,16 @@ int leg_place(
                     im->gdes[i].legend[0] = '\0';
             }
 
+            /* turn \\t into tab */
+            while ((tab = strstr(im->gdes[i].legend, "\\t"))) {
+                memmove(tab, tab + 1, strlen(tab));
+                tab[0] = (char) 9;
+            }
             leg_cc = strlen(im->gdes[i].legend);
             /* is there a controle code ant the end of the legend string ? */
-            /* and it is not a tab \\t */
             if (leg_cc >= 2
                 && im->gdes[i].legend[leg_cc -
-                                      2] == '\\'
-                && im->gdes[i].legend[leg_cc - 1] != 't') {
+                                      2] == '\\' ) {
                 prt_fctn = im->gdes[i].legend[leg_cc - 1];
                 leg_cc -= 2;
                 im->gdes[i].legend[leg_cc] = '\0';
@@ -1673,7 +1672,7 @@ int leg_place(
                 prt_fctn != 'j' &&
                 prt_fctn != 'c' &&
                 prt_fctn != 's' &&
-                prt_fctn != 't' && prt_fctn != '\0' && prt_fctn != 'g') {
+                prt_fctn != '\0' && prt_fctn != 'g') {
                 free(legspace);
                 rrd_set_error
                     ("Unknown control code at the end of '%s\\%c'",
@@ -1809,10 +1808,7 @@ int leg_place(
                     leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
             }
         } else {
-            im->yimg = leg_y_prev;
-            /* if we did place some legends we have to add vertical space */
-            if (leg_y != im->yimg)
-                im->yimg += im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
+            im->yimg = leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 + border * 0.6;
         }
         free(legspace);
     }
@@ -1824,8 +1820,6 @@ int leg_place(
 
 /* the xaxis labels are determined from the number of seconds per pixel
    in the requested graph */
-
-
 
 int calc_horizontal_grid(
     image_desc_t
@@ -1864,13 +1858,13 @@ int calc_horizontal_grid(
             if (im->ygrid_scale.gridstep == 0)  /* range is one -> 0.1 is reasonable scale */
                 im->ygrid_scale.gridstep = 0.1;
             /* should have at least 5 lines but no more then 15 */
-            if (range / im->ygrid_scale.gridstep < 5)
+            if (range / im->ygrid_scale.gridstep < 5 && im->ygrid_scale.gridstep >= 30 )
                 im->ygrid_scale.gridstep /= 10;
             if (range / im->ygrid_scale.gridstep > 15)
                 im->ygrid_scale.gridstep *= 10;
-            if (range / im->ygrid_scale.gridstep > 5) {
+            if (range / im->ygrid_scale.gridstep > 5 ) {
                 im->ygrid_scale.labfact = 1;
-                if (range / im->ygrid_scale.gridstep > 8)
+                if (range / im->ygrid_scale.gridstep > 8 || im->ygrid_scale.gridstep < 1.8 * im->text_prop[TEXT_PROP_AXIS].size )
                     im->ygrid_scale.labfact = 2;
             } else {
                 im->ygrid_scale.gridstep /= 5;
@@ -1897,17 +1891,17 @@ int calc_horizontal_grid(
                 sprintf(im->ygrid_scale.labfmt,
                         "%%%d.0f%s", len, (im->symbol != ' ' ? " %c" : ""));
             }
-        } else {
+        } else { /* classic rrd grid */
             for (i = 0; ylab[i].grid > 0; i++) {
                 pixel = im->ysize / (scaledrange / ylab[i].grid);
                 gridind = i;
-                if (pixel > 7)
+                if (pixel >= 5)
                     break;
             }
 
             for (i = 0; i < 4; i++) {
                 if (pixel * ylab[gridind].lfac[i] >=
-                    2.5 * im->text_prop[TEXT_PROP_AXIS].size) {
+                    1.8 * im->text_prop[TEXT_PROP_AXIS].size) {
                     im->ygrid_scale.labfact = ylab[gridind].lfac[i];
                     break;
                 }
@@ -2048,10 +2042,6 @@ double frexp10(
     *e = iexp;
     return mnt;
 }
-
-/* from http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm */
-/* yes we are loosing precision by doing tos with floats instead of doubles
-   but it seems more stable this way. */
 
 
 /* logaritmic horizontal grid */
@@ -3033,31 +3023,29 @@ int graph_paint(
     case IF_PDF:
         im->gridfit = 0;
         im->surface = strlen(im->graphfile)
-            ?
-            cairo_pdf_surface_create_for_stream
-            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom)
-            : cairo_pdf_surface_create(im->graphfile, im->ximg * im->zoom,
-                                       im->yimg * im->zoom);
+            ? cairo_pdf_surface_create(im->graphfile, im->ximg * im->zoom,
+                                       im->yimg * im->zoom)
+            : cairo_pdf_surface_create_for_stream
+            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom);
         break;
     case IF_EPS:
         im->gridfit = 0;
         im->surface = strlen(im->graphfile)
             ?
-            cairo_ps_surface_create_for_stream
-            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom)
-            : cairo_ps_surface_create(im->graphfile, im->ximg * im->zoom,
-                                      im->yimg * im->zoom);
+            cairo_ps_surface_create(im->graphfile, im->ximg * im->zoom,
+                                    im->yimg * im->zoom)
+            : cairo_ps_surface_create_for_stream
+            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom);
         break;
     case IF_SVG:
         im->gridfit = 0;
         im->surface = strlen(im->graphfile)
             ?
-            cairo_svg_surface_create_for_stream
-            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom)
-            : cairo_svg_surface_create(im->
-                                       graphfile,
-                                       im->
-                                       ximg * im->zoom, im->yimg * im->zoom);
+            cairo_svg_surface_create(im->
+                                     graphfile,
+                                     im->ximg * im->zoom, im->yimg * im->zoom)
+            : cairo_svg_surface_create_for_stream
+            (&cairo_output, im, im->ximg * im->zoom, im->yimg * im->zoom);
         cairo_svg_surface_restrict_to_version
             (im->surface, CAIRO_SVG_VERSION_1_1);
         break;
@@ -3078,7 +3066,9 @@ int graph_paint(
                  im->xsize,
                  im->yorigin - im->ysize, im->graph_col[GRC_CANVAS]);
     gfx_add_point(im, im->xorigin, im->yorigin - im->ysize);
-    gfx_close_path(im);
+    gfx_close_path(im);    
+    cairo_rectangle(im->cr, im->xorigin, im->yorigin-im->ysize-1.0, im->xsize,im->ysize+2.0);
+    cairo_clip(im->cr);
     if (im->minval > 0.0)
         areazero = im->minval;
     if (im->maxval < 0.0)
@@ -3366,6 +3356,7 @@ int graph_paint(
             break;
         }               /* switch */
     }
+    cairo_reset_clip(im->cr);
 
     /* grid_paint also does the text */
     if (!(im->extra_flags & ONLY_GRAPH))
@@ -3433,8 +3424,8 @@ int graph_paint(
             rrd_set_error("Could not save png to '%s'", im->graphfile);
             return 1;
         }
-    }
         break;
+    }
     default:
         if (strlen(im->graphfile)) {
             cairo_show_page(im->cr);

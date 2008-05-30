@@ -1,11 +1,11 @@
 /*****************************************************************************
- * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
  * This code is stolen from rateup (mrtg-2.x) by Dave Rand
  *****************************************************************************
  * diff calculate the difference between two very long integers available as
  *      strings
  *****************************************************************************
- * $Id: rrd_diff.c 1366 2008-05-18 13:06:44Z oetiker $
+ * $Id: rrd_diff.c 1380 2008-05-26 08:56:58Z oetiker $
  * $Log$
  * Revision 1.4  2003/03/10 00:30:34  oetiker
  * handle cases with two negative numbers

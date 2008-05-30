@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.c  Startup wrapper
  *****************************************************************************/
@@ -141,6 +141,7 @@ void PrintUsage(
            "\t\t[-M|--alt-autoscale-max]\n"
            "\t\t[-R|--font-render-mode {normal,light,mono}]\n"
            "\t\t[-B|--font-smoothing-threshold size]\n"
+           "\t\t[-T|--tabwidth width]\n"
            "\t\t[-E|--slope-mode]\n"
            "\t\t[-N|--no-gridfit]\n"
            "\t\t[-X|--units-exponent value]\n"
@@ -804,6 +805,7 @@ int HandleInputLine(
 
     } else if (strcmp("graphv", argv[1]) == 0) {
         info_t   *grinfo = NULL;    /* 1 to distinguish it from the NULL that rrd_graph sends in */
+
         grinfo = rrd_graph_v(argc - 1, &argv[1]);
         if (grinfo) {
             info_print(grinfo);
