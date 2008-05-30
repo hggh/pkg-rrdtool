@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDBUILD 1"
-.TH RRDBUILD 1 "2008-05-18" "1.3rc4" "rrdtool"
+.TH RRDBUILD 1 "2008-05-26" "1.3rc6" "rrdtool"
 .SH "NAME"
 rrdbuild \- Instructions for building RRDtool
 .SH "OVERVIEW"
@@ -163,7 +163,7 @@ Once you have decided. Save the two locations into environment variables.
 .PP
 .Vb 2
 \& BUILD_DIR=/tmp/rrdbuild
-\& INSTALL_DIR=/usr/local/rrdtool\-1.3rc4
+\& INSTALL_DIR=/usr/local/rrdtool\-1.3rc6
 .Ve
 .PP
 If your \fI/tmp\fR is mounted with the option noexec (\s-1RHEL\s0 seems todo that) you have to choose
@@ -180,9 +180,9 @@ Lets first assume you already have all the necessary libraries
 pre\-installed. 
 .PP
 .Vb 4
-\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3rc4.tar.gz
-\& gunzip \-c rrdtool\-1.3rc4.tar.gz | tar xf \-
-\& cd rrdtool\-1.3rc4
+\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3rc6.tar.gz
+\& gunzip \-c rrdtool\-1.3rc6.tar.gz | tar xf \-
+\& cd rrdtool\-1.3rc6
 \& ./configure \-\-prefix=$INSTALL_DIR && make && make install
 .Ve
 .PP
@@ -443,7 +443,7 @@ tcl setups that would prevent rrdtool from building if they are included in
 their current state.
 .PP
 .Vb 5
-\& cd $BUILD_DIR/rrdtool\-1.3rc4
+\& cd $BUILD_DIR/rrdtool\-1.3rc6
 \& ./configure \-\-prefix=$INSTALL_DIR \-\-disable\-tcl \-\-disable\-python
 \& $MAKE clean
 \& $MAKE

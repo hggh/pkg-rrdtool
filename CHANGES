@@ -1,3 +1,88 @@
+2008-05-26 08:56  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3rc6
+
+2008-05-26 07:46  oetiker
+
+	* NEWS: added notes about new grid lines
+
+2008-05-26 07:45  oetiker
+
+	* src/rrd_graph.c: * make y-axis labels NOT run into each other
+	  (classic and alt) * space horizontal grid lines and lables a bit
+	  further apart for tight layouts. * let horizontal lines and y axis
+	  labels run a little closer for classic grid
+
+2008-05-25 21:17  oetiker
+
+	* src/rrd_graph.c: fixed calculation of space at the bottom of the
+	  graph
+
+2008-05-25 20:02  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3rc5
+
+2008-05-25 20:00  oetiker
+
+	* src/rrd_format.h, src/rrd_open.c, src/rrd_update.c: fix update
+	  compatibility with rrd-1.0.x files
+
+2008-05-20 22:22  oetiker
+
+	* bindings/Makefile.am: droped rrd_extra.h from the distro with the
+	  python update ... must remove it from the Makefile too
+
+2008-05-19 21:14  oetiker
+
+	* NEWS, bindings/python/README, bindings/python/rrd_extra.h,
+	  bindings/python/rrdtoolmodule.c, doc/rrdpython.pod: fixed python
+	  bindings: * info call isnnow aequivalent to rrdtool info (the same
+	  as in the perl and ruby bindings) * graphv and updatev calls added
+
+2008-05-18 22:11  oetiker
+
+	* src/rrd_gfx.c, src/rrd_graph.c, src/rrd_tool.c: * document
+	  tabwidth option * fix \t -> tab expansion
+
+2008-05-18 15:39  oetiker
+
+	* src/rrd_graph.c: ytr boundery checking ... this is from the GD
+	  days ... we don't need this anymore
+
+2008-05-18 15:11  oetiker
+
+	* src/rrd_dump.c, src/rrd_tool.c: fix indenting
+
+2008-05-18 15:11  oetiker
+
+	* src/rrd_graph.c: pdf, svg and ps formats were not being created
+
 2008-05-18 13:06  oetiker
 
 	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,

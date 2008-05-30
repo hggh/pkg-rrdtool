@@ -1,10 +1,10 @@
 
 /*****************************************************************************
- * RRDtool 1.3rc4  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1366 2008-05-18 13:06:44Z oetiker $
+ * $Id: rrd_update.c 1380 2008-05-26 08:56:58Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -832,6 +832,9 @@ static int process_arg(
     rrd->live_head->last_up = *current_time;
     rrd->live_head->last_up_usec = *current_time_usec;
 
+    if ( version < 3 ){
+        *rrd->legacy_last_up = rrd->live_head->last_up;
+    }
     free(seasonal_coef);
     free(last_seasonal_coef);
     return 0;
@@ -2053,7 +2056,7 @@ static int write_changes_to_disk(
             return -1;
         }
     } else {
-        if (rrd_write(rrd_file, &rrd->live_head->last_up,
+        if (rrd_write(rrd_file, rrd->legacy_last_up,
                       sizeof(time_t) * 1) != sizeof(time_t) * 1) {
             rrd_set_error("rrd_write live_head to rrd");
             return -1;

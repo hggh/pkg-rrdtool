@@ -20,4 +20,4 @@ AAUUTTHHOORR
 
 
 
-1.3rc4                            2008-03-15                        RRDLAST(1)
+1.3rc6                            2008-03-15                        RRDLAST(1)
