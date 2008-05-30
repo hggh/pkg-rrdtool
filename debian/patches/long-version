@@ -6,8 +6,8 @@ index e37104b..710814d 100644
  sub end ();
  sub read ();
  
--$VERSION=1.299908051800;
-+$VERSION=1.2999001;
+-$VERSION=1.299908052600;
++$VERSION=1.2999002;
  
  sub start ($){
    croak "rrdtool is already running"
@@ -19,8 +19,8 @@ index b75c9f0..918c642 100644
  
  require DynaLoader;
  
--$VERSION=1.299908051800;
-+$VERSION=1.2999001;
+-$VERSION=1.299908052600;
++$VERSION=1.2999002;
  
  bootstrap RRDs $VERSION;
  
@@ -32,8 +32,8 @@ index acfddca..62e0d89 100755
  
  
  
--NUMVERS=1.299908051800
-+NUMVERS=1.2999001
+-NUMVERS=1.299908052600
++NUMVERS=1.2999002
  
  
  LIBVERS=3:2:1

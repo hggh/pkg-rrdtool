@@ -5,20 +5,20 @@ librrd.so.2 librrd2 #MINVER#
  FnvHash@Base 1.2.15
  HandleInputLine@Base 1.2.15
  LockRRD@Base 1.2.15
-#MISSING: 1.3~rc4# MyMod@Base 1.2.15
+#MISSING: 1.3~rc6# MyMod@Base 1.2.15
  PngSize@Base 1.2.15
  PrintUsage@Base 1.2.15
  RemoteMode@Base 1.2.15
  _rrd_update@Base 1.2.15
  addop2str@Base 1.2.15
-#MISSING: 1.3~rc4# afm_fontinfo_count@Base 1.2.15
-#MISSING: 1.3~rc4# afm_fontinfolist@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_ascender@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_descender@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_font_name@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_font_postscript_name@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_text_width@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_text_width_wide@Base 1.2.15
+#MISSING: 1.3~rc6# afm_fontinfo_count@Base 1.2.15
+#MISSING: 1.3~rc6# afm_fontinfolist@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_ascender@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_descender@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_font_name@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_font_postscript_name@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_text_width@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_text_width_wide@Base 1.2.15
  apply_gridfit@Base 1.2.15
  apply_smoother@Base 1.2.15
  auto_scale@Base 1.2.15
@@ -37,7 +37,7 @@ librrd.so.2 librrd2 #MINVER#
  draw_horizontal_grid@Base 1.2.15
  ds_match@Base 1.2.15
  dst_conv@Base 1.2.15
-#MISSING: 1.3~rc4# eat_tag@Base 1.2.15
+#MISSING: 1.3~rc6# eat_tag@Base 1.2.15
  erase_violations@Base 1.2.15
  expand_range@Base 1.2.15
  find_first_time@Base 1.2.15
@@ -50,50 +50,50 @@ librrd.so.2 librrd2 #MINVER#
  gdes_alloc@Base 1.2.15
  gf_conv@Base 1.2.15
  gfx_add_point@Base 1.2.15
- gfx_area_fit@Base 1.3~rc4
+ gfx_area_fit@Base 1.3~rc6
  gfx_close_path@Base 1.2.15
- gfx_dashed_line@Base 1.3~rc4
-#MISSING: 1.3~rc4# gfx_destroy@Base 1.2.15
+ gfx_dashed_line@Base 1.3~rc6
+#MISSING: 1.3~rc6# gfx_destroy@Base 1.2.15
  gfx_get_text_width@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_get_text_width_libart@Base 1.2.15
- gfx_hex_to_col@Base 1.3~rc4
- gfx_line@Base 1.3~rc4
- gfx_line_fit@Base 1.3~rc4
+#MISSING: 1.3~rc6# gfx_get_text_width_libart@Base 1.2.15
+ gfx_hex_to_col@Base 1.3~rc6
+ gfx_line@Base 1.3~rc6
+ gfx_line_fit@Base 1.3~rc6
  gfx_new_area@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_canvas@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_dashed_line@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_line@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_text@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_eps@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_pdf@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_png@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_svg@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_string_create@Base 1.2.15
- gfx_text@Base 1.3~rc4
-#MISSING: 1.3~rc4# gnome_print_art_rgba_svp_alpha@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_canvas@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_dashed_line@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_line@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_text@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_eps@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_pdf@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_png@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_svg@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_string_create@Base 1.2.15
+ gfx_text@Base 1.3~rc6
+#MISSING: 1.3~rc6# gnome_print_art_rgba_svp_alpha@Base 1.2.15
  graph_col@Base 1.2.15
  graph_paint@Base 1.2.15
  graph_size_location@Base 1.2.15
  grc_conv@Base 1.2.15
  grid_paint@Base 1.2.15
- grinfo_push@Base 1.3~rc4
+ grinfo_push@Base 1.3~rc6
  horizontal_log_grid@Base 1.2.15
- hw_additive_calculate_intercept@Base 1.3~rc4
- hw_additive_calculate_prediction@Base 1.3~rc4
- hw_additive_calculate_seasonality@Base 1.3~rc4
- hw_additive_init_seasonality@Base 1.3~rc4
- hw_calculate_seasonal_deviation@Base 1.3~rc4
- hw_calculate_slope@Base 1.3~rc4
- hw_init_seasonal_deviation@Base 1.3~rc4
- hw_multiplicative_calculate_intercept@Base 1.3~rc4
- hw_multiplicative_calculate_prediction@Base 1.3~rc4
- hw_multiplicative_calculate_seasonality@Base 1.3~rc4
- hw_multiplicative_init_seasonality@Base 1.3~rc4
+ hw_additive_calculate_intercept@Base 1.3~rc6
+ hw_additive_calculate_prediction@Base 1.3~rc6
+ hw_additive_calculate_seasonality@Base 1.3~rc6
+ hw_additive_init_seasonality@Base 1.3~rc6
+ hw_calculate_seasonal_deviation@Base 1.3~rc6
+ hw_calculate_slope@Base 1.3~rc6
+ hw_init_seasonal_deviation@Base 1.3~rc6
+ hw_multiplicative_calculate_intercept@Base 1.3~rc6
+ hw_multiplicative_calculate_prediction@Base 1.3~rc6
+ hw_multiplicative_calculate_seasonality@Base 1.3~rc6
+ hw_multiplicative_init_seasonality@Base 1.3~rc6
  if_conv@Base 1.2.15
  im_free@Base 1.2.15
- info_free@Base 1.3~rc4
- info_print@Base 1.3~rc4
+ info_free@Base 1.3~rc6
+ info_print@Base 1.3~rc6
  info_push@Base 1.2.15
  init_hwpredict_cdp@Base 1.2.15
  init_seasonal_cdp@Base 1.2.15
@@ -105,9 +105,9 @@ librrd.so.2 librrd2 #MINVER#
  main@Base 1.2.15
  parseCDEF_DS@Base 1.2.15
  parseGENERIC_DS@Base 1.2.15
-#MISSING: 1.3~rc4# parse_FAILURES_history@Base 1.2.15
-#MISSING: 1.3~rc4# parse_patch1028_CDP_params@Base 1.2.15
-#MISSING: 1.3~rc4# parse_patch1028_RRA_params@Base 1.2.15
+#MISSING: 1.3~rc6# parse_FAILURES_history@Base 1.2.15
+#MISSING: 1.3~rc6# parse_patch1028_CDP_params@Base 1.2.15
+#MISSING: 1.3~rc6# parse_patch1028_RRA_params@Base 1.2.15
  parsetime@Base 1.2.15
  print_calc@Base 1.2.15
  proc_start_end@Base 1.2.15
@@ -116,7 +116,7 @@ librrd.so.2 librrd2 #MINVER#
  queue_isempty@Base 1.2.15
  queue_pop@Base 1.2.15
  queue_push@Base 1.2.15
-#MISSING: 1.3~rc4# read_tag@Base 1.2.15
+#MISSING: 1.3~rc6# read_tag@Base 1.2.15
  readfile@Base 1.2.15
  reduce_data@Base 1.2.15
  reset_aberrant_coefficients@Base 1.2.15
@@ -127,23 +127,23 @@ librrd.so.2 librrd2 #MINVER#
  rpn_parse@Base 1.2.15
  rpnstack_free@Base 1.2.15
  rpnstack_init@Base 1.2.15
- rra_random_row@Base 1.3~rc4
+ rra_random_row@Base 1.3~rc6
  rrd_clear_error@Base 1.2.15
- rrd_close@Base 1.3~rc4
+ rrd_close@Base 1.3~rc6
  rrd_create@Base 1.2.15
  rrd_create_fn@Base 1.2.15
  rrd_create_r@Base 1.2.15
  rrd_diff@Base 1.2.15
- rrd_dontneed@Base 1.3~rc4
+ rrd_dontneed@Base 1.3~rc6
  rrd_dump@Base 1.2.15
- rrd_dump_opt_r@Base 1.3~rc4
+ rrd_dump_opt_r@Base 1.3~rc6
  rrd_dump_r@Base 1.2.15
  rrd_fetch@Base 1.2.15
  rrd_fetch_fn@Base 1.2.15
  rrd_fetch_r@Base 1.2.26
  rrd_first@Base 1.2.15
  rrd_first_r@Base 1.2.15
- rrd_flush@Base 1.3~rc4
+ rrd_flush@Base 1.3~rc6
  rrd_free@Base 1.2.15
  rrd_free_context@Base 1.2.15
  rrd_freemem@Base 1.2.15
@@ -155,7 +155,7 @@ librrd.so.2 librrd2 #MINVER#
  rrd_graph_init@Base 1.2.15
  rrd_graph_options@Base 1.2.15
  rrd_graph_script@Base 1.2.15
- rrd_graph_v@Base 1.3~rc4
+ rrd_graph_v@Base 1.3~rc6
  rrd_info@Base 1.2.15
  rrd_info_r@Base 1.2.15
  rrd_init@Base 1.2.15
@@ -175,17 +175,17 @@ librrd.so.2 librrd2 #MINVER#
  rrd_parse_make_vname@Base 1.2.15
  rrd_parse_print@Base 1.2.15
  rrd_parse_shift@Base 1.2.15
- rrd_parse_textalign@Base 1.3~rc4
+ rrd_parse_textalign@Base 1.3~rc6
  rrd_parse_vdef@Base 1.2.15
  rrd_parse_xport@Base 1.2.15
- rrd_read@Base 1.3~rc4
+ rrd_read@Base 1.3~rc6
  rrd_resize@Base 1.2.15
  rrd_restore@Base 1.2.15
- rrd_seek@Base 1.3~rc4
+ rrd_seek@Base 1.3~rc6
  rrd_set_error@Base 1.2.15
  rrd_strerror@Base 1.2.15
  rrd_strversion@Base 1.2.19
- rrd_tell@Base 1.3~rc4
+ rrd_tell@Base 1.3~rc6
  rrd_test_error@Base 1.2.15
  rrd_tune@Base 1.2.15
  rrd_update@Base 1.2.15
@@ -202,8 +202,8 @@ librrd.so.2 librrd2 #MINVER#
  set_to_DNAN@Base 1.2.15
  set_windowarg@Base 1.2.15
  si_unit@Base 1.2.15
-#MISSING: 1.3~rc4# skip@Base 1.2.15
-#MISSING: 1.3~rc4# skipxml@Base 1.2.15
+#MISSING: 1.3~rc6# skip@Base 1.2.15
+#MISSING: 1.3~rc6# skipxml@Base 1.2.15
  sprintf_alloc@Base 1.2.15
  text_prop@Base 1.2.15
  text_prop_conv@Base 1.2.15
@@ -219,10 +219,10 @@ librrd.so.2 librrd2 #MINVER#
  vdef_parse@Base 1.2.15
  vdef_percent_compar@Base 1.2.15
  vertical_grid@Base 1.2.15
-#MISSING: 1.3~rc4# write_RRA_row@Base 1.2.15
+#MISSING: 1.3~rc6# write_RRA_row@Base 1.2.15
  xlab@Base 1.2.15
-#MISSING: 1.3~rc4# xml2rrd@Base 1.2.15
-#MISSING: 1.3~rc4# xml_lc@Base 1.2.15
+#MISSING: 1.3~rc6# xml2rrd@Base 1.2.15
+#MISSING: 1.3~rc6# xml_lc@Base 1.2.15
  xtr@Base 1.2.15
  ylab@Base 1.2.15
  ytr@Base 1.2.15
@@ -233,20 +233,20 @@ librrd_th.so.2 librrd2 #MINVER#
  FnvHash@Base 1.2.15
  HandleInputLine@Base 1.2.15
  LockRRD@Base 1.2.15
-#MISSING: 1.3~rc4# MyMod@Base 1.2.15
+#MISSING: 1.3~rc6# MyMod@Base 1.2.15
  PngSize@Base 1.2.15
  PrintUsage@Base 1.2.15
  RemoteMode@Base 1.2.15
  _rrd_update@Base 1.2.15
  addop2str@Base 1.2.15
-#MISSING: 1.3~rc4# afm_fontinfo_count@Base 1.2.15
-#MISSING: 1.3~rc4# afm_fontinfolist@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_ascender@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_descender@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_font_name@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_font_postscript_name@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_text_width@Base 1.2.15
-#MISSING: 1.3~rc4# afm_get_text_width_wide@Base 1.2.15
+#MISSING: 1.3~rc6# afm_fontinfo_count@Base 1.2.15
+#MISSING: 1.3~rc6# afm_fontinfolist@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_ascender@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_descender@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_font_name@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_font_postscript_name@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_text_width@Base 1.2.15
+#MISSING: 1.3~rc6# afm_get_text_width_wide@Base 1.2.15
  apply_gridfit@Base 1.2.15
  apply_smoother@Base 1.2.15
  auto_scale@Base 1.2.15
@@ -265,7 +265,7 @@ librrd_th.so.2 librrd2 #MINVER#
  draw_horizontal_grid@Base 1.2.15
  ds_match@Base 1.2.15
  dst_conv@Base 1.2.15
-#MISSING: 1.3~rc4# eat_tag@Base 1.2.15
+#MISSING: 1.3~rc6# eat_tag@Base 1.2.15
  erase_violations@Base 1.2.15
  expand_range@Base 1.2.15
  find_first_time@Base 1.2.15
@@ -278,50 +278,50 @@ librrd_th.so.2 librrd2 #MINVER#
  gdes_alloc@Base 1.2.15
  gf_conv@Base 1.2.15
  gfx_add_point@Base 1.2.15
- gfx_area_fit@Base 1.3~rc4
+ gfx_area_fit@Base 1.3~rc6
  gfx_close_path@Base 1.2.15
- gfx_dashed_line@Base 1.3~rc4
-#MISSING: 1.3~rc4# gfx_destroy@Base 1.2.15
+ gfx_dashed_line@Base 1.3~rc6
+#MISSING: 1.3~rc6# gfx_destroy@Base 1.2.15
  gfx_get_text_width@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_get_text_width_libart@Base 1.2.15
- gfx_hex_to_col@Base 1.3~rc4
- gfx_line@Base 1.3~rc4
- gfx_line_fit@Base 1.3~rc4
+#MISSING: 1.3~rc6# gfx_get_text_width_libart@Base 1.2.15
+ gfx_hex_to_col@Base 1.3~rc6
+ gfx_line@Base 1.3~rc6
+ gfx_line_fit@Base 1.3~rc6
  gfx_new_area@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_canvas@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_dashed_line@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_line@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_new_text@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_eps@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_pdf@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_png@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_render_svg@Base 1.2.15
-#MISSING: 1.3~rc4# gfx_string_create@Base 1.2.15
- gfx_text@Base 1.3~rc4
-#MISSING: 1.3~rc4# gnome_print_art_rgba_svp_alpha@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_canvas@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_dashed_line@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_line@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_new_text@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_eps@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_pdf@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_png@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_render_svg@Base 1.2.15
+#MISSING: 1.3~rc6# gfx_string_create@Base 1.2.15
+ gfx_text@Base 1.3~rc6
+#MISSING: 1.3~rc6# gnome_print_art_rgba_svp_alpha@Base 1.2.15
  graph_col@Base 1.2.15
  graph_paint@Base 1.2.15
  graph_size_location@Base 1.2.15
  grc_conv@Base 1.2.15
  grid_paint@Base 1.2.15
- grinfo_push@Base 1.3~rc4
+ grinfo_push@Base 1.3~rc6
  horizontal_log_grid@Base 1.2.15
- hw_additive_calculate_intercept@Base 1.3~rc4
- hw_additive_calculate_prediction@Base 1.3~rc4
- hw_additive_calculate_seasonality@Base 1.3~rc4
- hw_additive_init_seasonality@Base 1.3~rc4
- hw_calculate_seasonal_deviation@Base 1.3~rc4
- hw_calculate_slope@Base 1.3~rc4
- hw_init_seasonal_deviation@Base 1.3~rc4
- hw_multiplicative_calculate_intercept@Base 1.3~rc4
- hw_multiplicative_calculate_prediction@Base 1.3~rc4
- hw_multiplicative_calculate_seasonality@Base 1.3~rc4
- hw_multiplicative_init_seasonality@Base 1.3~rc4
+ hw_additive_calculate_intercept@Base 1.3~rc6
+ hw_additive_calculate_prediction@Base 1.3~rc6
+ hw_additive_calculate_seasonality@Base 1.3~rc6
+ hw_additive_init_seasonality@Base 1.3~rc6
+ hw_calculate_seasonal_deviation@Base 1.3~rc6
+ hw_calculate_slope@Base 1.3~rc6
+ hw_init_seasonal_deviation@Base 1.3~rc6
+ hw_multiplicative_calculate_intercept@Base 1.3~rc6
+ hw_multiplicative_calculate_prediction@Base 1.3~rc6
+ hw_multiplicative_calculate_seasonality@Base 1.3~rc6
+ hw_multiplicative_init_seasonality@Base 1.3~rc6
  if_conv@Base 1.2.15
  im_free@Base 1.2.15
- info_free@Base 1.3~rc4
- info_print@Base 1.3~rc4
+ info_free@Base 1.3~rc6
+ info_print@Base 1.3~rc6
  info_push@Base 1.2.15
  init_hwpredict_cdp@Base 1.2.15
  init_seasonal_cdp@Base 1.2.15
@@ -333,9 +333,9 @@ librrd_th.so.2 librrd2 #MINVER#
  main@Base 1.2.15
  parseCDEF_DS@Base 1.2.15
  parseGENERIC_DS@Base 1.2.15
-#MISSING: 1.3~rc4# parse_FAILURES_history@Base 1.2.15
-#MISSING: 1.3~rc4# parse_patch1028_CDP_params@Base 1.2.15
-#MISSING: 1.3~rc4# parse_patch1028_RRA_params@Base 1.2.15
+#MISSING: 1.3~rc6# parse_FAILURES_history@Base 1.2.15
+#MISSING: 1.3~rc6# parse_patch1028_CDP_params@Base 1.2.15
+#MISSING: 1.3~rc6# parse_patch1028_RRA_params@Base 1.2.15
  parsetime@Base 1.2.15
  print_calc@Base 1.2.15
  proc_start_end@Base 1.2.15
@@ -344,7 +344,7 @@ librrd_th.so.2 librrd2 #MINVER#
  queue_isempty@Base 1.2.15
  queue_pop@Base 1.2.15
  queue_push@Base 1.2.15
-#MISSING: 1.3~rc4# read_tag@Base 1.2.15
+#MISSING: 1.3~rc6# read_tag@Base 1.2.15
  readfile@Base 1.2.15
  reduce_data@Base 1.2.15
  reset_aberrant_coefficients@Base 1.2.15
@@ -355,23 +355,23 @@ librrd_th.so.2 librrd2 #MINVER#
  rpn_parse@Base 1.2.15
  rpnstack_free@Base 1.2.15
  rpnstack_init@Base 1.2.15
- rra_random_row@Base 1.3~rc4
+ rra_random_row@Base 1.3~rc6
  rrd_clear_error@Base 1.2.15
- rrd_close@Base 1.3~rc4
+ rrd_close@Base 1.3~rc6
  rrd_create@Base 1.2.15
  rrd_create_fn@Base 1.2.15
  rrd_create_r@Base 1.2.15
  rrd_diff@Base 1.2.15
- rrd_dontneed@Base 1.3~rc4
+ rrd_dontneed@Base 1.3~rc6
  rrd_dump@Base 1.2.15
- rrd_dump_opt_r@Base 1.3~rc4
+ rrd_dump_opt_r@Base 1.3~rc6
  rrd_dump_r@Base 1.2.15
  rrd_fetch@Base 1.2.15
  rrd_fetch_fn@Base 1.2.15
  rrd_fetch_r@Base 1.2.26
  rrd_first@Base 1.2.15
  rrd_first_r@Base 1.2.15
- rrd_flush@Base 1.3~rc4
+ rrd_flush@Base 1.3~rc6
  rrd_free@Base 1.2.15
  rrd_free_context@Base 1.2.15
  rrd_freemem@Base 1.2.15
@@ -383,7 +383,7 @@ librrd_th.so.2 librrd2 #MINVER#
  rrd_graph_init@Base 1.2.15
  rrd_graph_options@Base 1.2.15
  rrd_graph_script@Base 1.2.15
- rrd_graph_v@Base 1.3~rc4
+ rrd_graph_v@Base 1.3~rc6
  rrd_info@Base 1.2.15
  rrd_info_r@Base 1.2.15
  rrd_init@Base 1.2.15
@@ -403,17 +403,17 @@ librrd_th.so.2 librrd2 #MINVER#
  rrd_parse_make_vname@Base 1.2.15
  rrd_parse_print@Base 1.2.15
  rrd_parse_shift@Base 1.2.15
- rrd_parse_textalign@Base 1.3~rc4
+ rrd_parse_textalign@Base 1.3~rc6
  rrd_parse_vdef@Base 1.2.15
  rrd_parse_xport@Base 1.2.15
- rrd_read@Base 1.3~rc4
+ rrd_read@Base 1.3~rc6
  rrd_resize@Base 1.2.15
  rrd_restore@Base 1.2.15
- rrd_seek@Base 1.3~rc4
+ rrd_seek@Base 1.3~rc6
  rrd_set_error@Base 1.2.15
  rrd_strerror@Base 1.2.15
  rrd_strversion@Base 1.2.19
- rrd_tell@Base 1.3~rc4
+ rrd_tell@Base 1.3~rc6
  rrd_test_error@Base 1.2.15
  rrd_tune@Base 1.2.15
  rrd_update@Base 1.2.15
@@ -430,8 +430,8 @@ librrd_th.so.2 librrd2 #MINVER#
  set_to_DNAN@Base 1.2.15
  set_windowarg@Base 1.2.15
  si_unit@Base 1.2.15
-#MISSING: 1.3~rc4# skip@Base 1.2.15
-#MISSING: 1.3~rc4# skipxml@Base 1.2.15
+#MISSING: 1.3~rc6# skip@Base 1.2.15
+#MISSING: 1.3~rc6# skipxml@Base 1.2.15
  sprintf_alloc@Base 1.2.15
  text_prop@Base 1.2.15
  text_prop_conv@Base 1.2.15
@@ -447,10 +447,10 @@ librrd_th.so.2 librrd2 #MINVER#
  vdef_parse@Base 1.2.15
  vdef_percent_compar@Base 1.2.15
  vertical_grid@Base 1.2.15
-#MISSING: 1.3~rc4# write_RRA_row@Base 1.2.15
+#MISSING: 1.3~rc6# write_RRA_row@Base 1.2.15
  xlab@Base 1.2.15
-#MISSING: 1.3~rc4# xml2rrd@Base 1.2.15
-#MISSING: 1.3~rc4# xml_lc@Base 1.2.15
+#MISSING: 1.3~rc6# xml2rrd@Base 1.2.15
+#MISSING: 1.3~rc6# xml_lc@Base 1.2.15
  xtr@Base 1.2.15
  ylab@Base 1.2.15
  ytr@Base 1.2.15
