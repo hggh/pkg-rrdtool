@@ -1,25 +1,27 @@
-rrdtool (1.3~rc6-1) experimental; urgency=low
+rrdtool (1.3~rc9-1) experimental; urgency=low
 
   * New upstream release candidate.
+    - Fixes a buffer overflow in librrd's error handling (Closes: #450578).
   * debian/patches:
-    - Updated patches to apply on 1.3rc6.
+    - Updated patches to apply on 1.3rc9.
     - "implicit-decl-fix" partly applied upstream
     - "typos" removed, has been applied upstream
     - Added "long-version" to work around a bug in perl 5.10 (see #482139).
   * debian/control:
-    - Added "ttf-dejavu | ttf-bitstream-vera" recommendation to librrd2 -
+    - Replaced librrd2 / librrd2-dev with librrd4 / librrd4-dev.
+    - Added "ttf-dejavu | ttf-bitstream-vera" recommendation to librrd4 -
       upstream no longer ships DejaVuSansMono-Roman.ttf.
     - Replaced "libart-2.0-dev" with "libcairo2-dev, libpango1.0-dev" in the
-      build dependencies and librrd2-dev's dependencies following the switch
+      build dependencies and librrd4-dev's dependencies following the switch
       made by upstream.
     - Added "libxml2-dev" to the build dependencies.
-  * debian/librrd2.symbols:
-    - Updated to the symbols provided by 1.3rc6 - none of the removed symbols
-      is supposed to be used outside of rrdtool.
+  * debian/librrd4.symbols:
+    - Added symbols file for the new SONAME version number replacing
+      librrd2.symbols.
   * debian/rules:
     - Install "NEWS" and "CHANGES" into all packages.
 
- -- Sebastian Harl <sh@tokkee.org>  Fri, 30 May 2008 17:35:48 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Sun, 08 Jun 2008 19:43:06 +0200
 
 rrdtool (1.2.27-3) UNRELEASED; urgency=low
 
