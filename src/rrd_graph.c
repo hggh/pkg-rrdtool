@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -1520,7 +1520,7 @@ int print_calc(
             }
 
             if (im->gdes[i].gf == GF_PRINT) {
-                infoval   prline;
+                rrd_infoval_t prline;
 
                 if (im->gdes[i].strftm) {
                     prline.u_str = malloc((FMT_LEG_LEN + 2) * sizeof(char));
@@ -1657,9 +1657,7 @@ int leg_place(
             }
             leg_cc = strlen(im->gdes[i].legend);
             /* is there a controle code ant the end of the legend string ? */
-            if (leg_cc >= 2
-                && im->gdes[i].legend[leg_cc -
-                                      2] == '\\' ) {
+            if (leg_cc >= 2 && im->gdes[i].legend[leg_cc - 2] == '\\') {
                 prt_fctn = im->gdes[i].legend[leg_cc - 1];
                 leg_cc -= 2;
                 im->gdes[i].legend[leg_cc] = '\0';
@@ -1671,8 +1669,7 @@ int leg_place(
                 prt_fctn != 'r' &&
                 prt_fctn != 'j' &&
                 prt_fctn != 'c' &&
-                prt_fctn != 's' &&
-                prt_fctn != '\0' && prt_fctn != 'g') {
+                prt_fctn != 's' && prt_fctn != '\0' && prt_fctn != 'g') {
                 free(legspace);
                 rrd_set_error
                     ("Unknown control code at the end of '%s\\%c'",
@@ -1808,7 +1805,9 @@ int leg_place(
                     leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
             }
         } else {
-            im->yimg = leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 + border * 0.6;
+            im->yimg =
+                leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 +
+                border * 0.6;
         }
         free(legspace);
     }
@@ -1858,13 +1857,16 @@ int calc_horizontal_grid(
             if (im->ygrid_scale.gridstep == 0)  /* range is one -> 0.1 is reasonable scale */
                 im->ygrid_scale.gridstep = 0.1;
             /* should have at least 5 lines but no more then 15 */
-            if (range / im->ygrid_scale.gridstep < 5 && im->ygrid_scale.gridstep >= 30 )
+            if (range / im->ygrid_scale.gridstep < 5
+                && im->ygrid_scale.gridstep >= 30)
                 im->ygrid_scale.gridstep /= 10;
             if (range / im->ygrid_scale.gridstep > 15)
                 im->ygrid_scale.gridstep *= 10;
-            if (range / im->ygrid_scale.gridstep > 5 ) {
+            if (range / im->ygrid_scale.gridstep > 5) {
                 im->ygrid_scale.labfact = 1;
-                if (range / im->ygrid_scale.gridstep > 8 || im->ygrid_scale.gridstep < 1.8 * im->text_prop[TEXT_PROP_AXIS].size )
+                if (range / im->ygrid_scale.gridstep > 8
+                    || im->ygrid_scale.gridstep <
+                    1.8 * im->text_prop[TEXT_PROP_AXIS].size)
                     im->ygrid_scale.labfact = 2;
             } else {
                 im->ygrid_scale.gridstep /= 5;
@@ -1891,7 +1893,7 @@ int calc_horizontal_grid(
                 sprintf(im->ygrid_scale.labfmt,
                         "%%%d.0f%s", len, (im->symbol != ' ' ? " %c" : ""));
             }
-        } else { /* classic rrd grid */
+        } else {        /* classic rrd grid */
             for (i = 0; ylab[i].grid > 0; i++) {
                 pixel = im->ysize / (scaledrange / ylab[i].grid);
                 gridind = i;
@@ -2945,7 +2947,7 @@ int graph_paint(
     int       lazy = lazy_check(im);
     double    areazero = 0.0;
     graph_desc_t *lastgdes = NULL;
-    infoval   info;
+    rrd_infoval_t info;
     PangoFontMap *font_map = pango_cairo_font_map_get_default();
 
     /* if we are lazy and there is nothing to PRINT ... quit now */
@@ -3066,8 +3068,9 @@ int graph_paint(
                  im->xsize,
                  im->yorigin - im->ysize, im->graph_col[GRC_CANVAS]);
     gfx_add_point(im, im->xorigin, im->yorigin - im->ysize);
-    gfx_close_path(im);    
-    cairo_rectangle(im->cr, im->xorigin, im->yorigin-im->ysize-1.0, im->xsize,im->ysize+2.0);
+    gfx_close_path(im);
+    cairo_rectangle(im->cr, im->xorigin, im->yorigin - im->ysize - 1.0,
+                    im->xsize, im->ysize + 2.0);
     cairo_clip(im->cr);
     if (im->minval > 0.0)
         areazero = im->minval;
@@ -3526,8 +3529,8 @@ int rrd_graph(
     double *ymax)
 {
     int       prlines = 0;
-    info_t   *grinfo = NULL;
-    info_t   *walker;
+    rrd_info_t *grinfo = NULL;
+    rrd_info_t *walker;
 
     grinfo = rrd_graph_v(argc, argv);
     if (grinfo == NULL)
@@ -3581,7 +3584,7 @@ int rrd_graph(
         /* skip anything else */
         walker = walker->next;
     }
-    info_free(grinfo);
+    rrd_info_free(grinfo);
     return 0;
 }
 
@@ -3592,12 +3595,12 @@ int rrd_graph(
 ** - options parsing  now in rrd_graph_options()
 ** - script parsing   now in rrd_graph_script()
 */
-info_t   *rrd_graph_v(
+rrd_info_t *rrd_graph_v(
     int argc,
     char **argv)
 {
     image_desc_t im;
-    info_t   *grinfo;
+    rrd_info_t  *grinfo;
 
     rrd_graph_init(&im);
     /* a dummy surface so that we can measure text sizes for placements */
@@ -3605,13 +3608,13 @@ info_t   *rrd_graph_v(
     im.cr = cairo_create(im.surface);
     rrd_graph_options(argc, argv, &im);
     if (rrd_test_error()) {
-        info_free(im.grinfo);
+        rrd_info_free(im.grinfo);
         im_free(&im);
         return NULL;
     }
 
     if (optind >= argc) {
-        info_free(im.grinfo);
+        rrd_info_free(im.grinfo);
         im_free(&im);
         rrd_set_error("missing filename");
         return NULL;
@@ -3619,7 +3622,7 @@ info_t   *rrd_graph_v(
 
     if (strlen(argv[optind]) >= MAXPATH) {
         rrd_set_error("filename (including path) too long");
-        info_free(im.grinfo);
+        rrd_info_free(im.grinfo);
         im_free(&im);
         return NULL;
     }
@@ -3633,7 +3636,7 @@ info_t   *rrd_graph_v(
 
     rrd_graph_script(argc, argv, &im, 1);
     if (rrd_test_error()) {
-        info_free(im.grinfo);
+        rrd_info_free(im.grinfo);
         im_free(&im);
         return NULL;
     }
@@ -3641,7 +3644,7 @@ info_t   *rrd_graph_v(
     /* Everything is now read and the actual work can start */
 
     if (graph_paint(&im) == -1) {
-        info_free(im.grinfo);
+        rrd_info_free(im.grinfo);
         im_free(&im);
         return NULL;
     }
@@ -3652,7 +3655,7 @@ info_t   *rrd_graph_v(
      */
 
     if (im.imginfo) {
-        infoval   info;
+        rrd_infoval_t info;
 
         info.u_str =
             sprintf_alloc(im.imginfo,
@@ -3663,7 +3666,7 @@ info_t   *rrd_graph_v(
         free(info.u_str);
     }
     if (im.rendered_image) {
-        infoval   img;
+        rrd_infoval_t img;
 
         img.u_blo.size = im.rendered_image_size;
         img.u_blo.ptr = im.rendered_image;
@@ -3702,8 +3705,8 @@ void rrd_graph_init(
     im->grid_dash_off = 1;
     im->grid_dash_on = 1;
     im->gridfit = 1;
-    im->grinfo = (info_t *) NULL;
-    im->grinfo_current = (info_t *) NULL;
+    im->grinfo = (rrd_info_t *) NULL;
+    im->grinfo_current = (rrd_info_t *) NULL;
     im->imgformat = IF_PNG;
     im->imginfo = NULL;
     im->lazy = 0;
@@ -3725,6 +3728,7 @@ void rrd_graph_init(
     im->unitslength = 6;
     im->viewfactor = 1.0;
     im->watermark[0] = '\0';
+    im->with_markup = 0;
     im->ximg = 0;
     im->xlab_user.minsec = -1;
     im->xorigin = 0;
@@ -3791,141 +3795,73 @@ void rrd_graph_options(
     char      scan_gtm[12], scan_mtm[12], scan_ltm[12], col_nam[12];
     time_t    start_tmp = 0, end_tmp = 0;
     long      long_tmp;
-    struct rrd_time_value start_tv, end_tv;
+    rrd_time_value_t start_tv, end_tv;
     long unsigned int color;
     char     *old_locale = "";
 
     /* defines for long options without a short equivalent. should be bytes,
        and may not collide with (the ASCII value of) short options */
 #define LONGOPT_UNITS_SI 255
+
+/* *INDENT-OFF* */
     struct option long_options[] = {
-        {
-         "start", required_argument, 0, 's'}, {
-                                               "end", required_argument, 0,
-                                               'e'}, {
-                                                      "x-grid",
-                                                      required_argument, 0,
-                                                      'x'}, {
-                                                             "y-grid",
-                                                             required_argument,
-                                                             0, 'y'}, {
-                                                                       "vertical-label",
-                                                                       required_argument,
-                                                                       0,
-                                                                       'v'}, {
-                                                                              "width",
-                                                                              required_argument,
-                                                                              0,
-                                                                              'w'},
-        {
-         "height", required_argument, 0, 'h'}, {
-                                                "full-size-mode", no_argument,
-                                                0, 'D'}, {
-                                                          "interlaced",
-                                                          no_argument, 0,
-                                                          'i'}, {
-                                                                 "upper-limit",
-                                                                 required_argument,
-                                                                 0,
-                                                                 'u'}, {
-                                                                        "lower-limit",
-                                                                        required_argument,
-                                                                        0,
-                                                                        'l'}, {
-                                                                               "rigid",
-                                                                               no_argument,
-                                                                               0,
-                                                                               'r'},
-        {
-         "base", required_argument, 0, 'b'}, {
-                                              "logarithmic", no_argument, 0,
-                                              'o'}, {
-                                                     "color",
-                                                     required_argument, 0,
-                                                     'c'}, {
-                                                            "font",
-                                                            required_argument,
-                                                            0, 'n'}, {
-                                                                      "title",
-                                                                      required_argument,
-                                                                      0, 't'},
-        {
-         "imginfo", required_argument, 0, 'f'}, {
-                                                 "imgformat",
-                                                 required_argument, 0, 'a'}, {
-                                                                              "lazy",
-                                                                              no_argument,
-                                                                              0,
-                                                                              'z'},
-        {
-         "zoom", required_argument, 0, 'm'}, {
-                                              "no-legend", no_argument, 0,
-                                              'g'}, {
-                                                     "force-rules-legend",
-                                                     no_argument,
-                                                     0, 'F'}, {
-                                                               "only-graph",
-                                                               no_argument, 0,
-                                                               'j'}, {
-                                                                      "alt-y-grid",
-                                                                      no_argument,
-                                                                      0, 'Y'},
-        {
-         "no-minor", no_argument, 0, 'I'}, {
-                                            "slope-mode", no_argument, 0,
-                                            'E'}, {
-                                                   "alt-autoscale",
-                                                   no_argument, 0, 'A'}, {
-                                                                          "alt-autoscale-min",
-                                                                          no_argument,
-                                                                          0,
-                                                                          'J'}, {
-                                                                                 "alt-autoscale-max",
-                                                                                 no_argument,
-                                                                                 0,
-                                                                                 'M'}, {
-                                                                                        "no-gridfit",
-                                                                                        no_argument,
-                                                                                        0,
-                                                                                        'N'},
-        {
-         "units-exponent", required_argument,
-         0, 'X'}, {
-                   "units-length", required_argument,
-                   0, 'L'}, {
-                             "units", required_argument, 0,
-                             LONGOPT_UNITS_SI}, {
-                                                 "step", required_argument, 0,
-                                                 'S'}, {
-                                                        "tabwidth",
-                                                        required_argument, 0,
-                                                        'T'}, {
-                                                               "font-render-mode",
-                                                               required_argument,
-                                                               0, 'R'}, {
-                                                                         "graph-render-mode",
-                                                                         required_argument,
-                                                                         0,
-                                                                         'G'},
-        {
-         "font-smoothing-threshold",
-         required_argument, 0, 'B'}, {
-                                      "watermark", required_argument, 0, 'W'}, {
-                                                                                "alt-y-mrtg", no_argument, 0, 1000},    /* this has no effect it is just here to save old apps from crashing when they use it */
-        {
-         0, 0, 0, 0}
-    };
+        { "start",              required_argument, 0, 's'}, 
+        { "end",                required_argument, 0, 'e'},
+        { "x-grid",             required_argument, 0, 'x'},
+        { "y-grid",             required_argument, 0, 'y'},
+        { "vertical-label",     required_argument, 0, 'v'},
+        { "width",              required_argument, 0, 'w'},
+        { "height",             required_argument, 0, 'h'},
+        { "full-size-mode",     no_argument,       0, 'D'},
+        { "interlaced",         no_argument,       0, 'i'},
+        { "upper-limit",        required_argument, 0, 'u'},
+        { "lower-limit",        required_argument, 0, 'l'},
+        { "rigid",              no_argument,       0, 'r'},
+        { "base",               required_argument, 0, 'b'},
+        { "logarithmic",        no_argument,       0, 'o'},
+        { "color",              required_argument, 0, 'c'},
+        { "font",               required_argument, 0, 'n'},
+        { "title",              required_argument, 0, 't'},
+        { "imginfo",            required_argument, 0, 'f'},
+        { "imgformat",          required_argument, 0, 'a'},
+        { "lazy",               no_argument,       0, 'z'},
+        { "zoom",               required_argument, 0, 'm'},
+        { "no-legend",          no_argument,       0, 'g'},
+        { "force-rules-legend", no_argument,       0, 'F'},
+        { "only-graph",         no_argument,       0, 'j'},
+        { "alt-y-grid",         no_argument,       0, 'Y'},
+        { "no-minor",           no_argument,       0, 'I'}, 
+        { "slope-mode",         no_argument,       0, 'E'},
+        { "alt-autoscale",      no_argument,       0, 'A'},
+        { "alt-autoscale-min",  no_argument,       0, 'J'},
+        { "alt-autoscale-max",  no_argument,       0, 'M'},
+        { "no-gridfit",         no_argument,       0, 'N'},
+        { "units-exponent",     required_argument, 0, 'X'},
+        { "units-length",       required_argument, 0, 'L'},
+        { "units",              required_argument, 0, LONGOPT_UNITS_SI},
+        { "step",               required_argument, 0, 'S'},
+        { "tabwidth",           required_argument, 0, 'T'},
+        { "font-render-mode",   required_argument, 0, 'R'},
+        { "graph-render-mode",  required_argument, 0, 'G'},
+        { "font-smoothing-threshold", required_argument, 0, 'B'},
+        { "watermark",          required_argument, 0, 'W'},
+        { "alt-y-mrtg",         no_argument,       0, 1000},    /* this has no effect it is just here to save old apps from crashing when they use it */
+        { "pango-markup",       no_argument,       0, 'P'},
+        {  0, 0, 0, 0}
+};
+/* *INDENT-ON* */
+
     optind = 0;
     opterr = 0;         /* initialize getopt */
-    parsetime("end-24h", &start_tv);
-    parsetime("now", &end_tv);
+    rrd_parsetime("end-24h", &start_tv);
+    rrd_parsetime("now", &end_tv);
     while (1) {
         int       option_index = 0;
         int       opt;
         int       col_start, col_end;
 
         opt = getopt_long(argc, argv,
-                          "s:e:x:y:v:w:h:D:iu:l:rb:oc:n:m:t:f:a:I:zgjFYAMEX:L:S:T:NR:B:W:k",
+                          "s:e:x:y:v:w:h:D:iu:l:rb:oc:n:m:t:f:a:I:zgjFYAMEX:L:S:T:NR:B:W:kP",
                           long_options, &option_index);
         if (opt == EOF)
             break;
@@ -3987,14 +3923,17 @@ void rrd_graph_options(
         case 'N':
             im->gridfit = 0;
             break;
+        case 'P':
+            im->with_markup = 1;
+            break;
         case 's':
-            if ((parsetime_error = parsetime(optarg, &start_tv))) {
+            if ((parsetime_error = rrd_parsetime(optarg, &start_tv))) {
                 rrd_set_error("start time: %s", parsetime_error);
                 return;
             }
             break;
         case 'e':
-            if ((parsetime_error = parsetime(optarg, &end_tv))) {
+            if ((parsetime_error = rrd_parsetime(optarg, &end_tv))) {
                 rrd_set_error("end time: %s", parsetime_error);
                 return;
             }
@@ -4187,18 +4126,20 @@ void rrd_graph_options(
                         if (size > 0) {
                             im->text_prop[propidx].size = size;
                         }
-                        if ((int) strlen(prop) > end) {
-                            if (prop[end] == ':') {
+                        if ((int) strlen(optarg) > end) {
+                            if (optarg[end] == ':') {
                                 strncpy(im->text_prop[propidx].font,
-                                        prop + end + 1, 255);
+                                        optarg + end + 1, 255);
                                 im->text_prop[propidx].font[255] = '\0';
                             } else {
                                 rrd_set_error
-                                    ("expected after font size in '%s'",
-                                     prop);
+                                    ("expected : after font size in '%s'",
+                                     optarg);
                                 return;
                             }
                         }
+                        /* only run the for loop for DEFAULT (0) for
+                           all others, we break here. woodo programming */
                         if (propidx == sindex && sindex != 0)
                             break;
                     }
@@ -4279,8 +4220,8 @@ void rrd_graph_options(
         return;
     }
 
-    if (proc_start_end(&start_tv, &end_tv, &start_tmp, &end_tmp) == -1) {
-        /* error string is set in parsetime.c */
+    if (rrd_proc_start_end(&start_tv, &end_tv, &start_tmp, &end_tmp) == -1) {
+        /* error string is set in rrd_parsetime.c */
         return;
     }
 
@@ -4510,15 +4451,21 @@ int vdef_calc(
     graph_desc_t *src, *dst;
     rrd_value_t *data;
     long      step, steps;
+    unsigned long end;
 
     dst = &im->gdes[gdi];
     src = &im->gdes[dst->vidx];
     data = src->data + src->ds;
-    steps = (src->end - src->start) / src->step;
+    end =
+        src->end_orig % src->step ==
+        0 ? src->end_orig : (src->end_orig + src->step -
+                             src->end_orig % src->step);
+
+    steps = (end - src->start) / src->step;
 #if 0
     printf
         ("DEBUG: start == %lu, end == %lu, %lu steps\n",
-         src->start, src->end, steps);
+         src->start, src->end_orig, steps);
 #endif
     switch (dst->vf.op) {
     case VDEF_PERCENT:{
@@ -4739,10 +4686,10 @@ int vdef_percent_compar(
 void grinfo_push(
     image_desc_t *im,
     char *key,
-    enum info_type type,
-    infoval value)
+    rrd_info_type_t type,
+    rrd_infoval_t value)
 {
-    im->grinfo_current = info_push(im->grinfo_current, key, type, value);
+    im->grinfo_current = rrd_info_push(im->grinfo_current, key, type, value);
     if (im->grinfo == NULL) {
         im->grinfo = im->grinfo_current;
     }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,7 +7,7 @@
  * rrd_thread_safe.c   Contains routines used when thread safety is required
  *                     for win32
  *****************************************************************************
- * $Id: rrd_thread_safe_nt.c 1380 2008-05-26 08:56:58Z oetiker $
+ * $Id: rrd_thread_safe_nt.c 1413 2008-06-08 17:08:47Z oetiker $
  *************************************************************************** */
 
 #include <windows.h>
@@ -44,10 +44,10 @@ static void context_init_context(
         atexit(context_destroy_context);
     }
 }
-struct rrd_context *rrd_get_context(
+rrd_context_t *rrd_get_context(
     void)
 {
-    struct rrd_context *ctx;
+    rrd_context_t *ctx;
 
     context_init_context();
 
@@ -63,15 +63,15 @@ struct rrd_context *rrd_get_context(
 const char *rrd_strerror(
     int err)
 {
-    struct rrd_context *ctx;
+    rrd_context_t *ctx;
 
     context_init_context();
 
     ctx = rrd_get_context();
 
     EnterCriticalSection(&CriticalSection);
-    strncpy(ctx->lib_errstr, strerror(err), ctx->errlen);
-    ctx->lib_errstr[ctx->errlen] = '\0';
+    strncpy(ctx->lib_errstr, strerror(err), sizeof(ctx->lib_errstr));
+    ctx->lib_errstr[sizeof(ctx->lib_errstr) - 1] = '\0';
     LeaveCriticalSection(&CriticalSection);
 
     return ctx->lib_errstr;

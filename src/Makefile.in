@@ -69,17 +69,14 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-librrd_la_DEPENDENCIES = librrdupd.la $(am__DEPENDENCIES_1)
 am__objects_1 = hash_32.lo pngsize.lo rrd_create.lo rrd_graph.lo \
 	rrd_graph_helper.lo rrd_version.lo rrd_last.lo \
 	rrd_lastupdate.lo rrd_first.lo rrd_restore.lo rrd_xport.lo \
-	rrd_gfx.lo rrd_dump.lo rrd_fetch.lo rrd_tool.lo rrd_resize.lo \
-	rrd_tune.lo
+	rrd_gfx.lo rrd_dump.lo rrd_fetch.lo rrd_resize.lo rrd_tune.lo
 am_librrd_la_OBJECTS = $(am__objects_1)
 librrd_la_OBJECTS = $(am_librrd_la_OBJECTS)
-librrd_th_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__objects_2 = librrd_th_la-rrd_getopt.lo librrd_th_la-rrd_getopt1.lo \
-	librrd_th_la-parsetime.lo librrd_th_la-rrd_hw.lo \
+	librrd_th_la-rrd_parsetime.lo librrd_th_la-rrd_hw.lo \
 	librrd_th_la-rrd_hw_math.lo librrd_th_la-rrd_hw_update.lo \
 	librrd_th_la-rrd_diff.lo librrd_th_la-rrd_format.lo \
 	librrd_th_la-rrd_info.lo librrd_th_la-rrd_error.lo \
@@ -92,17 +89,16 @@ am__objects_3 = librrd_th_la-hash_32.lo librrd_th_la-pngsize.lo \
 	librrd_th_la-rrd_first.lo librrd_th_la-rrd_restore.lo \
 	librrd_th_la-rrd_xport.lo librrd_th_la-rrd_gfx.lo \
 	librrd_th_la-rrd_dump.lo librrd_th_la-rrd_fetch.lo \
-	librrd_th_la-rrd_tool.lo librrd_th_la-rrd_resize.lo \
-	librrd_th_la-rrd_tune.lo
+	librrd_th_la-rrd_resize.lo librrd_th_la-rrd_tune.lo
 am_librrd_th_la_OBJECTS = $(am__objects_2) $(am__objects_3) \
 	librrd_th_la-rrd_thread_safe.lo
 librrd_th_la_OBJECTS = $(am_librrd_th_la_OBJECTS)
 @BUILD_MULTITHREAD_TRUE@am_librrd_th_la_rpath = -rpath $(libdir)
 librrdupd_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__objects_4 = rrd_getopt.lo rrd_getopt1.lo parsetime.lo rrd_hw.lo \
-	rrd_hw_math.lo rrd_hw_update.lo rrd_diff.lo rrd_format.lo \
-	rrd_info.lo rrd_error.lo rrd_open.lo rrd_nan_inf.lo \
-	rrd_rpncalc.lo rrd_update.lo
+am__objects_4 = rrd_getopt.lo rrd_getopt1.lo rrd_parsetime.lo \
+	rrd_hw.lo rrd_hw_math.lo rrd_hw_update.lo rrd_diff.lo \
+	rrd_format.lo rrd_info.lo rrd_error.lo rrd_open.lo \
+	rrd_nan_inf.lo rrd_rpncalc.lo rrd_update.lo
 am_librrdupd_la_OBJECTS = $(am__objects_4) rrd_not_thread_safe.lo
 librrdupd_la_OBJECTS = $(am_librrdupd_la_OBJECTS)
 @BUILD_RRDCGI_TRUE@am__EXEEXT_1 = rrdcgi$(EXEEXT)
@@ -111,7 +107,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_rrdcgi_OBJECTS = rrd_cgi.$(OBJEXT)
 rrdcgi_OBJECTS = $(am_rrdcgi_OBJECTS)
 rrdcgi_DEPENDENCIES = librrd.la
-am_rrdtool_OBJECTS =
+am_rrdtool_OBJECTS = rrd_tool.$(OBJEXT)
 rrdtool_OBJECTS = $(am_rrdtool_OBJECTS)
 am_rrdupdate_OBJECTS = rrdupdate.$(OBJEXT)
 rrdupdate_OBJECTS = $(am_rrdupdate_OBJECTS)
@@ -178,6 +174,7 @@ CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DSYMUTIL = @DSYMUTIL@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -200,14 +197,12 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
-INTLTOOL_ICONV = @INTLTOOL_ICONV@
 INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
-INTLTOOL_MSGFMT = @INTLTOOL_MSGFMT@
-INTLTOOL_MSGMERGE = @INTLTOOL_MSGMERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
 INTLTOOL_PERL = @INTLTOOL_PERL@
+INTLTOOL_POLICY_RULE = @INTLTOOL_POLICY_RULE@
 INTLTOOL_PONG_RULE = @INTLTOOL_PONG_RULE@
 INTLTOOL_PROP_RULE = @INTLTOOL_PROP_RULE@
 INTLTOOL_SCHEMAS_RULE = @INTLTOOL_SCHEMAS_RULE@
@@ -219,7 +214,6 @@ INTLTOOL_THEME_RULE = @INTLTOOL_THEME_RULE@
 INTLTOOL_UI_RULE = @INTLTOOL_UI_RULE@
 INTLTOOL_UPDATE = @INTLTOOL_UPDATE@
 INTLTOOL_XAM_RULE = @INTLTOOL_XAM_RULE@
-INTLTOOL_XGETTEXT = @INTLTOOL_XGETTEXT@
 INTLTOOL_XML_NOMERGE_RULE = @INTLTOOL_XML_NOMERGE_RULE@
 INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 LDFLAGS = @LDFLAGS@
@@ -237,8 +231,10 @@ MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 MSGFMT_OPTS = @MSGFMT_OPTS@
+MSGMERGE = @MSGMERGE@
 MULTITHREAD_CFLAGS = @MULTITHREAD_CFLAGS@
 MULTITHREAD_LDFLAGS = @MULTITHREAD_LDFLAGS@
+NMEDIT = @NMEDIT@
 NROFF = @NROFF@
 NUMVERS = @NUMVERS@
 OBJEXT = @OBJEXT@
@@ -280,12 +276,13 @@ RRDGRAPH_YLEGEND_ANGLE = @RRDGRAPH_YLEGEND_ANGLE@
 RRD_DEFAULT_FONT = @RRD_DEFAULT_FONT@
 RUBY = @RUBY@
 RUBY_MAKE_OPTIONS = @RUBY_MAKE_OPTIONS@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STATIC_PROGRAMS_FALSE = @STATIC_PROGRAMS_FALSE@
 STATIC_PROGRAMS_TRUE = @STATIC_PROGRAMS_TRUE@
 STRIP = @STRIP@
-TCL_INC_DIR = @TCL_INC_DIR@
+TCL_INCLUDE_SPEC = @TCL_INCLUDE_SPEC@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
 TCL_PACKAGE_DIR = @TCL_PACKAGE_DIR@
 TCL_PACKAGE_PATH = @TCL_PACKAGE_PATH@
@@ -361,7 +358,7 @@ AM_CPPFLAGS = -DRRD_DEFAULT_FONT=\"$(RRD_DEFAULT_FONT)\" -DNUMVERS=@NUMVERS@
 UPD_C_FILES = \
 	rrd_getopt.c	\
 	rrd_getopt1.c	\
-	parsetime.c	\
+	rrd_parsetime.c	\
 	rrd_hw.c	\
 	rrd_hw_math.c	\
 	rrd_hw_update.c	\
@@ -389,13 +386,12 @@ RRD_C_FILES = \
 	rrd_gfx.c \
 	rrd_dump.c	\
 	rrd_fetch.c	\
-	rrd_tool.c	\
 	rrd_resize.c \
 	rrd_tune.c
 
 noinst_HEADERS = \
 	unused.h \
-	rrd_getopt.h parsetime.h \
+	rrd_getopt.h rrd_parsetime.h \
 	rrd_i18n.h \
 	rrd_format.h rrd_tool.h rrd_xport.h rrd.h rrd_rpncalc.h \
 	rrd_hw.h rrd_hw_math.h rrd_hw_update.h \
@@ -407,27 +403,28 @@ lib_LTLIBRARIES = librrd.la $(am__append_1)
 librrdupd_la_SOURCES = $(UPD_C_FILES) rrd_not_thread_safe.c
 librrdupd_la_LIBADD = $(CORE_LIBS) @LIB_LIBINTL@
 librrd_la_SOURCES = $(RRD_C_FILES)
+librrd_la_DEPENDENCIES = librrdupd.la librrd.sym
 librrd_la_LIBADD = librrdupd.la $(ALL_LIBS)
-
-# see http://sourceware.org/autobook/autobook/autobook_91.html
-librrd_la_LDFLAGS = -version-info @LIBVERS@
+librrd_la_LDFLAGS = -version-info @LIBVERS@ -export-symbols librrd.sym
 librrd_th_la_SOURCES = $(UPD_C_FILES) $(RRD_C_FILES) rrd_thread_safe.c
+librrd_th_la_DEPENDENCIES = librrd.sym
 librrd_th_la_CFLAGS = $(MULTITHREAD_CFLAGS)
-librrd_th_la_LDFLAGS = $(MULTITHREAD_LDFLAGS) -version-info @LIBVERS@
+librrd_th_la_LDFLAGS = $(MULTITHREAD_LDFLAGS) -version-info @LIBVERS@ \
+	-export-symbols librrd.sym
 librrd_th_la_LIBADD = $(ALL_LIBS)
 include_HEADERS = rrd.h
 rrdcgi_SOURCES = rrd_cgi.c
 rrdcgi_LDADD = librrd.la
 rrdupdate_SOURCES = rrdupdate.c
 rrdupdate_LDADD = librrdupd.la
-rrdtool_SOURCES = 
-rrdtool_DEPENDENCIES = rrd_tool.o librrd.la
+rrdtool_SOURCES = rrd_tool.c
+rrdtool_DEPENDENCIES = librrd.la
 rrdtool_LDADD = librrd.la
 
 # strftime is here because we do not usually need it. unices have propper
 # iso date support
 EXTRA_DIST = strftime.c strftime.h \
-	win32comp.c  rrd_thread_safe_nt.c get_ver.awk
+	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym
 
 all: all-am
 
@@ -550,7 +547,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash_32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-hash_32.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-parsetime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-pngsize.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_create.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_diff.Plo@am__quote@
@@ -572,16 +568,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_lastupdate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_nan_inf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_open.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_parsetime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_resize.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_restore.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_rpncalc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_thread_safe.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_tool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_tune.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_update.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_version.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/librrd_th_la-rrd_xport.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsetime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngsize.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_cgi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_create.Plo@am__quote@
@@ -605,10 +600,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_nan_inf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_not_thread_safe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_open.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_parsetime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_resize.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_restore.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_rpncalc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_tool.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_tool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_tune.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_update.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rrd_version.Plo@am__quote@
@@ -650,12 +646,12 @@ librrd_th_la-rrd_getopt1.lo: rrd_getopt1.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_getopt1.lo `test -f 'rrd_getopt1.c' || echo '$(srcdir)/'`rrd_getopt1.c
 
-librrd_th_la-parsetime.lo: parsetime.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-parsetime.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-parsetime.Tpo" -c -o librrd_th_la-parsetime.lo `test -f 'parsetime.c' || echo '$(srcdir)/'`parsetime.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-parsetime.Tpo" "$(DEPDIR)/librrd_th_la-parsetime.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-parsetime.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsetime.c' object='librrd_th_la-parsetime.lo' libtool=yes @AMDEPBACKSLASH@
+librrd_th_la-rrd_parsetime.lo: rrd_parsetime.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_parsetime.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo" -c -o librrd_th_la-rrd_parsetime.lo `test -f 'rrd_parsetime.c' || echo '$(srcdir)/'`rrd_parsetime.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo" "$(DEPDIR)/librrd_th_la-rrd_parsetime.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_parsetime.c' object='librrd_th_la-rrd_parsetime.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-parsetime.lo `test -f 'parsetime.c' || echo '$(srcdir)/'`parsetime.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_parsetime.lo `test -f 'rrd_parsetime.c' || echo '$(srcdir)/'`rrd_parsetime.c
 
 librrd_th_la-rrd_hw.lo: rrd_hw.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_hw.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_hw.Tpo" -c -o librrd_th_la-rrd_hw.lo `test -f 'rrd_hw.c' || echo '$(srcdir)/'`rrd_hw.c; \
@@ -831,13 +827,6 @@ librrd_th_la-rrd_fetch.lo: rrd_fetch.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_fetch.c' object='librrd_th_la-rrd_fetch.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_fetch.lo `test -f 'rrd_fetch.c' || echo '$(srcdir)/'`rrd_fetch.c
-
-librrd_th_la-rrd_tool.lo: rrd_tool.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_tool.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_tool.Tpo" -c -o librrd_th_la-rrd_tool.lo `test -f 'rrd_tool.c' || echo '$(srcdir)/'`rrd_tool.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_tool.Tpo" "$(DEPDIR)/librrd_th_la-rrd_tool.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_tool.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_tool.c' object='librrd_th_la-rrd_tool.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_tool.lo `test -f 'rrd_tool.c' || echo '$(srcdir)/'`rrd_tool.c
 
 librrd_th_la-rrd_resize.lo: rrd_resize.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_resize.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_resize.Tpo" -c -o librrd_th_la-rrd_resize.lo `test -f 'rrd_resize.c' || echo '$(srcdir)/'`rrd_resize.c; \

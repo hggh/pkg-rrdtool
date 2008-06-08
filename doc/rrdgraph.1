@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2008-04-21" "1.3rc6" "rrdtool"
+.TH RRDGRAPH 1 "2008-06-05" "1.3rc9" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
@@ -397,7 +397,7 @@ suitable for including the graph into a web page, the command line
 would look like this:
 .Sp
 .Vb 1
-\& \-\-imginfo '<IMG SRC="/img/%s" WIDTH="%lu" HEIGHT="%lu" ALT="Demo">'
+\& \-\-imginfo \(aq<IMG SRC="/img/%s" WIDTH="%lu" HEIGHT="%lu" ALT="Demo">\(aq
 .Ve
 .Sp
 [\fB\-c\fR|\fB\-\-color\fR \fI\s-1COLORTAG\s0\fR#\fIrrggbb\fR[\fIaa\fR]]
@@ -468,6 +468,32 @@ This specifies the largest font size which will be rendered
 bitmapped, that is, without any font smoothing. By default,
 no text is rendered bitmapped.
 .Sp
+[\fB\-P\fR|\fB\-\-pango\-markup\fR]
+.Sp
+All text in rrdtool is rendered using Pango. With the \fB\-\-pango\-markup\fR option, all
+text will be processed by pango markup. This allows to embed some simple html
+like markup tags using 
+.Sp
+.Vb 1
+\& <span key="value">text</span>
+.Ve
+.Sp
+Apart from the verbose syntax, there are also the following short tags available.
+.Sp
+.Vb 9
+\& b     Bold
+\& big   Makes font relatively larger, equivalent to <span size="larger">
+\& i     Italic
+\& s     Strikethrough
+\& sub   Subscript
+\& sup   Superscript
+\& small Makes font relatively smaller, equivalent to <span size="smaller">
+\& tt    Monospace font
+\& u     Underline
+.Ve
+.Sp
+More details on <http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html>.
+.Sp
 [\fB\-G\fR|\fB\-\-graph\-render\-mode\fR {\fBnormal\fR,\fBmono\fR}]
 .Sp
 There are 2 render modes:
@@ -536,30 +562,6 @@ See rrdgraph_data and rrdgraph_rpn for the exact format.
 You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See rrdgraph_graph for the exact format.
-.IP "Markup" 4
-.IX Item "Markup"
-All text in rrdtool is rendered using Pango markup. This means text can contain embeded markup instructions.
-Simple html markup using 
-.Sp
-.Vb 1
-\& <span key="value">text</span>
-.Ve
-.Sp
-can be used. Apart from the verbose syntax, there are also the following short tags available.
-.Sp
-.Vb 9
-\& b     Bold
-\& big   Makes font relatively larger, equivalent to <span size="larger">
-\& i     Italic
-\& s     Strikethrough
-\& sub   Subscript
-\& sup   Superscript
-\& small Makes font relatively smaller, equivalent to <span size="smaller">
-\& tt    Monospace font
-\& u     Underline
-.Ve
-.Sp
-More details on http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html.
 .Sh "graphv"
 .IX Subsection "graphv"
 Calling rrdtool with the graphv option will return information in the

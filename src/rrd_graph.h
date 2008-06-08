@@ -219,7 +219,7 @@ typedef struct image_desc_t {
     double    force_scale_max;  /* Force a scale--max */
 
     /* status information */
-
+    int       with_markup;
     long      xorigin, yorigin; /* where is (0,0) of the graph */
     long      ximg, yimg;   /* total size of the image */
     size_t    rendered_image_size;
@@ -244,8 +244,8 @@ typedef struct image_desc_t {
     cairo_font_options_t *font_options; /* cairo font options */
     cairo_antialias_t graph_antialias;  /* antialiasing for the graph */
 
-    info_t   *grinfo;   /* root pointer to extra graph info */
-    info_t   *grinfo_current;   /* pointing to current entry */
+    rrd_info_t *grinfo;   /* root pointer to extra graph info */
+    rrd_info_t *grinfo_current;   /* pointing to current entry */
 } image_desc_t;
 
 /* Prototypes */
@@ -454,5 +454,5 @@ void      gfx_area_fit(
 void      grinfo_push(
     image_desc_t *im,
     char *key,
-    enum info_type type,
-    infoval value);
+    rrd_info_type_t type,
+    rrd_infoval_t value);

@@ -9,26 +9,25 @@ dnl tell automake the this script is for rrdtool
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3rc6])
+AC_INIT([rrdtool],[1.3rc9])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.299908052600
+NUMVERS=1.299908060801
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which version the library is compatible with
 dnl we must keep a separate library version cout of the format c:r:a if any
-dnl functionality is changed do c++ prior to release
 dnl if only implementation changed but all interfaces are kept, do r++
-dnl when only functionality was added, do a++ if any functionality was
-dnl removed do a=0.
+dnl when only functionality was added do c++,r=0,a++
+dnl if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=3:4:1
+LIBVERS=4:0:0
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
@@ -854,6 +853,9 @@ if test  "$enable_tcl" = "yes"; then
   else
 	. $tcl_config
 	TCL_PACKAGE_DIR="$TCL_PACKAGE_PATH/tclrrd$VERSION"
+	if test -n "$TCL_INC_DIR"; then
+	  TCL_INCLUDE_SPEC="$TCL_INCLUDE_SPEC -I$TCL_INC_DIR"
+	fi
   fi
   AC_ARG_ENABLE(tcl,[  --enable-tcl-site        install the tcl extension in the tcl tree],
   [],[enable_tcl_site=yes])
@@ -873,7 +875,7 @@ AC_SUBST(TCL_LD_SEARCH_FLAGS)
 AC_SUBST(TCL_STUB_LIB_SPEC)
 AC_SUBST(TCL_VERSION)
 AC_SUBST(TCL_PACKAGE_DIR)
-AC_SUBST(TCL_INC_DIR)
+AC_SUBST(TCL_INCLUDE_SPEC)
 
 AC_ARG_ENABLE(python,[  --disable-python        do not build the python modules],
 [],[enable_python=yes])

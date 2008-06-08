@@ -1,11 +1,11 @@
 /*****************************************************************************
- * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2008 Florian octo Forster
  * Distributed under the GPL
  *****************************************************************************
  * rrd_restore.c   Contains logic to parse XML input and create an RRD file
  *****************************************************************************
- * $Id: rrd_restore.c 1380 2008-05-26 08:56:58Z oetiker $
+ * $Id: rrd_restore.c 1413 2008-06-08 17:08:47Z oetiker $
  *************************************************************************** */
 
 /*
@@ -163,7 +163,7 @@ static int value_check_range(
 
     if (((!isnan(min)) && (*rrd_value < min))
         || ((!isnan(max)) && (*rrd_value > max)))
-        *rrd_value = NAN;
+        *rrd_value = DNAN;
 
     return (0);
 }                       /* int value_check_range */

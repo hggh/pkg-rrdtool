@@ -50,74 +50,55 @@
 Database (<strong>RRD</strong>) files.  The file is created at its final, full size
 and filled with <em>*UNKNOWN*</em> data.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong>
+<dt><strong><a name="item_filename"><em>filename</em></a></strong></dt>
 
 <dd>
 <p>The name of the <strong>RRD</strong> you want to create. <strong>RRD</strong> files should end
 with the extension <em>.rrd</em>. However, <strong>RRDtool</strong> will accept any
 filename.</p>
 </dd>
-</li>
-<dt><strong><a name="item_time"><strong>--start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></strong>
+<dt><strong><a name="item_time"><strong>--start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></strong></dt>
 
 <dd>
 <p>Specifies the time in seconds since 1970-01-01 UTC when the first
 value should be added to the <strong>RRD</strong>. <strong>RRDtool</strong> will not accept
 any data timed before or at the time specified.</p>
-</dd>
-<dd>
 <p>See also AT-STYLE TIME SPECIFICATION section in the
 <em>rrdfetch</em> documentation for other ways to specify time.</p>
 </dd>
-</li>
-<dt><strong><a name="item_step"><strong>--step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></strong>
+<dt><strong><a name="item_step"><strong>--step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></strong></dt>
 
 <dd>
 <p>Specifies the base interval in seconds with which data will be fed
 into the <strong>RRD</strong>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_ds_3ads_2dname_3adst_3adst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></strong>
+<dt><strong><a name="item_ds_3ads_2dname_3adst_3adst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></strong></dt>
 
 <dd>
 <p>A single <strong>RRD</strong> can accept input from several data sources (<strong>DS</strong>),
 for example incoming and outgoing traffic on a specific communication
 line. With the <strong>DS</strong> configuration option you must define some basic
 properties of each data source you want to store in the <strong>RRD</strong>.</p>
-</dd>
-<dd>
 <p><em>ds-name</em> is the name you will use to reference this particular data
 source from an <strong>RRD</strong>. A <em>ds-name</em> must be 1 to 19 characters long in
 the characters [a-zA-Z0-9_].</p>
-</dd>
-<dd>
 <p><em>DST</em> defines the Data Source Type. The remaining arguments of a
 data source entry depend on the data source type. For GAUGE, COUNTER,
 DERIVE, and ABSOLUTE the format for a data source entry is:</p>
-</dd>
-<dd>
 <p><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>GAUGE | COUNTER | DERIVE | ABSOLUTE</em><strong>:</strong><em>heartbeat</em><strong>:</strong><em>min</em><strong>:</strong><em>max</em></p>
-</dd>
-<dd>
 <p>For COMPUTE data sources, the format is:</p>
-</dd>
-<dd>
 <p><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>COMPUTE</em><strong>:</strong><em>rpn-expression</em></p>
-</dd>
-<dd>
 <p>In order to decide which data source type to use, review the
 definitions that follow. Also consult the section on ``HOW TO MEASURE''
 for further insight.</p>
-</dd>
 <dl>
-<dt><strong><a name="item_gauge"><strong>GAUGE</strong></a></strong>
+<dt><strong><a name="item_gauge"><strong>GAUGE</strong></a></strong></dt>
 
 <dd>
 <p>is for things like temperatures or number of people in a room or the
 value of a RedHat share.</p>
 </dd>
-</li>
-<dt><strong><a name="item_counter"><strong>COUNTER</strong></a></strong>
+<dt><strong><a name="item_counter"><strong>COUNTER</strong></a></strong></dt>
 
 <dd>
 <p>is for continuous incrementing counters like the ifInOctets counter in
@@ -128,8 +109,7 @@ rate. When the counter overflows, RRDtool checks if the overflow
 happened at the 32bit or 64bit border and acts accordingly by adding
 an appropriate value to the result.</p>
 </dd>
-</li>
-<dt><strong><a name="item_derive"><strong>DERIVE</strong></a></strong>
+<dt><strong><a name="item_derive"><strong>DERIVE</strong></a></strong></dt>
 
 <dd>
 <p>will store the derivative of the line going from the last to the
@@ -138,22 +118,17 @@ example, to measure the rate of people entering or leaving a
 room. Internally, derive works exactly like COUNTER but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use DERIVE and combine it with a MIN value of 0.</p>
-</dd>
 <dl>
-<dt><strong><a name="item_note_on_counter_vs_derive">NOTE on COUNTER vs DERIVE</a></strong>
+<dt><strong><a name="item_note_on_counter_vs_derive">NOTE on COUNTER vs DERIVE</a></strong></dt>
 
 <dd>
 <p>by Don Baarda &lt;<a href="mailto:don.baarda@baesystems.com">don.baarda@baesystems.com</a>&gt;</p>
-</dd>
-<dd>
 <p>If you cannot tolerate ever mistaking the occasional counter reset for a
 legitimate counter wrap, and would prefer ``Unknowns'' for all legitimate
 counter wraps and resets, always use DERIVE with min=0. Otherwise, using
 COUNTER with a suitable max will return correct values for all legitimate
 counter wraps, mark some counter resets as ``Unknown'', but can mistake some
 counter resets for a legitimate counter wrap.</p>
-</dd>
-<dd>
 <p>For a 5 minute step and 32-bit counter, the probability of mistaking a
 counter reset for a legitimate wrap is arguably about 0.8% per 1Mbps of
 maximum bandwidth. Note that this equates to 80% for 100Mbps interfaces, so
@@ -162,9 +137,9 @@ probably preferable. If you are using a 64bit counter, just about any max
 setting will eliminate the possibility of mistaking a reset for a counter
 wrap.</p>
 </dd>
-</li>
 </dl>
-<dt><strong><a name="item_absolute"><strong>ABSOLUTE</strong></a></strong>
+</dd>
+<dt><strong><a name="item_absolute"><strong>ABSOLUTE</strong></a></strong></dt>
 
 <dd>
 <p>is for counters which get reset upon reading. This is used for fast counters
@@ -173,8 +148,7 @@ after every read to make sure you have a maximum time available before the
 next overflow. Another usage is for things you count like number of messages
 since the last update.</p>
 </dd>
-</li>
-<dt><strong><a name="item_compute"><strong>COMPUTE</strong></a></strong>
+<dt><strong><a name="item_compute"><strong>COMPUTE</strong></a></strong></dt>
 
 <dd>
 <p>is for storing the result of a formula applied to other data sources
@@ -186,7 +160,6 @@ of the COMPUTE data source (that is the rpn-expression is only applied
 to generate PDPs). In database software, such data sets are referred
 to as ``virtual'' or ``computed'' columns.</p>
 </dd>
-</li>
 </dl>
 <p><em>heartbeat</em> defines the maximum number of seconds that may pass
 between two updates of this data source before the value of the
@@ -210,49 +183,41 @@ the RPN expression, the COMPUTE data source may only refer to the
 names of data source listed previously in the create command. This is
 similar to the restriction that <strong>CDEF</strong>s must refer only to <strong>DEF</strong>s
 and <strong>CDEF</strong>s previously defined in the same graph command.</p>
-<dt><strong><a name="item_rra_3acf_3acf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></strong>
+</dd>
+<dt><strong><a name="item_rra_3acf_3acf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></strong></dt>
 
 <dd>
 <p>The purpose of an <strong>RRD</strong> is to store data in the round robin archives
 (<strong>RRA</strong>). An archive consists of a number of data values or statistics for
 each of the defined data-sources (<strong>DS</strong>) and is defined with an <strong>RRA</strong> line.</p>
-</dd>
-<dd>
 <p>When data is entered into an <strong>RRD</strong>, it is first fit into time slots
 of the length defined with the <strong>-s</strong> option, thus becoming a <em>primary
 data point</em>.</p>
-</dd>
-<dd>
 <p>The data is also processed with the consolidation function (<em>CF</em>) of
 the archive. There are several consolidation functions that
 consolidate primary data points via an aggregate function: <strong>AVERAGE</strong>,
 <strong>MIN</strong>, <strong>MAX</strong>, <strong>LAST</strong>.</p>
-</dd>
 <dl>
-<dt><strong><a name="item_average">AVERAGE</a></strong>
+<dt><strong><a name="item_average">AVERAGE</a></strong></dt>
 
 <dd>
 <p>the average of the data points is stored.</p>
 </dd>
-</li>
-<dt><strong><a name="item_min">MIN</a></strong>
+<dt><strong><a name="item_min">MIN</a></strong></dt>
 
 <dd>
 <p>the smallest of the data points is stored.</p>
 </dd>
-</li>
-<dt><strong><a name="item_max">MAX</a></strong>
+<dt><strong><a name="item_max">MAX</a></strong></dt>
 
 <dd>
 <p>the largest of the data points is stored.</p>
 </dd>
-</li>
-<dt><strong><a name="item_last">LAST</a></strong>
+<dt><strong><a name="item_last">LAST</a></strong></dt>
 
 <dd>
 <p>the last data points is used.</p>
 </dd>
-</li>
 </dl>
 <p>Note that data aggregation inevitably leads to loss of precision and
 information. The trick is to pick the aggregate function such that the
@@ -268,6 +233,7 @@ to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).<
 <p><em>steps</em> defines how many of these <em>primary data points</em> are used to build
 a <em>consolidated data point</em> which then goes into the archive.</p>
 <p><em>rows</em> defines how many generations of data values are kept in an <strong>RRA</strong>.</p>
+</dd>
 </dl>
 <p>
 </p>
@@ -489,7 +455,7 @@ same average rate. <em>-- Don Baarda &lt;<a href="mailto:don.baarda@baesystems.c
 <h1><a name="how_to_measure">HOW TO MEASURE</a></h1>
 <p>Here are a few hints on how to measure:</p>
 <dl>
-<dt><strong><a name="item_temperature">Temperature</a></strong>
+<dt><strong><a name="item_temperature">Temperature</a></strong></dt>
 
 <dd>
 <p>Usually you have some type of meter you can read to get the temperature.
@@ -498,8 +464,7 @@ that the temperature reading happened at a certain time. You can use the
 <strong>GAUGE</strong> data source type for this. RRDtool will then record your reading
 together with the time.</p>
 </dd>
-</li>
-<dt><strong><a name="item_mail_messages">Mail Messages</a></strong>
+<dt><strong><a name="item_mail_messages">Mail Messages</a></strong></dt>
 
 <dd>
 <p>Assume you have a method to count the number of messages transported by
@@ -513,8 +478,7 @@ from RRDtool for the day in question and multiply this number with the
 number of seconds in a day. Because all math is run with Doubles, the
 precision should be acceptable.</p>
 </dd>
-</li>
-<dt><strong><a name="item_it_27s_always_a_rate">It's always a Rate</a></strong>
+<dt><strong><a name="item_it_27s_always_a_rate">It's always a Rate</a></strong></dt>
 
 <dd>
 <p>RRDtool stores rates in amount/second for COUNTER, DERIVE and ABSOLUTE
@@ -529,7 +493,6 @@ that draws bar-plots, where the delta-time is clear on the plot for
 each point (such that when you read the graph you see for example GB
 on the y axis, days on the x axis and one bar for each day).</p>
 </dd>
-</li>
 </dl>
 <p>
 </p>
