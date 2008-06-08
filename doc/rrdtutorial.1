@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDTUTORIAL 1"
-.TH RRDTUTORIAL 1 "2008-03-15" "1.3rc6" "rrdtool"
+.TH RRDTUTORIAL 1 "2008-03-15" "1.3rc9" "rrdtool"
 .SH "NAME"
 rrdtutorial \- Alex van den Bogaerdt's RRDtool tutorial
 .SH "DESCRIPTION"
@@ -288,7 +288,7 @@ I will use the following abbreviations:
 .PP
 .Vb 6
 \& M:    meter
-\& KM:   kilometer (= 1'000 meters).
+\& KM:   kilometer (= 1\(aq000 meters).
 \& H:    hour
 \& S:    second
 \& KM/H: kilometers per hour
@@ -544,16 +544,16 @@ to display kilometers per hour from the same data!
 To change a value that is measured in meters per second:
 .PP
 .Vb 3
-\& Calculate meters per hour:     value * 3'600
-\& Calculate kilometers per hour: value / 1'000
-\& Together this makes:           value * (3'600/1'000) or value * 3.6
+\& Calculate meters per hour:     value * 3\(aq600
+\& Calculate kilometers per hour: value / 1\(aq000
+\& Together this makes:           value * (3\(aq600/1\(aq000) or value * 3.6
 .Ve
 .PP
 In our example database we made a mistake and we need to compensate for
 this by multiplying with 1'000. Applying that correction:
 .PP
 .Vb 1
-\& value * 3.6  * 1'000 == value * 3'600
+\& value * 3.6  * 1\(aq000 == value * 3\(aq600
 .Ve
 .PP
 Now let's create this \s-1PNG\s0, and add some more magic ...
@@ -642,7 +642,7 @@ Or you could use the \*(L"time\*(R" function in Perl (the shortest example in
 this tutorial):
 .PP
 .Vb 1
-\&   perl \-e 'print time, "\en" '
+\&   perl \-e \(aqprint time, "\en" \(aq
 .Ve
 .PP
 How to run a program on regular intervals is \s-1OS\s0 specific. But here is
@@ -1135,11 +1135,11 @@ If the delta is negative, this can be compensated for by adding the
 maximum value of the counter + 1. For our car this would be:
 .PP
 .Vb 1
-\& Delta = 7 \- 999'987 = \-999'980    (instead of 1'000'007\-999'987=20)
+\& Delta = 7 \- 999\(aq987 = \-999\(aq980    (instead of 1\(aq000\(aq007\-999\(aq987=20)
 .Ve
 .PP
 .Vb 1
-\& Real delta = \-999'980 + 999'999 + 1 = 20
+\& Real delta = \-999\(aq980 + 999\(aq999 + 1 = 20
 .Ve
 .PP
 At the time of writing this document, RRDtool knows of counters that
@@ -1147,8 +1147,8 @@ are either 32 bits or 64 bits of size. These counters can handle the
 following different values:
 .PP
 .Vb 2
-\& \- 32 bits: 0 ..           4'294'967'295
-\& \- 64 bits: 0 .. 18'446'744'073'709'551'615
+\& \- 32 bits: 0 ..           4\(aq294\(aq967\(aq295
+\& \- 64 bits: 0 .. 18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615
 .Ve
 .PP
 If these numbers look strange to you, you can view them in
@@ -1181,50 +1181,50 @@ can't handle the numbers :)
 Correction numbers:
 .PP
 .Vb 3
-\& \- 32 bits: (4'294'967'295 + 1) =                                4'294'967'296
-\& \- 64 bits: (18'446'744'073'709'551'615 + 1)
-\&                                    \- correction1 = 18'446'744'069'414'584'320
+\& \- 32 bits: (4\(aq294\(aq967\(aq295 + 1) =                                4\(aq294\(aq967\(aq296
+\& \- 64 bits: (18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 + 1)
+\&                                    \- correction1 = 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320
 .Ve
 .PP
 .Vb 6
-\& Before:        4'294'967'200
+\& Before:        4\(aq294\(aq967\(aq200
 \& Increase:                100
-\& Should become: 4'294'967'300
+\& Should become: 4\(aq294\(aq967\(aq300
 \& But really is:             4
-\& Delta:        \-4'294'967'196
-\& Correction1:  \-4'294'967'196 + 4'294'967'296 = 100
+\& Delta:        \-4\(aq294\(aq967\(aq196
+\& Correction1:  \-4\(aq294\(aq967\(aq196 + 4\(aq294\(aq967\(aq296 = 100
 .Ve
 .PP
 .Vb 9
-\& Before:        18'446'744'073'709'551'000
+\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq000
 \& Increase:                             800
-\& Should become: 18'446'744'073'709'551'800
+\& Should become: 18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq800
 \& But really is:                        184
-\& Delta:        \-18'446'744'073'709'550'816
-\& Correction1:  \-18'446'744'073'709'550'816
-\&                                + 4'294'967'296 = \-18'446'744'069'414'583'520
-\& Correction2:  \-18'446'744'069'414'583'520
-\&                   + 18'446'744'069'414'584'320 = 800
+\& Delta:        \-18\(aq446\(aq744\(aq073\(aq709\(aq550\(aq816
+\& Correction1:  \-18\(aq446\(aq744\(aq073\(aq709\(aq550\(aq816
+\&                                + 4\(aq294\(aq967\(aq296 = \-18\(aq446\(aq744\(aq069\(aq414\(aq583\(aq520
+\& Correction2:  \-18\(aq446\(aq744\(aq069\(aq414\(aq583\(aq520
+\&                   + 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 = 800
 .Ve
 .PP
 .Vb 7
-\& Before:        18'446'744'073'709'551'615 ( maximum value )
-\& Increase:      18'446'744'069'414'584'320 ( absurd increase, minimum for
-\& Should become: 36'893'488'143'124'135'935             this example to work )
-\& But really is: 18'446'744'069'414'584'319
-\& Delta:                     \-4'294'967'296
-\& Correction1:  \-4'294'967'296 + 4'294'967'296 = 0
+\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 ( maximum value )
+\& Increase:      18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 ( absurd increase, minimum for
+\& Should become: 36\(aq893\(aq488\(aq143\(aq124\(aq135\(aq935             this example to work )
+\& But really is: 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319
+\& Delta:                     \-4\(aq294\(aq967\(aq296
+\& Correction1:  \-4\(aq294\(aq967\(aq296 + 4\(aq294\(aq967\(aq296 = 0
 \& (not negative \-> no correction2)
 .Ve
 .PP
 .Vb 7
-\& Before:        18'446'744'073'709'551'615 ( maximum value )
-\& Increase:      18'446'744'069'414'584'319 ( one less increase )
-\& Should become: 36'893'488'143'124'135'934
-\& But really is: 18'446'744'069'414'584'318
-\& Delta:                     \-4'294'967'297
-\& Correction1:  \-4'294'967'297 + 4'294'967'296 = \-1
-\& Correction2:  \-1 + 18'446'744'069'414'584'320 = 18'446'744'069'414'584'319
+\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 ( maximum value )
+\& Increase:      18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319 ( one less increase )
+\& Should become: 36\(aq893\(aq488\(aq143\(aq124\(aq135\(aq934
+\& But really is: 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq318
+\& Delta:                     \-4\(aq294\(aq967\(aq297
+\& Correction1:  \-4\(aq294\(aq967\(aq297 + 4\(aq294\(aq967\(aq296 = \-1
+\& Correction2:  \-1 + 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 = 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319
 .Ve
 .PP
 As you can see from the last two examples, you need strange numbers

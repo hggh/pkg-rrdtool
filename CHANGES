@@ -1,3 +1,218 @@
+2008-06-08 17:08  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3rc9
+
+2008-06-08 17:08  oetiker
+
+	* src/rrd_gfx.c, src/rrd_graph.c: fixed pango markup switch ... we
+	  still want the text to show even if no markup is enabled
+
+2008-06-08 16:47  oetiker
+
+	* bindings/python/rrdtoolmodule.c, bindings/ruby/main.c,
+	  src/librrd.sym: rrd_freemem has to be exported as well ...
+
+2008-06-08 16:23  oetiker
+
+	* branches/1.2/program/src/pngsize.c, src/pngsize.c: fix for ticket
+	  #121 jmpbuf on aix is a problem it seems, maybe this makes it
+	  better.
+
+2008-06-08 15:59  oetiker
+
+	* src/Makefile.am: prepare for the release of rrdtool-1.3rc8
+
+2008-06-08 15:55  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3rc8
+
+2008-06-08 15:55  oetiker
+
+	* bindings/perl-shared/RRDs.xs, bindings/python/rrdtoolmodule.c,
+	  bindings/ruby/main.c, bindings/tcl/tclrrd.c, doc/rrdthreads.pod,
+	  netware/Makefile, src/Makefile.am, src/librrd.sym,
+	  src/parsetime.c, src/parsetime.h, src/rrd.h, src/rrd_cgi.c,
+	  src/rrd_create.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_graph.c, src/rrd_graph.h, src/rrd_graph_helper.c,
+	  src/rrd_info.c, src/rrd_nan_inf.c, src/rrd_not_thread_safe.c,
+	  src/rrd_open.c, src/rrd_parsetime.c, src/rrd_parsetime.h,
+	  src/rrd_resize.c, src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c,
+	  src/rrd_tool.c, src/rrd_tool.h, src/rrd_update.c, src/rrd_xport.c,
+	  win32/rrd.dsp, win32/rrd.vcproj: From: Sebastian Harl sh
+	  tokkee.org Date: Sun, 8 Jun 2008 15:01:05 +0200 Subject: [PATCH]
+	  Cleanup the symbols exported by librrd. Up to know librrd exported
+	  a lot of symbols, most of which are to be regarded as private
+	  symbols. This somewhat pollutes the API as the symbols could, in
+	  theory, be used by external software and, more importantly, makes
+	  symbol based dependencies (as recently introduced in e.g. Debian)
+	  somewhat harder to implement. This patch does a somewhat
+	  large-scale cleanup of the exported symbols: * Introduced a
+	  librrd.sym file which contains all symbols that are to be
+	  exported. This file is then passed to libtool using the
+	  -export-symbols option which tells the linker to export the given
+	  symbols only (note: according to the libtool manual, this has no
+	  effect on some architectures - however, I assume that most
+	  architectures in use today do support it). librrd.sym contains all
+	  symbols originally defined in rrd.h sans LockRRD() (which has been
+	  moved to rrd_tool.h). The following functions have been added to
+	  rrd.h and the list of exported symbols (some of them have been
+	  renamed, see below): - rrd_info() - rrd_info_free() -
+	  rrd_info_print() - rrd_info_push() - rrd_lastupdate() -
+	  rrd_update_v() - rrd_strerror() * Prefixed all public functions
+	  and types with "rrd_" to avoid name clashes with other libraries.
+	  Also, while I was at it, I introduced typedefs for all custom
+	  types and prefixed the time names with "_t" to improve
+	  consistency: - enum info_type -> rrd_info_type_t - enum timetype
+	  -> rrd_timetype_t - union infoval -> rrd_infoval_t - struct info_t
+	  -> rrd_info_t - struct rrd_context -> rrd_context_t - struct
+	  rrd_time_value -> rrd_time_value_t - info_free() ->
+	  rrd_info_free() - info_free() -> rrd_info_free() - info_print() ->
+	  rrd_info_print() - info_push() -> rrd_info_push() - LockRRD() ->
+	  rrd_lock() (not public though) - parsetime() -> rrd_parsetime()
+	  (and: src/parsetime.c -> src/rrd_parsetime.c) - proc_start_end()
+	  -> rrd_proc_start_end() - set_to_DINF() -> rrd_set_to_DINF() -
+	  set_to_DNAN() -> rrd_set_to_DNAN() * Moved readfile() from
+	  rrd_open.c to rrd_cgi.c and declared it static. This function is
+	  used in rrd_cgi.c only. * rrd_lock() (f.k.a. LockRRD()) now
+	  accepts a rrd_file_t pointer instead of an integer to increase
+	  encapsulation.
+
+2008-06-07 14:35  oetiker
+
+	* src/rrd_open.c: don't bother with don't need when there is neither
+	  madvise not fadvise calls
+
+2008-06-06 16:38  oetiker
+
+	* branches/1.2/program/src/rrd_graph.c, src/rrd_graph.c: fix for
+	  --font bug (font names wer not being picked up at all). Bug
+	  reported by Dmitry B. Bigunayk
+
+2008-06-05 20:56  oetiker
+
+	* NEWS: added pango markup name
+
+2008-06-05 19:59  oetiker
+
+	* src/rrd.h, src/rrd_error.c, src/rrd_format.h, src/rrd_gfx.c,
+	  src/rrd_info.c, src/rrd_open.c, src/rrd_update.c: fixed indenting
+
+2008-06-05 19:59  oetiker
+
+	* src/rrd_graph.c: disable pango markup by default. added
+	  --pango-markup option for explicit enablement.
+
+2008-06-05 19:58  oetiker
+
+	* doc/rrdgraph.pod, src/rrd_graph.h: disable pango markup by
+	  default. added --pango-markup option for explicit enablement.
+
+2008-06-05 19:57  oetiker
+
+	* bindings/python/rrdtoolmodule.c: fixed indenting
+
+2008-06-04 16:18  oetiker
+
+	* bindings/tcl/Makefile.am, configure.ac: enable new building for
+	  newer tcl versions
+
+2008-06-02 06:46  oetiker
+
+	* configure.ac: updated documentation of library versioning system
+
+2008-06-02 06:43  oetiker
+
+	* configure.ac: Had to reset the interface version number due to the
+	  change in the rrd_context implementation.
+
+2008-06-02 06:21  oetiker
+
+	* src/rrd_restore.c: use DNAN instead of NAN since there seem to be
+	  issues with gcc on solaris and the NAN experession (and we use
+	  DNAN everywhere else anyway).
+
+2008-06-01 21:12  oetiker
+
+	* doc/rrdbuild.pod: integrated gentoo bits and spell fixes by Peter
+	  Volkov
+
+2008-06-01 20:44  oetiker
+
+	* src/rrd.h, src/rrd_error.c, src/rrd_not_thread_safe.c,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c: Patch for
+	  rrd_context system by sebastian harl, making it simpler and less
+	  error prone. Removing one buffer overflow in the process.
+
+2008-05-31 15:58  oetiker
+
+	* doc/rrdbuild.pod: prepare for the release of rrdtool-1.3rc7
+
+2008-05-31 15:57  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3rc7
+
+2008-05-31 15:56  oetiker
+
+	* doc/rrdbuild.pod: added pkgconfig build instructions
+
+2008-05-31 12:28  oetiker
+
+	* branches/1.2/program/src/rrd_graph.c, src/rrd_graph.c: make sure
+	  vdef calcs only calc as far as originally requested.
+
+2008-05-27 22:24  oetiker
+
+	* src/rrd_info.c: fixed maxlength for sprintf_alloc 50 was not
+	  enough ... 1024+strlen(fmt) is much better. This makes imginfo
+	  work even when there are long image paths.
+
+2008-05-26 16:39  oetiker
+
+	* trunk/talks/nordic-nagios-08/talk.odp: initial talk slides
+
+2008-05-26 11:45  oetiker
+
+	* TODO: updated todo list
+
 2008-05-26 08:56  oetiker
 
 	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,

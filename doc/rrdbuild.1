@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDBUILD 1"
-.TH RRDBUILD 1 "2008-05-26" "1.3rc6" "rrdtool"
+.TH RRDBUILD 1 "2008-06-08" "1.3rc9" "rrdtool"
 .SH "NAME"
 rrdbuild \- Instructions for building RRDtool
 .SH "OVERVIEW"
@@ -137,7 +137,7 @@ rrdbuild \- Instructions for building RRDtool
 If you downloaded the source of rrdtool you have to compile it. This
 document will give some information on how this is done.
 .PP
-RRDtool relies on services of thrid part libraries. Some of these libraries
+RRDtool relies on services of third part libraries. Some of these libraries
 may already be installed on your system. You have to compile copies of the other
 ones before you can build RRDtool.
 .PP
@@ -163,7 +163,7 @@ Once you have decided. Save the two locations into environment variables.
 .PP
 .Vb 2
 \& BUILD_DIR=/tmp/rrdbuild
-\& INSTALL_DIR=/usr/local/rrdtool\-1.3rc6
+\& INSTALL_DIR=/usr/local/rrdtool\-1.3rc9
 .Ve
 .PP
 If your \fI/tmp\fR is mounted with the option noexec (\s-1RHEL\s0 seems todo that) you have to choose
@@ -180,9 +180,9 @@ Lets first assume you already have all the necessary libraries
 pre\-installed. 
 .PP
 .Vb 4
-\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3rc6.tar.gz
-\& gunzip \-c rrdtool\-1.3rc6.tar.gz | tar xf \-
-\& cd rrdtool\-1.3rc6
+\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3rc9.tar.gz
+\& gunzip \-c rrdtool\-1.3rc9.tar.gz | tar xf \-
+\& cd rrdtool\-1.3rc9
 \& ./configure \-\-prefix=$INSTALL_DIR && make && make install
 .Ve
 .PP
@@ -193,8 +193,9 @@ Ok, this was very optimistic. This try will probably have ended with
 If your \s-1OS\s0 lets you install additional packages from a software repository,
 you may get away with installing the missing packages. When the packages are
 installed, run configure again and try to compile again. Below you find some
-hints on getting your \s-1OS\s0 ready for the rrdtool compilation. Additions to
-this list are welcome.
+hints on getting your \s-1OS\s0 ready for the rrdtool compilation.
+.PP
+Additions to this list are welcome.
 .Sh "OpenSolaris 2008.05"
 .IX Subsection "OpenSolaris 2008.05"
 Just add a compiler and the gnome development package:
@@ -204,13 +205,13 @@ Just add a compiler and the gnome development package:
 \& pkg install SUNWgnome\-common\-devel
 .Ve
 .PP
-There is a a problem with \fIcairo.pc\fR on opensolaris. It suggests that
+There is a problem with \fIcairo.pc\fR on opensolaris. It suggests that
 xrender is required for compilation with cairo. This is not true and also
 bad since opensolaris does not include an \fIxrender.pc\fR file. Use perl to
 fix this:
 .PP
 .Vb 1
-\& perl \-i~ \-p \-e 's/(Requires.*?)\es*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc
+\& perl \-i~ \-p \-e \(aqs/(Requires.*?)\es*xrender.*/$1/\(aq /usr/lib/pkgconfig/cairo.pc
 .Ve
 .Sh "Debian / Ubuntu"
 .IX Subsection "Debian / Ubuntu"
@@ -220,19 +221,46 @@ of packages will get added through dependencies.
 .Vb 1
 \& apt\-get install libpango1.0\-dev libxml2\-dev
 .Ve
+.Sh "Gentoo"
+.IX Subsection "Gentoo"
+In Gentoo installing rrdtool is really simple you just need to \fBemerge
+rrdtool\fR. All dependencies will be handled automatically by the portage
+system. The only thing you should care about are \s-1USE\s0 flags, which allow you
+fine tune features rrdtool will be built with. Currently the following \s-1USE\s0
+flags are available:
+.PP
+.Vb 7
+\& doc    \- install .html and .txt documentation
+\&          into /usr/share/doc/rrdtool\-1.x.xx/
+\& perl   \- build and install perl language bindings
+\& python \- build and install python language bindings
+\& ruby   \- build and install ruby language bindings
+\& tcl    \- build and install tcl language bindings
+\& rrdcgi \- build and install rrdcgi
+.Ve
+.PP
+After you've decided which \s-1USE\s0 flags you need, set them either in
+\&\fImake.conf\fR or \fI/etc/portage/package.use\fR and finally run:
+.PP
+.Vb 1
+\& # emerge \-va rrdtool
+.Ve
+.PP
+Take a look at Gentoo handbook for further details on how to manage \s-1USE\s0
+flags: http://www.gentoo.org/doc/en/handbook/handbook\-x86.xml?part=2
 .SH "BUILDING DEPENDENCIES"
 .IX Header "BUILDING DEPENDENCIES"
 But again this may have been too optimistic still, and you actually have to
 compile your own copies of some of the required libraries. Things like
 libpng and zlib are pretty standard so you will probably have them on your
 system anyway. Freetype, Fontinst, Cairo, Pango may be installed, but it is
-possible that they are pretty old and thus don't live up to the
+possible that they are pretty old and thus don't live up to our
 expectations, so you may want to compile their latest versions.
 .PP
-\fIBuild Tipps for \s-1AIX\s0\fR
-.IX Subsection "Build Tipps for AIX"
+\fIBuild Tips for \s-1AIX\s0\fR
+.IX Subsection "Build Tips for AIX"
 .PP
-If you are woking with \s-1AIX\s0, you may find the the \fB\-\-disable\-shared\fR option
+If you are working with \s-1AIX\s0, you may find the the \fB\-\-disable\-shared\fR option
 will cause things to break for you. In that case you may have to install the
 shared libraries into the rrdtool \s-1PREFIX\s0 and work with \fB\-\-disable\-static\fR
 instead.
@@ -250,7 +278,7 @@ Another hint to get rrdtool working on \s-1AIX\s0 is to use the \s-1IBM\s0 \s-1X
 In order to build the libraries you need a compiler on your system.
 Unfortunately compilers are not all alike. This has an effect on the \s-1CFLAGS\s0
 you want to set. The examples below are for the popular \s-1GCC\s0 compiler suite.
-If you have an other compile you have to use the following settings:
+If you have an other compilers here are some ides:
 .IP "Sun Forte" 4
 .IX Item "Sun Forte"
 .Vb 1
@@ -259,16 +287,19 @@ If you have an other compile you have to use the following settings:
 .Sp
 .RS 4
 Some libraries want to know where other libraries are. For this to work,
-set the following environamen variable
+set the following environment variable
 .Sp
 .Vb 2
 \& export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig
 \& export PATH=$INSTALL_DIR/bin:$PATH
 .Ve
 .Sp
-Since we are compiling libraries dynamically, you they must further know
-where to find each other. This is done by setting an appropriate \s-1LDFLAG\s0.
-Unfortunatly the syntax differs from system to system:
+This relies on the presence of the \fIpkgconfig\fR program. Below you find instructions
+on how to compile pkgconfig as well.
+.Sp
+Since we are compiling libraries dynamically, they must know
+where to find each other. This is done by setting an appropriate \s-1LDFLAGS\s0.
+Unfortunately, the syntax again differs from system to system:
 .IP "Solaris" 4
 .IX Item "Solaris"
 .Vb 1
@@ -279,9 +310,6 @@ Unfortunatly the syntax differs from system to system:
 .Vb 1
 \& export LDFLAGS="\-Wl,\-\-rpath \-Wl,${INSTALL_DIR}/lib"
 .Ve
-.Sp
-If you are on a 64bit platform, but would like to continue to use the rrd files created
-on your old 32bit linux, you may be able 
 .IP "\s-1HPUX\s0" 4
 .IX Item "HPUX"
 .Vb 1
@@ -303,12 +331,26 @@ then do
 \& export GNUMAKE=gmake
 .Ve
 .Sp
-otherwhise just do
+otherwise just do
 .Sp
 .Vb 1
 \& export MAKE=make
 .Ve
 .RE
+.IP "Building pkgconfig" 4
+.IX Item "Building pkgconfig"
+As mentioned above, without pkgconfig the whole build process will be lots
+of pain and suffering, so make sure you have a copy on your system. If it is
+not available natively, here is how to compile it.
+.Sp
+.Vb 6
+\& wget http://pkgconfig.freedesktop.org/releases/pkg\-config\-0.23.tar.gz
+\& gunzip \-c pkg\-config\-0.23.tar.gz | tar xf \-
+\& cd pkg\-config\-0.23
+\& ./configure \-\-prefix=$INSTALL_DIR CFLAGS="\-O3 \-fPIC"
+\& $MAKE
+\& $MAKE install
+.Ve
 .IP "Building zlib" 4
 .IX Item "Building zlib"
 Chances are very high that you already have that on your system ... 
@@ -325,7 +367,7 @@ Chances are very high that you already have that on your system ...
 .IP "Building libpng" 4
 .IX Item "Building libpng"
 Libpng itself requires zlib to build, so we need to help a bit. If you
-already have a copy of zlib on your system (which is very likley) you can
+already have a copy of zlib on your system (which is very likely) you can
 drop the settings of \s-1LDFLAGS\s0 and \s-1CPPFLAGS\s0. Note that the backslash (\e) at
 the end of line 4 means that line 4 and line 5 are on one line.
 .Sp
@@ -369,9 +411,9 @@ add the following at the start the configure line:
 .Ve
 .IP "Building fontconfig" 4
 .IX Item "Building fontconfig"
-Note that fontconfig has a runtime configuration file in INSTALL_DIR/etc you
+Note that fontconfig has a run time configuration file in INSTALL_DIR/etc you
 may want to adjust that so that fontconfig finds the fonts on your system.
-Run the fc-cache program to build the fontconfig cache after changeing the
+Run the fc-cache program to build the fontconfig cache after changing the
 config file.
 .Sp
 .Vb 7
@@ -389,7 +431,7 @@ config file.
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/pixman\-0.10.0.tar.gz
 \& gunzip \-c pixman\-0.10.0.tar.gz  | tar xf \-
-\& cd fontconfig\-2.4.2
+\& cd pixman\-0.10.0
 \& ./configure \-\-prefix=$INSTALL_DIR CFLAGS="\-O3 \-fPIC"
 \& $MAKE
 \& $MAKE install
@@ -443,7 +485,7 @@ tcl setups that would prevent rrdtool from building if they are included in
 their current state.
 .PP
 .Vb 5
-\& cd $BUILD_DIR/rrdtool\-1.3rc6
+\& cd $BUILD_DIR/rrdtool\-1.3rc9
 \& ./configure \-\-prefix=$INSTALL_DIR \-\-disable\-tcl \-\-disable\-python
 \& $MAKE clean
 \& $MAKE
@@ -451,7 +493,7 @@ their current state.
 .Ve
 .PP
 \&\s-1SOLARIS\s0 \s-1HINT:\s0 if you want to build  the perl module for the native perl (the
-one shipping with solaris) you will need the sun forte compiler installed on
+one shipping with Solaris) you will need the sun forte compiler installed on
 your box or you have to hand-tune bindings/perl\-shared/Makefile while
 building!
 .PP

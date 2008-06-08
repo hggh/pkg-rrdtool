@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDTHREADS 1"
-.TH RRDTHREADS 1 "2008-03-15" "1.3rc6" "rrdtool"
+.TH RRDTHREADS 1 "2008-06-08" "1.3rc9" "rrdtool"
 .SH "NAME"
 rrdthreads \- Provisions for linking the RRD library to use in multi\-threaded programs
 .SH "SYNOPSIS"
@@ -214,7 +214,7 @@ taking all options as function parameters. You may provide argc and
 **argv arguments for variable length argument lists. See
 \&\f(CW\*(C`rrd_update_r\*(C'\fR as an example.
 .IP "\(bu" 4
-Do not use the \f(CW\*(C`parsetime\*(C'\fR function!
+Do not use the \f(CW\*(C`rrd_parsetime\*(C'\fR function!
 .Sp
 It uses lots of global variables. You may use it in functions not designed
 to be thread\-safe, like in functions wrapping the \f(CW\*(C`_r\*(C'\fR version of some

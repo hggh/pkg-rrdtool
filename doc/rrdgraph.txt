@@ -325,6 +325,30 @@ OOPPTTIIOONNSS
            bitmapped, that is, without any font smoothing. By default, no text
            is rendered bitmapped.
 
+           [--PP|----ppaannggoo--mmaarrkkuupp]
+
+           All text in rrdtool is rendered using Pango. With the
+           ----ppaannggoo--mmaarrkkuupp option, all text will be processed by pango markup.
+           This allows to embed some simple html like markup tags using
+
+            <span key="value">text</span>
+
+           Apart from the verbose syntax, there are also the following short
+           tags available.
+
+            b     Bold
+            big   Makes font relatively larger, equivalent to <span size="larger">
+            i     Italic
+            s     Strikethrough
+            sub   Subscript
+            sup   Superscript
+            small Makes font relatively smaller, equivalent to <span size="smaller">
+            tt    Monospace font
+            u     Underline
+
+           More details on <http://developer.gnome.org/doc/API/2.0/pango/Pan-
+           goMarkupFormat.html>.
+
            [--GG|----ggrraapphh--rreennddeerr--mmooddee {nnoorrmmaall,mmoonnoo}]
 
            There are 2 render modes:
@@ -398,28 +422,6 @@ OOPPTTIIOONNSS
            least one print statement to generate a report.  See rrdgraph_graph
            for the exact format.
 
-       Markup
-           All text in rrdtool is rendered using Pango markup. This means text
-           can contain embeded markup instructions.  Simple html markup using
-
-            <span key="value">text</span>
-
-           can be used. Apart from the verbose syntax, there are also the fol-
-           lowing short tags available.
-
-            b     Bold
-            big   Makes font relatively larger, equivalent to <span size="larger">
-            i     Italic
-            s     Strikethrough
-            sub   Subscript
-            sup   Superscript
-            small Makes font relatively smaller, equivalent to <span size="smaller">
-            tt    Monospace font
-            u     Underline
-
-           More details on http://developer.gnome.org/doc/API/2.0/pango/Pango-
-           MarkupFormat.html.
-
        ggrraapphhvv
 
        Calling rrdtool with the graphv option will return information in the
@@ -463,4 +465,4 @@ AAUUTTHHOORR
 
 
 
-1.3rc6                            2008-04-21                       RRDGRAPH(1)
+1.3rc9                            2008-06-05                       RRDGRAPH(1)

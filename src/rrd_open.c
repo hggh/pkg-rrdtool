@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 1380 2008-05-26 08:56:58Z oetiker $
+ * $Id: rrd_open.c 1413 2008-06-08 17:08:47Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -34,10 +34,11 @@
 #endif
 
 /* get the address of the start of this page */
+#if defined USE_MADVISE || defined HAVE_POSIX_FADVISE 
 #ifndef PAGE_START
 #define PAGE_START(addr) ((addr)&(~(_page_size-1)))
 #endif
-
+#endif
 
 /* Open a database file, return its header and an open filehandle,
  * positioned to the first cdp in the first rra.
@@ -226,13 +227,13 @@ rrd_file_t *rrd_open(
             rrd_set_error("live_head_t malloc");
             goto out_close;
         }
-
 #if defined USE_MADVISE
         /* the live_head will be needed soonish, so hint accordingly */
-        madvise(data + PAGE_START(offset),
-                sizeof(time_t), MADV_WILLNEED);
-#endif        
-        __rrd_read(rrd->legacy_last_up,time_t,1);
+        madvise(data + PAGE_START(offset), sizeof(time_t), MADV_WILLNEED);
+#endif
+        __rrd_read(rrd->legacy_last_up, time_t,
+                   1);
+
         rrd->live_head->last_up = *rrd->legacy_last_up;
         rrd->live_head->last_up_usec = 0;
     } else {
@@ -316,6 +317,7 @@ void rrd_dontneed(
     rrd_file_t *rrd_file,
     rrd_t *rrd)
 {
+#if defined USE_MADVISE || defined HAVE_POSIX_FADVISE
     unsigned long dontneed_start;
     unsigned long rra_start;
     unsigned long active_block;
@@ -369,7 +371,12 @@ void rrd_dontneed(
 #if defined DEBUG && DEBUG > 1
     mincore_print(rrd_file, "after");
 #endif
+#endif /* without madvise and posix_fadvise ist does not make much sense todo anything */
 }
+
+
+
+
 
 int rrd_close(
     rrd_file_t *rrd_file)
@@ -528,8 +535,8 @@ void rrd_init(
 void rrd_free(
     rrd_t *rrd)
 {
-    if (rrd->legacy_last_up){ /* this gets set for version < 3 only */
-        free(rrd->live_head);  
+    if (rrd->legacy_last_up) {  /* this gets set for version < 3 only */
+        free(rrd->live_head);
     }
 }
 #else
@@ -557,63 +564,3 @@ void rrd_freemem(
     free(mem);
 }
 
-
-/* XXX: FIXME: missing documentation.  */
-/*XXX: FIXME should be renamed to rrd_readfile or _rrd_readfile */
-
-int /*_rrd_*/ readfile(
-    const char *file_name,
-    char **buffer,
-    int skipfirst)
-{
-    long      writecnt = 0, totalcnt = MEMBLK;
-    long      offset = 0;
-    FILE     *input = NULL;
-    char      c;
-
-    if ((strcmp("-", file_name) == 0)) {
-        input = stdin;
-    } else {
-        if ((input = fopen(file_name, "rb")) == NULL) {
-            rrd_set_error("opening '%s': %s", file_name, rrd_strerror(errno));
-            return (-1);
-        }
-    }
-    if (skipfirst) {
-        do {
-            c = getc(input);
-            offset++;
-        } while (c != '\n' && !feof(input));
-    }
-    if (strcmp("-", file_name)) {
-        fseek(input, 0, SEEK_END);
-        /* have extra space for detecting EOF without realloc */
-        totalcnt = (ftell(input) + 1) / sizeof(char) - offset;
-        if (totalcnt < MEMBLK)
-            totalcnt = MEMBLK;  /* sanitize */
-        fseek(input, offset * sizeof(char), SEEK_SET);
-    }
-    if (((*buffer) = (char *) malloc((totalcnt + 4) * sizeof(char))) == NULL) {
-        perror("Allocate Buffer:");
-        exit(1);
-    };
-    do {
-        writecnt +=
-            fread((*buffer) + writecnt, 1,
-                  (totalcnt - writecnt) * sizeof(char), input);
-        if (writecnt >= totalcnt) {
-            totalcnt += MEMBLK;
-            if (((*buffer) =
-                 rrd_realloc((*buffer),
-                             (totalcnt + 4) * sizeof(char))) == NULL) {
-                perror("Realloc Buffer:");
-                exit(1);
-            };
-        }
-    } while (!feof(input));
-    (*buffer)[writecnt] = '\0';
-    if (strcmp("-", file_name) != 0) {
-        fclose(input);
-    };
-    return writecnt;
-}

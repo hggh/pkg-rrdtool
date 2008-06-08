@@ -76,95 +76,82 @@ saves a considerable amount of startup time when you plan to make
 for RRDtool which allow you to use it directly from perl, python, tcl,
 php, etc.</p>
 <dl>
-<dt><strong><a name="item_create"><strong>create</strong></a></strong>
+<dt><strong><a name="item_create"><strong>create</strong></a></strong></dt>
 
 <dd>
 <p>Set up a new Round Robin Database (RRD). Check <a href="././rrdcreate.html">the rrdcreate manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_update"><strong>update</strong></a></strong>
+<dt><strong><a name="item_update"><strong>update</strong></a></strong></dt>
 
 <dd>
 <p>Store new data values into an RRD. Check <a href="././rrdupdate.html">the rrdupdate manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_updatev"><strong>updatev</strong></a></strong>
+<dt><strong><a name="item_updatev"><strong>updatev</strong></a></strong></dt>
 
 <dd>
 <p>Operationally equivalent to <strong>update</strong> except for output. Check <a href="././rrdupdate.html">the rrdupdate manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_graph"><strong>graph</strong></a></strong>
+<dt><strong><a name="item_graph"><strong>graph</strong></a></strong></dt>
 
 <dd>
 <p>Create a graph from data stored in one or several RRDs. Apart from
 generating graphs, data can also be extracted to stdout. Check <a href="././rrdgraph.html">the rrdgraph manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_dump"><strong>dump</strong></a></strong>
+<dt><strong><a name="item_dump"><strong>dump</strong></a></strong></dt>
 
 <dd>
 <p>Dump the contents of an RRD in plain ASCII. In connection with restore
 you can use this to move an RRD from one computer architecture to
 another.  Check <a href="././rrddump.html">the rrddump manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_restore"><strong>restore</strong></a></strong>
+<dt><strong><a name="item_restore"><strong>restore</strong></a></strong></dt>
 
 <dd>
 <p>Restore an RRD in XML format to a binary RRD. Check <a href="././rrdrestore.html">the rrdrestore manpage</a></p>
 </dd>
-</li>
-<dt><strong><a name="item_fetch"><strong>fetch</strong></a></strong>
+<dt><strong><a name="item_fetch"><strong>fetch</strong></a></strong></dt>
 
 <dd>
 <p>Get data for a certain time period from a RRD. The graph function
 uses fetch to retrieve its data from an RRD. Check <a href="././rrdfetch.html">the rrdfetch manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_tune"><strong>tune</strong></a></strong>
+<dt><strong><a name="item_tune"><strong>tune</strong></a></strong></dt>
 
 <dd>
 <p>Alter setup of an RRD. Check <a href="././rrdtune.html">the rrdtune manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_last"><strong>last</strong></a></strong>
+<dt><strong><a name="item_last"><strong>last</strong></a></strong></dt>
 
 <dd>
 <p>Find the last update time of an RRD. Check <a href="././rrdlast.html">the rrdlast manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_info"><strong>info</strong></a></strong>
+<dt><strong><a name="item_info"><strong>info</strong></a></strong></dt>
 
 <dd>
 <p>Get information about an RRD. Check <a href="././rrdinfo.html">the rrdinfo manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_rrdresize"><strong>rrdresize</strong></a></strong>
+<dt><strong><a name="item_rrdresize"><strong>rrdresize</strong></a></strong></dt>
 
 <dd>
 <p>Change the size of individual RRAs. This is dangerous! Check <a href="././rrdresize.html">the rrdresize manpage</a>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_xport"><strong>xport</strong></a></strong>
+<dt><strong><a name="item_xport"><strong>xport</strong></a></strong></dt>
 
 <dd>
 <p>Export data retrieved from one or several RRDs. Check <a href="././rrdxport.html">the rrdxport manpage</a></p>
 </dd>
-</li>
-<dt><strong><a name="item_rrdcgi"><strong>rrdcgi</strong></a></strong>
+<dt><strong><a name="item_rrdcgi"><strong>rrdcgi</strong></a></strong></dt>
 
 <dd>
 <p>This is a standalone tool for producing RRD graphs on the fly. Check
 <a href="././rrdcgi.html">the rrdcgi manpage</a>.</p>
 </dd>
-</li>
 </dl>
 <p>
 </p>
 <h2><a name="how_does_rrdtool_work">HOW DOES RRDTOOL WORK?</a></h2>
 <dl>
-<dt><strong><a name="item_data_acquisition">Data Acquisition</a></strong>
+<dt><strong><a name="item_data_acquisition">Data Acquisition</a></strong></dt>
 
 <dd>
 <p>When monitoring the state of a system, it is convenient to have the
@@ -177,8 +164,7 @@ interpolated value to the log. The original value you have supplied is
 stored as well and is also taken into account when interpolating the
 next log entry.</p>
 </dd>
-</li>
-<dt><strong><a name="item_consolidation">Consolidation</a></strong>
+<dt><strong><a name="item_consolidation">Consolidation</a></strong></dt>
 
 <dd>
 <p>You may log data at a 1 minute interval, but you might also be
@@ -195,16 +181,13 @@ consolidated values (see rrdcreate). You can define any number of
 different consolidation setups within one <strong>RRD</strong>. They will all be
 maintained on the fly when new data is loaded into the <strong>RRD</strong>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_round_robin_archives">Round Robin Archives</a></strong>
+<dt><strong><a name="item_round_robin_archives">Round Robin Archives</a></strong></dt>
 
 <dd>
 <p>Data values of the same consolidation setup are stored into Round
 Robin Archives (<strong>RRA</strong>). This is a very efficient manner to store data
 for a certain amount of time, while using a known and constant amount
 of storage space.</p>
-</dd>
-<dd>
 <p>It works like this: If you want to store 1'000 values in 5 minute
 interval, <strong>RRDtool</strong> will allocate space for 1'000 data values and a
 header area. In the header it will store a pointer telling which slots
@@ -215,22 +198,17 @@ manner. This automatically limits the history to the last 1'000 values
 single <strong>RRD</strong>, you can setup another one, for storing 750 data values
 at a 2 hour interval, for example, and thus keep a log for the last
 two months at a lower resolution.</p>
-</dd>
-<dd>
 <p>The use of <strong>RRA</strong>s guarantees that the <strong>RRD</strong> does not grow over
 time and that old data is automatically eliminated. By using the
 consolidation feature, you can still keep data for a very long time,
 while gradually reducing the resolution of the data along the time
 axis.</p>
-</dd>
-<dd>
 <p>Using different consolidation functions (<strong>CF</strong>) allows you to store
 exactly the type of information that actually interests you: the maximum
 one minute traffic on the LAN, the minimum temperature of your wine cellar,
 the total minutes of down time, etc.</p>
 </dd>
-</li>
-<dt><strong><a name="item_unknown_data">Unknown Data</a></strong>
+<dt><strong><a name="item_unknown_data">Unknown Data</a></strong></dt>
 
 <dd>
 <p>As mentioned earlier, the <strong>RRD</strong> stores data at a constant
@@ -246,8 +224,7 @@ performed to make sure that the percentage of unknown values in the
 data point is above a configurable level. If not, an <em>*UNKNOWN*</em> value
 will be written to the <strong>RRA</strong>.</p>
 </dd>
-</li>
-<dt><strong><a name="item_graphing">Graphing</a></strong>
+<dt><strong><a name="item_graphing">Graphing</a></strong></dt>
 
 <dd>
 <p><strong>RRDtool</strong> allows you to generate reports in numerical and
@@ -256,16 +233,12 @@ graphical form based on the data stored in one or several
 contents of the graph can be defined freely. Check <a href="././rrdgraph.html">the rrdgraph manpage</a>
 for more information on this.</p>
 </dd>
-</li>
-<dt><strong><a name="item_aberrant_behavior_detection">Aberrant Behavior Detection</a></strong>
+<dt><strong><a name="item_aberrant_behavior_detection">Aberrant Behavior Detection</a></strong></dt>
 
 <dd>
 <p>by Jake Brutlag</p>
-</dd>
-<dd>
 <p><strong>RRDtool</strong> provides the building blocks for near real-time aberrant
 behavior detection. These components include:</p>
-</dd>
 <ul>
 <li>
 <p>An algorithm for predicting the value of a time series one time step
@@ -312,6 +285,7 @@ particular, a FAILURES <strong>RRA</strong> logs potential failures. With these 
 you could, for example, use a front-end application to <strong>RRDtool</strong> to
 initiate real-time alerts.</p>
 <p>For a detailed description on how to set this up, see <a href="././rrdcreate.html">the rrdcreate manpage</a>.</p>
+</dd>
 </dl>
 <p>
 </p>

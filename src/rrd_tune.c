@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3rc6  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * change header parameters of an rrd
  *****************************************************************************
- * $Id: rrd_tune.c 1380 2008-05-26 08:56:58Z oetiker $
+ * $Id: rrd_tune.c 1413 2008-06-08 17:08:47Z oetiker $
  * $Log$
  * Revision 1.6  2004/05/26 22:11:12  oetiker
  * reduce compiler warnings. Many small fixes. -- Mike Slifcak <slif@bellsouth.net>
