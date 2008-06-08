@@ -76,9 +76,7 @@ build: build-arch build-indep
 
 build-arch: build-arch-stamp $(PY_VERS:%=build-python%)
 build-arch-stamp: config.status 
-
-	#configure forgets to set TCL_INC_DIR.
-	make TCL_INC_DIR=/usr/include/tcl
+	make
 	#Fix library path to tcl bindings
 	sed -i -e 's|lib/|lib/tcltk/rrdtool-tcl/|' bindings/tcl/pkgIndex.tcl
 	#sanity check if debian/control lists the right package name
