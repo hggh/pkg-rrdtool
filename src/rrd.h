@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id: rrd.h 1413 2008-06-08 17:08:47Z oetiker $
+ * $Id: rrd.h 1432 2008-06-10 23:12:55Z oetiker $
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...
@@ -128,7 +128,7 @@ extern    "C" {
     rrd_info_type_t,
     rrd_infoval_t);
     void      rrd_info_print(
-    rrd_info_t *data);
+    rrd_info_t * data);
     void      rrd_info_free(
     rrd_info_t *);
     int       rrd_update(
@@ -199,6 +199,9 @@ extern    "C" {
     char ***,
     rrd_value_t **);
 
+    void      rrd_freemem(
+    void *mem);
+
 /* thread-safe (hopefully) */
     int       rrd_create_r(
     const char *filename,
@@ -249,7 +252,7 @@ extern    "C" {
 
     char     *rrd_parsetime(
     const char *spec,
-    rrd_time_value_t *ptv);
+    rrd_time_value_t * ptv);
 /* END rrd_parsetime.h */
 
     typedef struct rrd_context {
@@ -289,12 +292,66 @@ extern    "C" {
     rrd_context_t *rrd_new_context(
     void);
     void      rrd_free_context(
-    rrd_context_t *buf);
+    rrd_context_t * buf);
 
 /* void   rrd_set_error_r  (rrd_context_t *, char *, ...); */
 /* void   rrd_clear_error_r(rrd_context_t *); */
 /* int    rrd_test_error_r (rrd_context_t *); */
 /* char  *rrd_get_error_r  (rrd_context_t *); */
+
+/*
+ * The following functions are _internal_ functions needed to read the raw RRD
+ * files. Since they are _internal_ they may change with the file format and
+ * will be replaced with a more general interface in RRDTool 1.4. Don't use
+ * these functions unless you have good reasons to do so. If you do use these
+ * functions you will have to adapt your code for RRDTool 1.4!
+ *
+ * To enable the deprecated functions define `RRD_EXPORT_DEPRECATED' before
+ * including <rrd_test.h>. You have been warned! If you come back to the
+ * RRDTool mailing list and whine about your broken application, you will get
+ * hit with something smelly!
+ */
+#if defined(_RRD_TOOL_H) || defined(RRD_EXPORT_DEPRECATED)
+
+# if defined(_RRD_TOOL_H)
+#  include "rrd_format.h"
+# else
+#  include <rrd_format.h>
+# endif
+
+#if defined(__GNUC__) && defined (RRD_EXPORT_DEPRECATED)
+# define RRD_DEPRECATED __attribute__((deprecated))
+#else
+# define RRD_DEPRECATED /**/
+#endif
+
+    void        rrd_free     (rrd_t *rrd)
+      RRD_DEPRECATED;
+    void        rrd_init     (rrd_t *rrd)
+      RRD_DEPRECATED;
+
+    rrd_file_t *rrd_open   (const char *const file_name, rrd_t *rrd,
+        unsigned rdwr)
+      RRD_DEPRECATED;
+
+    void        rrd_dontneed (rrd_file_t *rrd_file, rrd_t *rrd)
+      RRD_DEPRECATED;
+    int         rrd_close    (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    ssize_t     rrd_read     (rrd_file_t *rrd_file, void *buf, size_t count)
+      RRD_DEPRECATED;
+    ssize_t     rrd_write    (rrd_file_t *rrd_file,
+        const void *buf, size_t count)
+      RRD_DEPRECATED;
+    void        rrd_flush    (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    off_t       rrd_seek     (rrd_file_t *rrd_file, off_t off, int whence)
+      RRD_DEPRECATED;
+    off_t       rrd_tell     (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    int         rrd_lock     (rrd_file_t *file)
+      RRD_DEPRECATED;
+#endif /* defined(_RRD_TOOL_H) || defined(RRD_EXPORT_DEPRECATED) */
 
 #endif                  /* _RRDLIB_H */
 

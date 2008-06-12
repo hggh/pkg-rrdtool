@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCREATE 1"
-.TH RRDCREATE 1 "2008-05-12" "1.3rc9" "rrdtool"
+.TH RRDCREATE 1 "2008-06-11" "1.3.0" "rrdtool"
 .SH "NAME"
 rrdcreate \- Set up a new Round Robin Database
 .SH "SYNOPSIS"
@@ -144,48 +144,47 @@ rrdcreate \- Set up a new Round Robin Database
 The create function of RRDtool lets you set up new Round Robin
 Database (\fB\s-1RRD\s0\fR) files.  The file is created at its final, full size
 and filled with \fI*UNKNOWN*\fR data.
-.IP "\fIfilename\fR" 8
-.IX Item "filename"
+.Sh "\fIfilename\fP"
+.IX Subsection "filename"
 The name of the \fB\s-1RRD\s0\fR you want to create. \fB\s-1RRD\s0\fR files should end
 with the extension \fI.rrd\fR. However, \fBRRDtool\fR will accept any
 filename.
-.IP "\fB\-\-start\fR|\fB\-b\fR \fIstart time\fR (default: now \- 10s)" 8
-.IX Item "--start|-b start time (default: now - 10s)"
+.Sh "\fB\-\-start\fP|\fB\-b\fP \fIstart time\fP (default: now \- 10s)"
+.IX Subsection "--start|-b start time (default: now - 10s)"
 Specifies the time in seconds since 1970\-01\-01 \s-1UTC\s0 when the first
 value should be added to the \fB\s-1RRD\s0\fR. \fBRRDtool\fR will not accept
 any data timed before or at the time specified.
-.Sp
+.PP
 See also AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 section in the
 \&\fIrrdfetch\fR documentation for other ways to specify time.
-.IP "\fB\-\-step\fR|\fB\-s\fR \fIstep\fR (default: 300 seconds)" 8
-.IX Item "--step|-s step (default: 300 seconds)"
+.Sh "\fB\-\-step\fP|\fB\-s\fP \fIstep\fP (default: 300 seconds)"
+.IX Subsection "--step|-s step (default: 300 seconds)"
 Specifies the base interval in seconds with which data will be fed
 into the \fB\s-1RRD\s0\fR.
-.IP "\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst arguments\fR" 8
-.IX Item "DS:ds-name:DST:dst arguments"
+.Sh "\fB\s-1DS:\s0\fP\fIds-name\fP\fB:\fP\fI\s-1DST\s0\fP\fB:\fP\fIdst arguments\fP"
+.IX Subsection "DS:ds-name:DST:dst arguments"
 A single \fB\s-1RRD\s0\fR can accept input from several data sources (\fB\s-1DS\s0\fR),
 for example incoming and outgoing traffic on a specific communication
 line. With the \fB\s-1DS\s0\fR configuration option you must define some basic
 properties of each data source you want to store in the \fB\s-1RRD\s0\fR.
-.Sp
+.PP
 \&\fIds-name\fR is the name you will use to reference this particular data
 source from an \fB\s-1RRD\s0\fR. A \fIds-name\fR must be 1 to 19 characters long in
 the characters [a\-zA\-Z0\-9_].
-.Sp
+.PP
 \&\fI\s-1DST\s0\fR defines the Data Source Type. The remaining arguments of a
 data source entry depend on the data source type. For \s-1GAUGE\s0, \s-1COUNTER\s0,
 \&\s-1DERIVE\s0, and \s-1ABSOLUTE\s0 the format for a data source entry is:
-.Sp
+.PP
 \&\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1GAUGE\s0 | \s-1COUNTER\s0 | \s-1DERIVE\s0 | \s-1ABSOLUTE\s0\fR\fB:\fR\fIheartbeat\fR\fB:\fR\fImin\fR\fB:\fR\fImax\fR
-.Sp
+.PP
 For \s-1COMPUTE\s0 data sources, the format is:
-.Sp
+.PP
 \&\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1COMPUTE\s0\fR\fB:\fR\fIrpn-expression\fR
-.Sp
+.PP
 In order to decide which data source type to use, review the
 definitions that follow. Also consult the section on \*(L"\s-1HOW\s0 \s-1TO\s0 \s-1MEASURE\s0\*(R"
 for further insight.
-.RS 8
 .IP "\fB\s-1GAUGE\s0\fR" 4
 .IX Item "GAUGE"
 is for things like temperatures or number of people in a room or the
@@ -207,9 +206,9 @@ example, to measure the rate of people entering or leaving a
 room. Internally, derive works exactly like \s-1COUNTER\s0 but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use \s-1DERIVE\s0 and combine it with a \s-1MIN\s0 value of 0.
-.RS 4
-.IP "\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0" 4
-.IX Item "NOTE on COUNTER vs DERIVE"
+.Sp
+\&\fB\s-1NOTE\s0 on \s-1COUNTER\s0 vs \s-1DERIVE\s0\fR
+.Sp
 by Don Baarda <don.baarda@baesystems.com>
 .Sp
 If you cannot tolerate ever mistaking the occasional counter reset for a
@@ -226,9 +225,6 @@ for high bandwidth interfaces and a 32bit counter, \s-1DERIVE\s0 with min=0 is
 probably preferable. If you are using a 64bit counter, just about any max
 setting will eliminate the possibility of mistaking a reset for a counter
 wrap.
-.RE
-.RS 4
-.RE
 .IP "\fB\s-1ABSOLUTE\s0\fR" 4
 .IX Item "ABSOLUTE"
 is for counters which get reset upon reading. This is used for fast counters
@@ -246,24 +242,22 @@ formula. Consolidation functions are then applied normally to the PDPs
 of the \s-1COMPUTE\s0 data source (that is the rpn-expression is only applied
 to generate PDPs). In database software, such data sets are referred
 to as \*(L"virtual\*(R" or \*(L"computed\*(R" columns.
-.RE
-.RS 8
-.Sp
+.PP
 \&\fIheartbeat\fR defines the maximum number of seconds that may pass
 between two updates of this data source before the value of the
 data source is assumed to be \fI*UNKNOWN*\fR.
-.Sp
+.PP
 \&\fImin\fR and \fImax\fR define the expected range values for data supplied by a
 data source. If \fImin\fR and/or \fImax\fR any value outside the defined range
 will be regarded as \fI*UNKNOWN*\fR. If you do not know or care about min and
 max, set them to U for unknown. Note that min and max always refer to the
 processed values of the \s-1DS\s0. For a traffic\-\fB\s-1COUNTER\s0\fR type \s-1DS\s0 this would be
 the maximum and minimum data-rate expected from the device.
-.Sp
+.PP
 \&\fIIf information on minimal/maximal expected values is available,
 always set the min and/or max properties. This will help RRDtool in
 doing a simple sanity check on the data supplied when running update.\fR
-.Sp
+.PP
 \&\fIrpn-expression\fR defines the formula used to compute the PDPs of a
 \&\s-1COMPUTE\s0 data source from other data sources in the same <\s-1RRD\s0>. It is
 similar to defining a \fB\s-1CDEF\s0\fR argument for the graph command. Please
@@ -274,22 +268,20 @@ the \s-1RPN\s0 expression, the \s-1COMPUTE\s0 data source may only refer to the
 names of data source listed previously in the create command. This is
 similar to the restriction that \fB\s-1CDEF\s0\fRs must refer only to \fB\s-1DEF\s0\fRs
 and \fB\s-1CDEF\s0\fRs previously defined in the same graph command.
-.RE
-.IP "\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf arguments\fR" 8
-.IX Item "RRA:CF:cf arguments"
+.Sh "\fB\s-1RRA:\s0\fP\fI\s-1CF\s0\fP\fB:\fP\fIcf arguments\fP"
+.IX Subsection "RRA:CF:cf arguments"
 The purpose of an \fB\s-1RRD\s0\fR is to store data in the round robin archives
 (\fB\s-1RRA\s0\fR). An archive consists of a number of data values or statistics for
 each of the defined data-sources (\fB\s-1DS\s0\fR) and is defined with an \fB\s-1RRA\s0\fR line.
-.Sp
+.PP
 When data is entered into an \fB\s-1RRD\s0\fR, it is first fit into time slots
 of the length defined with the \fB\-s\fR option, thus becoming a \fIprimary
 data point\fR.
-.Sp
+.PP
 The data is also processed with the consolidation function (\fI\s-1CF\s0\fR) of
 the archive. There are several consolidation functions that
 consolidate primary data points via an aggregate function: \fB\s-1AVERAGE\s0\fR,
 \&\fB\s-1MIN\s0\fR, \fB\s-1MAX\s0\fR, \fB\s-1LAST\s0\fR. 
-.RS 8
 .IP "\s-1AVERAGE\s0" 4
 .IX Item "AVERAGE"
 the average of the data points is stored.
@@ -302,29 +294,27 @@ the largest of the data points is stored.
 .IP "\s-1LAST\s0" 4
 .IX Item "LAST"
 the last data points is used.
-.RE
-.RS 8
-.Sp
+.PP
 Note that data aggregation inevitably leads to loss of precision and
 information. The trick is to pick the aggregate function such that the
 \&\fIinteresting\fR properties of your data is kept across the aggregation
 process.
-.Sp
+.PP
 The format of \fB\s-1RRA\s0\fR line for these
 consolidation functions is:
-.Sp
+.PP
 \&\fB\s-1RRA:\s0\fR\fI\s-1AVERAGE\s0 | \s-1MIN\s0 | \s-1MAX\s0 | \s-1LAST\s0\fR\fB:\fR\fIxff\fR\fB:\fR\fIsteps\fR\fB:\fR\fIrows\fR
-.Sp
+.PP
 \&\fIxff\fR The xfiles factor defines what part of a consolidation interval may
 be made up from \fI*UNKNOWN*\fR data while the consolidated value is still
 regarded as known. It is given as the ratio of allowed \fI*UNKNOWN*\fR PDPs
 to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).
-.Sp
+.PP
 \&\fIsteps\fR defines how many of these \fIprimary data points\fR are used to build
 a \fIconsolidated data point\fR which then goes into the archive.
-.Sp
+.PP
 \&\fIrows\fR defines how many generations of data values are kept in an \fB\s-1RRA\s0\fR.
-.RE
+Obviously, this has to be greater than zero.
 .SH "Aberrant Behavior Detection with Holt-Winters Forecasting"
 .IX Header "Aberrant Behavior Detection with Holt-Winters Forecasting"
 In addition to the aggregate functions, there are a set of specialized

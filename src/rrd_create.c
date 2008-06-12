@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_create.c  creates new rrds
  *****************************************************************************/
@@ -232,6 +232,7 @@ int rrd_create_r(
             char     *argvcopy;
             char     *tokptr;
             size_t    old_size = sizeof(rra_def_t) * (rrd.stat_head->rra_cnt);
+            int       row_cnt;
 
             if ((rrd.rra_def = rrd_realloc(rrd.rra_def,
                                            old_size + sizeof(rra_def_t))) ==
@@ -312,8 +313,10 @@ int rrd_create_r(
                     case CF_SEASONAL:
                     case CF_DEVPREDICT:
                     case CF_FAILURES:
-                        rrd.rra_def[rrd.stat_head->rra_cnt].row_cnt =
-                            atoi(token);
+                        row_cnt = atoi(token);
+                        if (row_cnt <= 0)
+                            rrd_set_error("Invalid row count: %i", row_cnt);
+                        rrd.rra_def[rrd.stat_head->rra_cnt].row_cnt = row_cnt;
                         break;
                     default:
                         rrd.rra_def[rrd.stat_head->rra_cnt].
@@ -416,8 +419,10 @@ int rrd_create_r(
                             ("Unexpected extra argument for consolidation function DEVPREDICT");
                         break;
                     default:
-                        rrd.rra_def[rrd.stat_head->rra_cnt].row_cnt =
-                            atoi(token);
+                        row_cnt = atoi(token);
+                        if (row_cnt <= 0)
+                            rrd_set_error("Invalid row count: %i", row_cnt);
+                        rrd.rra_def[rrd.stat_head->rra_cnt].row_cnt = row_cnt;
                         break;
                     }
                     break;
@@ -675,8 +680,12 @@ int rrd_create_fn(
     int       unkn_cnt;
     rrd_file_t *rrd_file_dn;
     rrd_t     rrd_dn;
+    unsigned flags = O_WRONLY | O_CREAT | O_TRUNC;
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
+    flags |= O_BINARY;
+#endif
 
-    if ((rrd_file = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0) {
+    if ((rrd_file = open(file_name, flags, 0666)) < 0) {
         rrd_set_error("creating '%s': %s", file_name, rrd_strerror(errno));
         free(rrd->stat_head);
         free(rrd->live_head);

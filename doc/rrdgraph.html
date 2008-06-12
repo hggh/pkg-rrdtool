@@ -22,6 +22,16 @@
 	<li><a href="#options">OPTIONS</a></li>
 	<ul>
 
+		<li><a href="#graphv"><strong>graphv</strong></a></li>
+		<li><a href="#filename"><em>filename</em></a></li>
+		<li><a href="#time_range">Time range</a></li>
+		<li><a href="#labels">Labels</a></li>
+		<li><a href="#size">Size</a></li>
+		<li><a href="#limits">Limits</a></li>
+		<li><a href="#grid">Grid</a></li>
+		<li><a href="#miscellaneous">Miscellaneous</a></li>
+		<li><a href="#data_and_variables">Data and variables</a></li>
+		<li><a href="#graph_and_print_elements">Graph and print elements</a></li>
 		<li><a href="#graphv">graphv</a></li>
 	</ul>
 
@@ -83,26 +93,23 @@ graph it (or print it).  This ends the <strong>rrdtool graph</strong> sequence.<
 </p>
 <hr />
 <h1><a name="options">OPTIONS</a></h1>
-<dl>
-<dt><strong><a name="item_graphv"><strong>graphv</strong></a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="graphv"><strong>graphv</strong></a></h2>
 <p>This alternate version of <strong>graph</strong> takes the same arguments and performs the
 same function. The <em>v</em> stands for <em>verbose</em>, which describes the output
 returned. <strong>graphv</strong> will return a lot of information about the graph using
 the same format as rrdtool info (key = value). See the bottom of the document for more information.</p>
-</dd>
-<dt><strong><a name="item_filename">filename</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="filename"><em>filename</em></a></h2>
 <p>The name and path of the graph to generate. It is recommended to
 end this in <code>.png</code>, <code>.svg</code> or <code>.eps</code>, but <strong>RRDtool</strong> does not enforce this.</p>
 <p><em>filename</em> can be '<code>-</code>' to send the image to <code>stdout</code>. In
 this case, no other output is generated.</p>
-</dd>
-<dt><strong><a name="item_time_range">Time range</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="time_range">Time range</a></h2>
 <p>[<strong>-s</strong>|<strong>--start</strong> <em>time</em>]
 [<strong>-e</strong>|<strong>--end</strong> <em>time</em>]
 [<strong>-S</strong>|<strong>--step</strong> <em>seconds</em>]</p>
@@ -117,18 +124,16 @@ resolution.  With the <strong>step</strong> option you can alter this behaviour.
 If you want <strong>rrdtool graph</strong> to get data at a one-hour resolution
 from the <strong>RRD</strong>, set <strong>step</strong> to 3'600. Note: a step smaller than
 one pixel will silently be ignored.</p>
-</dd>
-<dt><strong><a name="item_labels">Labels</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="labels">Labels</a></h2>
 <p>[<strong>-t</strong>|<strong>--title</strong> <em>string</em>]
 [<strong>-v</strong>|<strong>--vertical-label</strong> <em>string</em>]</p>
 <p>A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.</p>
-</dd>
-<dt><strong><a name="item_size">Size</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="size">Size</a></h2>
 <p>[<strong>-w</strong>|<strong>--width</strong> <em>pixels</em>]
 [<strong>-h</strong>|<strong>--height</strong> <em>pixels</em>]
 [<strong>-j</strong>|<strong>--only-graph</strong>]
@@ -142,10 +147,9 @@ is automatically resized to fit.</p>
 pixels you will get a tiny graph image (thumbnail) to use as an icon
 for use in an overview, for example. All labeling will be stripped off
 the graph.</p>
-</dd>
-<dt><strong><a name="item_limits">Limits</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="limits">Limits</a></h2>
 <p>[<strong>-u</strong>|<strong>--upper-limit</strong> <em>value</em>]
 [<strong>-l</strong>|<strong>--lower-limit</strong> <em>value</em>]
 [<strong>-r</strong>|<strong>--rigid</strong>]</p>
@@ -181,9 +185,9 @@ points to device resolution pixels, this results in a crisper
 aperance. If this is not to your liking, you can use this switch
 to turn this behaviour off.</p>
 <p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
-</dd>
-<dt><strong><a name="item_grid">Grid</a></strong></dt>
-
+<p>
+</p>
+<h2><a name="grid">Grid</a></h2>
 <dl>
 <dt><strong><a name="item_x_2daxis">X-Axis</a></strong></dt>
 
@@ -261,10 +265,9 @@ the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, SI notation is used by default.</p>
 </dd>
 </dl>
-</dd>
-<dt><strong><a name="item_miscellaneous">Miscellaneous</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="miscellaneous">Miscellaneous</a></h2>
 <p>[<strong>-z</strong>|<strong>--lazy</strong>]</p>
 <p>Only generate the graph if the current graph is out of date or not
 existent.</p>
@@ -377,25 +380,21 @@ measurement, 1 kb/s is 1000 b/s.</p>
 <p>[<strong>-W</strong>|<strong>--watermark</strong> <em>string</em>]</p>
 <p>Adds the given string as a watermark, horizontally centred, at the bottom 
 of the graph.</p>
-</dd>
-<dt><strong><a name="item_data_and_variables">Data and variables</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="data_and_variables">Data and variables</a></h2>
 <p><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrdfile</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em>[<strong>:step=</strong><em>step</em>][<strong>:start=</strong><em>time</em>][<strong>:end=</strong><em>time</em>]</p>
 <p><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>RPN expression</em></p>
 <p><strong>VDEF:</strong><em>vname</em><strong>=</strong><em>RPN expression</em></p>
 <p>You need at least one <strong>DEF</strong> statement to generate anything. The
 other statements are useful but optional.
 See <a href="././rrdgraph_data.html">the rrdgraph_data manpage</a> and <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> for the exact format.</p>
-</dd>
-<dt><strong><a name="item_graph_and_print_elements">Graph and print elements</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="graph_and_print_elements">Graph and print elements</a></h2>
 <p>You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exact format.</p>
-</dd>
-</dl>
 <p>
 </p>
 <h2><a name="graphv">graphv</a></h2>

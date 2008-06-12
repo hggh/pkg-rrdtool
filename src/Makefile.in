@@ -412,7 +412,7 @@ librrd_th_la_CFLAGS = $(MULTITHREAD_CFLAGS)
 librrd_th_la_LDFLAGS = $(MULTITHREAD_LDFLAGS) -version-info @LIBVERS@ \
 	-export-symbols librrd.sym
 librrd_th_la_LIBADD = $(ALL_LIBS)
-include_HEADERS = rrd.h
+include_HEADERS = rrd.h rrd_format.h
 rrdcgi_SOURCES = rrd_cgi.c
 rrdcgi_LDADD = librrd.la
 rrdupdate_SOURCES = rrdupdate.c

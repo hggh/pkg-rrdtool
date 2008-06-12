@@ -1,11 +1,11 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2008 Florian octo Forster
  * Distributed under the GPL
  *****************************************************************************
  * rrd_restore.c   Contains logic to parse XML input and create an RRD file
  *****************************************************************************
- * $Id: rrd_restore.c 1413 2008-06-08 17:08:47Z oetiker $
+ * $Id: rrd_restore.c 1432 2008-06-10 23:12:55Z oetiker $
  *************************************************************************** */
 
 /*

@@ -1,3 +1,109 @@
+2008-06-10 23:12  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  doc/rrdbuild.pod, doc/rrdcreate.pod, doc/rrdgraph.pod,
+	  doc/rrdgraph_graph.pod, rrdtool.spec, src/pngsize.c, src/rrd.h,
+	  src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3.0
+
+2008-06-10 23:11  oetiker
+
+	* trunk/website/bin/htmlfix.sh, trunk/website/gallery/index.en.html,
+	  trunk/website/index.wml: updated website online
+
+2008-06-10 16:41  oetiker
+
+	* branches/1.2/website/index.wml, trunk/website, trunk/website/bin,
+	  trunk/website/download.wml, trunk/website/gallery,
+	  trunk/website/inc, trunk/website/index.wml,
+	  trunk/website/license.wml, trunk/website/logos,
+	  trunk/website/newbanner250x60.gif, trunk/website/rrdtool.dtd,
+	  trunk/website/rrdworld, trunk/website/sponsor.wml,
+	  trunk/website/tut: added website to trunk
+
+2008-06-10 16:38  oetiker
+
+	* trunk/website: using the 1.2 website as a basis for the new 1.3
+	  website
+
+2008-06-10 16:38  oetiker
+
+	* configure.ac: oops it is 1.3.0 not 1.4.0 yet
+
+2008-06-10 16:37  oetiker
+
+	* 00README, CONTRIBUTORS, PROJECTS, TODO, configure.ac,
+	  rrdtool-1.3-release: preparing for 1.3
+
+2008-06-10 16:32  oetiker
+
+	* src/Makefile.am, src/rrd.h, src/rrd_format.h, src/rrd_hw_math.c,
+	  src/rrd_hw_update.c, src/rrd_tool.h: document the 'internal'
+	  functions in rrd.h but mark them as deprecated, so that anyone
+	  using them will see that they should not be doing it.
+
+2008-06-10 11:16  oetiker
+
+	* src/rrd_create.c: flip check for row_count with setting for better
+	  code logic
+
+2008-06-10 09:35  oetiker
+
+	* doc/rrdcreate.pod, src/rrd_create.c: check row count in RRAs to be
+	  > 0 ... by Sebastian Harl
+
+2008-06-10 07:18  oetiker
+
+	* src/rrd_create.c, src/rrd_open.c: for windows we must open files
+	  in O_BINARY mode
+
+2008-06-09 16:10  oetiker
+
+	* src/rrd.h, src/rrd_tool.h: do NOT export lowlevel functions, since
+	  I have no intention supporting these interfaces across versions.
+	  The symbols are in the library, so if someone WANTS to code to
+	  them, they are free todo so, but they will have to use our
+	  internal header files.
+
+2008-06-09 15:49  oetiker
+
+	* src/librrd.sym, src/rrd.h, src/rrd_tool.h: add all lowlevel file
+	  access functions from the rrd_open interface to the export list.
+
+2008-06-09 05:12  oetiker
+
+	* bindings/python/rrdtoolmodule.c, src/pngsize.c, src/rrd.h,
+	  src/rrd_error.c, src/rrd_graph.h, src/rrd_info.c, src/rrd_open.c,
+	  src/rrd_parsetime.c, src/rrd_tool.c, src/rrd_update.c: fixed
+	  indenting
+
+2008-06-09 05:11  oetiker
+
+	* rrdtool.spec: update to rpm spec from Jarod Wilson
+
+2008-06-08 21:15  oetiker
+
+	* src/librrd.sym: export some more symbols from librrd
+
+2008-06-08 21:06  oetiker
+
+	* win32/config.h: windows should use a windows font
+
+2008-06-08 21:05  oetiker
+
+	* src/rrd_graph.c: drop special case windows font code ... it makes
+	  no sense with the new setup
+
 2008-06-08 17:08  oetiker
 
 	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,

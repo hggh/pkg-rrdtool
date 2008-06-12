@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,7 +7,7 @@
  * rrd_thread_safe.c   Contains routines used when thread safety is required
  *                     for win32
  *****************************************************************************
- * $Id: rrd_thread_safe_nt.c 1413 2008-06-08 17:08:47Z oetiker $
+ * $Id: rrd_thread_safe_nt.c 1432 2008-06-10 23:12:55Z oetiker $
  *************************************************************************** */
 
 #include <windows.h>

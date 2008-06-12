@@ -1,11 +1,23 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_format.h  RRD Database Format header
  *****************************************************************************/
 
 #ifndef _RRD_FORMAT_H
 #define _RRD_FORMAT_H
+
+/* 
+ * _RRD_TOOL_H
+ *   We're building RRDTool itself.
+ *
+ * RRD_EXPORT_DEPRECATED
+ *   User is requesting internal function which need this struct. They have
+ *   been told that this will change and have agreed to adapt their programs.
+ */
+#if !defined(_RRD_TOOL_H) && !defined(RRD_EXPORT_DEPRECATED)
+# error "Do not include rrd_format.h directly. Include rrd.h instead!"
+#endif
 
 #include "rrd.h"
 
