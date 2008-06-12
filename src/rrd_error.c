@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_error.c   Common Header File
  *****************************************************************************
- * $Id: rrd_error.c 1413 2008-06-08 17:08:47Z oetiker $
+ * $Id: rrd_error.c 1432 2008-06-10 23:12:55Z oetiker $
  * $Log$
  * Revision 1.4  2003/02/22 21:57:03  oetiker
  * a patch to avoid a memory leak and a Makefile.am patch to
@@ -78,7 +78,7 @@ char     *rrd_get_error(
    context. Using these functions would require to change each and
    every function containing any of the non _r versions... */
 void rrd_set_error_r(
-    rrd_context_t *rrd_ctx,
+    rrd_context_t * rrd_ctx,
     char *fmt,
     ...)
 {
@@ -96,19 +96,19 @@ void rrd_set_error_r(
 }
 
 int rrd_test_error_r(
-    rrd_context_t *rrd_ctx)
+    rrd_context_t * rrd_ctx)
 {
     return rrd_ctx->rrd_error[0] != '\0';
 }
 
 void rrd_clear_error_r(
-    rrd_context_t *rrd_ctx)
+    rrd_context_t * rrd_ctx)
 {
     rrd_ctx->rrd_error[0] = '\0';
 }
 
 char     *rrd_get_error_r(
-    rrd_context_t *rrd_ctx)
+    rrd_context_t * rrd_ctx)
 {
     return rrd_ctx->rrd_error;
 }
@@ -119,8 +119,7 @@ char     *rrd_get_error_r(
 rrd_context_t *rrd_new_context(
     void)
 {
-    rrd_context_t *rrd_ctx =
-        (rrd_context_t *) malloc(sizeof(rrd_context_t));
+    rrd_context_t *rrd_ctx = (rrd_context_t *) malloc(sizeof(rrd_context_t));
 
     if (!rrd_ctx) {
         return NULL;
@@ -132,7 +131,7 @@ rrd_context_t *rrd_new_context(
 }
 
 void rrd_free_context(
-    rrd_context_t *rrd_ctx)
+    rrd_context_t * rrd_ctx)
 {
     if (rrd_ctx) {
         free(rrd_ctx);
@@ -141,7 +140,7 @@ void rrd_free_context(
 
 #if 0
 void rrd_globalize_error(
-    rrd_context_t *rrd_ctx)
+    rrd_context_t * rrd_ctx)
 {
     if (rrd_ctx) {
         rrd_set_error(rrd_ctx->rrd_error);

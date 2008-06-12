@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.c  Startup wrapper
  *****************************************************************************/
@@ -804,7 +804,7 @@ int HandleInputLine(
         }
 
     } else if (strcmp("graphv", argv[1]) == 0) {
-        rrd_info_t *grinfo = NULL;    /* 1 to distinguish it from the NULL that rrd_graph sends in */
+        rrd_info_t *grinfo = NULL;  /* 1 to distinguish it from the NULL that rrd_graph sends in */
 
         grinfo = rrd_graph_v(argc - 1, &argv[1]);
         if (grinfo) {

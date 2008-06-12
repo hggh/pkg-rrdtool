@@ -79,7 +79,7 @@ tar</strong> and <strong>GNU make</strong> respectively. It could be that they a
 <p>Once you have decided. Save the two locations into environment variables.</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.3rc9</pre>
+ INSTALL_DIR=/usr/local/rrdtool-1.3.0</pre>
 <p>If your <em>/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -89,9 +89,9 @@ a different directory!</p>
 <p>Lets first assume you already have all the necessary libraries
 pre-installed.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3rc9.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3rc9.tar.gz</a>
- gunzip -c rrdtool-1.3rc9.tar.gz | tar xf -
- cd rrdtool-1.3rc9
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.0.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.0.tar.gz</a>
+ gunzip -c rrdtool-1.3.0.tar.gz | tar xf -
+ cd rrdtool-1.3.0
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
 <strong>configure</strong> complaining about several missing libraries.</p>
@@ -376,7 +376,7 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.3rc9
+ cd $BUILD_DIR/rrdtool-1.3.0
  ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
  $MAKE clean
  $MAKE

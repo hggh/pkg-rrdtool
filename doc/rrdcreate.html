@@ -18,6 +18,15 @@
 	<li><a href="#name">NAME</a></li>
 	<li><a href="#synopsis">SYNOPSIS</a></li>
 	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#filename"><em>filename</em></a></li>
+		<li><a href="#start_b_start_time__default__now__10s_"><strong>-start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></li>
+		<li><a href="#step_s_step__default__300_seconds_"><strong>-step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></li>
+		<li><a href="#ds_dsname_dst_dst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></li>
+		<li><a href="#rra_cf_cf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></li>
+	</ul>
+
 	<li><a href="#aberrant_behavior_detection_with_holtwinters_forecasting">Aberrant Behavior Detection with Holt-Winters Forecasting</a></li>
 	<li><a href="#the_heartbeat_and_the_step">The HEARTBEAT and the STEP</a></li>
 	<li><a href="#how_to_measure">HOW TO MEASURE</a></li>
@@ -49,32 +58,28 @@
 <p>The create function of RRDtool lets you set up new Round Robin
 Database (<strong>RRD</strong>) files.  The file is created at its final, full size
 and filled with <em>*UNKNOWN*</em> data.</p>
-<dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="filename"><em>filename</em></a></h2>
 <p>The name of the <strong>RRD</strong> you want to create. <strong>RRD</strong> files should end
 with the extension <em>.rrd</em>. However, <strong>RRDtool</strong> will accept any
 filename.</p>
-</dd>
-<dt><strong><a name="item_time"><strong>--start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="start_b_start_time__default__now__10s_"><strong>--start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></h2>
 <p>Specifies the time in seconds since 1970-01-01 UTC when the first
 value should be added to the <strong>RRD</strong>. <strong>RRDtool</strong> will not accept
 any data timed before or at the time specified.</p>
 <p>See also AT-STYLE TIME SPECIFICATION section in the
 <em>rrdfetch</em> documentation for other ways to specify time.</p>
-</dd>
-<dt><strong><a name="item_step"><strong>--step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="step_s_step__default__300_seconds_"><strong>--step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></h2>
 <p>Specifies the base interval in seconds with which data will be fed
 into the <strong>RRD</strong>.</p>
-</dd>
-<dt><strong><a name="item_ds_3ads_2dname_3adst_3adst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="ds_dsname_dst_dst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></h2>
 <p>A single <strong>RRD</strong> can accept input from several data sources (<strong>DS</strong>),
 for example incoming and outgoing traffic on a specific communication
 line. With the <strong>DS</strong> configuration option you must define some basic
@@ -118,10 +123,7 @@ example, to measure the rate of people entering or leaving a
 room. Internally, derive works exactly like COUNTER but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use DERIVE and combine it with a MIN value of 0.</p>
-<dl>
-<dt><strong><a name="item_note_on_counter_vs_derive">NOTE on COUNTER vs DERIVE</a></strong></dt>
-
-<dd>
+<p><strong>NOTE on COUNTER vs DERIVE</strong></p>
 <p>by Don Baarda &lt;<a href="mailto:don.baarda@baesystems.com">don.baarda@baesystems.com</a>&gt;</p>
 <p>If you cannot tolerate ever mistaking the occasional counter reset for a
 legitimate counter wrap, and would prefer ``Unknowns'' for all legitimate
@@ -136,8 +138,6 @@ for high bandwidth interfaces and a 32bit counter, DERIVE with min=0 is
 probably preferable. If you are using a 64bit counter, just about any max
 setting will eliminate the possibility of mistaking a reset for a counter
 wrap.</p>
-</dd>
-</dl>
 </dd>
 <dt><strong><a name="item_absolute"><strong>ABSOLUTE</strong></a></strong></dt>
 
@@ -183,10 +183,9 @@ the RPN expression, the COMPUTE data source may only refer to the
 names of data source listed previously in the create command. This is
 similar to the restriction that <strong>CDEF</strong>s must refer only to <strong>DEF</strong>s
 and <strong>CDEF</strong>s previously defined in the same graph command.</p>
-</dd>
-<dt><strong><a name="item_rra_3acf_3acf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="rra_cf_cf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></h2>
 <p>The purpose of an <strong>RRD</strong> is to store data in the round robin archives
 (<strong>RRA</strong>). An archive consists of a number of data values or statistics for
 each of the defined data-sources (<strong>DS</strong>) and is defined with an <strong>RRA</strong> line.</p>
@@ -232,9 +231,8 @@ regarded as known. It is given as the ratio of allowed <em>*UNKNOWN*</em> PDPs
 to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).</p>
 <p><em>steps</em> defines how many of these <em>primary data points</em> are used to build
 a <em>consolidated data point</em> which then goes into the archive.</p>
-<p><em>rows</em> defines how many generations of data values are kept in an <strong>RRA</strong>.</p>
-</dd>
-</dl>
+<p><em>rows</em> defines how many generations of data values are kept in an <strong>RRA</strong>.
+Obviously, this has to be greater than zero.</p>
 <p>
 </p>
 <hr />

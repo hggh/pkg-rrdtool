@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3rc9  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 1413 2008-06-08 17:08:47Z oetiker $
+ * $Id: rrd_open.c 1432 2008-06-10 23:12:55Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -34,7 +34,7 @@
 #endif
 
 /* get the address of the start of this page */
-#if defined USE_MADVISE || defined HAVE_POSIX_FADVISE 
+#if defined USE_MADVISE || defined HAVE_POSIX_FADVISE
 #ifndef PAGE_START
 #define PAGE_START(addr) ((addr)&(~(_page_size-1)))
 #endif
@@ -116,6 +116,10 @@ rrd_file_t *rrd_open(
         mm_flags |= MAP_NONBLOCK;   /* just populate ptes */
 #endif
     }
+
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
+    flags |= O_BINARY;
+#endif
 
     if ((rrd_file->fd = open(file_name, flags, mode)) < 0) {
         rrd_set_error("opening '%s': %s", file_name, rrd_strerror(errno));
@@ -371,7 +375,7 @@ void rrd_dontneed(
 #if defined DEBUG && DEBUG > 1
     mincore_print(rrd_file, "after");
 #endif
-#endif /* without madvise and posix_fadvise ist does not make much sense todo anything */
+#endif                          /* without madvise and posix_fadvise ist does not make much sense todo anything */
 }
 
 
@@ -563,4 +567,3 @@ void rrd_freemem(
 {
     free(mem);
 }
-
