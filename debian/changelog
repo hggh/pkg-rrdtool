@@ -1,12 +1,12 @@
-rrdtool (1.3~rc9-1) experimental; urgency=low
+rrdtool (1.3.0-1) experimental; urgency=low
 
-  * New upstream release candidate.
+  * New upstream release.
     - Fixes a buffer overflow in librrd's error handling (Closes: #450578).
+    - Validate RRA row count in rrdcreate.
   * debian/patches:
-    - Updated patches to apply on 1.3rc9.
+    - Updated patches to apply on 1.3.0.
     - "implicit-decl-fix" partly applied upstream
     - "typos" removed, has been applied upstream
-    - Added "long-version" to work around a bug in perl 5.10 (see #482139).
   * debian/control:
     - Replaced librrd2 / librrd2-dev with librrd4 / librrd4-dev.
     - Added "ttf-dejavu | ttf-bitstream-vera" recommendation to librrd4 -
