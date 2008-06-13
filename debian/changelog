@@ -17,6 +17,7 @@ rrdtool (1.3.0-1) experimental; urgency=low
     - Added "libxml2-dev" to the build dependencies.
     - Added conflict with librrd-dev to librrd4-dev to prevent two -dev
       packages from being installed simultaneously.
+    - Updated standards-version to 3.8.0 - no changes.
   * debian/librrd4.symbols:
     - Added symbols file for the new SONAME version number replacing
       librrd2.symbols.
@@ -24,7 +25,7 @@ rrdtool (1.3.0-1) experimental; urgency=low
     - Install "NEWS" and "CHANGES" into all packages.
     - No longer set TCL_INC_DIR manually - has been fixed upstream.
 
- -- Sebastian Harl <sh@tokkee.org>  Sun, 08 Jun 2008 21:54:25 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Fri, 13 Jun 2008 16:56:35 +0200
 
 rrdtool (1.2.27-3) UNRELEASED; urgency=low
 

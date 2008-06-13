@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Debian RRDtool Team <rrdtool@ml.snow-crash.org>
 Uploaders: Sebastian Harl <sh@tokkee.org>, Alexander Wirt <formorer@debian.org>, Bernd Zeimetz <bzed@debian.org>
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
  zlib1g-dev, libpng12-dev, libcairo2-dev, libpango1.0-dev, libfreetype6-dev,
  libxml2-dev,
