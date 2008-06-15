@@ -19,7 +19,8 @@ PY_VERS := $(shell set -e; \
                    done)
 
 #tcl version we're building for
-TCL_VERS := $(shell dpkg -s tcl | grep ^Depends | sed 's,.*tcl\([0-9.]*\).*,\1,')
+TCL_VERS := $(shell dpkg -s tcl-dev | grep '^Depends' \
+	| sed 's,.*\<tcl\([0-9.]*\)-dev\>.*,\1,')
 
 
 #let's help configure to figure out our host/build system
