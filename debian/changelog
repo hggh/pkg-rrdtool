@@ -3,13 +3,15 @@ rrdtool (1.3.0-1) experimental; urgency=low
   * New upstream release.
     - Fixes a buffer overflow in librrd's error handling (Closes: #450578).
     - Validate RRA row count in rrdcreate (Closes: #428780).
+  * Upload to experimental because of the required transition which has not
+    yet been granted for Lenny by the release team.
   * debian/patches:
     - Updated patches to apply on 1.3.0.
     - "implicit-decl-fix" partly applied upstream
     - "typos" removed, has been applied upstream
   * debian/control:
     - Replaced librrd2 / librrd2-dev with librrd4 / librrd-dev.
-    - Removed SONAME version from the -dev package.
+    - Removed SONAME version from the -dev package name.
     - Added "ttf-dejavu | ttf-bitstream-vera" recommendation to librrd4 -
       upstream no longer ships DejaVuSansMono-Roman.ttf.
     - Replaced "libart-2.0-dev" with "libcairo2-dev, libpango1.0-dev" in the
@@ -26,7 +28,7 @@ rrdtool (1.3.0-1) experimental; urgency=low
     - Install "NEWS" and "CHANGES" into all packages.
     - No longer set TCL_INC_DIR manually - has been fixed upstream.
 
- -- Sebastian Harl <sh@tokkee.org>  Sat, 14 Jun 2008 23:30:34 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Sun, 15 Jun 2008 13:23:21 +0200
 
 rrdtool (1.2.27-3) UNRELEASED; urgency=low
 
