@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.h   Common Header File
  *****************************************************************************/
@@ -83,6 +83,10 @@ extern "C" {
 
 #include <float.h>        /* for _isnan  */
 #include <io.h>           /* for chdir   */
+#include <process.h>      /* for getpid  */
+
+#define random rand
+#define srandom srand
 
 struct tm* localtime_r(const time_t *timep, struct tm* result);
 char* ctime_r(const time_t *timep, char* result);

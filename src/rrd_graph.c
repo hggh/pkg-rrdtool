@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -3508,15 +3508,17 @@ rrd_graph_options(int argc, char *argv[],image_desc_t *im)
                         if (size > 0){
                               im->text_prop[propidx].size=size;              
                       }        
-                       if (strlen(prop) > end){
-                          if (prop[end] == ':'){
-                             strncpy(im->text_prop[propidx].font,prop+end+1,255);
+                       if (strlen(optarg) > end){
+                          if (optarg[end] == ':'){
+                             strncpy(im->text_prop[propidx].font,optarg+end+1,255);
                              im->text_prop[propidx].font[255] = '\0';
                           } else {
-                             rrd_set_error("expected after font size in '%s'",prop);
+                             rrd_set_error("expected : after font size in '%s'",optarg);
                             return;
                           }
                       }
+                      /* only run the for loop for DEFAULT (0) for
+                         all others, we break here. woodo programming */
                       if (propidx==sindex && sindex != 0) break;
                   }
                 } else {
@@ -3789,17 +3791,17 @@ int gdi;
 {
     graph_desc_t        *src,*dst;
     rrd_value_t                *data;
-    long                step,steps;
+    long                step,steps,end;
 
     dst = &im->gdes[gdi];
     src = &im->gdes[dst->vidx];
     data = src->data + src->ds;
-    steps = (src->end - src->start) / src->step;
-
+    end = (src->end_orig % src->step) == 0 ? src->end_orig : (src->end_orig + src->step - src->end_orig % src->step);
+    steps = (end - src->start) / src->step;
 #if 0
 printf("DEBUG: start == %lu, end == %lu, %lu steps\n"
     ,src->start
-    ,src->end
+    ,src->end_orig
     ,steps
     );
 #endif

@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRD-BEGINNERS 1"
-.TH RRD-BEGINNERS 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRD-BEGINNERS 1 "2008-07-23" "1.2.28" "rrdtool"
 .SH "NAME"
 rrd\-beginners \- RRDtool Beginners' Guide
 .SH "SYNOPSIS"
@@ -360,15 +360,15 @@ generation is done using Perl scripts. These scripts are shown below:
 \& a=0
 \& while [ "$a" == 0 ]; do
 \& snmpwalk \-c public 192.168.1.250 hrSWRunPerfMem > snmp_reply
-\&     total_mem=`awk 'BEGIN {tot_mem=0}
+\&     total_mem=`awk \(aqBEGIN {tot_mem=0}
 \&                           { if ($NF == "KBytes")
 \&                             {tot_mem=tot_mem+$(NF\-1)}
 \&                           }
-\&                     END {print tot_mem}' snmp_reply`
+\&                     END {print tot_mem}\(aq snmp_reply`
 \&     # I can use N as a replacement for the current time
 \&     rrdtool update target.rrd N:$total_mem
 \&     # sleep until the next 300 seconds are full
-\&     perl \-e 'sleep 300 \- time % 300'
+\&     perl \-e \(aqsleep 300 \- time % 300\(aq
 \& done # end of while loop
 .Ve
 .PP

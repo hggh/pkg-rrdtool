@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDFETCH 1"
-.TH RRDFETCH 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDFETCH 1 "2008-07-23" "1.2.28" "rrdtool"
 .SH "NAME"
 rrdfetch \- Fetch data from an RRD.
 .SH "SYNOPSIS"
@@ -227,9 +227,9 @@ Using the bash shell, this could look be:
 Or in Perl:
 .PP
 .Vb 3
-\& perl \-e '$ctime = time; $rrdres = 900; \e
+\& perl \-e \(aq$ctime = time; $rrdres = 900; \e
 \&          system "rrdtool fetch subdata.rrd AVERAGE \e
-\&                  \-r $rrdres \-e @{[int($ctime/$rrdres)*$rrdres]} \-s e\-1h"'
+\&                  \-r $rrdres \-e @{[int($ctime/$rrdres)*$rrdres]} \-s e\-1h"\(aq
 .Ve
 .Sh "AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0"
 .IX Subsection "AT-STYLE TIME SPECIFICATION"

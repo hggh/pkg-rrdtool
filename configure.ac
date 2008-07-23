@@ -8,13 +8,13 @@ dnl Inspiration from http://autoconf-archive.cryp.to
 dnl tell automake the this script is for rrdtool
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.2.27])
+AC_INIT([rrdtool],[1.2.28])
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devl versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.2027
+NUMVERS=1.2028
 AC_SUBST(NUMVERS)
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
@@ -657,7 +657,7 @@ AC_ARG_ENABLE(ruby-site-install,
 		  	  together with rrdtool in $prefix/lib/ruby. You have to
                           add $prefix/lib/ruby/$ruby_version/$sitearch to you $: variable
                           for ruby to find the RRD.so file.],
-[RUBY_MAKE_OPTIONS=],[RUBY_MAKE_OPTIONS="sitedir=$prefix/lib/ruby"])
+[RUBY_MAKE_OPTIONS=],[RUBY_MAKE_OPTIONS="sitedir="'$(DESTDIR)'"$prefix/lib/ruby"])
 
     
 AC_ARG_WITH(ruby-options,

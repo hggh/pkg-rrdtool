@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1286 2008-02-17 10:08:10Z oetiker $
+ * $Id: rrd_update.c 1450 2008-07-23 13:45:41Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -533,9 +533,9 @@ _rrd_update(const char *filename, const char *tmplt, int argc, const char **argv
 	if(current_time < rrd.live_head->last_up || 
 	  (current_time == rrd.live_head->last_up && 
 	   (long)current_time_usec <= (long)rrd.live_head->last_up_usec)) {
-	    rrd_set_error("illegal attempt to update using time %ld when "
+	    rrd_set_error("%s: illegal attempt to update using time %ld when "
 			  "last update time is %ld (minimum one second step)",
-			  current_time, rrd.live_head->last_up);
+			  filename, current_time, rrd.live_head->last_up);
 	    free(step_start);
 	    break;
 	}
@@ -779,7 +779,7 @@ _rrd_update(const char *filename, const char *tmplt, int argc, const char **argv
 		     > rrd.ds_def[i].par[DS_mrhb_cnt].u_cnt) || */
 		    /* if the interval is larger thatn mrhb we get NAN */
 	            (interval > rrd.ds_def[i].par[DS_mrhb_cnt].u_cnt) ||
-		    (occu_pdp_st-proc_pdp_st <= 
+                    (rrd.stat_head -> pdp_step / 2.0 <
 		     rrd.pdp_prep[i].scratch[PDP_unkn_sec_cnt].u_cnt)) {
 		    pdp_temp[i] = DNAN;
 		} else {

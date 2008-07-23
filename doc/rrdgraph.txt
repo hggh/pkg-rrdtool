@@ -157,7 +157,7 @@ OOPPTTIIOONNSS
            hour, and labels every 4 hours. The labels are placed under the
            major grid lines as they specify exactly that time.
 
-            --x-grid HOUR:8:DAY:1:DAY:1:0:%A
+            --x-grid HOUR:8:DAY:1:DAY:1:86400:%A
 
            This places grid lines every 8 hours, major grid lines and labels
            each day. The labels are placed exactly between two major grid
@@ -373,4 +373,4 @@ AAUUTTHHOORR
 
 
 
-1.2.27                            2008-02-17                       RRDGRAPH(1)
+1.2.28                            2008-07-23                       RRDGRAPH(1)

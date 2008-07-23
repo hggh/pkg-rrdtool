@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.27  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_restore.c  creates new rrd from data dumped by rrd_dump.c
  *****************************************************************************/
@@ -26,6 +26,7 @@ int rrd_write(char *, rrd_t *, char);
 void parse_patch1028_RRA_params(char **buf, rrd_t *rrd, int rra_index);
 void parse_patch1028_CDP_params(char **buf, rrd_t *rrd, int rra_index, int ds_index);
 void parse_FAILURES_history(char **buf, rrd_t *rrd, int rra_index, int ds_index);
+long int rra_random_row(rra_def_t *);
 
 /* convert all occurrences of <BlaBlaBla> to <blablabla> */
 
@@ -313,7 +314,10 @@ int xml2rrd(char* buf, rrd_t* rrd, char rc){
       eat_tag(&ptr2,"cdp_prep");
       for(i=0;i< (int)rrd->stat_head->ds_cnt;i++)
       {
-      eat_tag(&ptr2,"ds");
+         if (eat_tag(&ptr2, "ds") != 1){
+            rrd_set_error("expected to find %lu <ds> entries in <cdp_prep>",rrd->stat_head->ds_cnt);
+            return -1;
+         }
       /* support to read CDP parameters */
       rra_index = rrd->stat_head->rra_cnt-1; 
       skip(&ptr2);
@@ -443,12 +447,6 @@ int xml2rrd(char* buf, rrd_t* rrd, char rc){
       return(-1);
   }
 
-  for(i=0; i < (int)rrd->stat_head->rra_cnt; i++) {
-	  /* last row in the xml file is the most recent; as
-	   * rrd_update increments the current row pointer, set cur_row
-	   * here to the last row. */
-      rrd->rra_ptr[i].cur_row = rrd->rra_def[i].row_cnt-1;
-  }
   if (ptr==NULL)
       return -1;
   return 1;
@@ -463,7 +461,7 @@ int xml2rrd(char* buf, rrd_t* rrd, char rc){
 int
 rrd_write(char *file_name, rrd_t *rrd, char force_overwrite)
 {
-    unsigned long    i,ii,val_cnt;
+    unsigned long    i,ii,rra_offset;
     FILE             *rrd_file=NULL;
     int			fdflags;
     int			fd;
@@ -502,16 +500,30 @@ rrd_write(char *file_name, rrd_t *rrd, char force_overwrite)
     
     fwrite( rrd->cdp_prep, sizeof(cdp_prep_t),rrd->stat_head->rra_cnt*
 	    rrd->stat_head->ds_cnt,rrd_file);
+
+    for(i=0; i < rrd->stat_head->rra_cnt; i++)
+      rrd->rra_ptr[i].cur_row = rra_random_row(&rrd->rra_def[i]);
+
     fwrite( rrd->rra_ptr, sizeof(rra_ptr_t), rrd->stat_head->rra_cnt,rrd_file);
 
 
 
-    /* calculate the number of rrd_values to dump */
-    val_cnt=0;
+    /* Dump RRD values */
+    rra_offset=0;
     for(i=0; i <  rrd->stat_head->rra_cnt; i++)
-	for(ii=0; ii <  rrd->rra_def[i].row_cnt * rrd->stat_head->ds_cnt;ii++)
-	    val_cnt++;
-    fwrite( rrd->rrd_value, sizeof(rrd_value_t),val_cnt,rrd_file);
+    {
+        unsigned long num_rows = rrd->rra_def[i].row_cnt;
+        unsigned long cur_row = rrd->rra_ptr[i].cur_row;
+        unsigned long ds_cnt = rrd->stat_head->ds_cnt;
+
+        fwrite(rrd->rrd_value + (rra_offset + num_rows-1 - cur_row) * ds_cnt,
+               sizeof(rrd_value_t), (cur_row+1)*ds_cnt, rrd_file);
+
+        fwrite(rrd->rrd_value + rra_offset * ds_cnt,
+               sizeof(rrd_value_t), (num_rows-1 - cur_row)*ds_cnt, rrd_file);
+
+        rra_offset += num_rows;
+    }
 
     /* lets see if we had an error */
     if(ferror(rrd_file)){

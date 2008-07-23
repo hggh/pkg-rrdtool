@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCGI 1"
-.TH RRDCGI 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDCGI 1 "2008-07-23" "1.2.28" "rrdtool"
 .SH "NAME"
 rrdcgi \- Create web pages containing RRD graphs based on templates
 .SH "SYNOPSIS"
@@ -318,7 +318,7 @@ cgi-bins are seperate directories
 \& <H1>RRDCGI test Page</H1>
 \& <RRD::GRAPH
 \&  /.../web/pngs/testhvt.png
-\&  \-\-imginfo '<IMG SRC=/.../pngs/%s WIDTH=%lu HEIGHT=%lu >'
+\&  \-\-imginfo \(aq<IMG SRC=/.../pngs/%s WIDTH=%lu HEIGHT=%lu >\(aq
 \&  \-\-lazy \-\-start \-1d \-\-end now
 \&  DEF:http_src=/.../rrds/test.rrd:http_src:AVERAGE
 \&  AREA:http_src#00ff00:http_src
