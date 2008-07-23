@@ -107,6 +107,7 @@ librrd.so.2 librrd2 #MINVER#
  rpn_parse@Base 1.2.15
  rpnstack_free@Base 1.2.15
  rpnstack_init@Base 1.2.15
+ rra_random_row@Base 1.2.28
  rrd_clear_error@Base 1.2.15
  rrd_create@Base 1.2.15
  rrd_create_fn@Base 1.2.15
@@ -305,6 +306,7 @@ librrd_th.so.2 librrd2 #MINVER#
  rpn_parse@Base 1.2.15
  rpnstack_free@Base 1.2.15
  rpnstack_init@Base 1.2.15
+ rra_random_row@Base 1.2.28
  rrd_clear_error@Base 1.2.15
  rrd_create@Base 1.2.15
  rrd_create_fn@Base 1.2.15
