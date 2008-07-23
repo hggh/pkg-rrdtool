@@ -1,4 +1,5 @@
 bts428778-floating-point-exception
+bts428780-validate-row-count
 setup.py-module-name
 no-rpath-for-ruby
 no-rpath-for-perl
