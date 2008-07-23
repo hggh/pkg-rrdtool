@@ -1,3 +1,143 @@
+2008-07-23 13:45  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/gdpng.c,
+	  src/pngsize.c, src/rrd.h, src/rrd_afm.c, src/rrd_afm.h,
+	  src/rrd_afm_data.c, src/rrd_afm_data.h, src/rrd_cgi.c,
+	  src/rrd_create.c, src/rrd_datalang.c, src/rrd_diff.c,
+	  src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c, src/rrd_first.c,
+	  src/rrd_format.c, src/rrd_format.h, src/rrd_gfx.c, src/rrd_gfx.h,
+	  src/rrd_graph.c, src/rrd_graph_helper.c, src/rrd_hw.c,
+	  src/rrd_hw.h, src/rrd_info.c, src/rrd_is_thread_safe.h,
+	  src/rrd_last.c, src/rrd_lastupdate.c, src/rrd_not_thread_safe.c,
+	  src/rrd_open.c, src/rrd_resize.c, src/rrd_restore.c,
+	  src/rrd_rpncalc.c, src/rrd_rpncalc.h, src/rrd_stat.c,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.2.28
+
+2008-07-23 13:45  oetiker
+
+	* netware/Makefile, src/rrd_tool.h, win32/Makefile: build fixes by
+	  Guenter Knauf
+
+2008-07-22 15:15  oetiker
+
+	* src/rrd_create.c, trunk/program/src/rrd_create.c: Fix for #167 -
+	  rrdcreate is arguably missing a check for 'step>=1' for RRAs with
+	  AVERAGE as a CF. I ran into this when specifying 0.6 as a step
+	  value, assuming floats were also accepted. Patch attached here. --
+	  Bogdan
+
+2008-06-29 16:24  oetiker
+
+	* src/rrd_update.c: add filename to illegal update message -- he at
+	  uninett.no
+
+2008-06-19 13:18  oetiker
+
+	* bindings/python/rrdtoolmodule.c,
+	  trunk/program/bindings/python/rrdtoolmodule.c: rrdtool.fetch is
+	  returning an extra, bogus, data point. Attached is a patch to
+	  correct this. - Gilad Raphaelli. Fix for #161
+
+2008-06-08 16:25  oetiker
+
+	* bindings/python/rrdtoolmodule.c: The python bindings do not
+	  currently support retrieval of the rpn expression in COMPUTE data
+	  sources. Attached is a patch that duplicates functionality from
+	  rrd_info.c to expose the correct data source attributes via the
+	  python binding. It: * exposes the rpn expression in the 'cdef'
+	  element for DST_CDEF data source types * exposes the heartbeat,
+	  min, and max only to the other data source types
+
+2008-06-08 16:23  oetiker
+
+	* src/pngsize.c, trunk/program/src/pngsize.c: fix for ticket #121
+	  jmpbuf on aix is a problem it seems, maybe this makes it better.
+
+2008-06-06 16:38  oetiker
+
+	* src/rrd_graph.c, trunk/program/src/rrd_graph.c: fix for --font bug
+	  (font names wer not being picked up at all). Bug reported by
+	  Dmitry B. Bigunayk
+
+2008-06-01 20:31  oetiker
+
+	* src/rrd_not_thread_safe.c: fliped order of rrd_context entries to
+	  match up with what was defined in rrd.h (based on debuan bug
+	  450578
+
+2008-05-31 12:28  oetiker
+
+	* src/rrd_graph.c, trunk/program/src/rrd_graph.c: make sure vdef
+	  calcs only calc as far as originally requested.
+
+2008-05-12 15:33  oetiker
+
+	* doc/rrdcreate.pod, src/rrd_update.c,
+	  trunk/program/doc/rrdcreate.pod, trunk/program/src/rrd_update.c:
+	  Fixed handling of unknown data at PDP build time. There was a long
+	  standing (even documented) missfeature in rrdtool which caused
+	  uknown-data to be accepted as long as it was less than the mrhb.
+	  This was never the intended behaviour and had interesting side
+	  effects (http://oss.oetiker.ch/rrdtool-trac/ticket/125): If you
+	  have a 60 Second step with 59s unknown data and 1 second of known
+	  data the whole become known data as long as the mrhb was > step.
+	  The intended behaviour was that a step should become unknown as
+	  soon as it contains more than 50% of unknown data. The patch fixes
+	  both the documentation and the code.
+
+2008-05-04 18:54  oetiker
+
+	* src/rrd_getopt.c, src/rrd_getopt1.c: make studio 11 happy ...
+	  http://www.netbsd.org/cgi-bin/query-pr-single.pl?number=38555
+
+2008-04-16 15:50  oetiker
+
+	* doc/rrdgraph.pod, trunk/program/doc/rrdgraph.pod: fixed 2. x-grid
+	  example ... since the lable is valid for the whole day, it must be
+	  86400 wide. --tobi
+
+2008-04-12 09:21  oetiker
+
+	* src/parsetime.c, trunk/program/src/parsetime.c: do not mess with
+	  dst status after running localtime, the system gets confused
+	  otherwhise when it comes to times during the switch over periode
+	  as DST changes to non DST. -- tobi
+
+2008-03-25 22:37  oetiker
+
+	* examples/Makefile.am: make out-of-tree builds possible for the
+	  examples directory too.
+
+2008-02-25 07:11  oetiker
+
+	* src/rrd_fetch.c, trunk/program/src/rrd_fetch.c: Ignore RRA-end
+	  when comparing. coverage.
+
+2008-02-24 14:30  oetiker
+
+	* src/rrd_restore.c: added for for invalid number of ds entries
+
+2008-02-21 07:21  oetiker
+
+	* configure.ac: make ruby obej destdir
+
+2008-02-19 12:56  oetiker
+
+	* src/rrd_create.c, src/rrd_info.c, src/rrd_restore.c,
+	  trunk/program/src/rrd_create.c, trunk/program/src/rrd_info.c,
+	  trunk/program/src/rrd_restore.c: Generate a random cur_row for
+	  each RRA during create/restore operations. This effectively
+	  randomizes the block crossings among RRDs created around the same
+	  time. Previously, RRDs that were created/restored en masse would
+	  cross block boundaries simultaneously, which is sub-optimal. Also,
+	  this patch enables the user to see the RRA's cur_row pointer via
+	  rrdinfo. This was useful during debugging. -- kevin brintnall
+	  kbrint qwest.net
+
 2008-02-17 10:09  oetiker
 
 	* rrdtool-1.2-release: prepare for the release of rrdtool-1.2.27

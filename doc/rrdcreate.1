@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCREATE 1"
-.TH RRDCREATE 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH RRDCREATE 1 "2008-07-23" "1.2.28" "rrdtool"
 .SH "NAME"
 rrdcreate \- Set up a new Round Robin Database
 .SH "SYNOPSIS"
@@ -426,28 +426,24 @@ Here is an explanation by Don Baarda on the inner workings of RRDtool.
 It may help you to sort out why all this *UNKNOWN* data is popping
 up in your databases:
 .PP
-RRDtool gets fed samples at arbitrary times. From these it builds Primary
-Data Points (PDPs) at exact times on every \*(L"step\*(R" interval. The PDPs are
-then accumulated into RRAs.
+RRDtool gets fed samples/updates at arbitrary times. From these it builds Primary
+Data Points (PDPs) on every \*(L"step\*(R" interval. The PDPs are
+then accumulated into the RRAs.
 .PP
 The \*(L"heartbeat\*(R" defines the maximum acceptable interval between
-samples. If the interval between samples is less than \*(L"heartbeat\*(R",
+samples/updates. If the interval between samples is less than \*(L"heartbeat\*(R",
 then an average rate is calculated and applied for that interval. If
 the interval between samples is longer than \*(L"heartbeat\*(R", then that
 entire interval is considered \*(L"unknown\*(R". Note that there are other
 things that can make a sample interval \*(L"unknown\*(R", such as the rate
-exceeding limits, or even an \*(L"unknown\*(R" input sample.
+exceeding limits, or a sample that was explicitly marked as unknown.
 .PP
 The known rates during a \s-1PDP\s0's \*(L"step\*(R" interval are used to calculate
-an average rate for that \s-1PDP\s0. Also, if the total \*(L"unknown\*(R" time during
-the \*(L"step\*(R" interval exceeds the \*(L"heartbeat\*(R", the entire \s-1PDP\s0 is marked
+an average rate for that \s-1PDP\s0. If the total \*(L"unknown\*(R" time accounts for
+more than \fBhalf\fR the \*(L"step\*(R", the entire \s-1PDP\s0 is marked
 as \*(L"unknown\*(R". This means that a mixture of known and \*(L"unknown\*(R" sample
-times in a single \s-1PDP\s0 \*(L"step\*(R" may or may not add up to enough \*(L"unknown\*(R"
-time to exceed \*(L"heartbeat\*(R" and hence mark the whole \s-1PDP\s0 \*(L"unknown\*(R". So
-\&\*(L"heartbeat\*(R" is not only the maximum acceptable interval between
-samples, but also the maximum acceptable amount of \*(L"unknown\*(R" time per
-\&\s-1PDP\s0 (obviously this is only significant if you have \*(L"heartbeat\*(R" less
-than \*(L"step\*(R").
+times in a single \s-1PDP\s0 \*(L"step\*(R" may or may not add up to enough \*(L"known\*(R"
+time to warrent for a known \s-1PDP\s0.
 .PP
 The \*(L"heartbeat\*(R" can be short (unusual) or long (typical) relative to
 the \*(L"step\*(R" interval between PDPs. A short \*(L"heartbeat\*(R" means you
@@ -480,7 +476,7 @@ same average rate. \fI\-\- Don Baarda <don.baarda@baesystems.com>\fR
 \&       u|15|/     "swt" expired
 \&       u|16|
 \&        |17|\-\-\-\-* sample4, restart "hb", create "pdp" for step1 = 
-\&        |18|   /  = unknown due to 10 "u" labled secs > "hb"
+\&        |18|   /  = unknown due to 10 "u" labled secs > 0.5 * step
 \&        |19|  /
 \&        |20| /
 \&        |21|\-\-\-\-* sample5, restart "hb"

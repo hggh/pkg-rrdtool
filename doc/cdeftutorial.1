@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "CDEFTUTORIAL 1"
-.TH CDEFTUTORIAL 1 "2008-02-17" "1.2.27" "rrdtool"
+.TH CDEFTUTORIAL 1 "2008-07-23" "1.2.28" "rrdtool"
 .SH "NAME"
 cdeftutorial \- Alex van den Bogaerdt's CDEF tutorial
 .SH "DESCRIPTION"
@@ -404,12 +404,12 @@ every minute:
 .PP
 .Vb 7
 \&   counter value    resulting rate
-\&   10'000
-\&   10'060            1; (10'060\-10'000)/60 == 1
-\&   10'120            1; (10'120\-10'060)/60 == 1
-\&   unknown           unknown; you don't know the last value
-\&   10'240            unknown; you don't know the previous value
-\&   10'300            1; (10'300\-10'240)/60 == 1
+\&   10\(aq000
+\&   10\(aq060            1; (10\(aq060\-10\(aq000)/60 == 1
+\&   10\(aq120            1; (10\(aq120\-10\(aq060)/60 == 1
+\&   unknown           unknown; you don\(aqt know the last value
+\&   10\(aq240            unknown; you don\(aqt know the previous value
+\&   10\(aq300            1; (10\(aq300\-10\(aq240)/60 == 1
 .Ve
 .PP
 If the \s-1CDP\s0 was to be calculated from the last five updates, it would get
@@ -956,7 +956,7 @@ You may do some complex data filtering:
 \&    CDEF:prev3=PREV(prev2)
 \&    CDEF:median=prev1,prev2,prev3,+,+,3,/
 \&    LINE3:median#000077:filtered
-\&    LINE1:prev2#007700:'raw data'
+\&    LINE1:prev2#007700:\(aqraw data\(aq
 .Ve
 .PP
 .Vb 1
@@ -970,7 +970,7 @@ You may do some complex data filtering:
 \&    CDEF:prevtime=PREV(time)
 \&    CDEF:derivate=var,prev1,\-,time,prevtime,\-,/
 \&    LINE3:derivate#000077:derivate
-\&    LINE1:var#007700:'raw data'
+\&    LINE1:var#007700:\(aqraw data\(aq
 .Ve
 .SH "Out of ideas for now"
 .IX Header "Out of ideas for now"
