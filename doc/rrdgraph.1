@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2008-06-11" "1.3.0" "rrdtool"
+.TH RRDGRAPH 1 "2008-06-29" "1.3.1" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
@@ -378,8 +378,9 @@ Note that for linear graphs, \s-1SI\s0 notation is used by default.
 .IX Subsection "Miscellaneous"
 [\fB\-z\fR|\fB\-\-lazy\fR]
 .PP
-Only generate the graph if the current graph is out of date or not
-existent.
+Only generate the graph if the current graph is out of date or not existent.
+Note, that only the image size will be returned, if you run with lazy even
+when using graphv.
 .PP
 [\fB\-f\fR|\fB\-\-imginfo\fR \fIprintfstr\fR]
 .PP

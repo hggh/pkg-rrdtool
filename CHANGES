@@ -1,3 +1,84 @@
+2008-07-23 13:02  oetiker
+
+	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,
+	  configure.ac, doc/rrdbuild.pod, rrdtool.spec, src/pngsize.c,
+	  src/rrd.h, src/rrd_cgi.c, src/rrd_create.c, src/rrd_datalang.c,
+	  src/rrd_diff.c, src/rrd_dump.c, src/rrd_error.c, src/rrd_fetch.c,
+	  src/rrd_first.c, src/rrd_format.c, src/rrd_format.h,
+	  src/rrd_gfx.c, src/rrd_graph.c, src/rrd_graph_helper.c,
+	  src/rrd_hw.c, src/rrd_hw.h, src/rrd_i18n.h, src/rrd_info.c,
+	  src/rrd_is_thread_safe.h, src/rrd_last.c, src/rrd_lastupdate.c,
+	  src/rrd_not_thread_safe.c, src/rrd_open.c, src/rrd_resize.c,
+	  src/rrd_restore.c, src/rrd_rpncalc.c, src/rrd_rpncalc.h,
+	  src/rrd_thread_safe.c, src/rrd_thread_safe_nt.c, src/rrd_tool.c,
+	  src/rrd_tool.h, src/rrd_tune.c, src/rrd_update.c,
+	  src/rrd_version.c, src/rrd_xport.c, src/rrd_xport.h,
+	  src/rrdupdate.c: prepare for the release of rrdtool-1.3.1
+
+2008-07-23 12:45  oetiker
+
+	* src/rrd_restore.c: added support for restoring rrdtool 1.0.x files
+	  ... removed support for old HW patched rrd format created by an
+	  early patched version of 1.0.x
+
+2008-07-22 15:15  oetiker
+
+	* branches/1.2/program/src/rrd_create.c, src/rrd_create.c: Fix for
+	  #167 - rrdcreate is arguably missing a check for 'step>=1' for
+	  RRAs with AVERAGE as a CF. I ran into this when specifying 0.6 as
+	  a step value, assuming floats were also accepted. Patch attached
+	  here. -- Bogdan
+
+2008-07-01 06:35  oetiker
+
+	* doc/rrdbuild.pod: header-fix
+
+2008-07-01 06:34  oetiker
+
+	* doc/rrdbuild.pod: improve layout
+
+2008-06-29 16:23  oetiker
+
+	* src/rrd_update.c: added rrd filename to illegal update message --
+	  he at uninett.no
+
+2008-06-29 14:08  oetiker
+
+	* rrdtool.spec: rrdtool.spec fix by Anton Blanchard to build without
+	  php patch
+
+2008-06-29 13:57  oetiker
+
+	* doc/rrdgraph.pod, src/rrd_graph.c: make sure image-with and
+	  image-height get returned even when rrdtool is called with --lazy
+	  as reported in bug #163
+
+2008-06-27 06:08  zaucker
+
+	* trunk/tutorial/lisa2008/abstract-rrdexample.txt,
+	  trunk/tutorial/lisa2008/abstract-rrdtut.txt: Etwas ueberarbeitet
+
+2008-06-24 15:05  oetiker
+
+	* trunk/tutorial/lisa2008,
+	  trunk/tutorial/lisa2008/abstract-rrdexample.txt,
+	  trunk/tutorial/lisa2008/abstract-rrdtut.txt: intial
+
+2008-06-19 13:18  oetiker
+
+	* branches/1.2/program/bindings/python/rrdtoolmodule.c,
+	  bindings/python/rrdtoolmodule.c: rrdtool.fetch is returning an
+	  extra, bogus, data point. Attached is a patch to correct this. -
+	  Gilad Raphaelli. Fix for #161
+
+2008-06-12 13:54  oetiker
+
+	* doc/rrdgraph_graph.pod: added note on %S
+
+2008-06-11 15:49  oetiker
+
+	* NEWS: made news the same as the announcement
+
 2008-06-10 23:12  oetiker
 
 	* bindings/perl-piped/RRDp.pm, bindings/perl-shared/RRDs.pm,

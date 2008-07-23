@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_GRAPH 1"
-.TH RRDGRAPH_GRAPH 1 "2008-06-11" "1.3.0" "rrdtool"
+.TH RRDGRAPH_GRAPH 1 "2008-06-12" "1.3.1" "rrdtool"
 .SH "NAME"
 rrdgraph_graph \- rrdtool graph command reference
 .SH "SYNOPSIS"
@@ -245,9 +245,12 @@ Either `\s-1AM\s0' or `\s-1PM\s0' according to the given time value, or the corr
 strings for the current locale.  Noon is treated as `pm' and midnight as
 `am'.  Note that in many locales and `pm' notation is unsupported and in
 such cases \f(CW%p\fR will return an empty string.
+.IP "\fB%s\fR" 4
+.IX Item "%s"
+The second as a decimal number (range 00 to 61).
 .IP "\fB%S\fR" 4
 .IX Item "%S"
-The second as a decimal number (range 00 to 61).
+The seconds since the epoch (1.1.1970) (libc dependant non standard!)
 .IP "\fB%U\fR" 4
 .IX Item "%U"
 The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the

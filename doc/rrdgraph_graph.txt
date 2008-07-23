@@ -110,7 +110,10 @@ DDEESSCCRRIIPPTTIIOONN
            and midnight as `am'.  Note that in many locales and `pm' notation
            is unsupported and in such cases %p will return an empty string.
 
-       %%SS  The second as a decimal number (range 00 to 61).
+       %%ss  The second as a decimal number (range 00 to 61).
+
+       %%SS  The seconds since the epoch (1.1.1970) (libc dependant non stan-
+           dard!)
 
        %%UU  The  week  number  of  the current year as a decimal number, range
            00 to 53, starting with the first Sunday as the first day of week
@@ -261,9 +264,9 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
 
        A colon ':' in a _l_e_g_e_n_d argument will mark the end of the legend. To
        enter a ':' as part of a legend, the colon must be escaped with a back-
-       slash '\:'.  Beware that many environments process backslashes
-       themselves, so it may be necessary to write two backslashes in order to
-       one being passed onto rrd_graph.
+       slash '\:'.  Beware that many environments process backslashes them-
+       selves, so it may be necessary to write two backslashes in order to one
+       being passed onto rrd_graph.
 
        SSttrriinngg FFoorrmmaattttiinngg
 
@@ -423,4 +426,4 @@ AAUUTTHHOORR
 
 
 
-1.3.0                             2008-06-11                 RRDGRAPH_GRAPH(1)
+1.3.1                             2008-06-12                 RRDGRAPH_GRAPH(1)

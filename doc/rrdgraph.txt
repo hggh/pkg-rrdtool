@@ -242,7 +242,8 @@ OOPPTTIIOONNSS
        [--zz|----llaazzyy]
 
        Only generate the graph if the current graph is out of date or not
-       existent.
+       existent.  Note, that only the image size will be returned, if you run
+       with lazy even when using graphv.
 
        [--ff|----iimmggiinnffoo _p_r_i_n_t_f_s_t_r]
 
@@ -462,4 +463,4 @@ AAUUTTHHOORR
 
 
 
-1.3.0                             2008-06-11                       RRDGRAPH(1)
+1.3.1                             2008-06-29                       RRDGRAPH(1)
