@@ -7,6 +7,7 @@ rrdtool (1.2.28-1) UNRELEASED; urgency=low
     - Updated standards-version to 3.8.0 - no changes.
     - No longer conflict / replace librrd0 and librrd0-dev - librrd0 is no
       longer available since Etch.
+    - Added libc6-dev | libc-dev to librrd2-dev's dependencies.
   * debian/patches:
     - Added backported upstream patch bts428780-validate-row-count to validate
       the RRA row count in rrdcreate (Closes: #428780).
@@ -21,7 +22,7 @@ rrdtool (1.2.28-1) UNRELEASED; urgency=low
   * debian/patches/implicit-decl-fix:
     - Patching the implicit declaration in rrd_update.c in a nicer way.
 
- -- Sebastian Harl <sh@tokkee.org>  Wed, 23 Jul 2008 20:55:45 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Wed, 23 Jul 2008 20:58:21 +0200
 
 rrdtool (1.2.27-2) unstable; urgency=low
 
