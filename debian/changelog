@@ -1,5 +1,10 @@
-rrdtool (1.2.27-3) UNRELEASED; urgency=low
+rrdtool (1.2.28-1) UNRELEASED; urgency=low
 
+  [ Sebastian Harl ]
+  * New upstream release.
+    - Fixes a buffer overflow in librrd's error handling (Closes: #450578).
+
+  [ Bernd Zeimetz ]
   * debian/rules:
     - Adding an option to point configure to the right path to tcl. This is
       not needed for Lenny, but we also add it here to make coming backports
@@ -7,7 +12,7 @@ rrdtool (1.2.27-3) UNRELEASED; urgency=low
   * debian/patches/implicit-decl-fix:
     - Patching the implicit declaration in rrd_update.c in a nicer way.
 
- -- Bernd Zeimetz <bzed@debian.org>  Sun, 20 Apr 2008 02:09:20 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Wed, 23 Jul 2008 20:08:04 +0200
 
 rrdtool (1.2.27-2) unstable; urgency=low
 
