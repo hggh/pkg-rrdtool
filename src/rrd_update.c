@@ -1,10 +1,10 @@
 
 /*****************************************************************************
- * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1432 2008-06-10 23:12:55Z oetiker $
+ * $Id: rrd_update.c 1447 2008-07-23 13:02:26Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -502,6 +502,15 @@ int _rrd_update(
                         rra_step_cnt, updvals, tmpl_idx, tmpl_cnt,
                         &pcdp_summary, version, skip_update,
                         &schedule_smooth) == -1) {
+	    if (rrd_test_error()) { /* Should have error string always here */
+		char *save_error;
+
+		/* Prepend file name to error message */
+		if ((save_error = strdup(rrd_get_error())) != NULL) {
+		    rrd_set_error("%s: %s", filename, save_error);
+		    free(save_error);
+		}
+	    }
             free(arg_copy);
             break;
         }

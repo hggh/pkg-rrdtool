@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDBUILD 1"
-.TH RRDBUILD 1 "2008-06-11" "1.3.0" "rrdtool"
+.TH RRDBUILD 1 "2008-07-23" "1.3.1" "rrdtool"
 .SH "NAME"
 rrdbuild \- Instructions for building RRDtool
 .SH "OVERVIEW"
@@ -163,7 +163,7 @@ Once you have decided. Save the two locations into environment variables.
 .PP
 .Vb 2
 \& BUILD_DIR=/tmp/rrdbuild
-\& INSTALL_DIR=/usr/local/rrdtool\-1.3.0
+\& INSTALL_DIR=/usr/local/rrdtool\-1.3.1
 .Ve
 .PP
 If your \fI/tmp\fR is mounted with the option noexec (\s-1RHEL\s0 seems todo that) you have to choose
@@ -180,9 +180,9 @@ Lets first assume you already have all the necessary libraries
 pre\-installed. 
 .PP
 .Vb 4
-\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3.0.tar.gz
-\& gunzip \-c rrdtool\-1.3.0.tar.gz | tar xf \-
-\& cd rrdtool\-1.3.0
+\& wget http://oss.oetiker.ch/rrdtool/pub/rrdtool\-1.3.1.tar.gz
+\& gunzip \-c rrdtool\-1.3.1.tar.gz | tar xf \-
+\& cd rrdtool\-1.3.1
 \& ./configure \-\-prefix=$INSTALL_DIR && make && make install
 .Ve
 .PP
@@ -256,10 +256,8 @@ libpng and zlib are pretty standard so you will probably have them on your
 system anyway. Freetype, Fontinst, Cairo, Pango may be installed, but it is
 possible that they are pretty old and thus don't live up to our
 expectations, so you may want to compile their latest versions.
-.PP
-\fIBuild Tips for \s-1AIX\s0\fR
-.IX Subsection "Build Tips for AIX"
-.PP
+.Sh "General build tips for \s-1AIX\s0"
+.IX Subsection "General build tips for AIX"
 If you are working with \s-1AIX\s0, you may find the the \fB\-\-disable\-shared\fR option
 will cause things to break for you. In that case you may have to install the
 shared libraries into the rrdtool \s-1PREFIX\s0 and work with \fB\-\-disable\-static\fR
@@ -273,33 +271,32 @@ Another hint to get rrdtool working on \s-1AIX\s0 is to use the \s-1IBM\s0 \s-1X
 .Ve
 .PP
 (Better instructions for \s-1AIX\s0 welcome!)
-.Sh "Building Libraries"
-.IX Subsection "Building Libraries"
-In order to build the libraries you need a compiler on your system.
-Unfortunately compilers are not all alike. This has an effect on the \s-1CFLAGS\s0
-you want to set. The examples below are for the popular \s-1GCC\s0 compiler suite.
-If you have an other compilers here are some ides:
+.Sh "Build Instructions"
+.IX Subsection "Build Instructions"
+In order to build rrdtool need a compiler on your system. Unfortunately
+compilers are not all alike. This has an effect on the \s-1CFLAGS\s0 you want to
+set. The examples below are for the popular \s-1GCC\s0 compiler suite. If you have
+an other compilers here are some ides:
 .IP "Sun Forte" 4
 .IX Item "Sun Forte"
 .Vb 1
 \& CFLAGS="\-xO3 \-kPIC"
 .Ve
-.Sp
-.RS 4
+.PP
 Some libraries want to know where other libraries are. For this to work,
 set the following environment variable
-.Sp
+.PP
 .Vb 2
 \& export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig
 \& export PATH=$INSTALL_DIR/bin:$PATH
 .Ve
-.Sp
-This relies on the presence of the \fIpkgconfig\fR program. Below you find instructions
-on how to compile pkgconfig as well.
-.Sp
-Since we are compiling libraries dynamically, they must know
-where to find each other. This is done by setting an appropriate \s-1LDFLAGS\s0.
-Unfortunately, the syntax again differs from system to system:
+.PP
+The above relies on the presence of the \fIpkgconfig\fR program. Below you find instructions
+on how to compile pkgconfig.
+.PP
+Since we are compiling libraries dynamically, they must know where to find
+each other. This is done by setting an appropriate \s-1LDFLAGS\s0. Unfortunately,
+the syntax again differs from system to system:
 .IP "Solaris" 4
 .IX Item "Solaris"
 .Vb 1
@@ -320,29 +317,28 @@ Unfortunately, the syntax again differs from system to system:
 .Vb 1
 \& export LDFLAGS="\-Wl,\-blibpath:${INSTALL_DIR}/lib"
 .Ve
-.RE
-.RS 4
-.Sp
+.PP
 If you have GNUmake installed and it is not called 'make',
 then do
-.Sp
+.PP
 .Vb 2
 \& export MAKE=gmake
 \& export GNUMAKE=gmake
 .Ve
-.Sp
+.PP
 otherwise just do
-.Sp
+.PP
 .Vb 1
 \& export MAKE=make
 .Ve
-.RE
-.IP "Building pkgconfig" 4
-.IX Item "Building pkgconfig"
+.PP
+\fIBuilding pkgconfig\fR
+.IX Subsection "Building pkgconfig"
+.PP
 As mentioned above, without pkgconfig the whole build process will be lots
 of pain and suffering, so make sure you have a copy on your system. If it is
 not available natively, here is how to compile it.
-.Sp
+.PP
 .Vb 6
 \& wget http://pkgconfig.freedesktop.org/releases/pkg\-config\-0.23.tar.gz
 \& gunzip \-c pkg\-config\-0.23.tar.gz | tar xf \-
@@ -351,10 +347,12 @@ not available natively, here is how to compile it.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building zlib" 4
-.IX Item "Building zlib"
+.PP
+\fIBuilding zlib\fR
+.IX Subsection "Building zlib"
+.PP
 Chances are very high that you already have that on your system ... 
-.Sp
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/zlib\-1.2.3.tar.gz
@@ -364,13 +362,15 @@ Chances are very high that you already have that on your system ...
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building libpng" 4
-.IX Item "Building libpng"
+.PP
+\fIBuilding libpng\fR
+.IX Subsection "Building libpng"
+.PP
 Libpng itself requires zlib to build, so we need to help a bit. If you
 already have a copy of zlib on your system (which is very likely) you can
 drop the settings of \s-1LDFLAGS\s0 and \s-1CPPFLAGS\s0. Note that the backslash (\e) at
 the end of line 4 means that line 4 and line 5 are on one line.
-.Sp
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/libpng\-1.2.18.tar.gz
@@ -380,8 +380,10 @@ the end of line 4 means that line 4 and line 5 are on one line.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building freetype" 4
-.IX Item "Building freetype"
+.PP
+\fIBuilding freetype\fR
+.IX Subsection "Building freetype"
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/freetype\-2.3.5.tar.gz
@@ -391,15 +393,17 @@ the end of line 4 means that line 4 and line 5 are on one line.
 \& $MAKE
 \& $MAKE install
 .Ve
-.Sp
+.PP
 If you run into problems building freetype on Solaris, you may want to try to
 add the following at the start the configure line:
-.Sp
+.PP
 .Vb 1
 \& env EGREP=egrep
 .Ve
-.IP "Building LibXML2" 4
-.IX Item "Building LibXML2"
+.PP
+\fIBuilding LibXML2\fR
+.IX Subsection "Building LibXML2"
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/libxml2\-sources\-2.6.31.tar.gz
@@ -409,13 +413,15 @@ add the following at the start the configure line:
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building fontconfig" 4
-.IX Item "Building fontconfig"
+.PP
+\fIBuilding fontconfig\fR
+.IX Subsection "Building fontconfig"
+.PP
 Note that fontconfig has a run time configuration file in INSTALL_DIR/etc you
 may want to adjust that so that fontconfig finds the fonts on your system.
 Run the fc-cache program to build the fontconfig cache after changing the
 config file.
-.Sp
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig\-2.4.2.tar.gz
@@ -425,8 +431,10 @@ config file.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building Pixman" 4
-.IX Item "Building Pixman"
+.PP
+\fIBuilding Pixman\fR
+.IX Subsection "Building Pixman"
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/pixman\-0.10.0.tar.gz
@@ -436,8 +444,10 @@ config file.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building Cairo" 4
-.IX Item "Building Cairo"
+.PP
+\fIBuilding Cairo\fR
+.IX Subsection "Building Cairo"
+.PP
 .Vb 11
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/cairo\-1.6.4.tar.gz
@@ -451,8 +461,10 @@ config file.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building Glib" 4
-.IX Item "Building Glib"
+.PP
+\fIBuilding Glib\fR
+.IX Subsection "Building Glib"
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/glib\-2.15.4.tar.gz
@@ -462,8 +474,10 @@ config file.
 \& $MAKE
 \& $MAKE install
 .Ve
-.IP "Building Pango" 4
-.IX Item "Building Pango"
+.PP
+\fIBuilding Pango\fR
+.IX Subsection "Building Pango"
+.PP
 .Vb 7
 \& cd $BUILD_DIR
 \& wget http://oss.oetiker.ch/rrdtool/pub/libs/pango\-1.21.1.tar.gz
@@ -473,7 +487,8 @@ config file.
 \& $MAKE
 \& $MAKE install
 .Ve
-.PP
+.Sh "Building rrdtool (second try)"
+.IX Subsection "Building rrdtool (second try)"
 Now all the dependent libraries are built and you can try again. This time
 you tell configure where it should be looking for libraries and include
 files. This is done via environment variables. Depending on the shell you
@@ -485,7 +500,7 @@ tcl setups that would prevent rrdtool from building if they are included in
 their current state.
 .PP
 .Vb 5
-\& cd $BUILD_DIR/rrdtool\-1.3.0
+\& cd $BUILD_DIR/rrdtool\-1.3.1
 \& ./configure \-\-prefix=$INSTALL_DIR \-\-disable\-tcl \-\-disable\-python
 \& $MAKE clean
 \& $MAKE
@@ -493,7 +508,7 @@ their current state.
 .Ve
 .PP
 \&\s-1SOLARIS\s0 \s-1HINT:\s0 if you want to build  the perl module for the native perl (the
-one shipping with Solaris) you will need the sun forte compiler installed on
+one shipping with Solaris) you will need the Sun Forte compiler installed on
 your box or you have to hand-tune bindings/perl\-shared/Makefile while
 building!
 .PP

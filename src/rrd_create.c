@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_create.c  creates new rrds
  *****************************************************************************/
@@ -373,6 +373,8 @@ int rrd_create_r(
                     default:
                         rrd.rra_def[rrd.stat_head->rra_cnt].pdp_cnt =
                             atoi(token);
+                        if (atoi(token) < 1)
+                            rrd_set_error("Invalid step: must be >= 1");
                         break;
                     }
                     break;

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.0  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_error.c   Common Header File
  *****************************************************************************
- * $Id: rrd_error.c 1432 2008-06-10 23:12:55Z oetiker $
+ * $Id: rrd_error.c 1447 2008-07-23 13:02:26Z oetiker $
  * $Log$
  * Revision 1.4  2003/02/22 21:57:03  oetiker
  * a patch to avoid a memory leak and a Makefile.am patch to
