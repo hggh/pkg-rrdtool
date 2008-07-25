@@ -86,6 +86,7 @@ to <em>positive or negative infinity</em>. Returns 1 for true or 0 for false.</p
 otherwise the value popped second is pushed back. This does, indeed,
 mean that any value other than 0 is considered to be true.</p>
 <p>Example: <code>A,B,C,IF</code> should be read as <code>if (A) then (B) else (C)</code></p>
+<p></p>
 </dd>
 <dt><strong><a name="item_comparing_values">Comparing values</a></strong></dt>
 
@@ -105,12 +106,16 @@ numbers involved is either <em>unknown</em> or <em>infinite</em> this function
 will always return an <em>unknown</em></p>
 <p>Example: <code>CDEF:a=alpha,0,100,LIMIT</code> will return <em>unknown</em> if
 alpha is lower than 0 or if it is higher than 100.</p>
+<p></p>
 </dd>
 <dt><strong><a name="item_arithmetics">Arithmetics</a></strong></dt>
 
 <dd>
 <p><strong>+, -, *, /, %</strong></p>
 <p>Add, subtract, multiply, divide, modulo</p>
+<p><strong>ADDNAN</strong></p>
+<p>NAN-safe addition. If one parameter is NAN/UNKNOWN it'll be treated as
+zero. If both parameters are NAN/UNKNOWN, NAN/UNKNOWN will be returned.</p>
 <p><strong>SIN, COS, LOG, EXP, SQRT</strong></p>
 <p>Sine and cosine (input in radians), log and exp (natural logarithm),
 square root.</p>
@@ -145,7 +150,7 @@ largest.</p>
 <p>Pop one element (<em>count</em>) from the stack. Now pop <em>count</em> elements and build the
 average, ignoring all UNKNOWN values in the process.</p>
 <p>Example: <code>CDEF:x=a,b,c,d,4,AVG</code></p>
-<p><strong>TREND</strong></p>
+<p><strong>TREND, TRENDNAN</strong></p>
 <p>Create a ``sliding window'' average of another data series.</p>
 <p>Usage:
 CDEF:smoothed=x,1800,TREND</p>
@@ -164,6 +169,10 @@ average is essentially computed as shown here:</p>
      Value at sample (t0) will be the average between (t0-delay) and (t0)
      Value at sample (t1) will be the average between (t1-delay) and (t1)
      Value at sample (t2) will be the average between (t2-delay) and (t2)</pre>
+<p>TRENDNAN is - in contrast to TREND - NAN-safe. If you use TREND and one 
+source value is NAN the complete sliding window is affected. The TRENDNAN 
+operation ignores all NAN-values in a sliding window and computes the 
+average of the remaining values.</p>
 </dd>
 <dt><strong><a name="item_special_values">Special values</a></strong></dt>
 
@@ -211,6 +220,7 @@ in the examples section below on how to use this.</p>
 <p><strong>DUP, POP, EXC</strong></p>
 <p>Duplicate the top element, remove the top element, exchange the two
 top elements.</p>
+<p></p>
 </dd>
 </dl>
 <p>
@@ -225,6 +235,12 @@ top elements.</p>
 <p>Return the corresponding value, MAXIMUM and MINIMUM also return
 the first occurrence of that value in the time component.</p>
 <p>Example: <code>VDEF:avg=mydata,AVERAGE</code></p>
+</dd>
+<dt><strong><a name="item_stdev">STDEV</a></strong></dt>
+
+<dd>
+<p>Returns the standard deviation of the values.</p>
+<p>Example: <code>VDEF:stdev=mydata,STDEV</code></p>
 </dd>
 <dt><strong><a name="item_last_2c_first">LAST, FIRST</a></strong></dt>
 

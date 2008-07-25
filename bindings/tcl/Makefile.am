@@ -12,12 +12,12 @@ TCL_SHLIB_SUFFIX = @TCL_SHLIB_SUFFIX@
 TCL_PACKAGE_PATH = @TCL_PACKAGE_PATH@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
 TCL_STUB_LIB_SPEC = @TCL_STUB_LIB_SPEC@
-TCL_INC_DIR = @TCL_INC_DIR@
+TCL_INCLUDE_SPEC = @TCL_INCLUDE_SPEC@
 
 CLEANFILES = tclrrd.o tclrrd.so
 
 SRC_DIR            = $(top_srcdir)/src
-AM_CPPFLAGS        = -I$(TCL_INC_DIR) -I$(SRC_DIR) -DUSE_TCL_STUBS
+AM_CPPFLAGS        = $(TCL_INCLUDE_SPEC) -I$(SRC_DIR) -DUSE_TCL_STUBS
 LIBDIRS            = -L$(top_builddir)/src/.libs -L$(top_builddir)/src -L$(libdir)
 LIB_RUNTIME_DIR    = $(libdir)
 
@@ -46,7 +46,7 @@ $(TCL_RRD_LIB): tclrrd.o
 	$(TCL_SHLIB_LD) $(TCL_LD_SEARCH_FLAGS) $(LIBDIRS) $< -o $@ -lrrd_th -lm $(TCL_STUB_LIB_SPEC) $(LDFLAGS) $(LIBS)
 
 tclrrd.o: tclrrd.c
-	$(CC) $(AM_CFLAGS) $(CFLAGS) $(TCL_SHLIB_CFLAGS) $(AM_CPPFLAGS) -c $< -DVERSION=\"$(VERSION)\"
+	$(CC) $(AM_CFLAGS) $(CFLAGS) $(TCL_SHLIB_CFLAGS) $(AM_CPPFLAGS) -c tclrrd.c -DVERSION=\"$(VERSION)\"
 
 pkgIndex.tcl:
 	echo "package ifneeded Rrd $(VERSION) \"load $(libdir)/tclrrd$(VERSION)[info sharedlibextension]\"" > $@

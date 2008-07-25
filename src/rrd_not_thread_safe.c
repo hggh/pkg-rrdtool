@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,33 +7,26 @@
  * rrd_not_thread_safe.c   Contains routines used when thread safety is not
  *                         an issue
  *****************************************************************************
- * $Id: rrd_not_thread_safe.c 1450 2008-07-23 13:45:41Z oetiker $
+ * $Id: rrd_not_thread_safe.c 1447 2008-07-23 13:02:26Z oetiker $
  *************************************************************************** */
 #include "rrd.h"
 #include "rrd_tool.h"
 #define MAXLEN 4096
 #define ERRBUFLEN 256
 
-static char rrd_error[MAXLEN+10];
-static char rrd_liberror[ERRBUFLEN+10];
-static int  rrd_context_init = 0;
 /* The global context is very useful in the transition period to even
    more thread-safe stuff, it can be used whereever we need a context
    and do not need to worry about concurrency. */
-static struct rrd_context global_ctx = {
-    MAXLEN,
-    ERRBUFLEN,
-    rrd_liberror,
-    rrd_error, 
+static rrd_context_t global_ctx = {
+    "",
+    ""
 };
+
 /* #include <stdarg.h> */
 
-struct rrd_context *rrd_get_context(void) {
-    if (! rrd_context_init ){
-	rrd_context_init = 1;
-        global_ctx.rrd_error[0]='\0';
-        global_ctx.lib_errstr[0]='\0';
-    }
+rrd_context_t *rrd_get_context(
+    void)
+{
     return &global_ctx;
 }
 
@@ -42,6 +35,8 @@ struct rrd_context *rrd_get_context(void) {
    silently turning misplaced strerror into rrd_strerror, but here
    this turns recursive! */
 #undef strerror
-const char *rrd_strerror(int err) {
+const char *rrd_strerror(
+    int err)
+{
     return strerror(err);
 }

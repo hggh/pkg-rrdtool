@@ -16,17 +16,36 @@
 <ul>
 
 	<li><a href="#name">NAME</a></li>
-	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#overview">OVERVIEW</a></li>
+	<li><a href="#optimistic_build">OPTIMISTIC BUILD</a></li>
+	<li><a href="#installing_dependencies">INSTALLING DEPENDENCIES</a></li>
 	<ul>
 
-		<li><a href="#overview">Overview</a></li>
-		<li><a href="#building">Building</a></li>
+		<li><a href="#opensolaris_2008_05">OpenSolaris 2008.05</a></li>
+		<li><a href="#debian___ubuntu">Debian / Ubuntu</a></li>
+		<li><a href="#gentoo">Gentoo</a></li>
+	</ul>
+
+	<li><a href="#building_dependencies">BUILDING DEPENDENCIES</a></li>
+	<ul>
+
+		<li><a href="#general_build_tips_for_aix">General build tips for AIX</a></li>
+		<li><a href="#build_instructions">Build Instructions</a></li>
 		<ul>
 
-			<li><a href="#build_tipps_for_aix">Build Tipps for AIX</a></li>
+			<li><a href="#building_pkgconfig">Building pkgconfig</a></li>
+			<li><a href="#building_zlib">Building zlib</a></li>
+			<li><a href="#building_libpng">Building libpng</a></li>
+			<li><a href="#building_freetype">Building freetype</a></li>
+			<li><a href="#building_libxml2">Building LibXML2</a></li>
+			<li><a href="#building_fontconfig">Building fontconfig</a></li>
+			<li><a href="#building_pixman">Building Pixman</a></li>
+			<li><a href="#building_cairo">Building Cairo</a></li>
+			<li><a href="#building_glib">Building Glib</a></li>
+			<li><a href="#building_pango">Building Pango</a></li>
 		</ul>
 
-		<li><a href="#building_libraries">Building Libraries</a></li>
+		<li><a href="#building_rrdtool__second_try_">Building rrdtool (second try)</a></li>
 	</ul>
 
 	<li><a href="#author">AUTHOR</a></li>
@@ -41,19 +60,24 @@
 <p>
 </p>
 <hr />
-<h1><a name="description">DESCRIPTION</a></h1>
-<p>
-</p>
-<h2><a name="overview">Overview</a></h2>
+<h1><a name="overview">OVERVIEW</a></h1>
 <p>If you downloaded the source of rrdtool you have to compile it. This
 document will give some information on how this is done.</p>
-<p>RRDtool relies on services of thrid part libraries. Some of these libraries
+<p>RRDtool relies on services of third part libraries. Some of these libraries
 may already be installed on your system. You have to compile copies of the other
 ones before you can build RRDtool.</p>
 <p>This document will tell you about all the necessary steps to get going.</p>
+<p>These instructions assume you are using a <strong>bash</strong> shell. If you use csh/tcsh,
+then you can either type <em>bash</em> to switch to bash for the compilation or if
+you know what you are doing just replace the export bits with
+setenv.</p>
+<p>We further assume that your copies of <strong>tar</strong> and <strong>make</strong> are actually <strong>GNU
+tar</strong> and <strong>GNU make</strong> respectively. It could be that they are installed as
+<strong>gtar</strong> and <strong>gmake</strong> on your system.</p>
 <p>
 </p>
-<h2><a name="building">Building</a></h2>
+<hr />
+<h1><a name="optimistic_build">OPTIMISTIC BUILD</a></h1>
 <p>Before you start to build RRDtool, you have to decide two things:</p>
 <ol>
 <li>
@@ -63,15 +87,10 @@ ones before you can build RRDtool.</p>
 <p>Where you want to install the software.</p>
 </li>
 </ol>
-<p>Once you have decided. Save the two locations into environment variables.
-Depending on the shell you are using, you can do either (bash,zsh):</p>
+<p>Once you have decided. Save the two locations into environment variables.</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.2.28</pre>
-<p>Or if you run tcsh:</p>
-<pre>
- set BUILD_DIR=/tmp/rrdbuild
- set INSTALL_DIR=/usr/local/rrdtool-1.2.28</pre>
+ INSTALL_DIR=/usr/local/rrdtool-1.3.1</pre>
 <p>If your <em>/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -79,26 +98,79 @@ a different directory!</p>
  mkdir -p $BUILD_DIR
  cd $BUILD_DIR</pre>
 <p>Lets first assume you already have all the necessary libraries
-pre-installed. Note that these instructions assume that your copies of
-<strong>tar</strong> and <strong>make</strong> are actually <strong>GNU tar</strong> and <strong>GNU make</strong> respectively. It
-could be that they are installed as <strong>gtar</strong> and <strong>gmake</strong> on your system.</p>
+pre-installed.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.28.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.2.28.tar.gz</a>
- tar zxf rrdtool-1.2.28.tar.gz
- cd rrdtool-1.2.28
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.1.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.1.tar.gz</a>
+ gunzip -c rrdtool-1.3.1.tar.gz | tar xf -
+ cd rrdtool-1.3.1
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
-<strong>configure</strong> complaining about several missing libraries. If you are on a
-Linux or *bsd system you may want to just install the missing bits from your
-software repository. When you do that, make sure you also get the <strong>-dev</strong>
-package for each library you install. Once you have the missing bits on
-board, just re-run the last line of the instructions above.</p>
-<p>But again this may have been too optimistic, and you actually have to
-compile your own copies of the required libraries.</p>
+<strong>configure</strong> complaining about several missing libraries.</p>
 <p>
 </p>
-<h3><a name="build_tipps_for_aix">Build Tipps for AIX</a></h3>
-<p>If you are woking with AIX, you may find the the <strong>--disable-shared</strong> option
+<hr />
+<h1><a name="installing_dependencies">INSTALLING DEPENDENCIES</a></h1>
+<p>If your OS lets you install additional packages from a software repository,
+you may get away with installing the missing packages. When the packages are
+installed, run configure again and try to compile again. Below you find some
+hints on getting your OS ready for the rrdtool compilation.</p>
+<p>Additions to this list are welcome.</p>
+<p>
+</p>
+<h2><a name="opensolaris_2008_05">OpenSolaris 2008.05</a></h2>
+<p>Just add a compiler and the gnome development package:</p>
+<pre>
+ pkg install sunstudioexpress
+ pkg install SUNWgnome-common-devel</pre>
+<p>There is a problem with <em>cairo.pc</em> on opensolaris. It suggests that
+xrender is required for compilation with cairo. This is not true and also
+bad since opensolaris does not include an <em>xrender.pc</em> file. Use perl to
+fix this:</p>
+<pre>
+ perl -i~ -p -e 's/(Requires.*?)\s*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc</pre>
+<p>
+</p>
+<h2><a name="debian___ubuntu">Debian / Ubuntu</a></h2>
+<p>Use apt-get to make sure you have all that is required. A number
+of packages will get added through dependencies.</p>
+<pre>
+ apt-get install libpango1.0-dev libxml2-dev</pre>
+<p>
+</p>
+<h2><a name="gentoo">Gentoo</a></h2>
+<p>In Gentoo installing rrdtool is really simple you just need to <strong>emerge
+rrdtool</strong>. All dependencies will be handled automatically by the portage
+system. The only thing you should care about are USE flags, which allow you
+fine tune features rrdtool will be built with. Currently the following USE
+flags are available:</p>
+<pre>
+ doc    - install .html and .txt documentation
+          into /usr/share/doc/rrdtool-1.x.xx/
+ perl   - build and install perl language bindings
+ python - build and install python language bindings
+ ruby   - build and install ruby language bindings
+ tcl    - build and install tcl language bindings
+ rrdcgi - build and install rrdcgi</pre>
+<p>After you've decided which USE flags you need, set them either in
+<em>make.conf</em> or <em>/etc/portage/package.use</em> and finally run:</p>
+<pre>
+ # emerge -va rrdtool</pre>
+<p>Take a look at Gentoo handbook for further details on how to manage USE
+flags: <a href="http://www.gentoo.org/doc/en/handbook/handbook-x86.xml?part=2">http://www.gentoo.org/doc/en/handbook/handbook-x86.xml?part=2</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="building_dependencies">BUILDING DEPENDENCIES</a></h1>
+<p>But again this may have been too optimistic still, and you actually have to
+compile your own copies of some of the required libraries. Things like
+libpng and zlib are pretty standard so you will probably have them on your
+system anyway. Freetype, Fontinst, Cairo, Pango may be installed, but it is
+possible that they are pretty old and thus don't live up to our
+expectations, so you may want to compile their latest versions.</p>
+<p>
+</p>
+<h2><a name="general_build_tips_for_aix">General build tips for AIX</a></h2>
+<p>If you are working with AIX, you may find the the <strong>--disable-shared</strong> option
 will cause things to break for you. In that case you may have to install the
 shared libraries into the rrdtool PREFIX and work with <strong>--disable-static</strong>
 instead.</p>
@@ -109,11 +181,11 @@ instead.</p>
 <p>(Better instructions for AIX welcome!)</p>
 <p>
 </p>
-<h2><a name="building_libraries">Building Libraries</a></h2>
-<p>In order to build the libraries you need a compiler on your system.
-Unfortunately compilers are not all alike. This has an effect on the CFLAGS
-you want to set. The examples below are for the popular GCC compiler suite.
-If you have an other compile you have to use the following settings:</p>
+<h2><a name="build_instructions">Build Instructions</a></h2>
+<p>In order to build rrdtool need a compiler on your system. Unfortunately
+compilers are not all alike. This has an effect on the CFLAGS you want to
+set. The examples below are for the popular GCC compiler suite. If you have
+an other compilers here are some ides:</p>
 <dl>
 <dt><strong><a name="item_sun_forte">Sun Forte</a></strong></dt>
 
@@ -122,104 +194,202 @@ If you have an other compile you have to use the following settings:</p>
  CFLAGS=&quot;-xO3 -kPIC&quot;</pre>
 </dd>
 </dl>
+<p>Some libraries want to know where other libraries are. For this to work,
+set the following environment variable</p>
+<pre>
+ export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig
+ export PATH=$INSTALL_DIR/bin:$PATH</pre>
+<p>The above relies on the presence of the <em>pkgconfig</em> program. Below you find instructions
+on how to compile pkgconfig.</p>
+<p>Since we are compiling libraries dynamically, they must know where to find
+each other. This is done by setting an appropriate LDFLAGS. Unfortunately,
+the syntax again differs from system to system:</p>
 <dl>
-<dt><strong><a name="item_building_zlib">Building zlib</a></strong></dt>
+<dt><strong><a name="item_solaris">Solaris</a></strong></dt>
 
 <dd>
 <pre>
- cd $BUILD_DIR
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz</a>
- tar  zxf zlib-1.2.3.tar.gz
- cd zlib-1.2.3
- env CFLAGS=&quot;-O3 -fPIC&quot; ./configure --prefix=$BUILD_DIR/lb
- make
- make install</pre>
+ export LDFLAGS=-R${INSTALL_DIR}/lib</pre>
 </dd>
-<dt><strong><a name="item_building_libpng">Building libpng</a></strong></dt>
+<dt><strong><a name="item_linux">Linux</a></strong></dt>
 
 <dd>
+<pre>
+ export LDFLAGS=&quot;-Wl,--rpath -Wl,${INSTALL_DIR}/lib&quot;</pre>
+</dd>
+<dt><strong><a name="item_hpux">HPUX</a></strong></dt>
+
+<dd>
+<pre>
+ export LDFLAGS=&quot;+b${INSTALL_DIR}/lib&quot;</pre>
+</dd>
+<dt><strong><a name="item_aix">AIX</a></strong></dt>
+
+<dd>
+<pre>
+ export LDFLAGS=&quot;-Wl,-blibpath:${INSTALL_DIR}/lib&quot;</pre>
+</dd>
+</dl>
+<p>If you have GNUmake installed and it is not called 'make',
+then do</p>
+<pre>
+ export MAKE=gmake
+ export GNUMAKE=gmake</pre>
+<p>otherwise just do</p>
+<pre>
+ export MAKE=make</pre>
+<p>
+</p>
+<h3><a name="building_pkgconfig">Building pkgconfig</a></h3>
+<p>As mentioned above, without pkgconfig the whole build process will be lots
+of pain and suffering, so make sure you have a copy on your system. If it is
+not available natively, here is how to compile it.</p>
+<pre>
+ wget <a href="http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz">http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz</a>
+ gunzip -c pkg-config-0.23.tar.gz | tar xf -
+ cd pkg-config-0.23
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_zlib">Building zlib</a></h3>
+<p>Chances are very high that you already have that on your system ...</p>
+<pre>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz</a>
+ gunzip -c zlib-1.2.3.tar.gz | tar xf -
+ cd zlib-1.2.3
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot; --shared
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_libpng">Building libpng</a></h3>
 <p>Libpng itself requires zlib to build, so we need to help a bit. If you
-already have a copy of zlib on your system (which is very likley) you can
+already have a copy of zlib on your system (which is very likely) you can
 drop the settings of LDFLAGS and CPPFLAGS. Note that the backslash (\) at
 the end of line 4 means that line 4 and line 5 are on one line.</p>
 <pre>
  cd $BUILD_DIR
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.10.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.10.tar.gz</a>
- tar zxvf libpng-1.2.10.tar.gz
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz</a>
+ gunzip -c libpng-1.2.18.tar.gz | tar xf -
  cd libpng-1.2.10
- env CPPFLAGS=&quot;-I$BUILD_DIR/lb/include&quot; LDFLAGS=&quot;-L$BUILD_DIR/lb/lib&quot; CFLAGS=&quot;-O3 -fPIC&quot; \
-     ./configure --disable-shared --prefix=$BUILD_DIR/lb
- make
- make install</pre>
-</dd>
-<dt><strong><a name="item_building_freetype">Building freetype</a></strong></dt>
-
-<dd>
+ env CFLAGS=&quot;-O3 -fPIC&quot; ./configure --prefix=$INSTALL_DIR
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_freetype">Building freetype</a></h3>
 <pre>
  cd $BUILD_DIR
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/freetype-2.1.10.tar.bz2">http://oss.oetiker.ch/rrdtool/pub/libs/freetype-2.1.10.tar.bz2</a>
- tar jxvf freetype-2.1.10.tar.bz2
- cd freetype-2.1.10
- env CPPFLAGS=&quot;-I$BUILD_DIR/lb/include&quot; LDFLAGS=&quot;-L$BUILD_DIR/lb/lib&quot; CFLAGS=&quot;-O3 -fPIC&quot; \
-     ./configure --disable-shared --prefix=$BUILD_DIR/lb
- make
- make install</pre>
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/freetype-2.3.5.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/freetype-2.3.5.tar.gz</a>
+ gunzip -c freetype-2.3.5.tar.gz | tar xf -
+ cd freetype-2.3.5
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
 <p>If you run into problems building freetype on Solaris, you may want to try to
-add the following at the end of the configure line:</p>
+add the following at the start the configure line:</p>
 <pre>
- GNUMAKE=gmake EGREP=egrep</pre>
-</dd>
-<dt><strong><a name="item_building_libart_lgpl">Building libart_lgpl</a></strong></dt>
-
-<dd>
+ env EGREP=egrep</pre>
+<p>
+</p>
+<h3><a name="building_libxml2">Building LibXML2</a></h3>
 <pre>
  cd $BUILD_DIR
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libart_lgpl-2.3.17.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libart_lgpl-2.3.17.tar.gz</a>
- tar zxvf libart_lgpl-2.3.17.tar.gz
- cd libart_lgpl-2.3.17
- env CFLAGS=&quot;-O3 -fPIC&quot; ./configure --disable-shared --prefix=$BUILD_DIR/lb
- make
- make install</pre>
-</dd>
-</dl>
-<p>Now all the dependent libraries are built and you can try again. Since these
-are static libraries, you may have to use <em>ranlib</em> to make them accessible.
-Especially BSD systems like Mac OS X may require this, Linux and Solaris
-will do just fine without since their <em>ar</em> command does ranlibs job as well.</p>
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz</a>
+ gunzip -c libxml2-sources-2.6.32.tar.gz | tar xf -
+ cd libxml2-sources-2.6.32
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_fontconfig">Building fontconfig</a></h3>
+<p>Note that fontconfig has a run time configuration file in INSTALL_DIR/etc you
+may want to adjust that so that fontconfig finds the fonts on your system.
+Run the fc-cache program to build the fontconfig cache after changing the
+config file.</p>
 <pre>
- ranlib $BUILD_DIR/lb/lib/*.a</pre>
-<p>This time you tell configure where it should be looking for libraries and
-include files. This is done via environment variables. Depending on the
-shell you are running, the syntax for setting environment variables is
-different. Under csh/tcsh you use:</p>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz</a>
+ gunzip -c fontconfig-2.4.2.tar.gz   | tar xf -
+ cd fontconfig-2.4.2
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_pixman">Building Pixman</a></h3>
 <pre>
- set IR=-I$BUILD_DIR/lb/include
- setenv CPPFLAGS &quot;$IR $IR/libart-2.0 $IR/freetype2 $IR/libpng&quot;
- setenv LDFLAGS  -L$BUILD_DIR/lb/lib
- setenv CFLAGS -O3</pre>
-<p>If you are running bash/sh/ash/ksh/zsh use this:</p>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz</a>
+ gunzip -c pixman-0.10.0.tar.gz  | tar xf -
+ cd pixman-0.10.0
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_cairo">Building Cairo</a></h3>
 <pre>
- IR=-I$BUILD_DIR/lb/include
- CPPFLAGS=&quot;$IR $IR/libart-2.0 $IR/freetype2 $IR/libpng&quot;
- LDFLAGS=&quot;-L$BUILD_DIR/lb/lib&quot;
- CFLAGS=-O3
- export CPPFLAGS LDFLAGS CFLAGS</pre>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz</a>
+ gunzip -c cairo-1.4.10.tar.gz   | tar xf -
+ cd cairo-1.4.10
+ ./configure --prefix=$INSTALL_DIR \
+    --enable-xlib=no \
+    --enable-xlib-render=no \
+    --enable-win32=no \
+    CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_glib">Building Glib</a></h3>
+<pre>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz</a>
+ gunzip -c glib-2.12.13.tar.gz  | tar xf -
+ cd glib-2.12.13
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h3><a name="building_pango">Building Pango</a></h3>
+<pre>
+ cd $BUILD_DIR
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.gz</a>
+ gunzip -c pango-1.21.1.tar.gz  | tar xf -
+ cd pango-1.21.1
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot; --without-x
+ $MAKE
+ $MAKE install</pre>
+<p>
+</p>
+<h2><a name="building_rrdtool__second_try_">Building rrdtool (second try)</a></h2>
+<p>Now all the dependent libraries are built and you can try again. This time
+you tell configure where it should be looking for libraries and include
+files. This is done via environment variables. Depending on the shell you
+are running, the syntax for setting environment variables is different.</p>
 <p>And finally try building again. We disable the python and tcl bindings
 because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.2.28
- ./configure --prefix=$INSTALL_DIR --disable-python --disable-tcl
- make clean
- make
- make install</pre>
+ cd $BUILD_DIR/rrdtool-1.3.1
+ ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
+ $MAKE clean
+ $MAKE
+ $MAKE install</pre>
 <p>SOLARIS HINT: if you want to build  the perl module for the native perl (the
-one shipping with solaris) you will need the sun forte compiler
-installed on your box or you have to hand-tune bindings/perl-shared/Makefile
-while building!</p>
-<p>Now go to <em>$INSTALL_DIR</em><strong>/share/rrdtool/examples/</strong> and run them to see if your
-build has been successful.</p>
+one shipping with Solaris) you will need the Sun Forte compiler installed on
+your box or you have to hand-tune bindings/perl-shared/Makefile while
+building!</p>
+<p>Now go to <em>$INSTALL_DIR</em><strong>/share/rrdtool/examples/</strong> and run them to see if
+your build has been successful.</p>
 <p>
 </p>
 <hr />

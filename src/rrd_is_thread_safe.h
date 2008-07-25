@@ -1,19 +1,19 @@
 /*****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
  *****************************************************************************
  * rrd_is_thread_safe.c   Poisons some nasty function calls using GNU cpp
  *****************************************************************************
- * $Id: rrd_is_thread_safe.h 1450 2008-07-23 13:45:41Z oetiker $
+ * $Id: rrd_is_thread_safe.h 1447 2008-07-23 13:02:26Z oetiker $
  *************************************************************************** */
 
 #ifndef _RRD_IS_THREAD_SAFE_H
 #define _RRD_IS_THREAD_SAFE_H
 
 #ifdef  __cplusplus
-extern "C" {
+extern    "C" {
 #endif
 
 #undef strerror
@@ -25,5 +25,4 @@ extern "C" {
 #ifdef  __cplusplus
 }
 #endif
-
 #endif /*_RRD_IS_THREAD_SAFE_H */

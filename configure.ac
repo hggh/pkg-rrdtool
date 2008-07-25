@@ -6,18 +6,34 @@ dnl
 dnl Inspiration from http://autoconf-archive.cryp.to
  
 dnl tell automake the this script is for rrdtool
+
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.2.28])
+AC_INIT([rrdtool],[1.3.1])
+
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
-dnl the devl versions will be something like
+dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.2028
+NUMVERS=1.3001
 AC_SUBST(NUMVERS)
+
+dnl for the linker to understand which version the library is compatible with
+dnl we must keep a separate library version cout of the format c:r:a if any
+dnl if only implementation changed but all interfaces are kept, do r++
+dnl when only functionality was added do c++,r=0,a++
+dnl if any functionality was removed do c++,r=0,a=0.
+dnl
+dnl see http://sourceware.org/autobook/autobook/autobook_91.html
+dnl 
+LIBVERS=4:0:0
+AC_SUBST(LIBVERS)
+
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
+AM_MAINTAINER_MODE
+
 AC_CONFIG_HEADERS([rrd_config.h])
 
 dnl all our local stuff like install scripts and include files
@@ -49,7 +65,7 @@ AH_TOP([
 /* realloc does not support NULL as argument */
 #undef NO_NULL_REALLOC
 
-/* lets enable madvise defines in NetBSD */
+/* lets enable madvise defines in NetBSD */ 
 #if defined(__NetBSD__)
 # if !defined(_NETBSD_SOURCE)
 #  define _NETBSD_SOURCE
@@ -59,19 +75,18 @@ AH_TOP([
  ])
 
 AH_BOTTOM([
+/* make sure that we pickup the correct stuff from all headers */
 #ifdef HAVE_FEATURES_H
+#undef _XOPEN_SOURCE /* keep unmodified */
+#undef _BSD_SOURCE /* keep unmodified */
 #define _XOPEN_SOURCE 600
-#undef _BSD_SOURCE /* comment to prevent configure from modifying this line */   
 #define _BSD_SOURCE 1
 # include <features.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
-
-#if defined(HAVE_SYS_MMAN_H)
-#include <sys/mman.h>
+/* FreeBSD 4.8 wants this included BEFORE sys/types.h */
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -93,6 +108,10 @@ AH_BOTTOM([
 # endif
 #endif
 
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif
+
 #if !defined HAVE_MADVISE && defined HAVE_POSIX_MADVISE
 /* use posix_madvise family */
 # define madvise posix_madvise
@@ -102,13 +121,6 @@ AH_BOTTOM([
 # define MADV_WILLNEED POSIX_MADV_WILLNEED
 # define MADV_DONTNEED POSIX_MADV_DONTNEED
 #endif
-
-#if defined POSIX_MADV_RANDOM && !defined MADV_RANDOM
-#define MADV_RANDOM POSIX_MADV_RANDOM
-#endif
-
-
-
 #if defined HAVE_MADVISE || defined HAVE_POSIX_MADVISE
 # define USE_MADVISE 1
 #endif
@@ -143,11 +155,12 @@ AH_BOTTOM([
 #ifdef HAVE_SYS_RESOURCE_H
 # include <sys/resource.h>
 #if (defined(__svr4__) && defined(__sun__))
-/* Solaris headers (pre 2.6) don't have a getrusage prototype.
+/* Solaris headers (pre 2.6) do not have a getrusage prototype. 
    Use this instead. */
 extern int getrusage(int, struct rusage *);
 #endif /* __svr4__ && __sun__ */
 #endif
+
 
 /* define strrchr, strchr and memcpy, memmove in terms of bsd funcs
    make sure you are NOT using bcopy, index or rindex in the code */
@@ -176,20 +189,58 @@ char *strchr (), *strrchr ();
 #  include <malloc/malloc.h>
 #endif
 
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif
+
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+
+#ifdef HAVE_CTYPE_H
+# include <ctype.h>
+#endif
+
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# ifdef HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# ifdef HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# ifdef HAVE_NDIR_H
+#  include <ndir.h>
+# endif
+#endif
+
+#ifdef MUST_DISABLE_SIGFPE
+# include <signal.h>
+#endif
+
+#ifdef MUST_DISABLE_FPMASK
+# include <floatingpoint.h>
+#endif
+
+
 #ifdef HAVE_MATH_H
-#  include <math.h>
+# include <math.h>
 #endif
 
 #ifdef HAVE_FLOAT_H
-#  include <float.h>
+# include <float.h>
 #endif
 
 #ifdef HAVE_IEEEFP_H
-#  include <ieeefp.h>
+# include <ieeefp.h>
 #endif
 
 #ifdef HAVE_FP_CLASS_H
-#  include <fp_class.h>
+# include <fp_class.h>
 #endif
 
 /* for Solaris */
@@ -203,7 +254,7 @@ char *strchr (), *strrchr ();
 
 /* solaris 10 it defines isnan such that only forte can compile it ... bad bad  */
 #if (defined(HAVE_ISNAN) && defined(isnan) && defined(HAVE_FPCLASS))
-#  undef isnan  /* confuse autoconf to NOT remove this */
+#  undef isnan /* confuse autoconf to NOT remove this */
 #  define isnan(a) (fpclass(a) == FP_SNAN || fpclass(a) == FP_QNAN)
 #endif
 
@@ -247,6 +298,14 @@ char *strchr (), *strrchr ();
 #error "Can't compile without isinf function"
 #endif
 
+#if (! defined(HAVE_FDATASYNC) && defined(HAVE_FSYNC))
+#define fdatasync fsync
+#endif
+
+#if (!defined(HAVE_FDATASYNC) && !defined(HAVE_FSYNC))
+#error "Can't compile with without fsync and fdatasync"
+#endif
+
 #endif /* RRD_CONFIG_H */
 ])
 
@@ -255,9 +314,9 @@ dnl -----------------------------------
 
 dnl How the vertical axis label is printed
 AC_ARG_VAR(RRDGRAPH_YLEGEND_ANGLE, 
- [Vertical label angle: 90.0 (default) or 270.0])
+ [Vertical label angle: -90.0 (default) or 90.0])
 AC_DEFINE_UNQUOTED(RRDGRAPH_YLEGEND_ANGLE,${RRDGRAPH_YLEGEND_ANGLE:-90.0},
- [Vertical label angle: 90.0 (default) or 270.0])
+ [Vertical label angle: -90.0 (default) or 90.0])
 
 AC_ARG_ENABLE(rrdcgi,[  --disable-rrdcgi        disable building of rrdcgi],
 [],[enable_rrdcgi=yes])
@@ -269,7 +328,7 @@ AC_ARG_WITH(rrd-default-font,
   if test -d ${WINDIR:-nodir}/cour.ttf ; then
 	RRD_DEFAULT_FONT=`cd $WINDIR;pwd`/cour.ttf
   else
-	RRD_DEFAULT_FONT='$(fontsdir)/$(fonts_DATA)'
+	RRD_DEFAULT_FONT='"DejaVu Sans Mono,Bitstream Vera Sans Mono,monospace,Courier"'
   fi
 ])
 
@@ -279,10 +338,17 @@ AC_ARG_ENABLE([mmap],
 [],
 [enable_mmap=yes])
 
-
- AC_ARG_ENABLE(pthread,[  --disable-pthread       disable multithread support],
+AC_ARG_ENABLE(pthread,[  --disable-pthread       disable multithread support],
 [],[enable_pthread=yes])
 
+AC_ARG_ENABLE(static-programs,
+     [  --enable-static-programs  Build static programs],
+     [case "${enableval}" in
+       yes) staticprogs=yes ;;
+       no)  staticprogs=no ;;
+       *) AC_MSG_ERROR(bad value ${enableval} for --enable-static-programs) ;;
+     esac],[staticprogs=no])
+AM_CONDITIONAL(STATIC_PROGRAMS,[test "x$staticprogs" = "xyes"])
 
 
 CONFIGURE_PART(Audit Compilation Environment)
@@ -293,16 +359,19 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 
-dnl which flags does the compile support?
-if test "$GCC" = "yes"; then
-  for flag in -fno-strict-aliasing -Wall -std=gnu99 -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -W; do
-    oCFLAGS=$CFLAGS
+dnl Try to detect/use GNU features
+CFLAGS="$CFLAGS -D_GNU_SOURCE"
+
+dnl which flags does the compiler support?
+if test "x$GCC" = "xyes"; then
+  for flag in -fno-strict-aliasing -Wall -std=c99 -pedantic -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wold-style-definition -W; do
+    oCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $flag"
     cachename=rd_cv_gcc_flag_`echo $flag|sed 's/[[^A-Za-z]]/_/g'`
     AC_CACHE_CHECK([if gcc likes the $flag flag], $cachename,
        [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[return 0 ]])],[eval $cachename=yes],[eval $cachename=no])])
     if eval test \$$cachename = no; then
-         CFLAGS=$oCFLAGS
+         CFLAGS="$oCFLAGS"
     fi
   done
 fi
@@ -316,21 +385,24 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS( features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h float.h strings.h)
+AC_CHECK_HEADERS(features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_HEADER_TIME
 AC_STRUCT_TM
 
+CONFIGURE_PART(Test Library Functions)
+
 dnl Checks for libraries.
 AC_CHECK_FUNC(acos, , AC_CHECK_LIB(m, acos))
+
+
 
 dnl add pic flag in any case this makes sure all our code is relocatable
 eval `./libtool --config | grep pic_flag`
 CFLAGS="$CFLAGS $pic_flag"
 
-CONFIGURE_PART(Test Library Functions)
 
 dnl Checks for library functions.
 AC_FUNC_STRFTIME
@@ -341,9 +413,19 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(tzset mbstowcs opendir readdir chdir chroot getuid setlocale strerror strerror_r snprintf vsnprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday posix_fadvise madvise)
+AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror strerror_r snprintf vsnprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
 
-AC_CHECK_DECLS(fdatasync, [], [], [#include <unistd.h>])
+CONFIGURE_PART(Map/Fadvis/Madvise checking)
+
+dnl Could use these to know if we need to provide a prototype
+dnl AC_CHECK_DECLS(fdatasync, [], [], [#include <unistd.h>])
+
+dnl check for fdatasync. Solaris has fdatasync in the librt
+
+AC_CHECK_FUNCS(fdatasync, [],  AC_CHECK_LIB(rt, fdatasync, [LIBS="${LIBS} -lrt"; AC_DEFINE(HAVE_FDATASYNC)],[]))
+dnl if there is no fdatasync we may get lucky with fsync
+AC_CHECK_FUNCS(fsync)
+
 
 dnl XXX: dunno about windows.. add AC_CHECK_FUNCS(munmap) there too?
 if test "x$enable_mmap" = "xyes"; then
@@ -360,8 +442,8 @@ if test "x$enable_mmap" = "xyes"; then
     AC_FUNC_MMAP
     AC_CHECK_FUNCS(mmap munmap msync)
     AC_CHECK_DECLS(madvise, [], [], [#ifdef HAVE_SYS_MMAN_H
-                                     # include <sys/mman.h>
-                                     #endif])
+				     # include <sys/mman.h>
+				     #endif])
     if test "x$ac_cv_have_decl_madvise" = "xyes";
     then
       AC_CHECK_FUNCS(madvise)
@@ -383,44 +465,103 @@ fi
 dnl can we use posix_fadvise
 AC_CHECK_DECLS(posix_fadvise, [], [], [#define _XOPEN_SOURCE 600
 #include <fcntl.h>])
-AC_CHECK_FUNCS(posix_fadvise)   
+AC_CHECK_FUNCS(posix_fadvise)
 
-if test "x$enable_mmap" = xyes; then
-  case "$host" in
-    *cygwin*)
-       # the normal mmap test does not work in cygwin
-       AC_CHECK_FUNCS(mmap)
-       if [ "x${ac_cv_func_mmap}" = xyes ]; then
-         ac_cv_func_mmap_fixed_mapped=yes
-       fi
-    ;;
-    *)
-       AC_FUNC_MMAP
-    ;;
-  esac
+CONFIGURE_PART(Libintl Processing)
+
+
+dnl gettext
+GETTEXT_PACKAGE=rrdtool
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package])
+
+AM_GLIB_GNU_GETTEXT()
+
+AC_ARG_ENABLE(libintl,[  --disable-libintl        i18n support (libintl)],
+[],[enable_libintl=yes])
+
+if test x$enable_libintl = xyes; then
+  IT_PROG_INTLTOOL([0.35.0],[no-xml])
 fi
 
+if test x$enable_libintl = xyes -a x$MSGFMT = xno; then
+  AC_MSG_WARN(I could not find msgfmt. Diabeling libintl build.)
+  enable_libintl=no
+fi
+
+if test x$enable_libintl = xyes; then
+  AC_CHECK_HEADERS(libintl.h,[],[AC_MSG_RESULT(disabeling libintl build); enable_libintl=no])
+fi
+
+if test x$enable_libintl = xyes ; then
+  dnl it seems bsd synstems need to link against libintl
+  dnl when compiling rrdupdate. lets check        
+  AC_CHECK_LIB(intl, libintl_gettext,[LIB_LIBINTL="-lintl"])
+fi
+
+dnl use for linking rrdupdate
+AC_SUBST(LIB_LIBINTL)
+
+dnl do not touch the po stuff if we are not going to build intl
+AM_CONDITIONAL(BUILD_LIBINTL,[test x$enable_libintl = xyes])
+
+if test x$enable_libintl = xyes; then
+   AC_DEFINE([BUILD_LIBINTL], [], [Use this in code sections to mark them for libintl build])
+fi
 
 CONFIGURE_PART(IEEE Math Checks)
  
-dnl HP-UX 11.00 does not have finite but does have isfinite as a macro so we need
+
 dnl actual code to check if this works
 AC_CHECK_FUNCS(fpclassify, ,
   [AC_MSG_CHECKING(for fpclassify with <math.h>)
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>
 volatile int x;volatile float f; ]], [[x = fpclassify(f)]])],[AC_MSG_RESULT(yes)
       AC_DEFINE(HAVE_FPCLASSIFY)],[AC_MSG_RESULT(no)])])
-AC_CHECK_FUNCS(finite, ,
-  [AC_CHECK_FUNCS(isfinite, ,
-    [AC_MSG_CHECKING(for isfinite with <math.h>)
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>
-volatile int x;volatile float f;  ]], [[x = isfinite(f)]])],[AC_MSG_RESULT(yes)
-      AC_DEFINE(HAVE_ISFINITE)],[AC_MSG_RESULT(no)])])])
+
 AC_CHECK_FUNCS(isinf, ,
   [AC_MSG_CHECKING(for isinf with <math.h>)
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>
 volatile int x;volatile float f;  ]], [[x = isinf(f)]])],[AC_MSG_RESULT(yes)
       AC_DEFINE(HAVE_ISINF)],[AC_MSG_RESULT(no)])])
+
+dnl finite is BSD, isfinite is C99, so prefer the latter
+AC_CACHE_CHECK([whether isfinite is broken],[have_broken_isfinite],[
+AC_TRY_RUN([
+#ifdef HAVE_MATH_H
+#include <math.h>
+#endif
+#ifdef HAVE_FLOAT_H
+#include <float.h>
+#endif
+int main ()
+{
+#ifdef isfinite
+#ifdef LDBL_MAX
+  if (!isfinite(LDBL_MAX)) return 1;
+#endif
+#ifdef DBL_MAX
+  if (!isfinite(DBL_MAX)) return 1;
+#endif
+#endif
+return 0;
+}],[
+have_broken_isfinite=no],have_broken_isfinite=yes,[
+case "${target}" in
+  hppa*-*-hpux*) have_broken_isfinite=yes ;;
+  *) have_broken_isfinite=no ;;
+esac])
+])
+if test "x$have_broken_isfinite" = "xno"; then
+  AC_DEFINE(HAVE_ISFINITE)
+else
+AC_CHECK_FUNCS(finite,[],
+  [AC_CHECK_FUNCS(isfinite,[],
+      [AC_MSG_CHECKING(for isfinite with <math.h>)
+       AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>
+volatile int x;volatile float f;  ]],[[x = isfinite(f)]])],[AC_MSG_RESULT(yes)
+	        AC_DEFINE(HAVE_ISFINITE)],[AC_MSG_RESULT(no)])])])
+fi
 
 AC_FULL_IEEE
 
@@ -522,12 +663,20 @@ CONFIGURE_PART(Find 3rd-Party Libraries)
 
 AM_CONDITIONAL(BUILD_RRDCGI,[test $enable_rrdcgi != no])
 
+
 CORE_LIBS="$LIBS"
 
-EX_CHECK_ALL(art_lgpl_2, art_vpath_add_point,       libart_lgpl/libart.h,   libart-2.0,  2.3.17, ftp://ftp.gnome.org/pub/GNOME/sources/libart_lgpl/2.3/, /usr/include/libart-2.0)
-EX_CHECK_ALL(z,          zlibVersion,               zlib.h,                 zlib,        1.2.3,  http://www.gzip.org/zlib/, "")
-EX_CHECK_ALL(png,        png_access_version_number, png.h,                  libpng,      1.2.10,  http://prdownloads.sourceforge.net/libpng/, "")
-EX_CHECK_ALL(freetype,   FT_Init_FreeType,          ft2build.h,		    freetype2,   2.1.10,  http://prdownloads.sourceforge.net/freetype/, /usr/include/freetype2)
+dnl EX_CHECK_ALL(z,          zlibVersion,               zlib.h,                 zlib,        1.2.3,  http://www.gzip.org/zlib/, "")
+dnl EX_CHECK_ALL(png,        png_access_version_number, png.h,                  libpng,      1.2.10,  http://prdownloads.sourceforge.net/libpng/, "")
+dnl EX_CHECK_ALL(freetype,   FT_Init_FreeType,          ft2build.h,		freetype2,   2.1.10,  http://prdownloads.sourceforge.net/freetype/, /usr/include/freetype2)
+dnl EX_CHECK_ALL(fontconfig, FcInit,                    fontconfig.h,		fontconfig,  2.3.1,  http://fontconfig.org/release/, /usr/include)
+EX_CHECK_ALL(cairo,      cairo_font_options_create,     cairo.h,                cairo-png,   1.4.6,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_svg_surface_create,      cairo-svg.h,            cairo-svg,   1.4.6,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_pdf_surface_create,      cairo-pdf.h,            cairo-pdf,   1.4.6,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_ps_surface_create,       cairo-ps.h,             cairo-ps,    1.4.6,  http://cairographics.org/releases/, "")
+dnl EX_CHECK_ALL(glib-2.0,   glib_check_version,        glib.h,                 glib-2.0,    2.12.12, ftp://ftp.gtk.org/pub/glib/2.12/, "")
+EX_CHECK_ALL(pango-1.0,  pango_cairo_context_set_font_options,  pango/pango.h,  pangocairo,  1.17,    http://ftp.gnome.org/pub/GNOME/sources/pango/1.17, "")
+EX_CHECK_ALL(xml2,       xmlParseFile,                  libxml/parser.h,        libxml-2.0,        2.6.31,  http://xmlsoft.org/downloads.html, /usr/include/libxml2)
 
 if test "$EX_CHECK_ALL_ERR" = "YES"; then
   AC_MSG_ERROR([Please fix the library issues listed above and try again.])
@@ -541,8 +690,13 @@ AC_SUBST(ALL_LIBS)
 
 CONFIGURE_PART(Prep for Building Language Bindings)
   
-dnl Check for Perl.
+dnl Check for Perl and friends
+PATH=$PATH:/usr/perl5/bin
+export PATH
 AC_PATH_PROG(PERL, perl, no)
+AC_PATH_PROG(POD2MAN, pod2man, no)
+AC_PATH_PROG(POD2HTML, pod2html, no)
+
 
 AC_ARG_ENABLE(perl,[  --disable-perl          do not build the perl modules],
 [],[enable_perl=yes])
@@ -682,7 +836,7 @@ if test  "$enable_tcl" = "yes"; then
   withval=""
   AC_ARG_WITH(tcllib,[  --with-tcllib=DIR       location of the tclConfig.sh])
   enable_tcl=no
-  for dir in $withval /usr/lib /usr/local/lib; do
+  for dir in $withval /usr/lib /usr/local/lib /usr/lib/tcl8.4 /usr/lib/tcl8.3 ; do
     AC_MSG_CHECKING(for tclConfig.sh in $dir)
     if test -f "$dir/tclConfig.sh" ; then
     	tcl_config=$dir/tclConfig.sh
@@ -695,10 +849,13 @@ if test  "$enable_tcl" = "yes"; then
   done
 
   if test "$enable_tcl" = "no"; then
-        AC_MSG_WARN([tclConfig.sh not found - Tcl interface won't be built])
+        AC_MSG_WARN([tclConfig.sh not found - Tcl interface will not be built])
   else
 	. $tcl_config
 	TCL_PACKAGE_DIR="$TCL_PACKAGE_PATH/tclrrd$VERSION"
+	if test -n "$TCL_INC_DIR"; then
+	  TCL_INCLUDE_SPEC="$TCL_INCLUDE_SPEC -I$TCL_INC_DIR"
+	fi
   fi
   AC_ARG_ENABLE(tcl,[  --enable-tcl-site        install the tcl extension in the tcl tree],
   [],[enable_tcl_site=yes])
@@ -707,6 +864,7 @@ fi
 
 AM_CONDITIONAL(BUILD_TCL, test "$enable_tcl" = "yes" )
 AM_CONDITIONAL(BUILD_TCL_SITE, test "$enable_tcl_site" = "yes" )
+
 
 AC_SUBST(TCL_PREFIX)
 AC_SUBST(TCL_SHLIB_CFLAGS)
@@ -717,6 +875,7 @@ AC_SUBST(TCL_LD_SEARCH_FLAGS)
 AC_SUBST(TCL_STUB_LIB_SPEC)
 AC_SUBST(TCL_VERSION)
 AC_SUBST(TCL_PACKAGE_DIR)
+AC_SUBST(TCL_INCLUDE_SPEC)
 
 AC_ARG_ENABLE(python,[  --disable-python        do not build the python modules],
 [],[enable_python=yes])
@@ -755,6 +914,7 @@ AC_CONFIG_FILES([examples/4charts.pl])
 AC_CONFIG_FILES([examples/perftest.pl])
 AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([bindings/Makefile])
 AC_CONFIG_FILES([bindings/tcl/Makefile])
@@ -782,7 +942,8 @@ echo
 echo "----------------------------------------------------------------"
 echo "Config is DONE!"
 echo
-echo "          With MMAP IO: $ac_cv_func_mmap_fixed_mapped"
+echo "          With MMAP IO: $enable_mmap"
+echo "       Static programs: $staticprogs"
 echo "          Perl Modules: $COMP_PERL"
 echo "           Perl Binary: $PERL"
 echo "          Perl Version: $PERL_VERSION"
@@ -794,7 +955,9 @@ echo "    Build Tcl Bindings: $enable_tcl"
 echo " Build Python Bindings: $enable_python"
 echo "          Build rrdcgi: $enable_rrdcgi"
 echo "       Build librrd MT: $enable_pthread"
+echo "     Link with libintl: $enable_libintl"
 echo
+echo "             Libraries: $ALL_LIBS"
 echo
 echo "Type 'make' to compile the software and use 'make install' to "
 echo "install everything to: $prefix."

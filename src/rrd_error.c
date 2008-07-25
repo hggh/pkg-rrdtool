@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_error.c   Common Header File
  *****************************************************************************
- * $Id: rrd_error.c 1450 2008-07-23 13:45:41Z oetiker $
+ * $Id: rrd_error.c 1447 2008-07-23 13:02:26Z oetiker $
  * $Log$
  * Revision 1.4  2003/02/22 21:57:03  oetiker
  * a patch to avoid a memory leak and a Makefile.am patch to
@@ -37,32 +37,37 @@
 #define ERRBUFLEN 256
 #define CTX (rrd_get_context())
 
-void
-rrd_set_error(char *fmt, ...)
+void rrd_set_error(
+    char *fmt,
+    ...)
 {
-    va_list argp;
+    va_list   argp;
+
     rrd_clear_error();
     va_start(argp, fmt);
 #ifdef HAVE_VSNPRINTF
-    vsnprintf(CTX->rrd_error, CTX->len, fmt, argp);
+    vsnprintf(CTX->rrd_error, sizeof(CTX->rrd_error), fmt, argp);
 #else
     vsprintf(CTX->rrd_error, fmt, argp);
 #endif
     va_end(argp);
 }
 
-int
-rrd_test_error(void) {
+int rrd_test_error(
+    void)
+{
     return CTX->rrd_error[0] != '\0';
 }
 
-void
-rrd_clear_error(void){
+void rrd_clear_error(
+    void)
+{
     CTX->rrd_error[0] = '\0';
 }
 
-char *
-rrd_get_error(void){
+char     *rrd_get_error(
+    void)
+{
     return CTX->rrd_error;
 }
 
@@ -72,74 +77,73 @@ rrd_get_error(void){
    operations on them... Then a single thread may use more than one
    context. Using these functions would require to change each and
    every function containing any of the non _r versions... */
-void
-rrd_set_error_r(struct rrd_context *rrd_ctx, char *fmt, ...)
+void rrd_set_error_r(
+    rrd_context_t * rrd_ctx,
+    char *fmt,
+    ...)
 {
-    va_list argp;
+    va_list   argp;
+
     rrd_clear_error_r(rrd_ctx);
     va_start(argp, fmt);
 #ifdef HAVE_VSNPRINTF
-    vsnprintf((char *)rrd_ctx->rrd_error, rrd_ctx->len, fmt, argp);
-    rrd_ctx->rrd_error[rrd_ctx->len]='\0';
+    vsnprintf(rrd_ctx->rrd_error, sizeof(rrd_ctx->rrd_error), fmt, argp);
+    rrd_ctx->rrd_error[sizeof(rrd_ctx->rrd_error) - 1] = '\0';
 #else
-    vsprintf((char *)rrd_ctx->rrd_error, fmt, argp);
+    vsprintf(rrd_ctx->rrd_error, fmt, argp);
 #endif
     va_end(argp);
 }
 
-int
-rrd_test_error_r(struct rrd_context *rrd_ctx) {
+int rrd_test_error_r(
+    rrd_context_t * rrd_ctx)
+{
     return rrd_ctx->rrd_error[0] != '\0';
 }
 
-void
-rrd_clear_error_r(struct rrd_context *rrd_ctx) {
+void rrd_clear_error_r(
+    rrd_context_t * rrd_ctx)
+{
     rrd_ctx->rrd_error[0] = '\0';
 }
 
-char *
-rrd_get_error_r(struct rrd_context *rrd_ctx) {
-    return (char *)rrd_ctx->rrd_error;
+char     *rrd_get_error_r(
+    rrd_context_t * rrd_ctx)
+{
+    return rrd_ctx->rrd_error;
 }
 #endif
 
 /* PS: Should we move this to some other file? It is not really error
    related. */
-struct rrd_context *
-rrd_new_context(void) {
-    struct rrd_context *rrd_ctx = 
-	(struct rrd_context *) malloc(sizeof(struct rrd_context));
+rrd_context_t *rrd_new_context(
+    void)
+{
+    rrd_context_t *rrd_ctx = (rrd_context_t *) malloc(sizeof(rrd_context_t));
 
-    if (rrd_ctx) {
-	rrd_ctx->rrd_error = malloc(MAXLEN+10);
-	rrd_ctx->lib_errstr = malloc(ERRBUFLEN+10);
-	if (rrd_ctx->rrd_error && rrd_ctx->lib_errstr) {
-	    *rrd_ctx->rrd_error = 0;
-	    *rrd_ctx->lib_errstr = 0;
-	    rrd_ctx->len = MAXLEN;
-	    rrd_ctx->errlen = ERRBUFLEN;
-	    return rrd_ctx;
-	}
-	if (rrd_ctx->rrd_error) free(rrd_ctx->rrd_error);
-	if (rrd_ctx->lib_errstr) free(rrd_ctx->lib_errstr);
-	free(rrd_ctx);
+    if (!rrd_ctx) {
+        return NULL;
     }
-    return NULL;
+
+    rrd_ctx->rrd_error[0] = '\0';
+    rrd_ctx->lib_errstr[0] = '\0';
+    return rrd_ctx;
 }
 
-void
-rrd_free_context(struct rrd_context *rrd_ctx) {
+void rrd_free_context(
+    rrd_context_t * rrd_ctx)
+{
     if (rrd_ctx) {
-	if (rrd_ctx->rrd_error) free(rrd_ctx->rrd_error);
-	if (rrd_ctx->lib_errstr) free(rrd_ctx->lib_errstr);
-	free(rrd_ctx);
+        free(rrd_ctx);
     }
 }
 
 #if 0
-void rrd_globalize_error(struct rrd_context *rrd_ctx) {
+void rrd_globalize_error(
+    rrd_context_t * rrd_ctx)
+{
     if (rrd_ctx) {
-	rrd_set_error(rrd_ctx->rrd_error);
+        rrd_set_error(rrd_ctx->rrd_error);
     }
 }
 #endif

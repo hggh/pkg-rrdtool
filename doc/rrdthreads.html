@@ -134,7 +134,7 @@ taking all options as function parameters. You may provide argc and
 <code>rrd_update_r</code> as an example.</p>
 </li>
 <li>
-<p>Do not use the <code>parsetime</code> function!</p>
+<p>Do not use the <code>rrd_parsetime</code> function!</p>
 <p>It uses lots of global variables. You may use it in functions not designed
 to be thread-safe, like in functions wrapping the <code>_r</code> version of some
 operation (e.g., <code>rrd_create</code>, but not in <code>rrd_create_r</code>)</p>

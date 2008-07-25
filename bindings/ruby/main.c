@@ -1,4 +1,4 @@
-/* $Id: main.c 1212 2007-11-08 10:13:48Z oetiker $
+/* $Id: main.c 1411 2008-06-08 16:47:22Z oetiker $
  * Substantial penalty for early withdrawal.
  */
 
@@ -7,33 +7,39 @@
 #include "../../src/rrd_tool.h"
 
 typedef struct string_arr_t {
-    int len;
-    char **strings;
+    int       len;
+    char    **strings;
 } string_arr;
 
-VALUE mRRD;
-VALUE rb_eRRDError;
+VALUE     mRRD;
+VALUE     rb_eRRDError;
 
-typedef int (*RRDFUNC)(int argc, char ** argv);
+typedef int (
+    *RRDFUNC) (
+    int argc,
+    char **argv);
+
 #define RRD_CHECK_ERROR  \
     if (rrd_test_error()) \
       rb_raise(rb_eRRDError, rrd_get_error()); \
     rrd_clear_error();
 
-string_arr string_arr_new(VALUE rb_strings)
+string_arr string_arr_new(
+    VALUE rb_strings)
 {
     string_arr a;
-    char buf[64];
-    int i;
-   
+    char      buf[64];
+    int       i;
+
     Check_Type(rb_strings, T_ARRAY);
     a.len = RARRAY(rb_strings)->len + 1;
 
     a.strings = malloc(a.len * sizeof(char *));
-    a.strings[0] = "dummy";     /* first element is a dummy element */
+    a.strings[0] = "dummy"; /* first element is a dummy element */
 
     for (i = 0; i < a.len - 1; i++) {
-        VALUE v = rb_ary_entry(rb_strings, i);
+        VALUE     v = rb_ary_entry(rb_strings, i);
+
         switch (TYPE(v)) {
         case T_STRING:
             a.strings[i + 1] = strdup(STR2CSTR(v));
@@ -43,7 +49,9 @@ string_arr string_arr_new(VALUE rb_strings)
             a.strings[i + 1] = strdup(buf);
             break;
         default:
-            rb_raise(rb_eTypeError, "invalid argument - %s, expected T_STRING or T_FIXNUM on index %d", rb_class2name(CLASS_OF(v)), i);
+            rb_raise(rb_eTypeError,
+                     "invalid argument - %s, expected T_STRING or T_FIXNUM on index %d",
+                     rb_class2name(CLASS_OF(v)), i);
             break;
         }
     }
@@ -51,9 +59,10 @@ string_arr string_arr_new(VALUE rb_strings)
     return a;
 }
 
-void string_arr_delete(string_arr a)
+void string_arr_delete(
+    string_arr a)
 {
-    int i;
+    int       i;
 
     /* skip dummy first entry */
     for (i = 1; i < a.len; i++) {
@@ -63,14 +72,19 @@ void string_arr_delete(string_arr a)
     free(a.strings);
 }
 
-void reset_rrd_state()
+void reset_rrd_state(
+    )
 {
-    optind = 0; 
+    optind = 0;
     opterr = 0;
     rrd_clear_error();
 }
 
-VALUE rrd_call(RRDFUNC func, VALUE args)
+/* Simple Calls */
+
+VALUE rrd_call(
+    RRDFUNC func,
+    VALUE args)
 {
     string_arr a;
 
@@ -79,114 +93,76 @@ VALUE rrd_call(RRDFUNC func, VALUE args)
     func(a.len, a.strings);
     string_arr_delete(a);
 
-    RRD_CHECK_ERROR
-
-    return Qnil;
+    RRD_CHECK_ERROR return Qnil;
 }
 
-VALUE rb_rrd_create(VALUE self, VALUE args)
+VALUE rb_rrd_create(
+    VALUE self,
+    VALUE args)
 {
     return rrd_call(rrd_create, args);
 }
 
-VALUE rb_rrd_dump(VALUE self, VALUE args)
+VALUE rb_rrd_dump(
+    VALUE self,
+    VALUE args)
 {
     return rrd_call(rrd_dump, args);
 }
 
-VALUE rb_rrd_fetch(VALUE self, VALUE args)
+VALUE rb_rrd_resize(
+    VALUE self,
+    VALUE args)
 {
-    string_arr a;
-    unsigned long i, j, k, step, ds_cnt;
-    rrd_value_t *raw_data;
-    char **raw_names;
-    VALUE data, names, result;
-    time_t start, end;
-
-    a = string_arr_new(args);
-    reset_rrd_state();
-    rrd_fetch(a.len, a.strings, &start, &end, &step, &ds_cnt, &raw_names, &raw_data);
-    string_arr_delete(a);
-
-    RRD_CHECK_ERROR
-
-    names = rb_ary_new();
-    for (i = 0; i < ds_cnt; i++) {
-        rb_ary_push(names, rb_str_new2(raw_names[i]));
-        free(raw_names[i]);
-    }
-    free(raw_names);
-
-    k = 0;
-    data = rb_ary_new();
-    for (i = start; i <= end; i += step) {
-        VALUE line = rb_ary_new2(ds_cnt);
-        for (j = 0; j < ds_cnt; j++) {
-            rb_ary_store(line, j, rb_float_new(raw_data[k]));
-            k++;
-        }
-        rb_ary_push(data, line);
-    }
-    free(raw_data);
-   
-    result = rb_ary_new2(4);
-    rb_ary_store(result, 0, INT2NUM(start));
-    rb_ary_store(result, 1, INT2NUM(end));
-    rb_ary_store(result, 2, names);
-    rb_ary_store(result, 3, data);
-    return result;
+    return rrd_call(rrd_resize, args);
 }
 
-VALUE rb_rrd_graph(VALUE self, VALUE args)
+VALUE rb_rrd_restore(
+    VALUE self,
+    VALUE args)
 {
-    string_arr a;
-    char **calcpr, **p;
-    VALUE result, print_results;
-    int xsize, ysize;
-    double ymin, ymax;
-
-    a = string_arr_new(args);
-    reset_rrd_state();
-    rrd_graph(a.len, a.strings, &calcpr, &xsize, &ysize, NULL, &ymin, &ymax);
-    string_arr_delete(a);
-
-    RRD_CHECK_ERROR
-
-    result = rb_ary_new2(3);
-    print_results = rb_ary_new();
-    p = calcpr;
-    for (p = calcpr; p && *p; p++) {
-        rb_ary_push(print_results, rb_str_new2(*p));
-        free(*p);
-    }
-    free(calcpr);
-    rb_ary_store(result, 0, print_results);
-    rb_ary_store(result, 1, INT2FIX(xsize));
-    rb_ary_store(result, 2, INT2FIX(ysize));
-    return result;
+    return rrd_call(rrd_restore, args);
 }
 
-VALUE rb_rrd_info(VALUE self, VALUE args)
+VALUE rb_rrd_tune(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_call(rrd_tune, args);
+}
+
+VALUE rb_rrd_update(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_call(rrd_update, args);
+}
+
+
+/* Calls Returning Data via the Info Interface */
+
+VALUE rb_rrd_infocall(
+    RRDFUNC func,
+    VALUE args)
 {
     string_arr a;
-    info_t *p, *data;
-    VALUE result;
+    rrd_info_t *p, *data;
+    VALUE     result;
 
     a = string_arr_new(args);
-    data = rrd_info(a.len, a.strings);
+    data = func(a.len, a.strings);
     string_arr_delete(a);
 
-    RRD_CHECK_ERROR
+    RRD_CHECK_ERROR result = rb_hash_new();
 
-    result = rb_hash_new();
     while (data) {
-        VALUE key = rb_str_new2(data->key);
+        VALUE     key = rb_str_new2(data->key);
+
         switch (data->type) {
         case RD_I_VAL:
             if (isnan(data->value.u_val)) {
                 rb_hash_aset(result, key, Qnil);
-            }
-            else {
+            } else {
                 rb_hash_aset(result, key, rb_float_new(data->value.u_val));
             }
             break;
@@ -195,20 +171,130 @@ VALUE rb_rrd_info(VALUE self, VALUE args)
             break;
         case RD_I_STR:
             rb_hash_aset(result, key, rb_str_new2(data->value.u_str));
-            free(data->value.u_str);
+            rrd_freemem(data->value.u_str);
+            break;
+        case RD_I_BLO:
+            rb_hash_aset(result, key,
+                         rb_str_new(data->value.u_blo.ptr,
+                                    data->value.u_blo.size));
+            rrd_freemem(data->value.u_blo.ptr);
             break;
         }
         p = data;
         data = data->next;
-        free(p);
+        rrd_freemem(p);
     }
     return result;
 }
 
-VALUE rb_rrd_last(VALUE self, VALUE args)
+VALUE rb_rrd_info(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_infocall(rrd_info, args);
+}
+
+VALUE rb_rrd_updatev(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_infocall(rrd_update_v, args);
+}
+
+VALUE rb_rrd_graphv(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_infocall(rrd_graph_v, args);
+}
+
+
+/* Other Calls */
+
+VALUE rb_rrd_fetch(
+    VALUE self,
+    VALUE args)
 {
     string_arr a;
-    time_t last;
+    unsigned long i, j, k, step, ds_cnt;
+    rrd_value_t *raw_data;
+    char    **raw_names;
+    VALUE     data, names, result;
+    time_t    start, end;
+
+    a = string_arr_new(args);
+    reset_rrd_state();
+    rrd_fetch(a.len, a.strings, &start, &end, &step, &ds_cnt, &raw_names,
+              &raw_data);
+    string_arr_delete(a);
+
+    RRD_CHECK_ERROR names = rb_ary_new();
+
+    for (i = 0; i < ds_cnt; i++) {
+        rb_ary_push(names, rb_str_new2(raw_names[i]));
+        rrd_freemem(raw_names[i]);
+    }
+    rrd_freemem(raw_names);
+
+    k = 0;
+    data = rb_ary_new();
+    for (i = start; i <= end; i += step) {
+        VALUE     line = rb_ary_new2(ds_cnt);
+
+        for (j = 0; j < ds_cnt; j++) {
+            rb_ary_store(line, j, rb_float_new(raw_data[k]));
+            k++;
+        }
+        rb_ary_push(data, line);
+    }
+    rrd_freemem(raw_data);
+
+    result = rb_ary_new2(5);
+    rb_ary_store(result, 0, INT2NUM(start));
+    rb_ary_store(result, 1, INT2NUM(end));
+    rb_ary_store(result, 2, names);
+    rb_ary_store(result, 3, data);
+    rb_ary_store(result, 4, INT2FIX(step));
+    return result;
+}
+
+VALUE rb_rrd_graph(
+    VALUE self,
+    VALUE args)
+{
+    string_arr a;
+    char    **calcpr, **p;
+    VALUE     result, print_results;
+    int       xsize, ysize;
+    double    ymin, ymax;
+
+    a = string_arr_new(args);
+    reset_rrd_state();
+    rrd_graph(a.len, a.strings, &calcpr, &xsize, &ysize, NULL, &ymin, &ymax);
+    string_arr_delete(a);
+
+    RRD_CHECK_ERROR result = rb_ary_new2(3);
+
+    print_results = rb_ary_new();
+    p = calcpr;
+    for (p = calcpr; p && *p; p++) {
+        rb_ary_push(print_results, rb_str_new2(*p));
+        rrd_freemem(*p);
+    }
+    rrd_freemem(calcpr);
+    rb_ary_store(result, 0, print_results);
+    rb_ary_store(result, 1, INT2FIX(xsize));
+    rb_ary_store(result, 2, INT2FIX(ysize));
+    return result;
+}
+
+
+VALUE rb_rrd_last(
+    VALUE self,
+    VALUE args)
+{
+    string_arr a;
+    time_t    last;
 
     a = string_arr_new(args);
     reset_rrd_state();
@@ -216,31 +302,11 @@ VALUE rb_rrd_last(VALUE self, VALUE args)
     string_arr_delete(a);
 
     RRD_CHECK_ERROR
-
-    return rb_funcall(rb_cTime, rb_intern("at"), 1, INT2FIX(last));
+        return rb_funcall(rb_cTime, rb_intern("at"), 1, INT2FIX(last));
 }
 
-VALUE rb_rrd_resize(VALUE self, VALUE args)
-{
-    return rrd_call(rrd_resize, args);
-}
-
-VALUE rb_rrd_restore(VALUE self, VALUE args)
-{
-    return rrd_call(rrd_restore, args);
-}
-
-VALUE rb_rrd_tune(VALUE self, VALUE args)
-{
-    return rrd_call(rrd_tune, args);
-}
-
-VALUE rb_rrd_update(VALUE self, VALUE args)
-{
-    return rrd_call(rrd_update, args);
-}
-
-void Init_RRD() 
+void Init_RRD(
+    )
 {
     mRRD = rb_define_module("RRD");
     rb_eRRDError = rb_define_class("RRDError", rb_eStandardError);
@@ -255,4 +321,6 @@ void Init_RRD()
     rb_define_module_function(mRRD, "tune", rb_rrd_tune, -2);
     rb_define_module_function(mRRD, "update", rb_rrd_update, -2);
     rb_define_module_function(mRRD, "info", rb_rrd_info, -2);
+    rb_define_module_function(mRRD, "updatev", rb_rrd_updatev, -2);
+    rb_define_module_function(mRRD, "graphv", rb_rrd_graphv, -2);
 }

@@ -12,8 +12,9 @@ SSYYNNOOPPSSIISS
        _n_a_m_e:_n_e_w_-_n_a_m_e] [----ddeellttaappooss _s_c_a_l_e_-_v_a_l_u_e] [----ddeellttaanneegg _s_c_a_l_e_-_v_a_l_u_e]
        [----ffaaiilluurree--tthhrreesshhoolldd _f_a_i_l_u_r_e_-_t_h_r_e_s_h_o_l_d] [----wwiinnddooww--lleennggtthh _w_i_n_d_o_w_-_l_e_n_g_t_h]
        [----aallpphhaa _a_d_a_p_t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----bbeettaa _a_d_a_p_t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----ggaammmmaa _a_d_a_p_-
-       _t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----ggaammmmaa--ddeevviiaattiioonn _a_d_a_p_t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----aabbeerr--
-       rraanntt--rreesseett _d_s_-_n_a_m_e]
+       _t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----ggaammmmaa--ddeevviiaattiioonn _a_d_a_p_t_i_o_n_-_p_a_r_a_m_e_t_e_r] [----ssmmooootthh--
+       iinngg--wwiinnddooww _f_r_a_c_t_i_o_n_-_o_f_-_s_e_a_s_o_n] [----ssmmooootthhiinngg--wwiinnddooww--ddeevviiaattiioonn _f_r_a_c_t_i_o_n_-
+       _o_f_-_s_e_a_s_o_n] [----aabbeerrrraanntt--rreesseett _d_s_-_n_a_m_e]
 
 DDEESSCCRRIIPPTTIIOONN
        The tune option allows you to alter some of the basic configuration
@@ -99,19 +100,28 @@ DDEESSCCRRIIPPTTIIOONN
                Alter the seasonal deviation adaptation parameter for the
                DEVSEASONAL RRRRAA. This parameter must be between 0 and 1.
 
+       ----ssmmooootthhiinngg--wwiinnddooww _f_r_a_c_t_i_o_n_-_o_f_-_s_e_a_s_o_n
+               Alter the size of the smoothing window for the SEASONAL RRRRAA.
+               This must be between 0 and 1.
+
+       ----ssmmooootthhiinngg--wwiinnddooww--ddeevviiaattiioonn _f_r_a_c_t_i_o_n_-_o_f_-_s_e_a_s_o_n
+               Alter the size of the smoothing window for the DEVSEASONAL RRRRAA.
+               This must be between 0 and 1.
+
        ----aabbeerrrraanntt--rreesseett _d_s_-_n_a_m_e
                This option causes the aberrant behavior detection algorithm to
                reset for the specified data source; that is, forget all it is
-               has learnt so far.  Specifically, for the HWPREDICT RRRRAA, it
-               sets the intercept and slope coefficients to unknown. For the
-               SEASONAL RRRRAA, it sets all seasonal coefficients to unknown. For
-               the DEVSEASONAL RRRRAA, it sets all seasonal deviation coeffi-
-               cients to unknown. For the FAILURES RRRRAA, it erases the viola-
-               tion history. Note that reset does not erase past predictions
-               (the values of the HWPREDICT RRRRAA), predicted deviations (the
-               values of the DEVPREDICT RRRRAA), or failure history (the values
-               of the FAILURES RRRRAA).  This option will function even if not
-               all the listed RRRRAAss are present.
+               has learnt so far.  Specifically, for the HWPREDICT or MHWPRE-
+               DICT RRRRAA, it sets the intercept and slope coefficients to
+               unknown. For the SEASONAL RRRRAA, it sets all seasonal coeffi-
+               cients to unknown. For the DEVSEASONAL RRRRAA, it sets all sea-
+               sonal deviation coefficients to unknown. For the FAILURES RRRRAA,
+               it erases the violation history. Note that reset does not erase
+               past predictions (the values of the HWPREDICT or MHWPREDICT
+               RRRRAA), predicted deviations (the values of the DEVPREDICT RRRRAA),
+               or failure history (the values of the FAILURES RRRRAA).  This
+               option will function even if not all the listed RRRRAAss are
+               present.
 
                Due to the implementation of this option, there is an indirect
                impact on other data sources in the RRD. A smoothing algorithm
@@ -149,4 +159,4 @@ AAUUTTHHOORR
 
 
 
-1.2.28                            2008-07-23                        RRDTUNE(1)
+1.3.1                             2008-03-15                        RRDTUNE(1)

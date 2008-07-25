@@ -7,7 +7,8 @@ Alex van den Bogaerdt <alex with ergens.op.het.net> (rrd_resize.c and more)
 Amos Shapira <amos with gezernet.co.il>
 Andreas Kroomaa <andre with ml.ee>
 Andrew Turner <turner with mint.net> (LAST consolidator)
-Bernard Fischer <bfischer with syslog.ch> 64bit stuff and --alt-autoscale-max
+Bernard Fischer <bfischer with syslog.ch> 64bit stuff, --alt-autoscale-max
+Bernhard Fischer <rep dot dot dot nop with gmail.com> MMAP rewrite
 Bill Fenner <fenner with research.att.com>
 Blair Zajac <bzajac with geostaff.com>
 Bruce Campbell <bruce.campbell with apnic.net>
@@ -18,7 +19,9 @@ Dan Dunn <dandunn with computer.org>
 Dave Bodenstab <dave@bodenstab.org> AT style time in update, tclfixes
 David Grimes <dgrimes with navisite.com> SQRT/SORT/REV/SHIFT/TREND
 David L. Barker <dave with ncomtech.com> xport function bug fixes
+Evan Miller <emiller with imvu.com> Multiplicative HW Enhancements
 Frank Strauss <strauss with escape.de> TCL bindings
+Florian octo Forster <rrdtool nospam.verplant.org> rrd_restore libxml2 rewrite deprecated function export
 Henrik Storner <henrik with hswn.dk> functions for min/max values of data in graph
 Hermann Hueni <hueni with glue.ch> (SunOS porting)
 Jakob Ilves <jilves with se.oracle.com> HPUX 11
@@ -30,11 +33,14 @@ Joey Miller <joeym with inficad.com>php3 and php4 bindings
 Jost.Krieger <Jost.Krieger with ruhr-uni-bochum.de>
 Kai Siering <kai.siering with mediaways.net>
 Larry Leszczynski <larryl with furph.com>
+Mark Plaksin <happy@usg.edu> rrd_graph_v
+Matt Chambers <matthew.chambers with vanderbilt.edu> --full-size-mode for rrdgraph
 McCreary mccreary with xoanon.colorado.edu
 Mike Mitchell <mcm with unx.sas.com>
 Mike Slifcak <slif with bellsouth.net> many rrdtool-1.1.x fixes
 Oleg Cherevko <olwi with icyb.kiev.ua>
 Otmar Lendl <O.Lendl with Austria.EU.net> (lots of bugfixes)
+Patrick Cherry <patrick with bytemark.co.uk>
 Paul Joslin <Paul.Joslin with sdrc.com>
 Peter Speck <speck with vitality.dk> eps/svg/pdf file format code in rrdtool-1.x
 Peter Stamfest <peter with stamfest.at> initial multi-thread support
@@ -58,6 +64,7 @@ Steve Harris <steveh with wesley.com.au> AIX portability
 Steve Rader <rader with teak.wiscnet.net> (rrd_cgi debugging and LAST)
 Terminator rAT <karl_schilke with eli.net>
 Tobias Weingartner <weingart with cs.ualberta.ca>
+Thomas Gutzler <thomas.gutzler with gmail.com> dashed lines
 Tom Crawley <Tom.Crawley with hi.riotinto.com.au> (GCC&HP configuration)
 Travis Brown <tebrown with csh.rit.edu> 
 Tuc <ttsg with ttsg.com>

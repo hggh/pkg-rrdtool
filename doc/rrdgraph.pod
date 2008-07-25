@@ -4,7 +4,7 @@ rrdgraph - Round Robin Database tool grapher functions
 
 =head1 SYNOPSIS
 
-B<rrdtool graph> I<filename>
+B<rrdtool graph|graphv> I<filename>
 [I<L<option|rrdgraph/OPTIONS>> ...]
 [I<L<data definition|rrdgraph_data/DEF>> ...]
 [I<L<data calculation|rrdgraph_data/CDEF>> ...]
@@ -43,16 +43,23 @@ it. For instance, you might be collecting B<bytes> per second, but
 want to display B<bits> per second. This is what the B<L<data
 calculation|rrdgraph_data/CDEF>> command is designed for. After
 B<consolidating> the data, a copy is made and this copy is modified
-using a rather powerful L<rrdgraph_rpn> command set.
+using a rather powerful B<L<RPN|rrdgraph_rpn/>> command set.
 
 When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the B<rrdtool graph> sequence.
 
 =head1 OPTIONS
 
-=over 4
 
-=item filename
+=head2 B<graphv>
+
+This alternate version of B<graph> takes the same arguments and performs the
+same function. The I<v> stands for I<verbose>, which describes the output
+returned. B<graphv> will return a lot of information about the graph using
+the same format as rrdtool info (key = value). See the bottom of the document for more information.
+
+
+=head2 I<filename>
 
 The name and path of the graph to generate. It is recommended to
 end this in C<.png>, C<.svg> or C<.eps>, but B<RRDtool> does not enforce this.
@@ -60,7 +67,7 @@ end this in C<.png>, C<.svg> or C<.eps>, but B<RRDtool> does not enforce this.
 I<filename> can be 'C<->' to send the image to C<stdout>. In
 this case, no other output is generated.
 
-=item Time range
+=head2 Time range
 
 [B<-s>|B<--start> I<time>]
 [B<-e>|B<--end> I<time>]
@@ -70,7 +77,7 @@ The start and end of the time series you would like to display, and which
 B<RRA> the data should come from.  Defaults are: 1 day ago until
 now, with the best possible resolution. B<Start> and B<end> can
 be specified in several formats, see
-L<rrdfetch> and L<rrdgraph_examples>.
+L<AT-STYLE TIME SPECIFICATION|rrdfetch/> and L<rrdgraph_examples>.
 By default, B<rrdtool graph> calculates the width of one pixel in
 the time domain and tries to get data from an B<RRA> with that
 resolution.  With the B<step> option you can alter this behaviour.
@@ -78,7 +85,7 @@ If you want B<rrdtool graph> to get data at a one-hour resolution
 from the B<RRD>, set B<step> to 3'600. Note: a step smaller than
 one pixel will silently be ignored.
 
-=item Labels
+=head2 Labels
 
 [B<-t>|B<--title> I<string>]
 [B<-v>|B<--vertical-label> I<string>]
@@ -86,21 +93,26 @@ one pixel will silently be ignored.
 A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.
 
-=item Size
+=head2 Size
 
 [B<-w>|B<--width> I<pixels>]
 [B<-h>|B<--height> I<pixels>]
 [B<-j>|B<--only-graph>]
+[B<-D>|B<--full-size-mode>]
 
-The width and height of the B<canvas> (the part of the graph with
+By default, the width and height of the B<canvas> (the part with
 the actual data and such). This defaults to 400 pixels by 100 pixels.
+
+If you specify the B<--full-size-mode> option, the width and height
+specify the final dimensions of the output image and the canvas
+is automatically resized to fit.
 
 If you specify the B<--only-graph> option and set the height E<lt> 32
 pixels you will get a tiny graph image (thumbnail) to use as an icon
 for use in an overview, for example. All labeling will be stripped off
 the graph.
 
-=item Limits
+=head2 Limits
 
 [B<-u>|B<--upper-limit> I<value>]
 [B<-l>|B<--lower-limit> I<value>]
@@ -141,15 +153,18 @@ and thus the throughput may be higher than the WAN line speed.
 
 [B<-N>|B<--no-gridfit>]
 
-In order to avoid anti-aliasing effects gridlines are placed on
-integer pixel values. This is by default done by extending
-the scale so that gridlines happens to be spaced using an
-integer number of pixels and also start on an integer pixel value.
-This might extend the scale too much for some logarithmic scales
-and for linear scales where B<--alt-autoscale> is needed.
-Using B<--no-gridfit> disables modification of the scale.
+In order to avoid anti-aliasing blurring effects rrdtool snaps
+points to device resolution pixels, this results in a crisper
+aperance. If this is not to your liking, you can use this switch
+to turn this behaviour off.
 
-=item X-Grid
+Gridfitting is turned off for PDF, EPS, SVG output by default.
+
+=head2 Grid
+
+=over
+
+=item X-Axis
 
 [B<-x>|B<--x-grid> I<GTM>B<:>I<GST>B<:>I<MTM>B<:>I<MST>B<:>I<LTM>B<:>I<LST>B<:>I<LPR>B<:>I<LFM>]
 
@@ -184,7 +199,7 @@ This places grid lines every 8 hours, major grid lines and labels
 each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.
 
-=item Y-Grid
+=item Y-Axis
 
 [B<-y>|B<--y-grid> I<grid step>B<:>I<label factor>]
 
@@ -241,12 +256,16 @@ With this option y-axis values on logarithmic graphs will be scaled to
 the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, SI notation is used by default.
 
-=item Miscellaneous
+=back
+
+=head2 Miscellaneous
 
 [B<-z>|B<--lazy>]
 
-Only generate the graph if the current graph is out of date or not
-existent.
+Only generate the graph if the current graph is out of date or not existent.
+Note, that only the image size will be returned, if you run with lazy even
+when using graphv.
+
 
 [B<-f>|B<--imginfo> I<printfstr>]
 
@@ -286,31 +305,77 @@ elements on the RRD graphs. C<DEFAULT> sets the default value for all
 elements, C<TITLE> for the title, C<AXIS> for the axis labels, C<UNIT>
 for the vertical unit label, C<LEGEND> for the graph legend.
 
-Use Times for the title: C<--font TITLE:13:/usr/lib/fonts/times.ttf>
+Use Times for the title: C<--font TITLE:13:Times>
 
 If you do not give a font string you can modify just the sice of the default font:
 C<--font TITLE:13:>.
 
 If you specify the size 0 then you can modify just the font without touching
 the size. This is especially usefull for altering the default font without
-resetting the default fontsizes: C<--font DEFAULT:0:/usr/lib/fonts/times.ttf>.
+resetting the default fontsizes: C<--font DEFAULT:0:Courier>.
 
 RRDtool comes with a preset default font. You can set the environment
 variable C<RRD_DEFAULT_FONT> if you want to change this.
 
-Truetype fonts are only supported for PNG output. See below.
+RRDtool uses Pango for its font handling. This means you can to use
+the full Pango syntax when selecting your font:
 
-[B<-R>|B<--font-render-mode> {I<normal>,I<light>,I<mono>}]
+The font name has the form "[I<FAMILY-LIST>] [I<STYLE-OPTIONS>] [I<SIZE>]",
+where I<FAMILY-LIST> is a comma separated list of families optionally
+terminated by a comma, I<STYLE_OPTIONS> is a whitespace separated list of
+words where each WORD describes one of style, variant, weight, stretch, or
+gravity, and I<SIZE> is a decimal number (size in points) or optionally
+followed by the unit modifier "px" for absolute size. Any one of the options
+may be absent.
 
-This lets you customize the strength of the font smoothing,
-or disable it entirely using I<mono>. By default, I<normal>
-font smoothing is used.
+[B<-R>|B<--font-render-mode> {B<normal>,B<light>,B<mono>}]
+
+There are 3 font render modes:
+
+B<normal>: Full Hinting and Antialiasing (default)
+
+B<light>: Slight Hinting and Antialiasing
+
+B<mono>: Full Hinting and NO Antialiasing
+
 
 [B<-B>|B<--font-smoothing-threshold> I<size>]
+
+(this gets ignored in 1.3 for now!)
 
 This specifies the largest font size which will be rendered
 bitmapped, that is, without any font smoothing. By default,
 no text is rendered bitmapped.
+
+[B<-P>|B<--pango-markup>]
+
+All text in rrdtool is rendered using Pango. With the B<--pango-markup> option, all
+text will be processed by pango markup. This allows to embed some simple html
+like markup tags using 
+ 
+ <span key="value">text</span>
+
+Apart from the verbose syntax, there are also the following short tags available.
+
+ b     Bold
+ big   Makes font relatively larger, equivalent to <span size="larger">
+ i     Italic
+ s     Strikethrough
+ sub   Subscript
+ sup   Superscript
+ small Makes font relatively smaller, equivalent to <span size="smaller">
+ tt    Monospace font
+ u     Underline 
+ 
+More details on L<http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html>.
+
+[B<-G>|B<--graph-render-mode> {B<normal>,B<mono>}]
+
+There are 2 render modes:
+
+B<normal>: Graphs are fully Antialiased (default)
+
+B<mono>: No Antialiasing
 
 [B<-E>|B<--slope-mode>]
 
@@ -327,6 +392,8 @@ Helvetica-BoldOblique, Helvetica-Oblique, Helvetica, Symbol,
 Times-Bold, Times-BoldItalic, Times-Italic, Times-Roman, and ZapfDingbats.
 
 [B<-i>|B<--interlaced>]
+
+(this gets ignored in 1.3 for now!)
 
 If images are interlaced they become visible on browsers more quickly.
 
@@ -355,7 +422,7 @@ measurement, 1 kb/s is 1000 b/s.
 Adds the given string as a watermark, horizontally centred, at the bottom 
 of the graph.
 
-=item Data and variables
+=head2 Data and variables
 
 B<DEF:>I<vname>B<=>I<rrdfile>B<:>I<ds-name>B<:>I<CF>[B<:step=>I<step>][B<:start=>I<time>][B<:end=>I<time>]
 
@@ -367,13 +434,42 @@ You need at least one B<DEF> statement to generate anything. The
 other statements are useful but optional.
 See L<rrdgraph_data> and L<rrdgraph_rpn> for the exact format.
 
-=item Graph and print elements
+=head2 Graph and print elements
 
 You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See L<rrdgraph_graph> for the exact format.
 
+
 =back
+
+=head2 graphv
+
+Calling rrdtool with the graphv option will return information in the
+rrdtool info format. On the command line this means that all output will be
+in key=value format. When used from the perl and ruby bindings a hash
+pointer will be returned from the call.
+
+When the filename '-' is given, the contents of the graph itself will also
+be returned through this interface (hash key 'image'). On the command line
+the output will look like this:
+
+ print[0] = "0.020833"
+ print[1] = "0.0440833"
+ graph_left = 51
+ graph_top = 22
+ graph_width = 400
+ graph_height = 100
+ image_width = 481
+ image_height = 154
+ value_min = 0.0000000000e+00
+ value_max = 4.0000000000e-02
+ image = BLOB_SIZE:8196
+ [... 8196 bytes of image data ...]
+
+There is more information returned than in the standard interface.
+Especially the 'graph_*' keys are new. They help applications that want to
+know what is where on the graph.
 
 =head1 SEE ALSO
 
