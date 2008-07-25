@@ -16,15 +16,13 @@ The create function of RRDtool lets you set up new Round Robin
 Database (B<RRD>) files.  The file is created at its final, full size
 and filled with I<*UNKNOWN*> data.
 
-=over
-
-=item I<filename>
+=head2 I<filename>
 
 The name of the B<RRD> you want to create. B<RRD> files should end
 with the extension F<.rrd>. However, B<RRDtool> will accept any
 filename.
 
-=item B<--start>|B<-b> I<start time> (default: now - 10s)
+=head2 B<--start>|B<-b> I<start time> (default: now - 10s)
 
 Specifies the time in seconds since 1970-01-01 UTC when the first
 value should be added to the B<RRD>. B<RRDtool> will not accept
@@ -33,12 +31,12 @@ any data timed before or at the time specified.
 See also AT-STYLE TIME SPECIFICATION section in the
 I<rrdfetch> documentation for other ways to specify time.
 
-=item B<--step>|B<-s> I<step> (default: 300 seconds)
+=head2 B<--step>|B<-s> I<step> (default: 300 seconds)
 
 Specifies the base interval in seconds with which data will be fed
 into the B<RRD>.
 
-=item B<DS:>I<ds-name>B<:>I<DST>B<:>I<dst arguments>
+=head2 B<DS:>I<ds-name>B<:>I<DST>B<:>I<dst arguments>
 
 A single B<RRD> can accept input from several data sources (B<DS>),
 for example incoming and outgoing traffic on a specific communication
@@ -89,7 +87,7 @@ room. Internally, derive works exactly like COUNTER but without
 overflow checks. So if your counter does not reset at 32 or 64 bit you
 might want to use DERIVE and combine it with a MIN value of 0.
 
-NOTE on COUNTER vs DERIVE
+B<NOTE on COUNTER vs DERIVE>
 
 by Don Baarda E<lt>don.baarda@baesystems.comE<gt>
 
@@ -155,8 +153,7 @@ names of data source listed previously in the create command. This is
 similar to the restriction that B<CDEF>s must refer only to B<DEF>s
 and B<CDEF>s previously defined in the same graph command.
 
-=item B<RRA:>I<CF>B<:>I<cf arguments>
-
+=head2 B<RRA:>I<CF>B<:>I<cf arguments>
 
 The purpose of an B<RRD> is to store data in the round robin archives
 (B<RRA>). An archive consists of a number of data values or statistics for
@@ -169,7 +166,35 @@ data point>.
 The data is also processed with the consolidation function (I<CF>) of
 the archive. There are several consolidation functions that
 consolidate primary data points via an aggregate function: B<AVERAGE>,
-B<MIN>, B<MAX>, B<LAST>. The format of B<RRA> line for these
+B<MIN>, B<MAX>, B<LAST>. 
+
+=over
+
+=item AVERAGE
+
+the average of the data points is stored.
+
+=item MIN
+
+the smallest of the data points is stored.
+
+=item MAX
+
+the largest of the data points is stored.
+
+=item LAST
+
+the last data points is used.
+
+=back
+
+Note that data aggregation inevitably leads to loss of precision and
+information. The trick is to pick the aggregate function such that the
+I<interesting> properties of your data is kept across the aggregation
+process.
+
+
+The format of B<RRA> line for these
 consolidation functions is:
 
 B<RRA:>I<AVERAGE | MIN | MAX | LAST>B<:>I<xff>B<:>I<steps>B<:>I<rows>
@@ -184,8 +209,7 @@ I<steps> defines how many of these I<primary data points> are used to build
 a I<consolidated data point> which then goes into the archive.
 
 I<rows> defines how many generations of data values are kept in an B<RRA>.
-
-=back
+Obviously, this has to be greater than zero.
 
 =head1 Aberrant Behavior Detection with Holt-Winters Forecasting
 
@@ -202,11 +226,15 @@ B<RRA:>I<HWPREDICT>B<:>I<rows>B<:>I<alpha>B<:>I<beta>B<:>I<seasonal period>[B<:>
 
 =item *
 
-B<RRA:>I<SEASONAL>B<:>I<seasonal period>B<:>I<gamma>B<:>I<rra-num>
+B<RRA:>I<MHWPREDICT>B<:>I<rows>B<:>I<alpha>B<:>I<beta>B<:>I<seasonal period>[B<:>I<rra-num>]
 
 =item *
 
-B<RRA:>I<DEVSEASONAL>B<:>I<seasonal period>B<:>I<gamma>B<:>I<rra-num>
+B<RRA:>I<SEASONAL>B<:>I<seasonal period>B<:>I<gamma>B<:>I<rra-num>[B<:smoothing-window=>I<fraction>]
+
+=item *
+
+B<RRA:>I<DEVSEASONAL>B<:>I<seasonal period>B<:>I<gamma>B<:>I<rra-num>[B<:smoothing-window=>I<fraction>]
 
 =item *
 
@@ -221,19 +249,32 @@ B<RRA:>I<FAILURES>B<:>I<rows>B<:>I<threshold>B<:>I<window length>B<:>I<rra-num>
 These B<RRAs> differ from the true consolidation functions in several ways.
 First, each of the B<RRA>s is updated once for every primary data point.
 Second, these B<RRAs> are interdependent. To generate real-time confidence
-bounds, a matched set of HWPREDICT, SEASONAL, DEVSEASONAL, and
-DEVPREDICT must exist. Generating smoothed values of the primary data points
-requires both a HWPREDICT B<RRA> and SEASONAL B<RRA>. Aberrant behavior
-detection requires FAILURES, HWPREDICT, DEVSEASONAL, and SEASONAL.
+bounds, a matched set of SEASONAL, DEVSEASONAL, DEVPREDICT, and either
+HWPREDICT or MHWPREDICT must exist. Generating smoothed values of the primary
+data points requires a SEASONAL B<RRA> and either an HWPREDICT or MHWPREDICT 
+B<RRA>. Aberrant behavior detection requires FAILURES, DEVSEASONAL, SEASONAL,
+and either HWPREDICT or MHWPREDICT.
 
-The actual predicted, or smoothed, values are stored in the HWPREDICT
-B<RRA>. The predicted deviations are stored in DEVPREDICT (think a standard
-deviation which can be scaled to yield a confidence band). The FAILURES
-B<RRA> stores binary indicators. A 1 marks the indexed observation as
-failure; that is, the number of confidence bounds violations in the
-preceding window of observations met or exceeded a specified threshold. An
-example of using these B<RRAs> to graph confidence bounds and failures
-appears in L<rrdgraph>.
+The predicted, or smoothed, values are stored in the HWPREDICT or MHWPREDICT
+B<RRA>. HWPREDICT and MHWPREDICT are actually two variations on the
+Holt-Winters method. They are interchangeable. Both attempt to decompose data
+into three components: a baseline, a trend, and a seasonal coefficient.
+HWPREDICT adds its seasonal coefficient to the baseline to form a prediction, whereas
+MHWPREDICT multiplies its seasonal coefficient by the baseline to form a
+prediction. The difference is noticeable when the baseline changes
+significantly in the course of a season; HWPREDICT will predict the seasonality
+to stay constant as the baseline changes, but MHWPREDICT will predict the
+seasonality to grow or shrink in proportion to the baseline. The proper choice
+of method depends on the thing being modeled. For simplicity, the rest of this
+discussion will refer to HWPREDICT, but MHWPREDICT may be substituted in its
+place.
+
+The predicted deviations are stored in DEVPREDICT (think a standard deviation
+which can be scaled to yield a confidence band). The FAILURES B<RRA> stores 
+binary indicators. A 1 marks the indexed observation as failure; that is, the 
+number of confidence bounds violations in the preceding window of observations 
+met or exceeded a specified threshold. An example of using these B<RRAs> to graph 
+confidence bounds and failures appears in L<rrdgraph>.
 
 The SEASONAL and DEVSEASONAL B<RRAs> store the seasonal coefficients for the
 Holt-Winters forecasting algorithm and the seasonal deviations, respectively.
@@ -292,6 +333,13 @@ coefficient.
 If SEASONAL and DEVSEASONAL B<RRAs> are created explicitly, I<gamma> need not
 be the same for both. Note that I<gamma> can also be changed via the
 B<RRDtool> I<tune> command.
+
+I<smoothing-window> specifies the fraction of a season that should be
+averaged around each point. By default, the value of I<smoothing-window> is
+0.05, which means each value in SEASONAL and DEVSEASONAL will be occasionally
+replaced by averaging it with its (I<seasonal period>*0.05) nearest neighbors.
+Setting I<smoothing-window> to zero will disable the running-average smoother
+altogether.
 
 I<rra-num> provides the links between related B<RRAs>. If HWPREDICT is
 specified alone and the other B<RRAs> are created implicitly, then

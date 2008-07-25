@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_EXAMPLES 1"
-.TH RRDGRAPH_EXAMPLES 1 "2008-07-23" "1.2.28" "rrdtool"
+.TH RRDGRAPH_EXAMPLES 1 "2008-03-25" "1.3.1" "rrdtool"
 .SH "NAME"
 rrdgraph_examples \- Examples for rrdtool graph
 .SH "SYNOPSIS"
@@ -238,6 +238,15 @@ Note: the second line gets stacked on top of the first one
 .Vb 1
 \&    LINE1:data#FF0000:"Data with offset":STACK
 .Ve
+.Sh "Drawing dashed lines"
+.IX Subsection "Drawing dashed lines"
+Also works for \s-1HRULE\s0 and \s-1VRULE\s0
+.IP "\(bu" 4
+default style: \- \- \- \- \-
+    LINE1:data#FF0000:\*(L"dashed line\*(R":dashes
+.IP "\(bu" 4
+more fancy style with offset: \- \-  \-\-\- \-  \-\-\- \-
+    LINE1:data#FF0000:\*(L"another dashed line\*(R":dashes=15,5,5,10:dash\-offset=10
 .Sh "Time ranges"
 .IX Subsection "Time ranges"
 .Vb 6
@@ -264,6 +273,63 @@ Shift the data forward by one week (604800 seconds)
 \&    AREA:lastweek#0000FF:Last\e week
 \&    LINE1:thisweek#FF0000:This\e week
 .Ve
+.Sh "Aberrant Behaviour Detection"
+.IX Subsection "Aberrant Behaviour Detection"
+If the specialized function \fBRRAs\fR exist for aberrant behavior detection, they
+can be used to generate the graph of a time series with confidence bands and
+failures.
+.PP
+.Vb 14
+\&   rrdtool graph example.png \e
+\&          DEF:obs=monitor.rrd:ifOutOctets:AVERAGE \e
+\&          DEF:pred=monitor.rrd:ifOutOctets:HWPREDICT \e
+\&          DEF:dev=monitor.rrd:ifOutOctets:DEVPREDICT \e
+\&          DEF:fail=monitor.rrd:ifOutOctets:FAILURES \e
+\&          TICK:fail#ffffa0:1.0:"Failures\e: Average bits out" \e
+\&          CDEF:scaledobs=obs,8,* \e
+\&          CDEF:upper=pred,dev,2,*,+ \e
+\&          CDEF:lower=pred,dev,2,*,\- \e
+\&          CDEF:scaledupper=upper,8,* \e
+\&          CDEF:scaledlower=lower,8,* \e
+\&          LINE2:scaledobs#0000ff:"Average bits out" \e
+\&          LINE1:scaledupper#ff0000:"Upper Confidence Bound: Average bits out" \e
+\&          LINE1:scaledlower#ff0000:"Lower Confidence Bound: Average bits out"
+.Ve
+.PP
+This example generates a graph of the data series in blue (\s-1LINE2\s0 with the scaledobs
+virtual data source), confidence bounds in red (scaledupper and scaledlower virtual
+data sources), and potential failures (i.e. potential aberrant aberrant behavior)
+marked by vertical yellow lines (the fail data source).
+.PP
+The raw data comes from an \s-1AVERAGE\s0 \fB\s-1RRA\s0\fR, the finest resolution of the observed
+time series (one consolidated data point per primary data point). The predicted
+(or smoothed) values are stored in the \s-1HWPREDICT\s0 \fB\s-1RRA\s0\fR. The predicted deviations
+(think standard deviation) values are stored in the \s-1DEVPREDICT\s0 \fB\s-1RRA\s0\fR. Finally,
+the \s-1FAILURES\s0 \fB\s-1RRA\s0\fR contains indicators, with 1 denoting a potential failure.
+.PP
+All of the data is rescaled to bits (instead of Octets) by multiplying by 8.
+The confidence bounds are computed by an offset of 2 deviations both above
+and below the predicted values (the CDEFs upper and lower). Vertical lines
+indicated potential failures are graphed via the \s-1TICK\s0 graph element, which
+converts non-zero values in an \fB\s-1RRA\s0\fR into tick marks. Here an axis-fraction
+argument of 1.0 means the tick marks span the entire y\-axis, and hence become
+vertical lines on the graph.
+.PP
+The choice of 2 deviations (a scaling factor) matches the default used internally
+by the \s-1FAILURES\s0 \fB\s-1RRA\s0\fR. If the internal value is changed (see rrdtune), this
+graphing command should be changed to be consistent.
+.PP
+\fIA note on data reduction:\fR
+.IX Subsection "A note on data reduction:"
+.PP
+The \fBrrdtool\fR \fIgraph\fR command is designed to plot data at a specified temporal
+resolution, regardless of the actually resolution of the data in the \s-1RRD\s0 file.
+This can present a problem for the specialized consolidation functions which
+maintain a one-to-one mapping between primary data points and consolidated
+data points. If a graph insists on viewing the contents of these \fBRRAs\fR on a
+coarser temporal scale, the \fIgraph\fR command tries to do something intelligent,
+but the confidence bands and failures no longer have the same meaning and may
+be misleading.
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
 rrdgraph gives an overview of how \fBrrdtool graph\fR works.

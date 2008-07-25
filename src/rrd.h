@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id: rrd.h 1450 2008-07-23 13:45:41Z oetiker $
+ * $Id: rrd.h 1447 2008-07-23 13:02:26Z oetiker $
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...
@@ -46,106 +46,314 @@
  *
  *****************************************************************************/
 #ifdef  __cplusplus
-extern "C" {
+extern    "C" {
 #endif
 
 #ifndef _RRDLIB_H
 #define _RRDLIB_H
 
+#include <sys/types.h>  /* for off_t */
+#include <unistd.h>     /* for off_t */
 #include <time.h>
-#include <stdio.h> /* for FILE */
+#include <stdio.h>      /* for FILE */
+
+
+/* Formerly rrd_nan_inf.h */
+#ifndef DNAN
+# define DNAN rrd_set_to_DNAN()
+#endif
+
+#ifndef DINF
+# define DINF rrd_set_to_DINF()
+#endif
+    double    rrd_set_to_DNAN(
+    void);
+    double    rrd_set_to_DINF(
+    void);
+/* end of rrd_nan_inf.h */
 
 /* Transplanted from rrd_format.h */
-typedef double       rrd_value_t;         /* the data storage type is
-                                           * double */
+    typedef double rrd_value_t; /* the data storage type is
+                                 * double */
 /* END rrd_format.h */
 
+/* information about an rrd file */
+    typedef struct rrd_file_t {
+        int       fd;   /* file descriptor if this rrd file */
+        char     *file_start;   /* start address of an open rrd file */
+        off_t     header_len;   /* length of the header of this rrd file */
+        off_t     file_len; /* total size of the rrd file */
+        off_t     pos;  /* current pos in file */
+    } rrd_file_t;
+
+/* rrd info interface */
+    typedef struct rrd_blob_t {
+        unsigned long size; /* size of the blob */
+        unsigned char *ptr; /* pointer */
+    } rrd_blob_t;
+
+    typedef enum rrd_info_type { RD_I_VAL = 0,
+        RD_I_CNT,
+        RD_I_STR,
+        RD_I_INT,
+        RD_I_BLO
+    } rrd_info_type_t;
+
+    typedef union rrd_infoval {
+        unsigned long u_cnt;
+        rrd_value_t u_val;
+        char     *u_str;
+        int       u_int;
+        rrd_blob_t u_blo;
+    } rrd_infoval_t;
+
+    typedef struct rrd_info_t {
+        char     *key;
+        rrd_info_type_t type;
+        rrd_infoval_t value;
+        struct rrd_info_t *next;
+    } rrd_info_t;
+
+
 /* main function blocks */
-int    rrd_create(int, char **);
-int    rrd_update(int, char **);
-int    rrd_graph(int, char **, char ***, int *, int *, FILE *, double *, double *);
-int    rrd_fetch(int, char **, time_t *, time_t *, unsigned long *,
-		 unsigned long *, char ***, rrd_value_t **);
-int    rrd_restore(int, char **);
-int    rrd_dump(int, char **);
-int    rrd_tune(int, char **);
-time_t rrd_last(int, char **);
-time_t rrd_first(int, char **);
-int    rrd_resize(int, char **);
-char * rrd_strversion(void);
-double rrd_version(void);
-int    rrd_xport(int, char **, int *, time_t *, time_t *,
-		 unsigned long *, unsigned long *,
-		 char ***, rrd_value_t **);
+    int       rrd_create(
+    int,
+    char **);
+    rrd_info_t *rrd_info(
+    int,
+    char **);
+    rrd_info_t *rrd_info_push(
+    rrd_info_t *,
+    char *,
+    rrd_info_type_t,
+    rrd_infoval_t);
+    void      rrd_info_print(
+    rrd_info_t * data);
+    void      rrd_info_free(
+    rrd_info_t *);
+    int       rrd_update(
+    int,
+    char **);
+    rrd_info_t *rrd_update_v(
+    int,
+    char **);
+    int       rrd_graph(
+    int,
+    char **,
+    char ***,
+    int *,
+    int *,
+    FILE *,
+    double *,
+    double *);
+    rrd_info_t *rrd_graph_v(
+    int,
+    char **);
+
+    int       rrd_fetch(
+    int,
+    char **,
+    time_t *,
+    time_t *,
+    unsigned long *,
+    unsigned long *,
+    char ***,
+    rrd_value_t **);
+    int       rrd_restore(
+    int,
+    char **);
+    int       rrd_dump(
+    int,
+    char **);
+    int       rrd_tune(
+    int,
+    char **);
+    time_t    rrd_last(
+    int,
+    char **);
+    int       rrd_lastupdate(
+    int argc,
+    char **argv,
+    time_t *last_update,
+    unsigned long *ds_cnt,
+    char ***ds_namv,
+    char ***last_ds);
+    time_t    rrd_first(
+    int,
+    char **);
+    int       rrd_resize(
+    int,
+    char **);
+    char     *rrd_strversion(
+    void);
+    double    rrd_version(
+    void);
+    int       rrd_xport(
+    int,
+    char **,
+    int *,
+    time_t *,
+    time_t *,
+    unsigned long *,
+    unsigned long *,
+    char ***,
+    rrd_value_t **);
+
+    void      rrd_freemem(
+    void *mem);
 
 /* thread-safe (hopefully) */
-int    rrd_create_r(const char *filename,
-		    unsigned long pdp_step, time_t last_up,
-		    int argc, const char **argv);
+    int       rrd_create_r(
+    const char *filename,
+    unsigned long pdp_step,
+    time_t last_up,
+    int argc,
+    const char **argv);
 /* NOTE: rrd_update_r are only thread-safe if no at-style time
    specifications get used!!! */
 
-int    rrd_update_r(const char *filename, const char *_template,
-		    int argc, const char **argv);
-int    rrd_fetch_r(const char *filename, const char* cf,
-                   time_t *start, time_t *end,
-                   unsigned long *step,
-                   unsigned long *ds_cnt,
-                   char        ***ds_namv,
-                   rrd_value_t **data);
-int    rrd_dump_r(const char *filename, char *outname);
-time_t rrd_last_r(const char *filename);
-time_t rrd_first_r(const char *filename, int rraindex);
+    int       rrd_update_r(
+    const char *filename,
+    const char *_template,
+    int argc,
+    const char **argv);
+    int       rrd_fetch_r(
+    const char *filename,
+    const char *cf,
+    time_t *start,
+    time_t *end,
+    unsigned long *step,
+    unsigned long *ds_cnt,
+    char ***ds_namv,
+    rrd_value_t **data);
+    int       rrd_dump_r(
+    const char *filename,
+    char *outname);
+    time_t    rrd_last_r(
+    const char *filename);
+    time_t    rrd_first_r(
+    const char *filename,
+    int rraindex);
 
-/* Transplanted from parsetime.h */
-typedef enum {
+/* Transplanted from rrd_parsetime.h */
+    typedef enum {
         ABSOLUTE_TIME,
-        RELATIVE_TO_START_TIME, 
+        RELATIVE_TO_START_TIME,
         RELATIVE_TO_END_TIME
-} timetype;
+    } rrd_timetype_t;
 
 #define TIME_OK NULL
 
-struct rrd_time_value {
-  timetype type;
-  long offset;
-  struct tm tm;
-};
+    typedef struct rrd_time_value {
+        rrd_timetype_t type;
+        long      offset;
+        struct tm tm;
+    } rrd_time_value_t;
 
-char *parsetime(const char *spec, struct rrd_time_value *ptv);
-/* END parsetime.h */
+    char     *rrd_parsetime(
+    const char *spec,
+    rrd_time_value_t * ptv);
+/* END rrd_parsetime.h */
 
-struct rrd_context {
-    int len;
-    int errlen;
-    char *lib_errstr;
-    char *rrd_error;
-};
+    typedef struct rrd_context {
+        char      lib_errstr[256];
+        char      rrd_error[4096];
+    } rrd_context_t;
 
 /* returns the current per-thread rrd_context */
-struct rrd_context *rrd_get_context(void);
+    rrd_context_t *rrd_get_context(
+    void);
 
 
-int proc_start_end (struct rrd_time_value *,  struct rrd_time_value *, time_t *, time_t *);
+    int       rrd_proc_start_end(
+    rrd_time_value_t *,
+    rrd_time_value_t *,
+    time_t *,
+    time_t *);
 
 /* HELPER FUNCTIONS */
-void rrd_set_error(char *,...);
-void rrd_clear_error(void);
-int  rrd_test_error(void);
-char *rrd_get_error(void);
+    void      rrd_set_error(
+    char *,
+    ...);
+    void      rrd_clear_error(
+    void);
+    int       rrd_test_error(
+    void);
+    char     *rrd_get_error(
+    void);
+
+    /* rrd_strerror is thread safe, but still it uses a global buffer
+       (but one per thread), thus subsequent calls within a single
+       thread overwrite the same buffer */
+    const char *rrd_strerror(
+    int err);
 
 /** MULTITHREADED HELPER FUNCTIONS */
-struct rrd_context *rrd_new_context(void);
-void   rrd_free_context (struct rrd_context *buf);
+    rrd_context_t *rrd_new_context(
+    void);
+    void      rrd_free_context(
+    rrd_context_t * buf);
 
-/* void   rrd_set_error_r  (struct rrd_context *, char *, ...); */
-/* void   rrd_clear_error_r(struct rrd_context *); */
-/* int    rrd_test_error_r (struct rrd_context *); */
-/* char  *rrd_get_error_r  (struct rrd_context *); */
+/* void   rrd_set_error_r  (rrd_context_t *, char *, ...); */
+/* void   rrd_clear_error_r(rrd_context_t *); */
+/* int    rrd_test_error_r (rrd_context_t *); */
+/* char  *rrd_get_error_r  (rrd_context_t *); */
 
-int  LockRRD(FILE *);
+/*
+ * The following functions are _internal_ functions needed to read the raw RRD
+ * files. Since they are _internal_ they may change with the file format and
+ * will be replaced with a more general interface in RRDTool 1.4. Don't use
+ * these functions unless you have good reasons to do so. If you do use these
+ * functions you will have to adapt your code for RRDTool 1.4!
+ *
+ * To enable the deprecated functions define `RRD_EXPORT_DEPRECATED' before
+ * including <rrd_test.h>. You have been warned! If you come back to the
+ * RRDTool mailing list and whine about your broken application, you will get
+ * hit with something smelly!
+ */
+#if defined(_RRD_TOOL_H) || defined(RRD_EXPORT_DEPRECATED)
 
-#endif /* _RRDLIB_H */
+# if defined(_RRD_TOOL_H)
+#  include "rrd_format.h"
+# else
+#  include <rrd_format.h>
+# endif
+
+#if defined(__GNUC__) && defined (RRD_EXPORT_DEPRECATED)
+# define RRD_DEPRECATED __attribute__((deprecated))
+#else
+# define RRD_DEPRECATED /**/
+#endif
+
+    void        rrd_free     (rrd_t *rrd)
+      RRD_DEPRECATED;
+    void        rrd_init     (rrd_t *rrd)
+      RRD_DEPRECATED;
+
+    rrd_file_t *rrd_open   (const char *const file_name, rrd_t *rrd,
+        unsigned rdwr)
+      RRD_DEPRECATED;
+
+    void        rrd_dontneed (rrd_file_t *rrd_file, rrd_t *rrd)
+      RRD_DEPRECATED;
+    int         rrd_close    (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    ssize_t     rrd_read     (rrd_file_t *rrd_file, void *buf, size_t count)
+      RRD_DEPRECATED;
+    ssize_t     rrd_write    (rrd_file_t *rrd_file,
+        const void *buf, size_t count)
+      RRD_DEPRECATED;
+    void        rrd_flush    (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    off_t       rrd_seek     (rrd_file_t *rrd_file, off_t off, int whence)
+      RRD_DEPRECATED;
+    off_t       rrd_tell     (rrd_file_t *rrd_file)
+      RRD_DEPRECATED;
+    int         rrd_lock     (rrd_file_t *file)
+      RRD_DEPRECATED;
+#endif /* defined(_RRD_TOOL_H) || defined(RRD_EXPORT_DEPRECATED) */
+
+#endif                  /* _RRDLIB_H */
 
 #ifdef  __cplusplus
 }

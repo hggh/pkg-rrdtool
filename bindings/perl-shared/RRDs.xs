@@ -99,6 +99,10 @@ extern "C" {
 			hvs(newSVpv(data->value.u_str,0)); \
 			rrd_freemem(data->value.u_str); \
 			break; \
+		    case RD_I_BLO: \
+			hvs(newSVpv(data->value.u_blo.ptr,data->value.u_blo.size)); \
+			rrd_freemem(data->value.u_blo.ptr); \
+			break; \
 		    } \
 		    rrd_freemem(data->key); \
 		    data = data->next; \
@@ -303,20 +307,20 @@ rrd_times(start, end)
 	  char *start
 	  char *end
 	PREINIT:
-		struct	rrd_time_value start_tv, end_tv;
+		rrd_time_value_t start_tv, end_tv;
 		char    *parsetime_error = NULL;
 		time_t	start_tmp, end_tmp;
 	PPCODE:
 		rrd_clear_error();
-		if( (parsetime_error = parsetime( start, &start_tv))) {
-			rrd_set_error( "start time: %s", parsetime_error);
+		if ((parsetime_error = rrd_parsetime(start, &start_tv))) {
+			rrd_set_error("start time: %s", parsetime_error);
 			XSRETURN_UNDEF;
 		}
-		if( (parsetime_error = parsetime( end, &end_tv))) {
-			rrd_set_error( "end time: %s", parsetime_error);
+		if ((parsetime_error = rrd_parsetime(end, &end_tv))) {
+			rrd_set_error("end time: %s", parsetime_error);
 			XSRETURN_UNDEF;
 		}
-		if( proc_start_end( &start_tv, &end_tv, &start_tmp, &end_tmp) == -1) {
+		if (rrd_proc_start_end(&start_tv, &end_tv, &start_tmp, &end_tmp) == -1) {
 			XSRETURN_UNDEF;
 		}
 		EXTEND(sp,2);
@@ -385,7 +389,7 @@ SV*
 rrd_info(...)
 	PROTOTYPE: @	
 	PREINIT:
-		info_t *data,*save;
+		rrd_info_t *data,*save;
                 int i;
                 char **argv;
 		HV *hash;
@@ -398,12 +402,25 @@ SV*
 rrd_updatev(...)
 	PROTOTYPE: @	
 	PREINIT:
-		info_t *data,*save;
+		rrd_info_t *data,*save;
                 int i;
                 char **argv;
 		HV *hash;
 	CODE:
 		rrdinfocode(rrd_update_v);	
+    OUTPUT:
+	   RETVAL
+
+SV*
+rrd_graphv(...)
+	PROTOTYPE: @	
+	PREINIT:
+		rrd_info_t *data,*save;
+                int i;
+                char **argv;
+		HV *hash;
+	CODE:
+		rrdinfocode(rrd_graph_v);	
     OUTPUT:
 	   RETVAL
 

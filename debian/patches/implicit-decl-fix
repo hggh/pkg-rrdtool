@@ -1,28 +1,12 @@
-Index: rrdtool/src/rrd_tool.c
-===================================================================
---- rrdtool.orig/src/rrd_tool.c	2008-04-20 02:11:52.000000000 +0200
-+++ rrdtool/src/rrd_tool.c	2008-04-20 02:11:58.000000000 +0200
-@@ -4,6 +4,8 @@
-  * rrd_tool.c  Startup wrapper
-  *****************************************************************************/
+diff a/src/rrd_tool.c b/src/rrd_tool.c
+--- a/src/rrd_tool.c
++++ b/src/rrd_tool.c
+@@ -12,6 +12,8 @@
+ #endif
+ #endif
  
 +#include <unistd.h>
 +
  #include "rrd_tool.h"
  #include "rrd_xport.h"
- 
-Index: rrdtool/src/rrd_update.c
-===================================================================
---- rrdtool.orig/src/rrd_update.c	2008-04-20 02:11:52.000000000 +0200
-+++ rrdtool/src/rrd_update.c	2008-04-22 15:38:38.000000000 +0200
-@@ -22,6 +22,10 @@
- #include "rrd_is_thread_safe.h"
- #include "unused.h"
- 
-+#ifdef USE_MADVISE
-+ #include <sys/mman.h>
-+#endif
-+
- #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
- /*
-  * WIN32 does not have gettimeofday	and struct timeval. This is a quick and dirty
+ #include "rrd_i18n.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_format.c  RRD Database Format helper functions
  *****************************************************************************
- * $Id: rrd_format.c 1450 2008-07-23 13:45:41Z oetiker $
+ * $Id: rrd_format.c 1447 2008-07-23 13:02:26Z oetiker $
  * $Log$
  * Revision 1.5  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -53,42 +53,48 @@
    if (strcmp(#VV, string) == 0) return VVV;
 
 /* conversion functions to allow symbolic entry of enumerations */
-enum dst_en dst_conv(char *string)
+enum dst_en dst_conv(
+    char *string)
 {
-    converter(COUNTER,DST_COUNTER)
-    converter(ABSOLUTE,DST_ABSOLUTE)
-    converter(GAUGE,DST_GAUGE)
-    converter(DERIVE,DST_DERIVE)
-    converter(COMPUTE,DST_CDEF)
-    rrd_set_error("unknown data acquisition function '%s'",string);
-    return(-1);
+    converter(COUNTER, DST_COUNTER)
+        converter(ABSOLUTE, DST_ABSOLUTE)
+        converter(GAUGE, DST_GAUGE)
+        converter(DERIVE, DST_DERIVE)
+        converter(COMPUTE, DST_CDEF)
+        rrd_set_error("unknown data acquisition function '%s'", string);
+    return (-1);
 }
 
 
-enum cf_en cf_conv(const char *string)
+enum cf_en cf_conv(
+    const char *string)
 {
 
-    converter(AVERAGE,CF_AVERAGE)
-    converter(MIN,CF_MINIMUM)
-    converter(MAX,CF_MAXIMUM)
-    converter(LAST,CF_LAST)
-    converter(HWPREDICT,CF_HWPREDICT)
-    converter(DEVPREDICT,CF_DEVPREDICT)
-    converter(SEASONAL,CF_SEASONAL)
-    converter(DEVSEASONAL,CF_DEVSEASONAL)
-    converter(FAILURES,CF_FAILURES)
-    rrd_set_error("unknown consolidation function '%s'",string);
-    return(-1);
+    converter(AVERAGE, CF_AVERAGE)
+        converter(MIN, CF_MINIMUM)
+        converter(MAX, CF_MAXIMUM)
+        converter(LAST, CF_LAST)
+        converter(HWPREDICT, CF_HWPREDICT)
+        converter(MHWPREDICT, CF_MHWPREDICT)
+        converter(DEVPREDICT, CF_DEVPREDICT)
+        converter(SEASONAL, CF_SEASONAL)
+        converter(DEVSEASONAL, CF_DEVSEASONAL)
+        converter(FAILURES, CF_FAILURES)
+        rrd_set_error("unknown consolidation function '%s'", string);
+    return (-1);
 }
 
-#undef converter	
+#undef converter
 
-long
-ds_match(rrd_t *rrd,char *ds_nam){
+long ds_match(
+    rrd_t *rrd,
+    char *ds_nam)
+{
     unsigned long i;
-    for(i=0;i<rrd->stat_head->ds_cnt;i++)
-	if ((strcmp(ds_nam,rrd->ds_def[i].ds_nam))==0)
-	    return i;
-    rrd_set_error("unknown data source name '%s'",ds_nam);
+
+    for (i = 0; i < rrd->stat_head->ds_cnt; i++)
+        if ((strcmp(ds_nam, rrd->ds_def[i].ds_nam)) == 0)
+            return i;
+    rrd_set_error("unknown data source name '%s'", ds_nam);
     return -1;
 }

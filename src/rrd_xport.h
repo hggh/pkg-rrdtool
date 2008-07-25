@@ -1,10 +1,10 @@
 /****************************************************************************
- * RRDtool 1.2.28  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd_xport.h  contains XML related constants
  ****************************************************************************/
 #ifdef  __cplusplus
-extern "C" {
+extern    "C" {
 #endif
 
 #ifndef _RRD_XPORT_H

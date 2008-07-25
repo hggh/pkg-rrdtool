@@ -8,13 +8,6 @@
 include /usr/share/quilt/quilt.make
 
 
-#library versions
-LIB_version := $(shell grep '^librrd_la_LDFLAGS' src/Makefile.am | \
-		sed 's,^[^0-9]*,,g;s,\([0-9]*\):\([0-9]*\):\([0-9]*\),\1.\3.\2,g')
-LIB_major := $(shell echo $(LIB_version) | sed 's,\..*,,g')
-
-
-
 #Ruby versions to build for
 RUBY_VERS := 1.8 1.9
 RUBY_DEFAULT_VERS := 1.8
@@ -26,7 +19,8 @@ PY_VERS := $(shell set -e; \
                    done)
 
 #tcl version we're building for
-TCL_VERS := $(shell dpkg -s tcl | grep ^Depends | sed 's,.*tcl\([0-9.]*\).*,\1,')
+TCL_VERS := $(shell dpkg -s tcl-dev | grep '^Depends' \
+	| sed 's,.*\<tcl\([0-9.]*\)-dev\>.*,\1,')
 
 
 #let's help configure to figure out our host/build system
@@ -46,9 +40,6 @@ CONFFLAGS += --prefix=/usr --docdir=/usr/share/doc/rrdtool
 
 #install perl libs in vendor mode
 CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor 
-
-#path to our ttf font
-CONFFLAGS += --with-rrd-default-font=/usr/share/rrdtool/librrd$(LIB_major)/DejaVuSansMono-Roman.ttf
 
 #path to tcl
 CONFFLAGS += --with-tcllib=/usr/lib/tcl$(TCL_VERS)
@@ -86,11 +77,14 @@ build: build-arch build-indep
 
 build-arch: build-arch-stamp $(PY_VERS:%=build-python%)
 build-arch-stamp: config.status 
-
-	#configure forgets to set TCL_INC_DIR.
-	make TCL_INC_DIR=/usr/include/tcl
+	make
 	#Fix library path to tcl bindings
 	sed -i -e 's|lib/|lib/tcltk/rrdtool-tcl/|' bindings/tcl/pkgIndex.tcl
+	#sanity check if debian/control lists the right package name
+	LIB_major=`grep '^dlname=' src/librrd.la \
+			| sed -e "s/^dlname='librrd\.so\.\\([0-9]\+\\)'\$$/\\1/"` \
+		&& test -n "$$LIB_major" \
+		&& grep -q "^Package: librrd$$LIB_major\\>" debian/control
 	touch $@
 
 build-python%: build-arch-stamp
@@ -106,8 +100,6 @@ clean: clean-patched
 clean-patched: unpatch $(PY_VERS:%=clean-python%)
 	dh_testdir
 	dh_testroot
-	#sanity check if debian/control lists the right package name
-	grep -q '^Package: librrd$(LIB_major)' debian/control
 
 	[ ! -f Makefile ] || make distclean
 
@@ -127,6 +119,7 @@ endif
 	rm -f bindings/tcl/pkgIndex.tcl bindings/tcl/tclrrd*.so
 	rm -f examples/cgi-demo.cgi
 	rm -rf src/.libs src/.deps doc/*.html doc/*.1 doc/*.txt
+	rm -f intltool-extract intltool-merge intltool-update
 
 	dh_clean
 
