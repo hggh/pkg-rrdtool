@@ -54,6 +54,7 @@ Package: librrd-dev
 Architecture: any
 Section: libdevel
 Depends: libc6-dev | libc-dev, librrd4 (= ${binary:Version}), libpng12-dev, zlib1g-dev, libcairo2-dev, libpango1.0-dev, libfreetype6-dev, ${misc:Depends}
+Provides: librrd2-dev
 Conflicts: librrd2-dev
 Replaces: librrd2-dev
 Description: Time-series data storage and display system (development)
