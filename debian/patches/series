@@ -5,3 +5,4 @@ no-rpath-for-ruby
 no-rpath-for-perl
 implicit-decl-fix
 bts499350-data-corruption
+bts498183-segfault-madvise
