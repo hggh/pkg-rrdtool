@@ -8,8 +8,11 @@ rrdtool (1.3.1-4) unstable; urgency=low
       valuable debugging information (Closes: #498183).
     - Added upstream patch bts496847-error-handling to fix error handling of
       syscalls in rrdtool(1) (Closes: #496847).
+  * debian/NEWS:
+    - Added. Documented the changes required by the switch to libpango
+      (Closes: #493575, #493594).
 
- -- Sebastian Harl <sh@tokkee.org>  Sat, 20 Sep 2008 21:50:18 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Fri, 26 Sep 2008 00:07:32 +0200
 
 rrdtool (1.3.1-3) unstable; urgency=low
 
