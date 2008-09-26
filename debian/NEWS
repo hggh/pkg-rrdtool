@@ -1,4 +1,4 @@
-rrdtool (1.3.1-4) unstable; urgency=low
+rrdtool (1.3.1-4) unstable; urgency=high
 
   Starting with version 1.3, RRDtool uses libpango for handling text in
   graphs. When specifying fonts (e.g. using the --font option of rrdgraph(1))
