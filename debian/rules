@@ -113,13 +113,14 @@ endif
 	find . -name \*.pyc | xargs rm -f
 	rm -rf bindings/python/build
 
-	#clean what the Makefiles do not clean....
+	# clean what the Makefiles do not clean ...
 	rm -rf bindings/perl-piped/blib bindings/perl-shared/blib \
 	       bindings/perl-piped/Makefile.old bindings/perl-shared/Makefile.old
 	rm -f bindings/tcl/pkgIndex.tcl bindings/tcl/tclrrd*.so
 	rm -f examples/cgi-demo.cgi
 	rm -rf src/.libs src/.deps doc/*.html doc/*.1 doc/*.txt
 	rm -f intltool-extract intltool-merge intltool-update
+	rm -f src/librrd.sym
 
 	dh_clean
 
