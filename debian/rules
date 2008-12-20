@@ -142,6 +142,8 @@ install-common-stamp: build-arch-stamp
 	dh_clean -k
 
 	make install DESTDIR=$(CURDIR)/debian/tmp
+	# we don't want .txt and .pod documentation in the package
+	rm -rf debian/tmp/usr/share/doc/rrdtool/txt
 	dh_install --sourcedir=$(CURDIR)/debian/tmp --list-missing
 
 	touch $@
