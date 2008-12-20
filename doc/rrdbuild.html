@@ -90,7 +90,7 @@ tar</strong> and <strong>GNU make</strong> respectively. It could be that they a
 <p>Once you have decided. Save the two locations into environment variables.</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.3.1</pre>
+ INSTALL_DIR=/usr/local/rrdtool-1.3.5</pre>
 <p>If your <em>/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -100,9 +100,9 @@ a different directory!</p>
 <p>Lets first assume you already have all the necessary libraries
 pre-installed.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.1.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.1.tar.gz</a>
- gunzip -c rrdtool-1.3.1.tar.gz | tar xf -
- cd rrdtool-1.3.1
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.5.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.5.tar.gz</a>
+ gunzip -c rrdtool-1.3.5.tar.gz | tar xf -
+ cd rrdtool-1.3.5
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
 <strong>configure</strong> complaining about several missing libraries.</p>
@@ -128,6 +128,14 @@ bad since opensolaris does not include an <em>xrender.pc</em> file. Use perl to
 fix this:</p>
 <pre>
  perl -i~ -p -e 's/(Requires.*?)\s*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc</pre>
+<p>Make sure rrdtool finds your new compiler</p>
+<pre>
+ export PATH=/opt/SunStudioExpress/bin</pre>
+<p>Since there does not seem to ba a viable msgfmt tool on opensolaris (short
+of installing it yourself). You have to call configure with the</p>
+<pre>
+ --disable-libintl</pre>
+<p>option.</p>
 <p>
 </p>
 <h2><a name="debian___ubuntu">Debian / Ubuntu</a></h2>
@@ -182,18 +190,6 @@ instead.</p>
 <p>
 </p>
 <h2><a name="build_instructions">Build Instructions</a></h2>
-<p>In order to build rrdtool need a compiler on your system. Unfortunately
-compilers are not all alike. This has an effect on the CFLAGS you want to
-set. The examples below are for the popular GCC compiler suite. If you have
-an other compilers here are some ides:</p>
-<dl>
-<dt><strong><a name="item_sun_forte">Sun Forte</a></strong></dt>
-
-<dd>
-<pre>
- CFLAGS=&quot;-xO3 -kPIC&quot;</pre>
-</dd>
-</dl>
 <p>Some libraries want to know where other libraries are. For this to work,
 set the following environment variable</p>
 <pre>
@@ -210,6 +206,10 @@ the syntax again differs from system to system:</p>
 <dd>
 <pre>
  export LDFLAGS=-R${INSTALL_DIR}/lib</pre>
+<p>if you are using the Sun Studio/Forte compiler, you may also want to set</p>
+<pre>
+ CFLAGS=&quot;-xO3 -xcode=pic13&quot;   (SPARC)
+ CFLAGS=&quot;-xO3 -Kpic&quot;          (x86)</pre>
 </dd>
 <dt><strong><a name="item_linux">Linux</a></strong></dt>
 
@@ -299,8 +299,8 @@ add the following at the start the configure line:</p>
 <pre>
  cd $BUILD_DIR
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz</a>
- gunzip -c libxml2-sources-2.6.32.tar.gz | tar xf -
- cd libxml2-sources-2.6.32
+ gunzip -c libxml2-sources-2.6.31.tar.gz | tar xf -
+ cd libxml2-sources-2.6.31
  ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
@@ -336,7 +336,7 @@ config file.</p>
 <pre>
  cd $BUILD_DIR
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz</a>
- gunzip -c cairo-1.4.10.tar.gz   | tar xf -
+ gunzip -c cairo-1.6.4.tar.gz   | tar xf -
  cd cairo-1.4.10
  ./configure --prefix=$INSTALL_DIR \
     --enable-xlib=no \
@@ -351,8 +351,8 @@ config file.</p>
 <pre>
  cd $BUILD_DIR
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz</a>
- gunzip -c glib-2.12.13.tar.gz  | tar xf -
- cd glib-2.12.13
+ gunzip -c glib-2.15.4.tar.gz  | tar xf -
+ cd glib-2.15.4
  ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
@@ -379,7 +379,7 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.3.1
+ cd $BUILD_DIR/rrdtool-1.3.5
  ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
  $MAKE clean
  $MAKE

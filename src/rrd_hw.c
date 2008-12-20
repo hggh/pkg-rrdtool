@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_hw.c : Support for Holt-Winters Smoothing/ Aberrant Behavior Detection
  *****************************************************************************
@@ -10,6 +10,10 @@
 #include "rrd_hw.h"
 #include "rrd_hw_math.h"
 #include "rrd_hw_update.h"
+
+#ifdef WIN32
+#include <stdlib.h>
+#endif
 
 #define hw_dep_idx(rrd, rra_idx) rrd->rra_def[rra_idx].par[RRA_dependent_rra_idx].u_cnt
 

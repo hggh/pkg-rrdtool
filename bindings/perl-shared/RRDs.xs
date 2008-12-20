@@ -78,8 +78,8 @@ extern "C" {
 		free(argv); \
                 if (rrd_test_error()) XSRETURN_UNDEF; \
                 hash = newHV(); \
+   	        save=data; \
                 while (data) { \
-		    save=data; \
 		/* the newSV will get copied by hv so we create it as a mortal \
            to make sure it does not keep hanging round after the fact */ \
 		    switch (data->type) { \
@@ -97,18 +97,14 @@ extern "C" {
 			break; \
 		    case RD_I_STR: \
 			hvs(newSVpv(data->value.u_str,0)); \
-			rrd_freemem(data->value.u_str); \
 			break; \
 		    case RD_I_BLO: \
 			hvs(newSVpv(data->value.u_blo.ptr,data->value.u_blo.size)); \
-			rrd_freemem(data->value.u_blo.ptr); \
 			break; \
 		    } \
-		    rrd_freemem(data->key); \
 		    data = data->next; \
-		    rrd_freemem(save); \
-		    } \
-            rrd_freemem(data); \
+	        } \
+            rrd_info_free(save); \
             RETVAL = newRV_noinc((SV*)hash);
 
 /*
@@ -203,7 +199,7 @@ rrd_tune(...)
 		RETVAL
 
 
-void
+SV *
 rrd_graph(...)
 	PROTOTYPE: @	
 	PREINIT:
@@ -249,7 +245,7 @@ rrd_graph(...)
 		PUSHs(sv_2mortal(newSViv(xsize)));
 		PUSHs(sv_2mortal(newSViv(ysize)));
 
-void
+SV *
 rrd_fetch(...)
 	PROTOTYPE: @	
 	PREINIT:
@@ -302,7 +298,7 @@ rrd_fetch(...)
 		PUSHs(sv_2mortal(newRV_noinc((SV*)names)));
 		PUSHs(sv_2mortal(newRV_noinc((SV*)retar)));
 
-void
+SV *
 rrd_times(start, end)
 	  char *start
 	  char *end

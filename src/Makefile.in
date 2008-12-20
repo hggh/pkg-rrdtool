@@ -21,6 +21,7 @@
 
 
 
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -44,12 +45,15 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@BUILD_MULTITHREAD_TRUE@am__append_1 = librrd_th.la
+@BUILD_GETOPT_TRUE@am__append_1 = rrd_getopt.h
+@BUILD_GETOPT_TRUE@am__append_2 = rrd_getopt.c rrd_getopt1.c
+@BUILD_MULTITHREAD_TRUE@am__append_3 = librrd_th.la
 bin_PROGRAMS = rrdtool$(EXEEXT) rrdupdate$(EXEEXT) $(am__EXEEXT_1)
-@BUILD_RRDCGI_TRUE@am__append_2 = rrdcgi
+@BUILD_RRDCGI_TRUE@am__append_4 = rrdcgi
 subdir = src
-DIST_COMMON = $(include_HEADERS) $(noinst_HEADERS) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(am__noinst_HEADERS_DIST) $(include_HEADERS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/librrd.pc.in $(srcdir)/librrd.sym.in.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -57,7 +61,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/rrd_config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = librrd.sym.in librrd.pc
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -65,7 +69,7 @@ am__vpath_adj = case $$p in \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(includedir)"
+	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
 am__DEPENDENCIES_1 =
@@ -75,14 +79,24 @@ am__objects_1 = hash_32.lo pngsize.lo rrd_create.lo rrd_graph.lo \
 	rrd_gfx.lo rrd_dump.lo rrd_fetch.lo rrd_resize.lo rrd_tune.lo
 am_librrd_la_OBJECTS = $(am__objects_1)
 librrd_la_OBJECTS = $(am_librrd_la_OBJECTS)
-am__objects_2 = librrd_th_la-rrd_getopt.lo librrd_th_la-rrd_getopt1.lo \
-	librrd_th_la-rrd_parsetime.lo librrd_th_la-rrd_hw.lo \
+am__librrd_th_la_SOURCES_DIST = rrd_parsetime.c rrd_hw.c rrd_hw_math.c \
+	rrd_hw_update.c rrd_diff.c rrd_format.c rrd_info.c rrd_error.c \
+	rrd_open.c rrd_nan_inf.c rrd_rpncalc.c rrd_update.c \
+	rrd_getopt.c rrd_getopt1.c hash_32.c pngsize.c rrd_create.c \
+	rrd_graph.c rrd_graph_helper.c rrd_version.c rrd_last.c \
+	rrd_lastupdate.c rrd_first.c rrd_restore.c rrd_xport.c \
+	rrd_gfx.c rrd_dump.c rrd_fetch.c rrd_resize.c rrd_tune.c \
+	rrd_thread_safe.c
+@BUILD_GETOPT_TRUE@am__objects_2 = librrd_th_la-rrd_getopt.lo \
+@BUILD_GETOPT_TRUE@	librrd_th_la-rrd_getopt1.lo
+am__objects_3 = librrd_th_la-rrd_parsetime.lo librrd_th_la-rrd_hw.lo \
 	librrd_th_la-rrd_hw_math.lo librrd_th_la-rrd_hw_update.lo \
 	librrd_th_la-rrd_diff.lo librrd_th_la-rrd_format.lo \
 	librrd_th_la-rrd_info.lo librrd_th_la-rrd_error.lo \
 	librrd_th_la-rrd_open.lo librrd_th_la-rrd_nan_inf.lo \
-	librrd_th_la-rrd_rpncalc.lo librrd_th_la-rrd_update.lo
-am__objects_3 = librrd_th_la-hash_32.lo librrd_th_la-pngsize.lo \
+	librrd_th_la-rrd_rpncalc.lo librrd_th_la-rrd_update.lo \
+	$(am__objects_2)
+am__objects_4 = librrd_th_la-hash_32.lo librrd_th_la-pngsize.lo \
 	librrd_th_la-rrd_create.lo librrd_th_la-rrd_graph.lo \
 	librrd_th_la-rrd_graph_helper.lo librrd_th_la-rrd_version.lo \
 	librrd_th_la-rrd_last.lo librrd_th_la-rrd_lastupdate.lo \
@@ -90,16 +104,21 @@ am__objects_3 = librrd_th_la-hash_32.lo librrd_th_la-pngsize.lo \
 	librrd_th_la-rrd_xport.lo librrd_th_la-rrd_gfx.lo \
 	librrd_th_la-rrd_dump.lo librrd_th_la-rrd_fetch.lo \
 	librrd_th_la-rrd_resize.lo librrd_th_la-rrd_tune.lo
-am_librrd_th_la_OBJECTS = $(am__objects_2) $(am__objects_3) \
+am_librrd_th_la_OBJECTS = $(am__objects_3) $(am__objects_4) \
 	librrd_th_la-rrd_thread_safe.lo
 librrd_th_la_OBJECTS = $(am_librrd_th_la_OBJECTS)
 @BUILD_MULTITHREAD_TRUE@am_librrd_th_la_rpath = -rpath $(libdir)
 librrdupd_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__objects_4 = rrd_getopt.lo rrd_getopt1.lo rrd_parsetime.lo \
-	rrd_hw.lo rrd_hw_math.lo rrd_hw_update.lo rrd_diff.lo \
-	rrd_format.lo rrd_info.lo rrd_error.lo rrd_open.lo \
-	rrd_nan_inf.lo rrd_rpncalc.lo rrd_update.lo
-am_librrdupd_la_OBJECTS = $(am__objects_4) rrd_not_thread_safe.lo
+am__librrdupd_la_SOURCES_DIST = rrd_parsetime.c rrd_hw.c rrd_hw_math.c \
+	rrd_hw_update.c rrd_diff.c rrd_format.c rrd_info.c rrd_error.c \
+	rrd_open.c rrd_nan_inf.c rrd_rpncalc.c rrd_update.c \
+	rrd_getopt.c rrd_getopt1.c rrd_not_thread_safe.c
+@BUILD_GETOPT_TRUE@am__objects_5 = rrd_getopt.lo rrd_getopt1.lo
+am__objects_6 = rrd_parsetime.lo rrd_hw.lo rrd_hw_math.lo \
+	rrd_hw_update.lo rrd_diff.lo rrd_format.lo rrd_info.lo \
+	rrd_error.lo rrd_open.lo rrd_nan_inf.lo rrd_rpncalc.lo \
+	rrd_update.lo $(am__objects_5)
+am_librrdupd_la_OBJECTS = $(am__objects_6) rrd_not_thread_safe.lo
 librrdupd_la_OBJECTS = $(am_librrdupd_la_OBJECTS)
 @BUILD_RRDCGI_TRUE@am__EXEEXT_1 = rrdcgi$(EXEEXT)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -126,10 +145,16 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 SOURCES = $(librrd_la_SOURCES) $(librrd_th_la_SOURCES) \
 	$(librrdupd_la_SOURCES) $(rrdcgi_SOURCES) $(rrdtool_SOURCES) \
 	$(rrdupdate_SOURCES)
-DIST_SOURCES = $(librrd_la_SOURCES) $(librrd_th_la_SOURCES) \
-	$(librrdupd_la_SOURCES) $(rrdcgi_SOURCES) $(rrdtool_SOURCES) \
-	$(rrdupdate_SOURCES)
+DIST_SOURCES = $(librrd_la_SOURCES) $(am__librrd_th_la_SOURCES_DIST) \
+	$(am__librrdupd_la_SOURCES_DIST) $(rrdcgi_SOURCES) \
+	$(rrdtool_SOURCES) $(rrdupdate_SOURCES)
+pkgconfigDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(pkgconfig_DATA)
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
+am__noinst_HEADERS_DIST = unused.h rrd_getopt.h rrd_parsetime.h \
+	rrd_config_bottom.h rrd_i18n.h rrd_format.h rrd_tool.h \
+	rrd_xport.h rrd.h rrd_rpncalc.h rrd_hw.h rrd_hw_math.h \
+	rrd_hw_update.h fnv.h rrd_graph.h rrd_is_thread_safe.h
 HEADERS = $(include_HEADERS) $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -145,6 +170,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUILD_GETOPT_FALSE = @BUILD_GETOPT_FALSE@
+BUILD_GETOPT_TRUE = @BUILD_GETOPT_TRUE@
 BUILD_LIBINTL_FALSE = @BUILD_LIBINTL_FALSE@
 BUILD_LIBINTL_TRUE = @BUILD_LIBINTL_TRUE@
 BUILD_MULTITHREAD_FALSE = @BUILD_MULTITHREAD_FALSE@
@@ -274,6 +301,7 @@ RANLIB = @RANLIB@
 RRDDOCDIR = @RRDDOCDIR@
 RRDGRAPH_YLEGEND_ANGLE = @RRDGRAPH_YLEGEND_ANGLE@
 RRD_DEFAULT_FONT = @RRD_DEFAULT_FONT@
+RRD_GETOPT_LONG = @RRD_GETOPT_LONG@
 RUBY = @RUBY@
 RUBY_MAKE_OPTIONS = @RUBY_MAKE_OPTIONS@
 SED = @SED@
@@ -355,22 +383,9 @@ target_vendor = @target_vendor@
 @STATIC_PROGRAMS_TRUE@AM_LDFLAGS = -all-static
 INCLUDES = -DLOCALEDIR="\"$(datadir)/locale\""
 AM_CPPFLAGS = -DRRD_DEFAULT_FONT=\"$(RRD_DEFAULT_FONT)\" -DNUMVERS=@NUMVERS@
-UPD_C_FILES = \
-	rrd_getopt.c	\
-	rrd_getopt1.c	\
-	rrd_parsetime.c	\
-	rrd_hw.c	\
-	rrd_hw_math.c	\
-	rrd_hw_update.c	\
-	rrd_diff.c	\
-	rrd_format.c	\
-	rrd_info.c	\
-	rrd_error.c	\
-	rrd_open.c	\
-	rrd_nan_inf.c	\
-	rrd_rpncalc.c	\
-	rrd_update.c
-
+UPD_C_FILES = rrd_parsetime.c rrd_hw.c rrd_hw_math.c rrd_hw_update.c \
+	rrd_diff.c rrd_format.c rrd_info.c rrd_error.c rrd_open.c \
+	rrd_nan_inf.c rrd_rpncalc.c rrd_update.c $(am__append_2)
 RRD_C_FILES = \
 	hash_32.c	\
 	pngsize.c	\
@@ -389,17 +404,13 @@ RRD_C_FILES = \
 	rrd_resize.c \
 	rrd_tune.c
 
-noinst_HEADERS = \
-	unused.h \
-	rrd_getopt.h rrd_parsetime.h \
-	rrd_i18n.h \
-	rrd_format.h rrd_tool.h rrd_xport.h rrd.h rrd_rpncalc.h \
-	rrd_hw.h rrd_hw_math.h rrd_hw_update.h \
-	fnv.h rrd_graph.h \
-	rrd_is_thread_safe.h
-
+noinst_HEADERS = unused.h rrd_getopt.h rrd_parsetime.h \
+	rrd_config_bottom.h rrd_i18n.h rrd_format.h rrd_tool.h \
+	rrd_xport.h rrd.h rrd_rpncalc.h rrd_hw.h rrd_hw_math.h \
+	rrd_hw_update.h fnv.h rrd_graph.h rrd_is_thread_safe.h \
+	$(am__append_1)
 noinst_LTLIBRARIES = librrdupd.la
-lib_LTLIBRARIES = librrd.la $(am__append_1)
+lib_LTLIBRARIES = librrd.la $(am__append_3)
 librrdupd_la_SOURCES = $(UPD_C_FILES) rrd_not_thread_safe.c
 librrdupd_la_LIBADD = $(CORE_LIBS) @LIB_LIBINTL@
 librrd_la_SOURCES = $(RRD_C_FILES)
@@ -420,11 +431,13 @@ rrdupdate_LDADD = librrdupd.la
 rrdtool_SOURCES = rrd_tool.c
 rrdtool_DEPENDENCIES = librrd.la
 rrdtool_LDADD = librrd.la
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = librrd.pc
 
 # strftime is here because we do not usually need it. unices have propper
 # iso date support
-EXTRA_DIST = strftime.c strftime.h \
-	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym
+EXTRA_DIST = librrd.pc.in strftime.c strftime.h  rrd_getopt.c rrd_getopt1.c rrd_getopt.h \
+	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym.in.in
 
 all: all-am
 
@@ -459,6 +472,10 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+librrd.sym.in: $(top_builddir)/config.status $(srcdir)/librrd.sym.in.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+librrd.pc: $(top_builddir)/config.status $(srcdir)/librrd.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
@@ -632,20 +649,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-librrd_th_la-rrd_getopt.lo: rrd_getopt.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_getopt.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo" -c -o librrd_th_la-rrd_getopt.lo `test -f 'rrd_getopt.c' || echo '$(srcdir)/'`rrd_getopt.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo" "$(DEPDIR)/librrd_th_la-rrd_getopt.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_getopt.c' object='librrd_th_la-rrd_getopt.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_getopt.lo `test -f 'rrd_getopt.c' || echo '$(srcdir)/'`rrd_getopt.c
-
-librrd_th_la-rrd_getopt1.lo: rrd_getopt1.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_getopt1.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo" -c -o librrd_th_la-rrd_getopt1.lo `test -f 'rrd_getopt1.c' || echo '$(srcdir)/'`rrd_getopt1.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo" "$(DEPDIR)/librrd_th_la-rrd_getopt1.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_getopt1.c' object='librrd_th_la-rrd_getopt1.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_getopt1.lo `test -f 'rrd_getopt1.c' || echo '$(srcdir)/'`rrd_getopt1.c
-
 librrd_th_la-rrd_parsetime.lo: rrd_parsetime.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_parsetime.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo" -c -o librrd_th_la-rrd_parsetime.lo `test -f 'rrd_parsetime.c' || echo '$(srcdir)/'`rrd_parsetime.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo" "$(DEPDIR)/librrd_th_la-rrd_parsetime.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_parsetime.Tpo"; exit 1; fi
@@ -729,6 +732,20 @@ librrd_th_la-rrd_update.lo: rrd_update.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_update.c' object='librrd_th_la-rrd_update.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_update.lo `test -f 'rrd_update.c' || echo '$(srcdir)/'`rrd_update.c
+
+librrd_th_la-rrd_getopt.lo: rrd_getopt.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_getopt.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo" -c -o librrd_th_la-rrd_getopt.lo `test -f 'rrd_getopt.c' || echo '$(srcdir)/'`rrd_getopt.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo" "$(DEPDIR)/librrd_th_la-rrd_getopt.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_getopt.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_getopt.c' object='librrd_th_la-rrd_getopt.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_getopt.lo `test -f 'rrd_getopt.c' || echo '$(srcdir)/'`rrd_getopt.c
+
+librrd_th_la-rrd_getopt1.lo: rrd_getopt1.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-rrd_getopt1.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo" -c -o librrd_th_la-rrd_getopt1.lo `test -f 'rrd_getopt1.c' || echo '$(srcdir)/'`rrd_getopt1.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo" "$(DEPDIR)/librrd_th_la-rrd_getopt1.Plo"; else rm -f "$(DEPDIR)/librrd_th_la-rrd_getopt1.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rrd_getopt1.c' object='librrd_th_la-rrd_getopt1.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -c -o librrd_th_la-rrd_getopt1.lo `test -f 'rrd_getopt1.c' || echo '$(srcdir)/'`rrd_getopt1.c
 
 librrd_th_la-hash_32.lo: hash_32.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(librrd_th_la_CFLAGS) $(CFLAGS) -MT librrd_th_la-hash_32.lo -MD -MP -MF "$(DEPDIR)/librrd_th_la-hash_32.Tpo" -c -o librrd_th_la-hash_32.lo `test -f 'hash_32.c' || echo '$(srcdir)/'`hash_32.c; \
@@ -858,6 +875,23 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
+install-pkgconfigDATA: $(pkgconfig_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pkgconfigdir)" || $(mkdir_p) "$(DESTDIR)$(pkgconfigdir)"
+	@list='$(pkgconfig_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(pkgconfigDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgconfigdir)/$$f'"; \
+	  $(pkgconfigDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgconfigdir)/$$f"; \
+	done
+
+uninstall-pkgconfigDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkgconfig_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(pkgconfigdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkgconfigdir)/$$f"; \
+	done
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(includedir)" || $(mkdir_p) "$(DESTDIR)$(includedir)"
@@ -953,11 +987,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(DATA) $(HEADERS)
 install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -1005,7 +1039,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includeHEADERS
+install-data-am: install-includeHEADERS install-pkgconfigDATA
 
 install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
 
@@ -1034,7 +1068,8 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
-	uninstall-info-am uninstall-libLTLIBRARIES
+	uninstall-info-am uninstall-libLTLIBRARIES \
+	uninstall-pkgconfigDATA
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
 	clean-generic clean-libLTLIBRARIES clean-libtool \
@@ -1044,13 +1079,17 @@ uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
 	install-binPROGRAMS install-data install-data-am install-exec \
 	install-exec-am install-includeHEADERS install-info \
 	install-info-am install-libLTLIBRARIES install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-includeHEADERS \
-	uninstall-info-am uninstall-libLTLIBRARIES
+	install-pkgconfigDATA install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-includeHEADERS uninstall-info-am \
+	uninstall-libLTLIBRARIES uninstall-pkgconfigDATA
 
+
+librrd.sym: librrd.sym.in
+	grep -v LIBC_HAS_GETOPT_LONG librrd.sym.in >$@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

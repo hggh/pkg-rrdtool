@@ -1,4 +1,4 @@
-/* $Id: main.c 1411 2008-06-08 16:47:22Z oetiker $
+/* $Id: main.c 1700 2008-12-08 16:07:27Z oetiker $
  * Substantial penalty for early withdrawal.
  */
 
@@ -155,6 +155,7 @@ VALUE rb_rrd_infocall(
 
     RRD_CHECK_ERROR result = rb_hash_new();
 
+    p = data;
     while (data) {
         VALUE     key = rb_str_new2(data->key);
 
@@ -171,19 +172,16 @@ VALUE rb_rrd_infocall(
             break;
         case RD_I_STR:
             rb_hash_aset(result, key, rb_str_new2(data->value.u_str));
-            rrd_freemem(data->value.u_str);
             break;
         case RD_I_BLO:
             rb_hash_aset(result, key,
                          rb_str_new(data->value.u_blo.ptr,
                                     data->value.u_blo.size));
-            rrd_freemem(data->value.u_blo.ptr);
             break;
         }
-        p = data;
         data = data->next;
-        rrd_freemem(p);
     }
+    rrd_info_free(p);
     return result;
 }
 
@@ -191,21 +189,21 @@ VALUE rb_rrd_info(
     VALUE self,
     VALUE args)
 {
-    return rrd_infocall(rrd_info, args);
+    return rb_rrd_infocall(rrd_info, args);
 }
 
 VALUE rb_rrd_updatev(
     VALUE self,
     VALUE args)
 {
-    return rrd_infocall(rrd_update_v, args);
+    return rb_rrd_infocall(rrd_update_v, args);
 }
 
 VALUE rb_rrd_graphv(
     VALUE self,
     VALUE args)
 {
-    return rrd_infocall(rrd_graph_v, args);
+    return rb_rrd_infocall(rrd_graph_v, args);
 }
 
 
@@ -302,7 +300,7 @@ VALUE rb_rrd_last(
     string_arr_delete(a);
 
     RRD_CHECK_ERROR
-        return rb_funcall(rb_cTime, rb_intern("at"), 1, INT2FIX(last));
+        return rb_funcall(rb_cTime, rb_intern("at"), 1, UINT2NUM(last));
 }
 
 void Init_RRD(

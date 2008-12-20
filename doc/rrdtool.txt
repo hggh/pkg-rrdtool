@@ -35,7 +35,7 @@ DDEESSCCRRIIPPTTIIOONN
        order to make RRRRDDttooooll work it is important to note that RRRRDDttooooll can be
        remotely controlled through a set of pipes. This saves a considerable
        amount of startup time when you plan to make RRRRDDttooooll do a lot of things
-       quickly. Check the section on "Remote Control" further down. There is
+       quickly. Check the section on Remote_Control further down. There is
        also a number of language bindings for RRDtool which allow you to use
        it directly from perl, python, tcl, php, etc.
 
@@ -273,4 +273,4 @@ AAUUTTHHOORR
 
 
 
-1.3.1                             2008-03-15                        RRDTOOL(1)
+1.3.5                             2008-09-06                        RRDTOOL(1)

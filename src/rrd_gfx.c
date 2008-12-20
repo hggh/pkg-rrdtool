@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd_gfx.c  graphics wrapper for rrdtool
   **************************************************************************/
@@ -46,9 +46,12 @@ void gfx_dashed_line(
     double dash_off)
 {
     cairo_t  *cr = im->cr;
-    double    dashes[] = { dash_on, dash_off };
+    double    dashes[2];
     double    x = 0;
     double    y = 0;
+
+    dashes[0] = dash_on;
+    dashes[1] = dash_off;
 
     cairo_save(cr);
     cairo_new_path(cr);
@@ -116,14 +119,17 @@ static PangoLayout *gfx_prep_text(
     image_desc_t *im,
     double x,
     gfx_color_t color,
-    char *font,
-    double size,
+    PangoFontDescription *font_desc,
     double tabwidth,
     const char *text)
 {
-    PangoLayout *layout;
-    PangoFontDescription *font_desc;
+    PangoLayout  *layout = im->layout;
+    PangoFontDescription *pfd;
     cairo_t  *cr = im->cr;
+
+    static double last_tabwidth = -1;
+
+
 
     /* for performance reasons we might
        want todo that only once ... tabs will always
@@ -132,34 +138,52 @@ static PangoLayout *gfx_prep_text(
     long      tab_count = strlen(text);
     long      tab_shift = fmod(x, tabwidth);
     int       border = im->text_prop[TEXT_PROP_LEGEND].size * 2.0;
+    
+    gchar    *utf8_text;
 
-    PangoTabArray *tab_array;
-    PangoContext *pango_context;
-
-    tab_array = pango_tab_array_new(tab_count, (gboolean) (1));
-    for (i = 1; i <= tab_count; i++) {
-        pango_tab_array_set_tab(tab_array,
-                                i, PANGO_TAB_LEFT,
-                                tabwidth * i - tab_shift + border);
+    if (last_tabwidth < 0 || last_tabwidth != tabwidth){
+        PangoTabArray *tab_array;
+        // fprintf(stderr,"t");
+        last_tabwidth = tabwidth;
+        tab_array = pango_tab_array_new(tab_count, (gboolean) (1));
+        for (i = 1; i <= tab_count; i++) {
+             pango_tab_array_set_tab(tab_array,
+                                     i, PANGO_TAB_LEFT,
+                                     tabwidth * i - tab_shift + border);
+        }
+        pango_layout_set_tabs(layout, tab_array);
+        pango_tab_array_free(tab_array);
     }
-    cairo_new_path(cr);
-    cairo_set_source_rgba(cr, color.red, color.green, color.blue,
+   pfd = (PangoFontDescription*)(pango_layout_get_font_description(layout));
+
+   if (!pfd || !pango_font_description_equal (pfd,font_desc)){
+        pango_layout_set_font_description(layout, font_desc);
+  }
+//   fprintf(stderr,"%s\n",pango_font_description_to_string(pango_layout_get_font_description(layout))); 
+
+   cairo_new_path(cr);
+   cairo_set_source_rgba(cr, color.red, color.green, color.blue,
                           color.alpha);
-    layout = pango_cairo_create_layout(cr);
-    pango_context = pango_layout_get_context(layout);
-    pango_cairo_context_set_font_options(pango_context, im->font_options);
-    pango_cairo_context_set_resolution(pango_context, 100);
+/*     layout = pango_cairo_create_layout(cr); */
+
+//    pango_cairo_context_set_font_options(pango_context, im->font_options);
+//    pango_cairo_context_set_resolution(pango_context, 100);
 
 /*     pango_cairo_update_context(cr, pango_context); */
 
-    pango_layout_set_tabs(layout, tab_array);
-    font_desc = pango_font_description_from_string(font);
-    pango_font_description_set_size(font_desc, size * PANGO_SCALE);
-    pango_layout_set_font_description(layout, font_desc);
+
+    /* pango expects the string to be utf-8 encoded */
+    utf8_text = g_locale_to_utf8((const gchar *) text, -1, NULL, NULL, NULL);
+
+    /* In case of an error, i.e. utf8_text == NULL (locale settings messed
+     * up?), we fall back to a possible "invalid UTF-8 string" warning instead
+     * of provoking a failed assertion in libpango. */
     if (im->with_markup)
-        pango_layout_set_markup(layout, text, -1);
+        pango_layout_set_markup(layout, utf8_text ? utf8_text : text, -1);
     else
-        pango_layout_set_text(layout, text, -1);
+        pango_layout_set_text(layout, utf8_text ? utf8_text : text, -1);
+
+    g_free(utf8_text);
     return layout;
 }
 
@@ -167,18 +191,16 @@ static PangoLayout *gfx_prep_text(
 double gfx_get_text_width(
     image_desc_t *im,
     double start,
-    char *font,
-    double size,
+    PangoFontDescription *font_desc,
     double tabwidth,
     char *text)
 {
     PangoLayout *layout;
     PangoRectangle log_rect;
     gfx_color_t color = { 0, 0, 0, 0 };
-    layout = gfx_prep_text(im, start, color, font, size, tabwidth, text);
+    layout = gfx_prep_text(im, start, color, font_desc, tabwidth, text);
     pango_layout_get_pixel_extents(layout, NULL, &log_rect);
-    pango_tab_array_free(pango_layout_get_tabs(layout));
-    g_object_unref(layout);
+/*    g_object_unref(layout); */
     return log_rect.width;
 }
 
@@ -187,8 +209,7 @@ void gfx_text(
     double x,
     double y,
     gfx_color_t color,
-    char *font,
-    double size,
+    PangoFontDescription *font_desc,
     double tabwidth,
     double angle,
     enum gfx_h_align_en h_align,
@@ -197,7 +218,6 @@ void gfx_text(
 {
     PangoLayout *layout;
     PangoRectangle log_rect;
-    PangoRectangle ink_rect;
     cairo_t  *cr = im->cr;
     double    sx = 0;
     double    sy = 0;
@@ -206,8 +226,8 @@ void gfx_text(
     cairo_translate(cr, x, y);
 /*    gfx_line(cr,-2,0,2,0,1,color);
     gfx_line(cr,0,-2,0,2,1,color); */
-    layout = gfx_prep_text(im, x, color, font, size, tabwidth, text);
-    pango_layout_get_pixel_extents(layout, &ink_rect, &log_rect);
+    layout = gfx_prep_text(im, x, color, font_desc, tabwidth, text);
+    pango_layout_get_pixel_extents(layout, NULL, &log_rect);
     cairo_rotate(cr, -angle * G_PI / 180.0);
     sx = log_rect.x;
     switch (h_align) {
@@ -238,8 +258,7 @@ void gfx_text(
     pango_cairo_update_layout(cr, layout);
     cairo_move_to(cr, sx, sy);
     pango_cairo_show_layout(cr, layout);
-    pango_tab_array_free(pango_layout_get_tabs(layout));
-    g_object_unref(layout);
+/*    g_object_unref(layout); */
     cairo_restore(cr);
 
 }

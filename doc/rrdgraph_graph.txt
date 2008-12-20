@@ -242,7 +242,7 @@ DDEESSCCRRIIPPTTIIOONN
 
        _SS_TT_AA_CC_KK_::_v_n_a_m_e_##_c_o_l_o_r_[_::_l_e_g_e_n_d_]
 
-       _D_e_p_r_e_c_a_t_e_d_.  _U_s_e _t_h_e _SS_TT_AA_CC_KK _m_o_d_i_f_i_e_r_s _o_n _t_h_e _o_t_h_e_r _c_o_m_m_a_n_d_s_.
+       _D_e_p_r_e_c_a_t_e_d_.  _U_s_e _t_h_e _SS_TT_AA_CC_KK _m_o_d_i_f_i_e_r_s _o_n _t_h_e _o_t_h_e_r _c_o_m_m_a_n_d_s _i_n_s_t_e_a_d_!
 
        SSoommee nnootteess oonn ssttaacckkiinngg
 
@@ -426,4 +426,4 @@ AAUUTTHHOORR
 
 
 
-1.3.1                             2008-06-12                 RRDGRAPH_GRAPH(1)
+1.3.5                             2008-09-06                 RRDGRAPH_GRAPH(1)

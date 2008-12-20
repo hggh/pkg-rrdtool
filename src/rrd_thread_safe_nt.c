@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,7 +7,7 @@
  * rrd_thread_safe.c   Contains routines used when thread safety is required
  *                     for win32
  *****************************************************************************
- * $Id: rrd_thread_safe_nt.c 1447 2008-07-23 13:02:26Z oetiker $
+ * $Id: rrd_thread_safe_nt.c 1710 2008-12-15 22:06:22Z oetiker $
  *************************************************************************** */
 
 #include <windows.h>
@@ -22,7 +22,7 @@ static CRITICAL_SECTION CriticalSection;
 
 
 /* Once-only initialisation of the key */
-static DWORD context_key_once = 0;
+static volatile LONG context_key_once = 0;
 
 
 /* Free the thread-specific rrd_context - we might actually use
@@ -51,13 +51,27 @@ rrd_context_t *rrd_get_context(
 
     context_init_context();
 
-    ctx = TlsGetValue(context_key);
+    ctx = (rrd_context_t*)(TlsGetValue(context_key));
     if (!ctx) {
         ctx = rrd_new_context();
         TlsSetValue(context_key, ctx);
     }
     return ctx;
 }
+
+#ifdef WIN32
+	rrd_context_t *rrd_force_new_context(void)
+	{
+		rrd_context_t *ctx;
+
+		context_init_context();
+
+		ctx = rrd_new_context();
+		TlsSetValue(context_key, ctx);
+
+		return ctx;
+	}
+#endif
 
 #undef strerror
 const char *rrd_strerror(

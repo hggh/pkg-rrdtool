@@ -35,7 +35,7 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
        ables.
 
         BUILD_DIR=/tmp/rrdbuild
-        INSTALL_DIR=/usr/local/rrdtool-1.3.1
+        INSTALL_DIR=/usr/local/rrdtool-1.3.5
 
        If your _/_t_m_p is mounted with the option noexec (RHEL seems todo that)
        you have to choose a different directory!
@@ -48,9 +48,9 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
        Lets first assume you already have all the necessary libraries
        pre-installed.
 
-        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.1.tar.gz
-        gunzip -c rrdtool-1.3.1.tar.gz | tar xf -
-        cd rrdtool-1.3.1
+        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.5.tar.gz
+        gunzip -c rrdtool-1.3.5.tar.gz | tar xf -
+        cd rrdtool-1.3.5
         ./configure --prefix=$INSTALL_DIR && make && make install
 
        Ok, this was very optimistic. This try will probably have ended with
@@ -78,6 +78,17 @@ IINNSSTTAALLLLIINNGG DDEEPPEENNDDEENNCCIIEESS
        fix this:
 
         perl -i~ -p -e 's/(Requires.*?)\s*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc
+
+       Make sure rrdtool finds your new compiler
+
+        export PATH=/opt/SunStudioExpress/bin
+
+       Since there does not seem to ba a viable msgfmt tool on opensolaris
+       (short of installing it yourself). You have to call configure with the
+
+        --disable-libintl
+
+       option.
 
        DDeebbiiaann // UUbbuunnttuu
 
@@ -136,14 +147,6 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
        BBuuiilldd IInnssttrruuccttiioonnss
 
-       In order to build rrdtool need a compiler on your system. Unfortunately
-       compilers are not all alike. This has an effect on the CFLAGS you want
-       to set. The examples below are for the popular GCC compiler suite. If
-       you have an other compilers here are some ides:
-
-       Sun Forte
-            CFLAGS="-xO3 -kPIC"
-
        Some libraries want to know where other libraries are. For this to
        work, set the following environment variable
 
@@ -159,6 +162,12 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
        Solaris
             export LDFLAGS=-R${INSTALL_DIR}/lib
+
+           if you are using the Sun Studio/Forte compiler, you may also want
+           to set
+
+            CFLAGS="-xO3 -xcode=pic13"   (SPARC)
+            CFLAGS="-xO3 -Kpic"          (x86)
 
        Linux
             export LDFLAGS="-Wl,--rpath -Wl,${INSTALL_DIR}/lib"
@@ -237,8 +246,8 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz
-        gunzip -c libxml2-sources-2.6.32.tar.gz | tar xf -
-        cd libxml2-sources-2.6.32
+        gunzip -c libxml2-sources-2.6.31.tar.gz | tar xf -
+        cd libxml2-sources-2.6.31
         ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
@@ -272,7 +281,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz
-        gunzip -c cairo-1.4.10.tar.gz   | tar xf -
+        gunzip -c cairo-1.6.4.tar.gz   | tar xf -
         cd cairo-1.4.10
         ./configure --prefix=$INSTALL_DIR \
            --enable-xlib=no \
@@ -286,8 +295,8 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz
-        gunzip -c glib-2.12.13.tar.gz  | tar xf -
-        cd glib-2.12.13
+        gunzip -c glib-2.15.4.tar.gz  | tar xf -
+        cd glib-2.15.4
         ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
@@ -315,7 +324,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        python and tcl setups that would prevent rrdtool from building if they
        are included in their current state.
 
-        cd $BUILD_DIR/rrdtool-1.3.1
+        cd $BUILD_DIR/rrdtool-1.3.5
         ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
         $MAKE clean
         $MAKE
@@ -334,4 +343,4 @@ AAUUTTHHOORR
 
 
 
-1.3.1                             2008-07-23                       RRDBUILD(1)
+1.3.5                             2008-12-15                       RRDBUILD(1)

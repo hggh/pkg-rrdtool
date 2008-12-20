@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_create.c  creates new rrds
  *****************************************************************************/
@@ -14,6 +14,11 @@
 
 #include "rrd_is_thread_safe.h"
 
+#ifdef WIN32
+#include <fcntl.h>
+#include <process.h>
+#endif
+
 unsigned long FnvHash(
     const char *str);
 int       create_hw_contingent_rras(
@@ -26,6 +31,9 @@ void      parseGENERIC_DS(
     int ds_idx);
 long int  rra_random_row(
     rra_def_t *);
+
+static void rrd_free2(
+    rrd_t *rrd);        /* our onwn copy, immmune to mmap */
 
 int rrd_create(
     int argc,
@@ -123,17 +131,16 @@ int rrd_create_r(
     /* init rrd clean */
     rrd_init(&rrd);
     /* static header */
-    if ((rrd.stat_head = calloc(1, sizeof(stat_head_t))) == NULL) {
+    if ((rrd.stat_head = (stat_head_t*)calloc(1, sizeof(stat_head_t))) == NULL) {
         rrd_set_error("allocating rrd.stat_head");
-        free(rrd.stat_head);
+        rrd_free2(&rrd);
         return (-1);
     }
 
     /* live header */
-    if ((rrd.live_head = calloc(1, sizeof(live_head_t))) == NULL) {
+    if ((rrd.live_head = (live_head_t*)calloc(1, sizeof(live_head_t))) == NULL) {
         rrd_set_error("allocating rrd.live_head");
-        free(rrd.stat_head);
-        free(rrd.live_head);
+        rrd_free2(&rrd);
         return (-1);
     }
 
@@ -162,12 +169,11 @@ int rrd_create_r(
         if (strncmp(argv[i], "DS:", 3) == 0) {
             size_t    old_size = sizeof(ds_def_t) * (rrd.stat_head->ds_cnt);
 
-            if ((rrd.ds_def = rrd_realloc(rrd.ds_def,
+            if ((rrd.ds_def = (ds_def_t*)rrd_realloc(rrd.ds_def,
                                           old_size + sizeof(ds_def_t))) ==
                 NULL) {
                 rrd_set_error("allocating rrd.ds_def");
-                free(rrd.stat_head);
-                free(rrd.live_head);
+                rrd_free2(&rrd);
                 return (-1);
             }
             memset(&rrd.ds_def[rrd.stat_head->ds_cnt], 0, sizeof(ds_def_t));
@@ -199,8 +205,7 @@ int rrd_create_r(
                 rrd_set_error("invalid DS format");
             }
             if (rrd_test_error()) {
-                free(rrd.stat_head);
-                free(rrd.live_head);
+                rrd_free2(&rrd);
                 return -1;
             }
 
@@ -223,8 +228,7 @@ int rrd_create_r(
             }
 
             if (rrd_test_error()) {
-                free(rrd.stat_head);
-                free(rrd.live_head);
+                rrd_free2(&rrd);
                 return -1;
             }
             rrd.stat_head->ds_cnt++;
@@ -234,12 +238,11 @@ int rrd_create_r(
             size_t    old_size = sizeof(rra_def_t) * (rrd.stat_head->rra_cnt);
             int       row_cnt;
 
-            if ((rrd.rra_def = rrd_realloc(rrd.rra_def,
+            if ((rrd.rra_def = (rra_def_t*)rrd_realloc(rrd.rra_def,
                                            old_size + sizeof(rra_def_t))) ==
                 NULL) {
                 rrd_set_error("allocating rrd.rra_def");
-                free(rrd.stat_head);
-                free(rrd.live_head);
+                rrd_free2(&rrd);
                 return (-1);
             }
             memset(&rrd.rra_def[rrd.stat_head->rra_cnt], 0,
@@ -496,8 +499,7 @@ int rrd_create_r(
                 if (rrd_test_error()) {
                     /* all errors are unrecoverable */
                     free(argvcopy);
-                    free(rrd.stat_head);
-                    free(rrd.live_head);
+                    rrd_free2(&rrd);
                     return (-1);
                 }
                 token = strtok_r(NULL, ":", &tokptr);
@@ -524,16 +526,14 @@ int rrd_create_r(
                 if (create_hw_contingent_rras(&rrd, period, hashed_name) ==
                     -1) {
                     rrd_set_error("creating contingent RRA");
-                    free(rrd.stat_head);
-                    free(rrd.live_head);
+                    rrd_free2(&rrd);
                     return -1;
                 }
             }
             rrd.stat_head->rra_cnt++;
         } else {
             rrd_set_error("can't parse argument '%s'", argv[i]);
-            free(rrd.stat_head);
-            free(rrd.live_head);
+            rrd_free2(&rrd);
             return -1;
         }
     }
@@ -541,15 +541,13 @@ int rrd_create_r(
 
     if (rrd.stat_head->rra_cnt < 1) {
         rrd_set_error("you must define at least one Round Robin Archive");
-        free(rrd.stat_head);
-        free(rrd.live_head);
+        rrd_free2(&rrd);
         return (-1);
     }
 
     if (rrd.stat_head->ds_cnt < 1) {
         rrd_set_error("you must define at least one Data Source");
-        free(rrd.stat_head);
-        free(rrd.live_head);
+        rrd_free2(&rrd);
         return (-1);
     }
     return rrd_create_fn(filename, &rrd);
@@ -615,9 +613,10 @@ int create_hw_contingent_rras(
     (rrd->stat_head->rra_cnt)++;
     /* allocate the memory for the 4 contingent RRAs */
     old_size = sizeof(rra_def_t) * (rrd->stat_head->rra_cnt);
-    if ((rrd->rra_def = rrd_realloc(rrd->rra_def,
+    if ((rrd->rra_def = (rra_def_t*)rrd_realloc(rrd->rra_def,
                                     old_size + 4 * sizeof(rra_def_t))) ==
         NULL) {
+        rrd_free2(rrd);
         rrd_set_error("allocating rrd.rra_def");
         return (-1);
     }
@@ -682,15 +681,15 @@ int rrd_create_fn(
     int       unkn_cnt;
     rrd_file_t *rrd_file_dn;
     rrd_t     rrd_dn;
-    unsigned flags = O_WRONLY | O_CREAT | O_TRUNC;
+    unsigned  flags = O_WRONLY | O_CREAT | O_TRUNC;
+
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
     flags |= O_BINARY;
 #endif
 
     if ((rrd_file = open(file_name, flags, 0666)) < 0) {
         rrd_set_error("creating '%s': %s", file_name, rrd_strerror(errno));
-        free(rrd->stat_head);
-        free(rrd->live_head);
+        rrd_free2(rrd);
         return (-1);
     }
 
@@ -703,10 +702,9 @@ int rrd_create_fn(
 
     write(rrd_file, rrd->live_head, sizeof(live_head_t));
 
-    if ((rrd->pdp_prep = calloc(1, sizeof(pdp_prep_t))) == NULL) {
+    if ((rrd->pdp_prep = (pdp_prep_t*)calloc(1, sizeof(pdp_prep_t))) == NULL) {
         rrd_set_error("allocating pdp_prep");
-        free(rrd->stat_head);
-        free(rrd->live_head);
+        rrd_free2(rrd);
         close(rrd_file);
         return (-1);
     }
@@ -720,10 +718,9 @@ int rrd_create_fn(
     for (i = 0; i < rrd->stat_head->ds_cnt; i++)
         write(rrd_file, rrd->pdp_prep, sizeof(pdp_prep_t));
 
-    if ((rrd->cdp_prep = calloc(1, sizeof(cdp_prep_t))) == NULL) {
+    if ((rrd->cdp_prep = (cdp_prep_t*)calloc(1, sizeof(cdp_prep_t))) == NULL) {
         rrd_set_error("allocating cdp_prep");
-        free(rrd->stat_head);
-        free(rrd->live_head);
+        rrd_free2(rrd);
         close(rrd_file);
         return (-1);
     }
@@ -768,10 +765,9 @@ int rrd_create_fn(
     /* now, we must make sure that the rest of the rrd
        struct is properly initialized */
 
-    if ((rrd->rra_ptr = calloc(1, sizeof(rra_ptr_t))) == NULL) {
+    if ((rrd->rra_ptr = (rra_ptr_t*)calloc(1, sizeof(rra_ptr_t))) == NULL) {
         rrd_set_error("allocating rra_ptr");
-        free(rrd->stat_head);
-        free(rrd->live_head);
+        rrd_free2(rrd);
         close(rrd_file);
         return (-1);
     }
@@ -788,8 +784,7 @@ int rrd_create_fn(
     /* write the empty data area */
     if ((unknown = (rrd_value_t *) malloc(512 * sizeof(rrd_value_t))) == NULL) {
         rrd_set_error("allocating unknown");
-        free(rrd->stat_head);
-        free(rrd->live_head);
+        rrd_free2(rrd);
         close(rrd_file);
         return (-1);
     }
@@ -806,9 +801,12 @@ int rrd_create_fn(
         unkn_cnt -= 512;
     }
     free(unknown);
+
+#ifndef WIN32
     fdatasync(rrd_file);
-    free(rrd->stat_head);
-    free(rrd->live_head);
+#endif
+
+    rrd_free2(rrd);
     if (close(rrd_file) == -1) {
         rrd_set_error("creating rrd: %s", rrd_strerror(errno));
         return -1;
@@ -821,15 +819,37 @@ int rrd_create_fn(
     return (0);
 }
 
+
+static void rrd_free2(
+    rrd_t *rrd)
+{
+    free(rrd->live_head);
+    free(rrd->stat_head);
+    free(rrd->ds_def);
+    free(rrd->rra_def);
+    free(rrd->rra_ptr);
+    free(rrd->pdp_prep);
+    free(rrd->cdp_prep);
+    free(rrd->rrd_value);
+}
+
 static int rand_init = 0;
 
 long int rra_random_row(
     rra_def_t *rra)
 {
     if (!rand_init) {
+#ifdef WIN32
+        srand((unsigned int) time(NULL) + (unsigned int) getpid());
+#else
         srandom((unsigned int) time(NULL) + (unsigned int) getpid());
+#endif
         rand_init++;
     }
 
+#ifdef WIN32
+    return rand() % rra->row_cnt;
+#else
     return random() % rra->row_cnt;
+#endif
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_lastupdate  Get the last datum entered for each DS
  *****************************************************************************/
@@ -7,6 +7,10 @@
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
 #include <stdarg.h>
+
+#ifdef WIN32
+#include <stdlib.h>
+#endif
 
 int rrd_lastupdate(
     int argc,

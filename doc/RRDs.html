@@ -97,10 +97,10 @@ return their findings.</p>
 <p><strong>RRDs::last</strong> returns a single INTEGER representing the last update time.</p>
 <pre>
  $lastupdate = RRDs::last ...</pre>
-<p><strong>RRDs::graph</strong> returns an pointer to an ARRAY containing the x-size and y-size of the
-created image and results of the PRINT arguments.</p>
+<p><strong>RRDs::graph</strong> returns an ARRAY containing the x-size and y-size of the
+created image and a pointer to an array with the results of the PRINT arguments.</p>
 <pre>
- ($averages,$xsize,$ysize) = RRDs::graph ...
+ ($result_arr,$xsize,$ysize) = RRDs::graph ...
  print &quot;Imagesize: ${xsize}x${ysize}\n&quot;;
  print &quot;Averages: &quot;, (join &quot;, &quot;, @$averages);</pre>
 <p><strong>RRDs::info</strong> returns a pointer to a hash. The keys of the hash
@@ -130,10 +130,10 @@ integers, a pointer to an array and a pointer to a array of pointers.</p>
   print &quot;DS names:    &quot;, join (&quot;, &quot;, @$names).&quot;\n&quot;;
   print &quot;Data points: &quot;, $#$data + 1, &quot;\n&quot;;
   print &quot;Data:\n&quot;;
-  foreach my $line (@$data) {
+  for my $line (@$data) {
     print &quot;  &quot;, scalar localtime($start), &quot; ($start) &quot;;
     $start += $step;
-    foreach my $val (@$line) {
+    for my $val (@$line) {
       printf &quot;%12.1f &quot;, $val;
     }
     print &quot;\n&quot;;
