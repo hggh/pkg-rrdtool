@@ -1,8 +1,7 @@
-Index: pkg-rrdtool/bindings/perl-shared/Makefile.PL
-===================================================================
---- pkg-rrdtool.orig/bindings/perl-shared/Makefile.PL	2008-02-10 15:31:58.000000000 +0100
-+++ pkg-rrdtool/bindings/perl-shared/Makefile.PL	2008-02-10 15:34:16.000000000 +0100
-@@ -3,26 +3,7 @@
+diff a/bindings/perl-shared/Makefile.PL b/bindings/perl-shared/Makefile.PL
+--- a/bindings/perl-shared/Makefile.PL
++++ b/bindings/perl-shared/Makefile.PL
+@@ -3,27 +3,7 @@ use Config;
  # See lib/ExtUtils/MakeMaker.pm for details of how to influence
  # the contents of the Makefile that is written.
  
@@ -17,6 +16,7 @@ Index: pkg-rrdtool/bindings/perl-shared/Makefile.PL
 -	        /linux/   && do{ $R = "-Wl,--rpath -Wl,$rp"};
 -	        /hpux/    && do{ $R = "+b$rp"};
 -	        /solaris/ && do{ $R = "-R$rp"};
+-	        /bsd/     && do{ $R = "-R$rp"};
 -                /aix/     && do{ $R = "-Wl,-blibpath:$rp"};
 -	}
 -}
@@ -26,6 +26,6 @@ Index: pkg-rrdtool/bindings/perl-shared/Makefile.PL
 -# library after it is installed. This install_name gets transfered
 -# to the perl shared object.
 -
- my $librrd = "-L../../src/.libs/ $R -lrrd";
- 
- WriteMakefile(
+ my $librrd;
+ if ($^O eq 'darwin'){
+         $librrd = '-lrrd';
