@@ -14,6 +14,10 @@
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
 
+#ifdef WIN32
+#  include <windows.h>
+#  define MAXPATH MAX_PATH
+#endif
 
 #define ALTYGRID  	 0x01   /* use alternative y grid algorithm */
 #define ALTAUTOSCALE	 0x02   /* use alternative algorithm to find lower and upper bounds */
@@ -28,6 +32,7 @@
 #define FORCE_UNITS_SI 0x100    /* force use of SI units in Y axis (no effect in linear graph, SI instead of E in log graph) */
 
 #define FULL_SIZE_MODE     0x200    /* -width and -height indicate the total size of the image */
+#define NO_RRDTOOL_TAG 0x400  /* disable the rrdtool tag */
 
 enum tmt_en { TMT_SECOND = 0, TMT_MINUTE, TMT_HOUR, TMT_DAY,
     TMT_WEEK, TMT_MONTH, TMT_YEAR
@@ -61,11 +66,13 @@ enum vdef_op_en {
         , VDEF_LSLINT   /* least squares line y_intercept */
         , VDEF_LSLCORREL    /* least squares line correlation coefficient */
 };
-enum text_prop_en { TEXT_PROP_DEFAULT = 0,  /* default settings */
+enum text_prop_en { 
+    TEXT_PROP_DEFAULT = 0,  /* default settings */
     TEXT_PROP_TITLE,    /* properties for the title */
     TEXT_PROP_AXIS,     /* for the numbers next to the axis */
     TEXT_PROP_UNIT,     /* for the vertical unit description */
-    TEXT_PROP_LEGEND,   /* fot the legend below the graph */
+    TEXT_PROP_LEGEND,   /* for the legend below the graph */
+    TEXT_PROP_WATERMARK, /* for the little text to the side of the graph */
     TEXT_PROP_LAST
 };
 
@@ -87,6 +94,7 @@ typedef struct gfx_color_t {
 typedef struct text_prop_t {
     double    size;
     char      font[1024];
+    PangoFontDescription *font_desc;
 } text_prop_t;
 
 
@@ -195,6 +203,10 @@ typedef struct image_desc_t {
     double    grid_dash_on, grid_dash_off;
     xlab_t    xlab_user;    /* user defined labeling for xaxis */
     char      xlab_form[210];   /* format for the label on the xaxis */
+    double    second_axis_scale; /* relative to the first axis (0 to disable) */
+    double    second_axis_shift; /* how much is it shifted vs the first axis */
+    char      second_axis_legend[210]; /* label to put on the seond axis */
+    char      second_axis_format[210]; /* format for the numbers on the scond axis */    
 
     double    ygridstep;    /* user defined step for y grid */
     int       ylabfact; /* every how many y grid shall a label be written ? */
@@ -243,7 +255,7 @@ typedef struct image_desc_t {
     cairo_t  *cr;       /* drawin context */
     cairo_font_options_t *font_options; /* cairo font options */
     cairo_antialias_t graph_antialias;  /* antialiasing for the graph */
-
+    PangoLayout *layout; /* the pango layout we use for writing fonts */
     rrd_info_t *grinfo; /* root pointer to extra graph info */
     rrd_info_t *grinfo_current; /* pointing to current entry */
 } image_desc_t;
@@ -338,6 +350,7 @@ int       scan_for_col(
     char *const);
 void      rrd_graph_init(
     image_desc_t *);
+
 void      rrd_graph_options(
     int,
     char **,
@@ -417,8 +430,7 @@ void      gfx_text(
     double x,
     double y,
     gfx_color_t color,
-    char *font,
-    double size,
+    PangoFontDescription *font_desc,
     double tabwidth,
     double angle,
     enum gfx_h_align_en h_align,
@@ -429,8 +441,7 @@ void      gfx_text(
 double    gfx_get_text_width(
     image_desc_t *im,
     double start,
-    char *font,
-    double size,
+    PangoFontDescription *font_desc,
     double tabwidth,
     char *text);
 
@@ -454,5 +465,4 @@ void      gfx_area_fit(
 void      grinfo_push(
     image_desc_t *im,
     char *key,
-    rrd_info_type_t type,
-    rrd_infoval_t value);
+    rrd_info_type_t type,    rrd_infoval_t value);

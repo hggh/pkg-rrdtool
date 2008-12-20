@@ -31,7 +31,6 @@
 		<li><a href="#grid">Grid</a></li>
 		<li><a href="#miscellaneous">Miscellaneous</a></li>
 		<li><a href="#data_and_variables">Data and variables</a></li>
-		<li><a href="#graph_and_print_elements">Graph and print elements</a></li>
 		<li><a href="#graphv">graphv</a></li>
 	</ul>
 
@@ -131,6 +130,21 @@ one pixel will silently be ignored.</p>
 [<strong>-v</strong>|<strong>--vertical-label</strong> <em>string</em>]</p>
 <p>A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.</p>
+<dl>
+<dt><strong><a name="item_right_axis">Right Axis</a></strong></dt>
+
+<dd>
+<p>[<strong>--right-axis</strong> <em>scale</em><strong>:</strong><em>shift</em>]
+[<strong>--right-axis-label</strong> <em>label</em>]</p>
+<p>A second axis will be drawn to the right of the graph. It is tied to the
+left axis via the scale and shift parameters. You can also define a label
+for the right axis.</p>
+<p>[<strong>--right-axis-format</strong> <em>format-string</em>]</p>
+<p>By default the format of the axis lables gets determined automatically. If
+you want todo this your self, use this option with the same %lf arguments
+you know from the PRING and GPRINT commands.</p>
+</dd>
+</dl>
 <p>
 </p>
 <h2><a name="size">Size</a></h2>
@@ -271,7 +285,7 @@ Note that for linear graphs, SI notation is used by default.</p>
 <p>[<strong>-z</strong>|<strong>--lazy</strong>]</p>
 <p>Only generate the graph if the current graph is out of date or not existent.
 Note, that only the image size will be returned, if you run with lazy even
-when using graphv.</p>
+when using graphv and even when using PRINT.</p>
 <p>[<strong>-f</strong>|<strong>--imginfo</strong> <em>printfstr</em>]</p>
 <p>After the image has been created, the graph function uses printf
 together with this format string to create output similar to the PRINT
@@ -287,7 +301,7 @@ would look like this:</p>
 the actual graph, <code>SHADEA</code> for the left and top border, <code>SHADEB</code> for the
 right and bottom border, <code>GRID</code>, <code>MGRID</code> for the major grid, <code>FONT</code> for
 the color of the font, <code>AXIS</code> for the axis of the graph, <code>FRAME</code> for the
-line around the color spots and finally <code>ARROW</code> for the arrow head pointing
+line around the color spots, and finally <code>ARROW</code> for the arrow head pointing
 up and forward. Each color is composed out of three hexadecimal numbers
 specifying its rgb color component (00 is off, FF is maximum) of red, green
 and blue. Optionally you may add another hexadecimal number specifying the
@@ -297,10 +311,11 @@ multiple defaults.</p>
 <p>[<strong>--zoom</strong> <em>factor</em>]</p>
 <p>Zoom the graphics by the given amount. The factor must be &gt; 0</p>
 <p>[<strong>-n</strong>|<strong>--font</strong> <em>FONTTAG</em><strong>:</strong><em>size</em><strong>:</strong>[<em>font</em>]]</p>
-<p>This lets you customize which font to use for the various text
-elements on the RRD graphs. <code>DEFAULT</code> sets the default value for all
-elements, <code>TITLE</code> for the title, <code>AXIS</code> for the axis labels, <code>UNIT</code>
-for the vertical unit label, <code>LEGEND</code> for the graph legend.</p>
+<p>This lets you customize which font to use for the various text elements on
+the RRD graphs. <code>DEFAULT</code> sets the default value for all elements, <code>TITLE</code>
+for the title, <code>AXIS</code> for the axis labels, <code>UNIT</code> for the vertical unit
+label, <code>LEGEND</code> for the graph legend, <code>WATERMARK</code> for the watermark on the
+edge of the graph.</p>
 <p>Use Times for the title: <code>--font TITLE:13:Times</code></p>
 <p>If you do not give a font string you can modify just the sice of the default font:
 <code>--font TITLE:13:</code>.</p>
@@ -331,10 +346,8 @@ no text is rendered bitmapped.</p>
 <p>[<strong>-P</strong>|<strong>--pango-markup</strong>]</p>
 <p>All text in rrdtool is rendered using Pango. With the <strong>--pango-markup</strong> option, all
 text will be processed by pango markup. This allows to embed some simple html
-like markup tags using 
-</p>
+like markup tags using</p>
 <pre>
-
  &lt;span key=&quot;value&quot;&gt;text&lt;/span&gt;</pre>
 <p>Apart from the verbose syntax, there are also the following short tags available.</p>
 <pre>
@@ -346,9 +359,8 @@ like markup tags using
  sup   Superscript
  small Makes font relatively smaller, equivalent to &lt;span size=&quot;smaller&quot;&gt;
  tt    Monospace font
- u     Underline 
- 
-More details on L&lt;<a href="http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html&gt">http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html&gt</a>;.</pre>
+ u     Underline</pre>
+<p>More details on <a href="http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html">http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html</a>.</p>
 <p>[<strong>-G</strong>|<strong>--graph-render-mode</strong> {<strong>normal</strong>,<strong>mono</strong>}]</p>
 <p>There are 2 render modes:</p>
 <p><strong>normal</strong>: Graphs are fully Antialiased (default)</p>
@@ -390,9 +402,7 @@ of the graph.</p>
 <p>You need at least one <strong>DEF</strong> statement to generate anything. The
 other statements are useful but optional.
 See <a href="././rrdgraph_data.html">the rrdgraph_data manpage</a> and <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> for the exact format.</p>
-<p>
-</p>
-<h2><a name="graph_and_print_elements">Graph and print elements</a></h2>
+<p>NOTE: <strong>Graph and print elements</strong></p>
 <p>You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exact format.</p>
@@ -436,9 +446,7 @@ know what is where on the graph.</p>
 <hr />
 <h1><a name="author">AUTHOR</a></h1>
 <p>Program by Tobias Oetiker &lt;<a href="mailto:tobi@oetiker.ch">tobi@oetiker.ch</a>&gt;</p>
-<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;
-
-</p>
+<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;</p>
 
 </body>
 

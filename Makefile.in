@@ -83,6 +83,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUILD_GETOPT_FALSE = @BUILD_GETOPT_FALSE@
+BUILD_GETOPT_TRUE = @BUILD_GETOPT_TRUE@
 BUILD_LIBINTL_FALSE = @BUILD_LIBINTL_FALSE@
 BUILD_LIBINTL_TRUE = @BUILD_LIBINTL_TRUE@
 BUILD_MULTITHREAD_FALSE = @BUILD_MULTITHREAD_FALSE@
@@ -212,6 +214,7 @@ RANLIB = @RANLIB@
 RRDDOCDIR = @RRDDOCDIR@
 RRDGRAPH_YLEGEND_ANGLE = @RRDGRAPH_YLEGEND_ANGLE@
 RRD_DEFAULT_FONT = @RRD_DEFAULT_FONT@
+RRD_GETOPT_LONG = @RRD_GETOPT_LONG@
 RUBY = @RUBY@
 RUBY_MAKE_OPTIONS = @RUBY_MAKE_OPTIONS@
 SED = @SED@
@@ -299,7 +302,7 @@ SUBDIRS = $(PO) src examples doc bindings
 EXTRA_DIST = COPYRIGHT CHANGES WIN32-BUILD-TIPS.txt TODO CONTRIBUTORS THREADS \
              intltool-extract.in  intltool-merge.in    intltool-update.in \
 	     rrdtool.spec favicon.ico win32/config.h win32/rrd.dsp \
-	     win32/rrd.vcproj win32/rrdtool.dsp win32/rrdtool.dsw \
+	     win32/rrdlib.vcproj win32/rrd.vcproj win32/rrdtool.dsp win32/rrdtool.dsw \
 	     win32/rrdtool.vcproj win32/Makefile \
 	     win32/rrd_config.h.msvc netware/Makefile
 
@@ -510,7 +513,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/bindings/tcl $(distdir)/examples $(distdir)/netware $(distdir)/po $(distdir)/win32
+	$(mkdir_p) $(distdir)/bindings/tcl $(distdir)/examples $(distdir)/netware $(distdir)/po $(distdir)/src $(distdir)/win32
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

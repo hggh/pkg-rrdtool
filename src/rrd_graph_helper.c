@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd_graph_helper.c  commandline parser functions 
  *                     this code initially written by Alex van den Bogaerdt
@@ -516,10 +516,10 @@ int rrd_parse_textalign(
 }
 
 
-/* Parsing of PART, VRULE, HRULE, LINE, AREA, STACK and TICK
+/* Parsing of VRULE, HRULE, LINE, AREA, STACK and TICK
 ** is done in one function.
 **
-** Stacking PART, VRULE, HRULE or TICK is not allowed.
+** Stacking VRULE, HRULE or TICK is not allowed.
 **
 ** If a number (which is valid to enter) is more than a
 ** certain amount of characters, it is caught as an error.
@@ -541,18 +541,12 @@ int rrd_parse_PVHLAST(
         float     one_space = gfx_get_text_width(im, 0,
                                                  im->
                                                  text_prop[TEXT_PROP_LEGEND].
-                                                 font,
-                                                 im->
-                                                 text_prop[TEXT_PROP_LEGEND].
-                                                 size,
+                                                 font_desc,
                                                  im->tabwidth, "    ") / 4.0;
         float     target_space = gfx_get_text_width(im, 0,
                                                     im->
                                                     text_prop
-                                                    [TEXT_PROP_LEGEND].font,
-                                                    im->
-                                                    text_prop
-                                                    [TEXT_PROP_LEGEND].size,
+                                                    [TEXT_PROP_LEGEND].font_desc,
                                                     im->tabwidth, "oo");
 
         spacecnt = target_space / one_space;
@@ -739,7 +733,7 @@ int rrd_parse_PVHLAST(
     }
     (*eaten)++;         /* after colon */
 
-    /* PART, HRULE, VRULE and TICK cannot be stacked. */
+    /* HRULE, VRULE and TICK cannot be stacked. */
     if ((gdp->gf != GF_HRULE)
         && (gdp->gf != GF_VRULE)
         && (gdp->gf != GF_TICK)) {
@@ -866,6 +860,10 @@ int rrd_parse_make_vname(
     sscanf(&line[*eaten], DEF_NAM_FMT "=%n", tmpstr, &i);
     if (!i) {
         rrd_set_error("Cannot parse vname from '%s'", line);
+        return 1;
+    }
+    if (line[*eaten+i] == '\0') {
+        rrd_set_error("String ends after the = sign on '%s'", line);
         return 1;
     }
     dprintf("- found candidate '%s'\n", tmpstr);

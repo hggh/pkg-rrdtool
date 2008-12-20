@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_fetch.c  read date from an rrd to use for further processing
  *****************************************************************************
- * $Id: rrd_fetch.c 1447 2008-07-23 13:02:26Z oetiker $
+ * $Id: rrd_fetch.c 1710 2008-12-15 22:06:22Z oetiker $
  * $Log$
  * Revision 1.8  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -51,6 +51,10 @@
  * checkin
  *
  *****************************************************************************/
+
+#ifdef WIN32
+#include <stdlib.h>
+#endif
 
 #include "rrd_tool.h"
 
@@ -227,7 +231,7 @@ int rrd_fetch_fn(
     }
 
     for (i = 0; (unsigned long) i < rrd.stat_head->ds_cnt; i++) {
-        if ((((*ds_namv)[i]) = malloc(sizeof(char) * DS_NAM_SIZE)) == NULL) {
+        if ((((*ds_namv)[i]) = (char*)malloc(sizeof(char) * DS_NAM_SIZE)) == NULL) {
             rrd_set_error("malloc fetch ds_namv entry");
             goto err_free_ds_namv;
         }
@@ -327,7 +331,7 @@ int rrd_fetch_fn(
 ** database is the one with time stamp (t+s) which means t to t+s.
 */
     *ds_cnt = rrd.stat_head->ds_cnt;
-    if (((*data) = malloc(*ds_cnt * rows * sizeof(rrd_value_t))) == NULL) {
+    if (((*data) = (rrd_value_t *)malloc(*ds_cnt * rows * sizeof(rrd_value_t))) == NULL) {
         rrd_set_error("malloc fetch data area");
         goto err_free_all_ds_namv;
     }
@@ -355,21 +359,27 @@ int rrd_fetch_fn(
 
     /* fill the gap at the start if needs be */
 
-    if (start_offset <= 0)
-        rra_pointer = rrd.rra_ptr[chosen_rra].cur_row + 1;
-    else
-        rra_pointer = rrd.rra_ptr[chosen_rra].cur_row + 1 + start_offset;
+    if (*start <= rra_end_time && *end >= rra_start_time - *step){
+        
+        if (start_offset <= 0)
+            rra_pointer = rrd.rra_ptr[chosen_rra].cur_row + 1;
+        else
+            rra_pointer = rrd.rra_ptr[chosen_rra].cur_row + 1 + start_offset;
 
-    if (rrd_seek(rrd_file, (rra_base + (rra_pointer * (*ds_cnt)
-                                        * sizeof(rrd_value_t))),
+        rra_pointer = rra_pointer % (signed) rrd.rra_def[chosen_rra].row_cnt;
+         
+        if (rrd_seek(rrd_file, (rra_base + (rra_pointer * (*ds_cnt)
+                                            * sizeof(rrd_value_t))),
                  SEEK_SET) != 0) {
-        rrd_set_error("seek error in RRA");
-        goto err_free_data;
-    }
+            rrd_set_error("seek error in RRA");
+            goto err_free_data;
+        }        
 #ifdef DEBUG
-    fprintf(stderr, "First Seek: rra_base %lu rra_pointer %lu\n",
+        fprintf(stderr, "First Seek: rra_base %lu rra_pointer %lu\n",
             rra_base, rra_pointer);
 #endif
+    }
+    
     /* step trough the array */
 
     for (i = start_offset;

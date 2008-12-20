@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_format.c  RRD Database Format helper functions
  *****************************************************************************
- * $Id: rrd_format.c 1447 2008-07-23 13:02:26Z oetiker $
+ * $Id: rrd_format.c 1710 2008-12-15 22:06:22Z oetiker $
  * $Log$
  * Revision 1.5  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -62,7 +62,7 @@ enum dst_en dst_conv(
         converter(DERIVE, DST_DERIVE)
         converter(COMPUTE, DST_CDEF)
         rrd_set_error("unknown data acquisition function '%s'", string);
-    return (-1);
+    return (enum dst_en)(-1);
 }
 
 
@@ -81,7 +81,7 @@ enum cf_en cf_conv(
         converter(DEVSEASONAL, CF_DEVSEASONAL)
         converter(FAILURES, CF_FAILURES)
         rrd_set_error("unknown consolidation function '%s'", string);
-    return (-1);
+    return (enum cf_en)(-1);
 }
 
 #undef converter

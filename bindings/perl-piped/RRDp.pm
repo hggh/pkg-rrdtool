@@ -102,6 +102,7 @@ For more information on how to use RRDtool, check the manpages.
 Tobias Oetiker <tobi@oetiker.ch>
 
 =cut
+
 #'  this is to make cperl.el happy
 
 use strict;
@@ -120,7 +121,7 @@ sub cmd (@);
 sub end ();
 sub read ();
 
-$VERSION=1.3001;
+$VERSION=1.3005;
 
 sub start ($){
   croak "rrdtool is already running"

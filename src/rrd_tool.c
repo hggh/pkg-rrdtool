@@ -1,11 +1,13 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.c  Startup wrapper
  *****************************************************************************/
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__) && !defined(HAVE_CONFIG_H)
 #include "../win32/config.h"
+#include <stdlib.h>
+#include <sys/stat.h>
 #else
 #ifdef HAVE_CONFIG_H
 #include "../rrd_config.h"
@@ -129,10 +131,12 @@ void PrintUsage(
            "\t\t[-Y|--alt-y-grid]\n"
            "\t\t[-y|--y-grid y-axis grid and label]\n"
            "\t\t[-v|--vertical-label string] [-w|--width pixels]\n"
+           "\t\t[--right-axis scale:shift] [--right-axis-label label]\n"
+           "\t\t[--right-axis-format format]\n"          
            "\t\t[-h|--height pixels] [-o|--logarithmic]\n"
            "\t\t[-u|--upper-limit value] [-z|--lazy]\n"
            "\t\t[-l|--lower-limit value] [-r|--rigid]\n"
-           "\t\t[-g|--no-legend]\n"
+           "\t\t[-g|--no-legend] [--full-size-mode]\n"
            "\t\t[-F|--force-rules-legend]\n" "\t\t[-j|--only-graph]\n");
     const char *help_graph2 =
         N_("\t\t[-n|--font FONTTAG:size:font]\n"
@@ -364,11 +368,16 @@ static char *fgetslong(
             return *aLinePtr = linebuf;
         bufsize += MAX_LENGTH;
         if (!(linebuf = realloc(linebuf, bufsize))) {
+            free(linebuf);
             perror("fgetslong: realloc");
             exit(1);
         }
     }
-    return *aLinePtr = linebuf[0] ? linebuf : 0;
+    if (linebuf[0]){
+        return  *aLinePtr = linebuf;
+    }
+    free(linebuf);
+    return *aLinePtr = 0;
 }
 
 int main(
@@ -419,11 +428,8 @@ int main(
                    == 0) {
 
 #ifdef HAVE_CHROOT
-                chroot(argv[2]);
-                if (errno != 0) {
-                    fprintf(stderr,
-                            "ERROR: can't change root to '%s' errno=%d\n",
-                            argv[2], errno);
+                if (chroot(argv[2]) != 0){
+                    fprintf(stderr, "ERROR: chroot %s: %s\n", argv[2],rrd_strerror(errno));
                     exit(errno);
                 }
                 ChangeRoot = 1;
@@ -439,15 +445,15 @@ int main(
             }
         }
         if (strcmp(firstdir, "")) {
-            chdir(firstdir);
-            if (errno != 0) {
-                fprintf(stderr, "ERROR: %s\n", rrd_strerror(errno));
+            if (chdir(firstdir) != 0){
+                fprintf(stderr, "ERROR: chdir %s %s\n", firstdir,rrd_strerror(errno));
                 exit(errno);
             }
         }
 
         while (fgetslong(&aLine, stdin)) {
             if ((argc = CountArgs(aLine)) == 0) {
+                free(aLine);
                 printf("ERROR: not enough arguments\n");
             }
             if ((myargv = (char **) malloc((argc + 1) *
@@ -456,6 +462,8 @@ int main(
                 exit(1);
             }
             if ((argc = CreateArgs(argv[0], aLine, argc, myargv)) < 0) {
+                free(aLine);
+                free(myargv);
                 printf("ERROR: creating arguments\n");
             } else {
                 int       ret = HandleInputLine(argc, myargv, stdout);
@@ -512,7 +520,6 @@ int HandleInputLine(
 
     /* Reset errno to 0 before we start.
      */
-    errno = 0;
     if (RemoteMode) {
         if (argc > 1 && strcmp("quit", argv[1]) == 0) {
             if (argc > 2) {
@@ -535,9 +542,8 @@ int HandleInputLine(
                 return (1);
             }
 #endif
-            chdir(argv[2]);
-            if (errno != 0) {
-                printf("ERROR: %s\n", rrd_strerror(errno));
+            if (chdir(argv[2]) != 0){
+                printf("ERROR: chdir %s %s\n", argv[2], rrd_strerror(errno));
                 return (1);
             }
             return (0);
@@ -549,7 +555,7 @@ int HandleInputLine(
             }
             cwd = getcwd(NULL, MAXPATH);
             if (cwd == NULL) {
-                printf("ERROR: %s\n", rrd_strerror(errno));
+                printf("ERROR: getcwd %s\n", rrd_strerror(errno));
                 return (1);
             }
             printf("%s\n", cwd);
@@ -569,9 +575,8 @@ int HandleInputLine(
                 return (1);
             }
 #endif
-            mkdir(argv[2], 0777);
-            if (errno != 0) {
-                printf("ERROR: %s\n", rrd_strerror(errno));
+            if(mkdir(argv[2], 0777)!=0){
+                printf("ERROR: mkdir %s: %s\n", argv[2],rrd_strerror(errno));
                 return (1);
             }
             return (0);
@@ -599,7 +604,7 @@ int HandleInputLine(
                 }
                 closedir(curdir);
             } else {
-                printf("ERROR: %s\n", rrd_strerror(errno));
+                printf("ERROR: opendir .: %s\n", rrd_strerror(errno));
                 return (errno);
             }
             return (0);

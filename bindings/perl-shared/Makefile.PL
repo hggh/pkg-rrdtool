@@ -14,6 +14,7 @@ if ($ARGV[-1] =~ /RPATH=(\S+)/){
 	        /linux/   && do{ $R = "-Wl,--rpath -Wl,$rp"};
 	        /hpux/    && do{ $R = "+b$rp"};
 	        /solaris/ && do{ $R = "-R$rp"};
+	        /bsd/     && do{ $R = "-R$rp"};
                 /aix/     && do{ $R = "-Wl,-blibpath:$rp"};
 	}
 }
@@ -23,7 +24,13 @@ if ($ARGV[-1] =~ /RPATH=(\S+)/){
 # library after it is installed. This install_name gets transfered
 # to the perl shared object.
 
-my $librrd = "-L../../src/.libs/ $R -lrrd";
+my $librrd;
+if ($^O eq 'darwin'){
+        $librrd = '-lrrd';
+}
+else {
+        $librrd = "-L../../src/.libs/ $R -lrrd";
+}
 
 WriteMakefile(
     'NAME'         => 'RRDs',
@@ -34,6 +41,7 @@ WriteMakefile(
     #'dynamic_lib'  => {'OTHERLDFLAGS' => "$librrd -lm"},
     'depend'       => {'RRDs.c' => "../../src/librrd.la"},
     'LDFROM'       => '$(OBJECT) '.$librrd, 
-    'realclean'    => {FILES => 't/demo?.rrd t/demo?.png' }
+    'realclean'    => {FILES => 't/demo?.rrd t/demo?.png' },
+    ($^O eq 'darwin') ? ( 'LDDLFLAGS'    => "-L../../src/.libs/ $Config{lddlflags}" ) : ()
 );
 

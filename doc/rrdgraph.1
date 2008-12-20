@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2008-06-29" "1.3.1" "rrdtool"
+.TH RRDGRAPH 1 "2008-12-09" "1.3.5" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
@@ -213,6 +213,21 @@ one pixel will silently be ignored.
 .PP
 A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.
+.RE
+.IP "Right Axis"
+.IX Item "Right Axis"
+[\fB\-\-right\-axis\fR \fIscale\fR\fB:\fR\fIshift\fR]
+[\fB\-\-right\-axis\-label\fR \fIlabel\fR]
+.PP
+A second axis will be drawn to the right of the graph. It is tied to the
+left axis via the scale and shift parameters. You can also define a label
+for the right axis.
+.PP
+[\fB\-\-right\-axis\-format\fR \fIformat-string\fR]
+.PP
+By default the format of the axis lables gets determined automatically. If
+you want todo this your self, use this option with the same \f(CW%lf\fR arguments
+you know from the \s-1PRING\s0 and \s-1GPRINT\s0 commands.
 .Sh "Size"
 .IX Subsection "Size"
 [\fB\-w\fR|\fB\-\-width\fR \fIpixels\fR]
@@ -380,7 +395,7 @@ Note that for linear graphs, \s-1SI\s0 notation is used by default.
 .PP
 Only generate the graph if the current graph is out of date or not existent.
 Note, that only the image size will be returned, if you run with lazy even
-when using graphv.
+when using graphv and even when using \s-1PRINT\s0.
 .PP
 [\fB\-f\fR|\fB\-\-imginfo\fR \fIprintfstr\fR]
 .PP
@@ -402,7 +417,7 @@ Override the default colors for the standard elements of the graph. The
 the actual graph, \f(CW\*(C`SHADEA\*(C'\fR for the left and top border, \f(CW\*(C`SHADEB\*(C'\fR for the
 right and bottom border, \f(CW\*(C`GRID\*(C'\fR, \f(CW\*(C`MGRID\*(C'\fR for the major grid, \f(CW\*(C`FONT\*(C'\fR for
 the color of the font, \f(CW\*(C`AXIS\*(C'\fR for the axis of the graph, \f(CW\*(C`FRAME\*(C'\fR for the
-line around the color spots and finally \f(CW\*(C`ARROW\*(C'\fR for the arrow head pointing
+line around the color spots, and finally \f(CW\*(C`ARROW\*(C'\fR for the arrow head pointing
 up and forward. Each color is composed out of three hexadecimal numbers
 specifying its rgb color component (00 is off, \s-1FF\s0 is maximum) of red, green
 and blue. Optionally you may add another hexadecimal number specifying the
@@ -417,10 +432,11 @@ Zoom the graphics by the given amount. The factor must be > 0
 .PP
 [\fB\-n\fR|\fB\-\-font\fR \fI\s-1FONTTAG\s0\fR\fB:\fR\fIsize\fR\fB:\fR[\fIfont\fR]]
 .PP
-This lets you customize which font to use for the various text
-elements on the \s-1RRD\s0 graphs. \f(CW\*(C`DEFAULT\*(C'\fR sets the default value for all
-elements, \f(CW\*(C`TITLE\*(C'\fR for the title, \f(CW\*(C`AXIS\*(C'\fR for the axis labels, \f(CW\*(C`UNIT\*(C'\fR
-for the vertical unit label, \f(CW\*(C`LEGEND\*(C'\fR for the graph legend.
+This lets you customize which font to use for the various text elements on
+the \s-1RRD\s0 graphs. \f(CW\*(C`DEFAULT\*(C'\fR sets the default value for all elements, \f(CW\*(C`TITLE\*(C'\fR
+for the title, \f(CW\*(C`AXIS\*(C'\fR for the axis labels, \f(CW\*(C`UNIT\*(C'\fR for the vertical unit
+label, \f(CW\*(C`LEGEND\*(C'\fR for the graph legend, \f(CW\*(C`WATERMARK\*(C'\fR for the watermark on the
+edge of the graph.
 .PP
 Use Times for the title: \f(CW\*(C`\-\-font TITLE:13:Times\*(C'\fR
 .PP
@@ -552,8 +568,9 @@ of the graph.
 You need at least one \fB\s-1DEF\s0\fR statement to generate anything. The
 other statements are useful but optional.
 See rrdgraph_data and rrdgraph_rpn for the exact format.
-.Sh "Graph and print elements"
-.IX Subsection "Graph and print elements"
+.PP
+\&\s-1NOTE:\s0 \fBGraph and print elements\fR
+.PP
 You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.
 See rrdgraph_graph for the exact format.

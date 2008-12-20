@@ -14,8 +14,6 @@ RRD_DEFAULT_FONT=@RRD_DEFAULT_FONT@
 AM_CPPFLAGS = -DRRD_DEFAULT_FONT=\"$(RRD_DEFAULT_FONT)\" -DNUMVERS=@NUMVERS@
 
 UPD_C_FILES =		\
-	rrd_getopt.c	\
-	rrd_getopt1.c	\
 	rrd_parsetime.c	\
 	rrd_hw.c	\
 	rrd_hw_math.c	\
@@ -50,11 +48,16 @@ RRD_C_FILES =		\
 noinst_HEADERS = \
 	unused.h \
 	rrd_getopt.h rrd_parsetime.h \
-	rrd_i18n.h \
+	rrd_config_bottom.h rrd_i18n.h \
 	rrd_format.h rrd_tool.h rrd_xport.h rrd.h rrd_rpncalc.h \
 	rrd_hw.h rrd_hw_math.h rrd_hw_update.h \
 	fnv.h rrd_graph.h \
 	rrd_is_thread_safe.h
+
+if BUILD_GETOPT
+noinst_HEADERS += rrd_getopt.h
+UPD_C_FILES += rrd_getopt.c rrd_getopt1.c
+endif
 
 noinst_LTLIBRARIES        = librrdupd.la
 
@@ -97,8 +100,13 @@ rrdtool_SOURCES = rrd_tool.c
 rrdtool_DEPENDENCIES = librrd.la
 rrdtool_LDADD	= librrd.la
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = librrd.pc
+
 # strftime is here because we do not usually need it. unices have propper
 # iso date support
-EXTRA_DIST= strftime.c strftime.h \
-	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym
+EXTRA_DIST= librrd.pc.in strftime.c strftime.h  rrd_getopt.c rrd_getopt1.c rrd_getopt.h \
+	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym.in.in
 
+librrd.sym: librrd.sym.in
+	grep -v LIBC_HAS_GETOPT_LONG librrd.sym.in >$@

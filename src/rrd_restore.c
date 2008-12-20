@@ -1,11 +1,11 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2008 Florian octo Forster
  * Distributed under the GPL
  *****************************************************************************
  * rrd_restore.c   Contains logic to parse XML input and create an RRD file
  *****************************************************************************
- * $Id: rrd_restore.c 1447 2008-07-23 13:02:26Z oetiker $
+ * $Id: rrd_restore.c 1710 2008-12-15 22:06:22Z oetiker $
  *************************************************************************** */
 
 /*
@@ -31,13 +31,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
 #include <fcntl.h>
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
+
+#if defined(WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
+#include <math.h>
 # include <io.h>
 # define open _open
 # define close _close
+#else
+# include <unistd.h>
 #endif
+
 #include <libxml/parser.h>
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
@@ -130,6 +134,13 @@ static int get_double_from_node(
     if (str_ptr == NULL) {
         rrd_set_error("get_double_from_node: xmlNodeListGetString failed.");
         return (-1);
+    }
+
+    if (strstr(str_ptr, "NaN") != NULL)
+    {
+        *value = DNAN;
+        xmlFree(str_ptr);
+        return 0;
     }
 
     end_ptr = NULL;
@@ -318,9 +329,9 @@ static int parse_tag_rra_cdp_prep_ds(
 
     status = 0;
     for (child = node->xmlChildrenNode; child != NULL; child = child->next) {
-        if (atoi(rrd->stat_head->version) == 1){
-                cdp_prep->scratch[CDP_primary_val].u_val = 0.0;
-                cdp_prep->scratch[CDP_secondary_val].u_val = 0.0;
+        if (atoi(rrd->stat_head->version) == 1) {
+            cdp_prep->scratch[CDP_primary_val].u_val = 0.0;
+            cdp_prep->scratch[CDP_secondary_val].u_val = 0.0;
         }
         if ((xmlStrcmp(child->name, (const xmlChar *) "comment") == 0)
             || (xmlStrcmp(child->name, (const xmlChar *) "text") == 0))
@@ -676,7 +687,8 @@ static int parse_tag_rra(
         else if (atoi(rrd->stat_head->version) == 1
                  && xmlStrcmp(child->name, (const xmlChar *) "xff") == 0)
             status = get_double_from_node(doc, child,
-                                       (double *) &cur_rra_def->par[RRA_cdp_xff_val].u_val);
+                                          (double *) &cur_rra_def->
+                                          par[RRA_cdp_xff_val].u_val);
         else if (atoi(rrd->stat_head->version) >= 2
                  && xmlStrcmp(child->name, (const xmlChar *) "params") == 0)
             status = parse_tag_rra_params(doc, child, cur_rra_def);
@@ -693,8 +705,12 @@ static int parse_tag_rra(
             break;
     }
 
-    /* Set the RRA pointer to the last value in the archive */
-    cur_rra_ptr->cur_row = cur_rra_def->row_cnt - 1;
+    /* Set the RRA pointer to a random location */
+#ifdef WIN32
+    cur_rra_ptr->cur_row = rand() % cur_rra_def->row_cnt;
+#else
+    cur_rra_ptr->cur_row = random() % cur_rra_def->row_cnt;
+#endif
 
     return (status);
 }                       /* int parse_tag_rra */
@@ -966,7 +982,7 @@ static int write_file(
 {
     FILE     *fh;
     unsigned int i;
-    unsigned int value_count;
+    unsigned int rra_offset;
 
     if (strcmp("-", file_name) == 0)
         fh = stdout;
@@ -995,9 +1011,9 @@ static int write_file(
             return (-1);
         }
     }
-    if (atoi(rrd->stat_head->version) < 3){
+    if (atoi(rrd->stat_head->version) < 3) {
         /* we output 3 or higher */
-        strcpy(rrd->stat_head->version,"0003");        
+        strcpy(rrd->stat_head->version, "0003");
     }
     fwrite(rrd->stat_head, sizeof(stat_head_t), 1, fh);
     fwrite(rrd->ds_def, sizeof(ds_def_t), rrd->stat_head->ds_cnt, fh);
@@ -1009,11 +1025,21 @@ static int write_file(
     fwrite(rrd->rra_ptr, sizeof(rra_ptr_t), rrd->stat_head->rra_cnt, fh);
 
     /* calculate the number of rrd_values to dump */
-    value_count = 0;
-    for (i = 0; i < rrd->stat_head->rra_cnt; i++)
-        value_count += (rrd->rra_def[i].row_cnt * rrd->stat_head->ds_cnt);
+    rra_offset = 0;
+    for (i = 0; i < rrd->stat_head->rra_cnt; i++) {
+        unsigned long num_rows = rrd->rra_def[i].row_cnt;
+        unsigned long cur_row = rrd->rra_ptr[i].cur_row;
+        unsigned long ds_cnt = rrd->stat_head->ds_cnt;
 
-    fwrite(rrd->rrd_value, sizeof(rrd_value_t), value_count, fh);
+        fwrite(rrd->rrd_value +
+               (rra_offset + num_rows - 1 - cur_row) * ds_cnt,
+               sizeof(rrd_value_t), (cur_row + 1) * ds_cnt, fh);
+
+        fwrite(rrd->rrd_value + rra_offset * ds_cnt,
+               sizeof(rrd_value_t), (num_rows - 1 - cur_row) * ds_cnt, fh);
+
+        rra_offset += num_rows;
+    }
 
     /* lets see if we had an error */
     if (ferror(fh)) {
@@ -1032,6 +1058,11 @@ int rrd_restore(
 {
     rrd_t    *rrd;
 
+#ifdef WIN32
+    srand((unsigned int) time(NULL));
+#else
+    srandom((unsigned int) time(NULL) + (unsigned int) getpid());
+#endif
     /* init rrd clean */
     optind = 0;
     opterr = 0;         /* initialize getopt */

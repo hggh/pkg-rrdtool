@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "CDEFTUTORIAL 1"
-.TH CDEFTUTORIAL 1 "2008-03-15" "1.3.1" "rrdtool"
+.TH CDEFTUTORIAL 1 "2008-10-30" "1.3.5" "rrdtool"
 .SH "NAME"
 cdeftutorial \- Alex van den Bogaerdt's CDEF tutorial
 .SH "DESCRIPTION"
@@ -702,7 +702,7 @@ Let's compile the complete \s-1CDEF:\s0
 .PP
 .Vb 2
 \&        DEF:ds0=router1.rrd:AVERAGE
-\&        CDEF:ds0modified=TIME,begintime,GE,TIME,endtime,LE,*,UNKN,ds0,IF
+\&        CDEF:ds0modified=TIME,begintime,GT,TIME,endtime,LE,*,ds0,UNKN,IF
 .Ve
 .PP
 This will return the value of ds0 if both comparisons return true. You

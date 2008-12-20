@@ -1,13 +1,20 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 1447 2008-07-23 13:02:26Z oetiker $
+ * $Id: rrd_open.c 1710 2008-12-15 22:06:22Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
 #include "unused.h"
+
+#ifdef WIN32
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#endif
+
 #define MEMBLK 8192
 
 /* DEBUG 2 prints information obtained via mincore(2) */
@@ -21,16 +28,30 @@
 /* the cast to void* is there to avoid this warning seen on ia64 with certain
    versions of gcc: 'cast increases required alignment of target type'
 */
-#define __rrd_read(dst, dst_t, cnt) \
+#define __rrd_read(dst, dst_t, cnt) { \
+	size_t wanted = sizeof(dst_t)*(cnt); \
+	if (offset + wanted > rrd_file->file_len) { \
+		rrd_set_error("reached EOF while loading header " #dst); \
+		goto out_nullify_head; \
+	} \
 	(dst) = (dst_t*)(void*) (data + offset); \
-	offset += sizeof(dst_t) * (cnt)
+	offset += wanted; \
+    }
 #else
-#define __rrd_read(dst, dst_t, cnt) \
-	if ((dst = malloc(sizeof(dst_t)*(cnt))) == NULL) { \
+#define __rrd_read(dst, dst_t, cnt) { \
+	size_t wanted = sizeof(dst_t)*(cnt); \
+        size_t got; \
+	if ((dst = (dst_t*)malloc(wanted)) == NULL) { \
 		rrd_set_error(#dst " malloc"); \
 		goto out_nullify_head; \
 	} \
-	offset += read (rrd_file->fd, dst, sizeof(dst_t)*(cnt))
+        got = read (rrd_file->fd, dst, wanted); \
+	if (got != wanted) { \
+		rrd_set_error("short read while reading header " #dst); \
+                goto out_nullify_head; \
+	} \
+	offset += got; \
+    }
 #endif
 
 /* get the address of the start of this page */
@@ -52,13 +73,19 @@ rrd_file_t *rrd_open(
     unsigned rdwr)
 {
     int       flags = 0;
+
+/* Win32 can't use S_IRUSR flag */
+#ifndef WIN32
     mode_t    mode = S_IRUSR;
+#else
+    int mode = 0;
+#endif
     int       version;
 
 #ifdef HAVE_MMAP
     ssize_t   _page_size = sysconf(_SC_PAGESIZE);
     int       mm_prot = PROT_READ, mm_flags = 0;
-    char     *data;
+    char     *data = MAP_FAILED;
 #endif
     off_t     offset = 0;
     struct stat statb;
@@ -72,7 +99,7 @@ rrd_file_t *rrd_open(
         free(rrd->stat_head);
     }
     rrd_init(rrd);
-    rrd_file = malloc(sizeof(rrd_file_t));
+    rrd_file = (rrd_file_t*)malloc(sizeof(rrd_file_t));
     if (rrd_file == NULL) {
         rrd_set_error("allocating rrd_file descriptor for '%s'", file_name);
         return NULL;
@@ -97,7 +124,9 @@ rrd_file_t *rrd_open(
 #endif
     } else {
         if (rdwr & RRD_READWRITE) {
+#ifndef WIN32 // Win32 can't use this mode
             mode |= S_IWUSR;
+#endif
             flags |= O_RDWR;
 #ifdef HAVE_MMAP
             mm_flags = MAP_SHARED;
@@ -116,7 +145,6 @@ rrd_file_t *rrd_open(
         mm_flags |= MAP_NONBLOCK;   /* just populate ptes */
 #endif
     }
-
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
     flags |= O_BINARY;
 #endif
@@ -125,6 +153,21 @@ rrd_file_t *rrd_open(
         rrd_set_error("opening '%s': %s", file_name, rrd_strerror(errno));
         goto out_free;
     }
+
+#ifdef HAVE_MMAP
+#ifdef HAVE_BROKEN_MS_ASYNC
+    if (rdwr & RRD_READWRITE) {
+        /* some unices, the files mtime does not get update
+           on msync MS_ASYNC, in order to help them,
+           we update the the timestamp at this point.
+           The thing happens pretty 'close' to the open
+           call so the chances of a race should be minimal.
+              
+           Maybe ask your vendor to fix your OS ... */
+           utime(file_name,NULL);
+    }
+#endif    
+#endif
 
     /* Better try to avoid seeks as much as possible. stat may be heavy but
      * many concurrent seeks are even worse.  */
@@ -258,11 +301,34 @@ rrd_file_t *rrd_open(
 
     rrd_file->header_len = offset;
     rrd_file->pos = offset;
+
+    {
+      unsigned long row_cnt = 0;
+      unsigned long i;
+
+      for (i=0; i<rrd->stat_head->rra_cnt; i++)
+        row_cnt += rrd->rra_def[i].row_cnt;
+
+      off_t correct_len = rrd_file->header_len +
+        sizeof(rrd_value_t) * row_cnt * rrd->stat_head->ds_cnt;
+
+      if (correct_len > rrd_file->file_len)
+      {
+        rrd_set_error("'%s' is too small (should be %ld bytes)",
+                      file_name, (long long) correct_len);
+        goto out_nullify_head;
+      }
+    }
+
   out_done:
     return (rrd_file);
   out_nullify_head:
     rrd->stat_head = NULL;
   out_close:
+#ifdef HAVE_MMAP
+    if (data != MAP_FAILED)
+      munmap(data, rrd_file->file_len);
+#endif
     close(rrd_file->fd);
   out_free:
     free(rrd_file);
@@ -328,6 +394,13 @@ void rrd_dontneed(
     unsigned long i;
     ssize_t   _page_size = sysconf(_SC_PAGESIZE);
 
+    if (rrd_file == NULL) {
+#if defined DEBUG && DEBUG
+	    fprintf (stderr, "rrd_dontneed: Argument 'rrd_file' is NULL.\n");
+#endif
+	    return;
+    }
+
 #if defined DEBUG && DEBUG > 1
     mincore_print(rrd_file, "before");
 #endif
@@ -364,14 +437,19 @@ void rrd_dontneed(
             rrd->rra_def[i].row_cnt * rrd->stat_head->ds_cnt *
             sizeof(rrd_value_t);
     }
+
+    if (dontneed_start < rrd_file->file_len) {
 #ifdef USE_MADVISE
-    madvise(rrd_file->file_start + dontneed_start,
-            rrd_file->file_len - dontneed_start, MADV_DONTNEED);
+	    madvise(rrd_file->file_start + dontneed_start,
+		    rrd_file->file_len - dontneed_start, MADV_DONTNEED);
 #endif
 #ifdef HAVE_POSIX_FADVISE
-    posix_fadvise(rrd_file->fd, dontneed_start,
-                  rrd_file->file_len - dontneed_start, POSIX_FADV_DONTNEED);
+	    posix_fadvise(rrd_file->fd, dontneed_start,
+			  rrd_file->file_len - dontneed_start,
+			  POSIX_FADV_DONTNEED);
 #endif
+    }
+
 #if defined DEBUG && DEBUG > 1
     mincore_print(rrd_file, "after");
 #endif
@@ -433,7 +511,7 @@ off_t rrd_seek(
 
 /* Get current position in rrd_file.  */
 
-inline off_t rrd_tell(
+off_t rrd_tell(
     rrd_file_t *rrd_file)
 {
     return rrd_file->pos;
@@ -443,7 +521,7 @@ inline off_t rrd_tell(
 /* Read count bytes into buffer buf, starting at rrd_file->pos.
  * Returns the number of bytes read or <0 on error.  */
 
-inline ssize_t rrd_read(
+ssize_t rrd_read(
     rrd_file_t *rrd_file,
     void *buf,
     size_t count)
@@ -481,7 +559,7 @@ inline ssize_t rrd_read(
  * rrd_file->pos of rrd_file->fd.
  * Returns the number of bytes written or <0 on error.  */
 
-inline ssize_t rrd_write(
+ssize_t rrd_write(
     rrd_file_t *rrd_file,
     const void *buf,
     size_t count)
@@ -506,13 +584,19 @@ inline ssize_t rrd_write(
 
 /* flush all data pending to be written to FD.  */
 
-inline void rrd_flush(
+void rrd_flush(
     rrd_file_t *rrd_file)
 {
+/*
+ * Win32 can only flush files by FlushFileBuffers function, 
+ * but it works with HANDLE hFile, not FILE. So skipping
+ */
+#ifndef WIN32
     if (fdatasync(rrd_file->fd) != 0) {
         rrd_set_error("flushing fd %d: %s", rrd_file->fd,
                       rrd_strerror(errno));
     }
+#endif
 }
 
 

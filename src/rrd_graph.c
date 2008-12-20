@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -37,15 +37,17 @@
 #endif
 
 text_prop_t text_prop[] = {
-    {8.0, RRD_DEFAULT_FONT}
+    {8.0, RRD_DEFAULT_FONT,NULL}
     ,                   /* default */
-    {9.0, RRD_DEFAULT_FONT}
+    {9.0, RRD_DEFAULT_FONT,NULL}
     ,                   /* title */
-    {7.0, RRD_DEFAULT_FONT}
+    {7.0, RRD_DEFAULT_FONT,NULL}
     ,                   /* axis */
-    {8.0, RRD_DEFAULT_FONT}
+    {8.0, RRD_DEFAULT_FONT,NULL}
     ,                   /* unit */
-    {8.0, RRD_DEFAULT_FONT} /* legend */
+    {8.0, RRD_DEFAULT_FONT,NULL} /* legend */
+    ,
+    {5.5, RRD_DEFAULT_FONT,NULL} /* watermark */    
 };
 
 xlab_t    xlab[] = {
@@ -232,7 +234,7 @@ enum gf_en gf_conv(
     conv_if(XPORT, GF_XPORT);
     conv_if(SHIFT, GF_SHIFT);
 
-    return (-1);
+    return (enum gf_en)(-1);
 }
 
 enum gfx_if_en if_conv(
@@ -244,7 +246,7 @@ enum gfx_if_en if_conv(
     conv_if(EPS, IF_EPS);
     conv_if(PDF, IF_PDF);
 
-    return (-1);
+    return (enum gfx_if_en)(-1);
 }
 
 enum tmt_en tmt_conv(
@@ -258,7 +260,7 @@ enum tmt_en tmt_conv(
     conv_if(WEEK, TMT_WEEK);
     conv_if(MONTH, TMT_MONTH);
     conv_if(YEAR, TMT_YEAR);
-    return (-1);
+    return (enum tmt_en)(-1);
 }
 
 enum grc_en grc_conv(
@@ -276,7 +278,7 @@ enum grc_en grc_conv(
     conv_if(AXIS, GRC_AXIS);
     conv_if(FRAME, GRC_FRAME);
 
-    return -1;
+    return (enum grc_en)(-1);
 }
 
 enum text_prop_en text_prop_conv(
@@ -288,7 +290,8 @@ enum text_prop_en text_prop_conv(
     conv_if(AXIS, TEXT_PROP_AXIS);
     conv_if(UNIT, TEXT_PROP_UNIT);
     conv_if(LEGEND, TEXT_PROP_LEGEND);
-    return -1;
+    conv_if(WATERMARK, TEXT_PROP_WATERMARK);
+    return (enum text_prop_en)(-1);
 }
 
 
@@ -298,7 +301,7 @@ int im_free(
     image_desc_t *im)
 {
     unsigned long i, ii;
-    cairo_status_t status = 0;
+    cairo_status_t status = CAIRO_STATUS_SUCCESS;
 
     if (im == NULL)
         return 0;
@@ -330,12 +333,18 @@ int im_free(
     if (im->rendered_image) {
         free(im->rendered_image);
     }
+
+    if (im->layout) {
+        g_object_unref (im->layout);
+    }
+
     if (im->surface)
         cairo_surface_destroy(im->surface);
+
     if (status)
         fprintf(stderr, "OOPS: Cairo has issues it can't even die: %s\n",
                 cairo_status_to_string(status));
-
+        
     return 0;
 }
 
@@ -412,7 +421,7 @@ void si_unit(
 
     if (im->unitsexponent != 9999) {
         /* unitsexponent = 9, 6, 3, 0, -3, -6, -9, etc */
-        viewdigits = floor(im->unitsexponent / 3);
+        viewdigits = floor((double)(im->unitsexponent / 3));
     } else {
         viewdigits = digits;
     }
@@ -1008,9 +1017,9 @@ int data_calc(
                         /* add one entry to the array that keeps track of the step sizes of the
                          * data sources going into the CDEF. */
                         if ((steparray =
-                             rrd_realloc(steparray,
+                                         (long*)(rrd_realloc(steparray,
                                          (++stepcnt +
-                                          1) * sizeof(*steparray))) == NULL) {
+                                          1) * sizeof(*steparray)))) == NULL) {
                             rrd_set_error("realloc steparray");
                             rpnstack_free(&rpnstack);
                             return -1;
@@ -1076,10 +1085,10 @@ int data_calc(
              */
             im->gdes[gdi].step = lcd(steparray);
             free(steparray);
-            if ((im->gdes[gdi].data = malloc(((im->gdes[gdi].end -
+            if ((im->gdes[gdi].data = (rrd_value_t*)(malloc(((im->gdes[gdi].end -
                                                im->gdes[gdi].start)
                                               / im->gdes[gdi].step)
-                                             * sizeof(double))) == NULL) {
+                                             * sizeof(double)))) == NULL) {
                 rrd_set_error("malloc im->gdes[gdi].data");
                 rpnstack_free(&rpnstack);
                 return -1;
@@ -1166,8 +1175,8 @@ int data_proc(
     for (i = 0; i < im->gdes_c; i++) {
         if ((im->gdes[i].gf == GF_LINE) ||
             (im->gdes[i].gf == GF_AREA) || (im->gdes[i].gf == GF_TICK)) {
-            if ((im->gdes[i].p_data = malloc((im->xsize + 1)
-                                             * sizeof(rrd_value_t))) == NULL) {
+            if ((im->gdes[i].p_data = (rrd_value_t*)(malloc((im->xsize + 1)
+                                             * sizeof(rrd_value_t)))) == NULL) {
                 rrd_set_error("malloc data_proc");
                 return -1;
             }
@@ -1523,7 +1532,7 @@ int print_calc(
                 rrd_infoval_t prline;
 
                 if (im->gdes[i].strftm) {
-                    prline.u_str = malloc((FMT_LEG_LEN + 2) * sizeof(char));
+                    prline.u_str = (char*)(malloc((FMT_LEG_LEN + 2) * sizeof(char)));
                     strftime(prline.u_str,
                              FMT_LEG_LEN, im->gdes[i].format, &tmvdef);
                 } else if (bad_format(im->gdes[i].format)) {
@@ -1612,27 +1621,24 @@ int leg_place(
     int       border = im->text_prop[TEXT_PROP_LEGEND].size * 2.0;
     int       fill = 0, fill_last;
     int       leg_c = 0;
-    int       leg_x = border;
+    double    leg_x = border;
     int       leg_y = im->yimg;
     int       leg_y_prev = im->yimg;
     int       leg_cc;
-    int       glue = 0;
+    double    glue = 0;
     int       i, ii, mark = 0;
-    char      prt_fctn; /*special printfunctions */
     char      default_txtalign = TXA_JUSTIFIED; /*default line orientation */
     int      *legspace;
     char     *tab;
 
     if (!(im->extra_flags & NOLEGEND) & !(im->extra_flags & ONLY_GRAPH)) {
-        if ((legspace = malloc(im->gdes_c * sizeof(int))) == NULL) {
+        if ((legspace = (int*)(malloc(im->gdes_c * sizeof(int)))) == NULL) {
             rrd_set_error("malloc for legspace");
             return -1;
         }
 
-        if (im->extra_flags & FULL_SIZE_MODE)
-            leg_y = leg_y_prev =
-                leg_y - (int) (im->text_prop[TEXT_PROP_LEGEND].size * 1.8);
         for (i = 0; i < im->gdes_c; i++) {
+            char      prt_fctn; /*special printfunctions */
             fill_last = fill;
             /* hide legends for rules which are not displayed */
             if (im->gdes[i].gf == GF_TEXTALIGN) {
@@ -1656,7 +1662,7 @@ int leg_place(
                 tab[0] = (char) 9;
             }
             leg_cc = strlen(im->gdes[i].legend);
-            /* is there a controle code ant the end of the legend string ? */
+            /* is there a controle code at the end of the legend string ? */
             if (leg_cc >= 2 && im->gdes[i].legend[leg_cc - 2] == '\\') {
                 prt_fctn = im->gdes[i].legend[leg_cc - 1];
                 leg_cc -= 2;
@@ -1701,11 +1707,7 @@ int leg_place(
                                        im->
                                        text_prop
                                        [TEXT_PROP_LEGEND].
-                                       font,
-                                       im->
-                                       text_prop
-                                       [TEXT_PROP_LEGEND].
-                                       size,
+                                       font_desc,
                                        im->tabwidth, im->gdes[i].legend);
                 leg_c++;
             } else {
@@ -1752,12 +1754,12 @@ int leg_place(
             if (prt_fctn != '\0') {
                 leg_x = border;
                 if (leg_c >= 2 && prt_fctn == 'j') {
-                    glue = (im->ximg - fill - 2 * border) / (leg_c - 1);
+                    glue = (double)(im->ximg - fill - 2 * border) / (double)(leg_c - 1);
                 } else {
                     glue = 0;
                 }
                 if (prt_fctn == 'c')
-                    leg_x = (im->ximg - fill) / 2.0;
+                    leg_x = (double)(im->ximg - fill) / 2.0;
                 if (prt_fctn == 'r')
                     leg_x = im->ximg - fill - border;
                 for (ii = mark; ii <= i; ii++) {
@@ -1766,32 +1768,20 @@ int leg_place(
                     im->gdes[ii].leg_x = leg_x;
                     im->gdes[ii].leg_y = leg_y;
                     leg_x +=
-                        gfx_get_text_width(im, leg_x,
+                        (double)gfx_get_text_width(im, leg_x,
                                            im->
                                            text_prop
                                            [TEXT_PROP_LEGEND].
-                                           font,
-                                           im->
-                                           text_prop
-                                           [TEXT_PROP_LEGEND].
-                                           size,
+                                           font_desc,
                                            im->tabwidth, im->gdes[ii].legend)
-                        + legspace[ii]
+                        +(double)legspace[ii]
                         + glue;
                 }
                 leg_y_prev = leg_y;
-                if (im->extra_flags & FULL_SIZE_MODE) {
-                    /* only add y space if there was text on the line */
-                    if (leg_x > border || prt_fctn == 's')
-                        leg_y -= im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
-                    if (prt_fctn == 's')
-                        leg_y += im->text_prop[TEXT_PROP_LEGEND].size;
-                } else {
-                    if (leg_x > border || prt_fctn == 's')
-                        leg_y += im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
-                    if (prt_fctn == 's')
-                        leg_y -= im->text_prop[TEXT_PROP_LEGEND].size;
-                }
+                if (leg_x > border || prt_fctn == 's')
+                    leg_y += im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
+                if (prt_fctn == 's')
+                    leg_y -= im->text_prop[TEXT_PROP_LEGEND].size;
                 fill = 0;
                 leg_c = 0;
                 mark = ii;
@@ -1799,11 +1789,15 @@ int leg_place(
         }
 
         if (im->extra_flags & FULL_SIZE_MODE) {
-            if (leg_y != leg_y_prev) {
-                *gY = leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
-                im->yorigin =
-                    leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
+            /* now for some backpaddeling. We have to shift up all the
+               legend items into the graph and tell the caller about the
+               space we used up. */
+            long shift_up = leg_y - im->yimg - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 + border * 0.7;
+            for (i = 0; i < im->gdes_c; i++) {
+                im->gdes[i].leg_y -= shift_up;
             }
+            im->yorigin = im->yorigin - leg_y + im->yimg - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 - border;            
+            *gY = im->yorigin;
         } else {
             im->yimg =
                 leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 +
@@ -1931,7 +1925,9 @@ int draw_horizontal_grid(
     int       sgrid = (int) (im->minval / im->ygrid_scale.gridstep - 1);
     int       egrid = (int) (im->maxval / im->ygrid_scale.gridstep + 1);
     double    MaxY;
-
+    double second_axis_magfact = 0;
+    char *second_axis_symb = "";
+    
     scaledstep =
         im->ygrid_scale.gridstep /
         (double) im->magfact * (double) im->viewfactor;
@@ -1982,6 +1978,33 @@ int draw_horizontal_grid(
                     }
                 }
                 nlabels++;
+                if (im->second_axis_scale != 0){
+                        char graph_label_right[100];
+                        double sval = im->ygrid_scale.gridstep*(double)i*im->second_axis_scale+im->second_axis_shift;
+                        if (im->second_axis_format[0] == '\0'){
+                            if (!second_axis_magfact){
+                                double dummy = im->ygrid_scale.gridstep*(double)(sgrid+egrid)/2.0*im->second_axis_scale+im->second_axis_shift;
+                                auto_scale(im,&dummy,&second_axis_symb,&second_axis_magfact);
+                            }
+                            sval /= second_axis_magfact;
+ 
+                            if(MaxY < 10) { 
+                                sprintf(graph_label_right,"%5.1f %s",sval,second_axis_symb);
+                            } else {
+                                sprintf(graph_label_right,"%5.0f %s",sval,second_axis_symb);
+                            }
+                        }
+                        else {
+                           sprintf(graph_label_right,im->second_axis_format,sval);
+                        }        
+                        gfx_text ( im,
+                               X1+7, Y0,
+                               im->graph_col[GRC_FONT],
+                               im->text_prop[TEXT_PROP_AXIS].font_desc,
+                               im->tabwidth,0.0, GFX_H_LEFT, GFX_V_CENTER,
+                               graph_label_right );
+                }
+ 
                 gfx_text(im,
                          X0 -
                          im->
@@ -1990,10 +2013,8 @@ int draw_horizontal_grid(
                          im->graph_col[GRC_FONT],
                          im->
                          text_prop[TEXT_PROP_AXIS].
-                         font,
-                         im->
-                         text_prop[TEXT_PROP_AXIS].
-                         size, im->tabwidth, 0.0,
+                         font_desc,
+                         im->tabwidth, 0.0,
                          GFX_H_RIGHT, GFX_V_CENTER, graph_label);
                 gfx_line(im, X0 - 2, Y0, X0, Y0,
                          MGRIDWIDTH, im->graph_col[GRC_MGRID]);
@@ -2035,7 +2056,7 @@ double frexp10(
     double    mnt;
     int       iexp;
 
-    iexp = floor(log(fabs(x)) / log(10));
+    iexp = floor(log((double)(fabs(x))) / log(10.0));
     mnt = x / pow(10.0, iexp);
     if (mnt >= 10.0) {
         iexp++;
@@ -2161,8 +2182,35 @@ int horizontal_log_grid(
             else
                 symbol = '?';
             sprintf(graph_label, "%3.0f %c", pvalue, symbol);
-        } else
+        } else {            
             sprintf(graph_label, "%3.0e", value);
+        }
+        if (im->second_axis_scale != 0){
+                char graph_label_right[100];
+                double sval = value*im->second_axis_scale+im->second_axis_shift;
+                if (im->second_axis_format[0] == '\0'){
+                        if (im->extra_flags & FORCE_UNITS_SI) {
+                                double mfac = 1;
+                                char   *symb = "";
+                                auto_scale(im,&sval,&symb,&mfac);
+                                sprintf(graph_label_right,"%4.0f %s", sval,symb);
+                        }
+                        else {        
+                                sprintf(graph_label_right,"%3.0e", sval);
+                        }
+                }
+                else {
+                      sprintf(graph_label_right,im->second_axis_format,sval);
+                }    
+    
+                gfx_text ( im,
+                               X1+7, Y0,
+                               im->graph_col[GRC_FONT],
+                               im->text_prop[TEXT_PROP_AXIS].font_desc,
+                               im->tabwidth,0.0, GFX_H_LEFT, GFX_V_CENTER,
+                               graph_label_right );
+        }
+      
         gfx_text(im,
                  X0 -
                  im->
@@ -2171,10 +2219,8 @@ int horizontal_log_grid(
                  im->graph_col[GRC_FONT],
                  im->
                  text_prop[TEXT_PROP_AXIS].
-                 font,
-                 im->
-                 text_prop[TEXT_PROP_AXIS].
-                 size, im->tabwidth, 0.0,
+                 font_desc,
+                 im->tabwidth, 0.0,
                  GFX_H_RIGHT, GFX_V_CENTER, graph_label);
         /* minor grid */
         if (mid < 4 && exfrac == 1) {
@@ -2442,10 +2488,8 @@ void vertical_grid(
                  im->graph_col[GRC_FONT],
                  im->
                  text_prop[TEXT_PROP_AXIS].
-                 font,
-                 im->
-                 text_prop[TEXT_PROP_AXIS].
-                 size, im->tabwidth, 0.0,
+                 font_desc,
+                 im->tabwidth, 0.0,
                  GFX_H_CENTER, GFX_V_TOP, graph_label);
     }
 
@@ -2480,6 +2524,18 @@ void axis_paint(
     gfx_new_area(im, im->xorigin - 3, im->yorigin - im->ysize - 2, im->xorigin + 3, im->yorigin - im->ysize - 2, im->xorigin, im->yorigin - im->ysize - 7,  /* vertical */
                  im->graph_col[GRC_ARROW]);
     gfx_close_path(im);
+    if (im->second_axis_scale != 0){
+       gfx_line ( im, im->xorigin+im->xsize,im->yorigin+4,
+                         im->xorigin+im->xsize,im->yorigin-im->ysize-4,
+                         MGRIDWIDTH, im->graph_col[GRC_AXIS]);
+       gfx_new_area ( im, 
+                   im->xorigin+im->xsize-2,  im->yorigin-im->ysize-2,
+                   im->xorigin+im->xsize+3,  im->yorigin-im->ysize-2,
+                   im->xorigin+im->xsize,    im->yorigin-im->ysize-7, /* LINEOFFSET */
+                   im->graph_col[GRC_ARROW]);
+       gfx_close_path(im);
+    }
+
 }
 
 void grid_paint(
@@ -2523,54 +2579,68 @@ void grid_paint(
                      im->graph_col[GRC_FONT],
                      im->
                      text_prop[TEXT_PROP_AXIS].
-                     font,
-                     im->
-                     text_prop[TEXT_PROP_AXIS].
-                     size, im->tabwidth, 0.0,
+                     font_desc,
+                     im->tabwidth, 0.0,
                      GFX_H_CENTER, GFX_V_CENTER, nodata);
         }
     }
 
     /* yaxis unit description */
-    gfx_text(im,
-             10,
-             (im->yorigin -
-              im->ysize / 2),
-             im->graph_col[GRC_FONT],
-             im->
-             text_prop[TEXT_PROP_UNIT].
-             font,
-             im->
-             text_prop[TEXT_PROP_UNIT].
-             size, im->tabwidth,
-             RRDGRAPH_YLEGEND_ANGLE, GFX_H_CENTER, GFX_V_CENTER, im->ylegend);
+    if (im->ylegend[0] != '\0'){
+        gfx_text(im,
+                 10,
+                 (im->yorigin -
+                  im->ysize / 2),
+                 im->graph_col[GRC_FONT],
+                 im->
+                 text_prop[TEXT_PROP_UNIT].
+                 font_desc,
+                 im->tabwidth,
+                 RRDGRAPH_YLEGEND_ANGLE, GFX_H_CENTER, GFX_V_CENTER, im->ylegend);
+    }
+    if (im->second_axis_legend[0] != '\0'){
+            double Xylabel=gfx_get_text_width(im, 0,
+                        im->text_prop[TEXT_PROP_AXIS].font_desc,
+                        im->tabwidth,
+                        "0") * im->unitslength
+                    + im->text_prop[TEXT_PROP_UNIT].size *2;
+            gfx_text( im,
+                  im->xorigin+im->xsize+Xylabel+8, (im->yorigin - im->ysize/2),
+                  im->graph_col[GRC_FONT],
+                  im->text_prop[TEXT_PROP_UNIT].font_desc,
+                  im->tabwidth, 
+                  RRDGRAPH_YLEGEND_ANGLE,
+                  GFX_H_CENTER, GFX_V_CENTER,
+                  im->second_axis_legend);
+    }        
+ 
     /* graph title */
     gfx_text(im,
              im->ximg / 2, 6,
              im->graph_col[GRC_FONT],
              im->
              text_prop[TEXT_PROP_TITLE].
-             font,
-             im->
-             text_prop[TEXT_PROP_TITLE].
-             size, im->tabwidth, 0.0, GFX_H_CENTER, GFX_V_TOP, im->title);
+             font_desc,
+             im->tabwidth, 0.0, GFX_H_CENTER, GFX_V_TOP, im->title);
     /* rrdtool 'logo' */
-    water_color = im->graph_col[GRC_FONT];
-    water_color.alpha = 0.3;
-    gfx_text(im, im->ximg - 4, 5,
-             water_color,
-             im->
-             text_prop[TEXT_PROP_AXIS].
-             font, 5.5, im->tabwidth,
-             -90, GFX_H_LEFT, GFX_V_TOP, "RRDTOOL / TOBI OETIKER");
+    if (!(im->extra_flags & NO_RRDTOOL_TAG)){
+        water_color = im->graph_col[GRC_FONT];
+        water_color.alpha = 0.3;
+        gfx_text(im, im->ximg - 4, 5,
+                 water_color,
+                 im->
+                 text_prop[TEXT_PROP_WATERMARK].
+                 font_desc, im->tabwidth,
+                 -90, GFX_H_LEFT, GFX_V_TOP, "RRDTOOL / TOBI OETIKER");
+    }    
     /* graph watermark */
     if (im->watermark[0] != '\0') {
         gfx_text(im,
                  im->ximg / 2, im->yimg - 6,
                  water_color,
                  im->
-                 text_prop[TEXT_PROP_AXIS].
-                 font, 5.5, im->tabwidth, 0,
+                 text_prop[TEXT_PROP_WATERMARK].
+                 font_desc, im->tabwidth, 0,
                  GFX_H_CENTER, GFX_V_BOTTOM, im->watermark);
     }
 
@@ -2586,10 +2656,7 @@ void grid_paint(
                      im->graph_col[GRC_FONT],
                      im->
                      text_prop
-                     [TEXT_PROP_LEGEND].font,
-                     im->
-                     text_prop
-                     [TEXT_PROP_LEGEND].size,
+                     [TEXT_PROP_LEGEND].font_desc,
                      im->tabwidth, 0.0,
                      GFX_H_LEFT, GFX_V_BOTTOM, im->gdes[i].legend);
             /* The legend for GRAPH items starts with "M " to have
@@ -2603,11 +2670,8 @@ void grid_paint(
                                           im->
                                           text_prop
                                           [TEXT_PROP_LEGEND].
-                                          font,
-                                          im->
-                                          text_prop
-                                          [TEXT_PROP_LEGEND].
-                                          size, im->tabwidth, "o") * 1.2;
+                                          font_desc,
+                                          im->tabwidth, "o") * 1.2;
                 boxV = boxH;
                 /* shift the box up a bit */
                 Y0 -= boxV * 0.4;
@@ -2720,24 +2784,24 @@ int graph_size_location(
         return 0;
     }
 
-    /** +---+--------------------------------------------+
-     ** | y |...............graph title..................|
-     ** |   +---+-------------------------------+--------+
-     ** | a | y |                               |        |
-     ** | x |   |                               |        |
-     ** | i | a |                               |  pie   |
-     ** | s | x |       main graph area         | chart  |
-     ** |   | i |                               |  area  |
-     ** | t | s |                               |        |
-     ** | i |   |                               |        |
-     ** | t | l |                               |        |
-     ** | l | b +-------------------------------+--------+
-     ** | e | l |       x axis labels           |        |
-     ** +---+---+-------------------------------+--------+
-     ** |....................legends.....................|
-     ** +------------------------------------------------+
-     ** |                   watermark                    |
-     ** +------------------------------------------------+
+    /** +---+-----------------------------------+
+     ** | y |...............graph title.........|
+     ** |   +---+-------------------------------+
+     ** | a | y |                               |
+     ** | x |   |                               |
+     ** | i | a |                               |    
+     ** | s | x |       main graph area         |
+     ** |   | i |                               |
+     ** | t | s |                               |
+     ** | i |   |                               |
+     ** | t | l |                               |
+     ** | l | b +-------------------------------+
+     ** | e | l |       x axis labels           |
+     ** +---+---+-------------------------------+
+     ** |....................legends............|
+     ** +---------------------------------------+
+     ** |                   watermark           |
+     ** +---------------------------------------+
      */
 
     if (im->ylegend[0] != '\0') {
@@ -2763,18 +2827,15 @@ int graph_size_location(
                                    im->
                                    text_prop
                                    [TEXT_PROP_AXIS].
-                                   font,
-                                   im->
-                                   text_prop
-                                   [TEXT_PROP_AXIS].
-                                   size, im->tabwidth, "0") * im->unitslength;
+                                   font_desc,
+                                   im->tabwidth, "0") * im->unitslength;
         }
     }
 
     if (im->extra_flags & FULL_SIZE_MODE) {
         /* The actual size of the image to draw has been determined by the user.
          ** The graph area is the space remaining after accounting for the legend,
-         ** the watermark, the pie chart, the axis labels, and the title.
+         ** the watermark, the axis labels, and the title.
          */
         im->xorigin = 0;
         im->ximg = im->xsize;
@@ -2782,36 +2843,45 @@ int graph_size_location(
         im->yorigin = im->ysize;
         Xmain = im->ximg;
         Ymain = im->yimg;
-        im->yorigin += Ytitle;
         /* Now calculate the total size.  Insert some spacing where
            desired.  im->xorigin and im->yorigin need to correspond
            with the lower left corner of the main graph area or, if
            this one is not set, the imaginary box surrounding the
            pie chart area. */
         /* Initial size calculation for the main graph area */
-        Xmain = im->ximg - (Xylabel + 2 * Xspacing);
-        if (Xmain)
-            Xmain -= Xspacing;  /* put space between main graph area and right edge */
+        Xmain = im->ximg - Xylabel - 3 * Xspacing;
+
         im->xorigin = Xspacing + Xylabel;
-        /* the length of the title should not influence with width of the graph
-           if (Xtitle > im->ximg) im->ximg = Xtitle; */
+
         if (Xvertical) {    /* unit description */
             Xmain -= Xvertical;
             im->xorigin += Xvertical;
         }
+
+        /* adjust space for second axis */
+        if (im->second_axis_scale != 0){
+            Xmain -= Xylabel + Xspacing;
+        }
+        if (im->extra_flags & NO_RRDTOOL_TAG){
+            Xmain += Xspacing;
+        }
+        if (im->second_axis_legend[0] != '\0' ) {
+            Xmain -= im->text_prop[TEXT_PROP_UNIT].size * 1.5;
+        }
+
         im->xsize = Xmain;
+
         xtr(im, 0);
         /* The vertical size of the image is known in advance.  The main graph area
          ** (Ymain) and im->yorigin must be set according to the space requirements
          ** of the legend and the axis labels.
          */
         if (im->extra_flags & NOLEGEND) {
-            /* set dimensions correctly if using full size mode with no legend */
-            im->yorigin =
-                im->yimg -
+            im->yorigin = im->yimg -
                 im->text_prop[TEXT_PROP_AXIS].size * 2.5 - Yspacing;
             Ymain = im->yorigin;
-        } else {
+        }
+        else {            
             /* Determine where to place the legends onto the image.
              ** Set Ymain and adjust im->yorigin to match the space requirements.
              */
@@ -2853,8 +2923,7 @@ int graph_size_location(
              */
             /* don't care for the with of the title
                Xtitle = gfx_get_text_width(im->canvas, 0,
-               im->text_prop[TEXT_PROP_TITLE].font,
-               im->text_prop[TEXT_PROP_TITLE].size,
+               im->text_prop[TEXT_PROP_TITLE].font_desc,
                im->tabwidth,
                im->title, 0) + 2*Xspacing; */
             Ytitle = im->text_prop[TEXT_PROP_TITLE].size * 2.6 + 10;
@@ -2876,6 +2945,14 @@ int graph_size_location(
          ** size already allocated.
          */
         im->ximg = Xylabel + Xmain + 2 * Xspacing;
+
+        if (im->second_axis_scale != 0){
+            im->ximg += Xylabel + Xspacing;
+        }
+        if (im->extra_flags & NO_RRDTOOL_TAG){
+            im->ximg -= Xspacing;
+        }
+        
         if (Xmain)
             im->ximg += Xspacing;
         im->xorigin = Xspacing + Xylabel;
@@ -2885,6 +2962,10 @@ int graph_size_location(
             im->ximg += Xvertical;
             im->xorigin += Xvertical;
         }
+        if (im->second_axis_legend[0] != '\0' ) {
+            im->ximg += Xvertical;
+        }
+      
         xtr(im, 0);
         /* The vertical size is interesting... we need to compare
          ** the sum of {Ytitle, Ymain, Yxlabel, Ylegend, Ywatermark} with 
@@ -2928,10 +3009,10 @@ static cairo_status_t cairo_output(
     *data,
     unsigned int length)
 {
-    image_desc_t *im = closure;
+    image_desc_t *im = (image_desc_t*)(closure);
 
     im->rendered_image =
-        realloc(im->rendered_image, im->rendered_image_size + length);
+        (unsigned char*)(realloc(im->rendered_image, im->rendered_image_size + length));
     if (im->rendered_image == NULL)
         return CAIRO_STATUS_WRITE_ERROR;
     memcpy(im->rendered_image + im->rendered_image_size, data, length);
@@ -2948,10 +3029,11 @@ int graph_paint(
     double    areazero = 0.0;
     graph_desc_t *lastgdes = NULL;
     rrd_infoval_t info;
-    PangoFontMap *font_map = pango_cairo_font_map_get_default();
 
-    /* if we are lazy and there is nothing to PRINT ... quit now */
-    if (lazy && im->prt_c == 0) {
+//    PangoFontMap *font_map = pango_cairo_font_map_get_default();
+
+    /* if we want and can be lazy ... quit now */
+    if (lazy) {
         info.u_cnt = im->ximg;
         grinfo_push(im, sprintf_alloc("image_width"), RD_I_CNT, info);
         info.u_cnt = im->yimg;
@@ -2969,7 +3051,7 @@ int graph_paint(
      * if there are no graph elements (i==0) we stop here ... 
      * if we are lazy, try to quit ... 
      */
-    i = print_calc(im); 
+    i = print_calc(im);
     if (i < 0)
         return -1;
 
@@ -3059,10 +3141,11 @@ int graph_paint(
             (im->surface, CAIRO_SVG_VERSION_1_1);
         break;
     };
+    cairo_destroy(im->cr);
     im->cr = cairo_create(im->surface);
     cairo_set_antialias(im->cr, im->graph_antialias);
     cairo_scale(im->cr, im->zoom, im->zoom);
-    pango_cairo_font_map_set_resolution(PANGO_CAIRO_FONT_MAP(font_map), 100);
+//    pango_cairo_font_map_set_resolution(PANGO_CAIRO_FONT_MAP(font_map), 100);
     gfx_new_area(im, 0, 0, 0, im->yimg,
                  im->ximg, im->yimg, im->graph_col[GRC_BACK]);
     gfx_add_point(im, im->ximg, 0);
@@ -3548,14 +3631,14 @@ int rrd_graph(
         if (strcmp(walker->key, "image_info") == 0) {
             prlines++;
             if (((*prdata) =
-                 rrd_realloc((*prdata),
-                             (prlines + 1) * sizeof(char *))) == NULL) {
+                 (char**)(rrd_realloc((*prdata),
+                             (prlines + 1) * sizeof(char *)))) == NULL) {
                 rrd_set_error("realloc prdata");
                 return 0;
             }
             /* imginfo goes to position 0 in the prdata array */
-            (*prdata)[prlines - 1] = malloc((strlen(walker->value.u_str)
-                                             + 2) * sizeof(char));
+            (*prdata)[prlines - 1] = (char*)(malloc((strlen(walker->value.u_str)
+                                             + 2) * sizeof(char)));
             strcpy((*prdata)[prlines - 1], walker->value.u_str);
             (*prdata)[prlines] = NULL;
         }
@@ -3567,7 +3650,7 @@ int rrd_graph(
     *ysize = 0;
     *ymin = 0;
     *ymax = 0;
-    while (walker) {        
+    while (walker) {
         if (strcmp(walker->key, "image_width") == 0) {
             *xsize = walker->value.u_int;
         } else if (strcmp(walker->key, "image_height") == 0) {
@@ -3579,13 +3662,13 @@ int rrd_graph(
         } else if (strncmp(walker->key, "print", 5) == 0) { /* keys are prdate[0..] */
             prlines++;
             if (((*prdata) =
-                 rrd_realloc((*prdata),
-                             (prlines + 1) * sizeof(char *))) == NULL) {
+                 (char**)(rrd_realloc((*prdata),
+                             (prlines + 1) * sizeof(char *)))) == NULL) {
                 rrd_set_error("realloc prdata");
                 return 0;
             }
-            (*prdata)[prlines - 1] = malloc((strlen(walker->value.u_str)
-                                             + 2) * sizeof(char));
+            (*prdata)[prlines - 1] = (char*)(malloc((strlen(walker->value.u_str)
+                                             + 2) * sizeof(char)));
             (*prdata)[prlines] = NULL;
             strcpy((*prdata)[prlines - 1], walker->value.u_str);
         } else if (strcmp(walker->key, "image") == 0) {
@@ -3612,11 +3695,9 @@ rrd_info_t *rrd_graph_v(
 {
     image_desc_t im;
     rrd_info_t *grinfo;
-
     rrd_graph_init(&im);
     /* a dummy surface so that we can measure text sizes for placements */
-    im.surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 10, 10);
-    im.cr = cairo_create(im.surface);
+    
     rrd_graph_options(argc, argv, &im);
     if (rrd_test_error()) {
         rrd_info_free(im.grinfo);
@@ -3667,14 +3748,19 @@ rrd_info_t *rrd_graph_v(
 
     if (im.imginfo) {
         rrd_infoval_t info;
+        char     *path;
+        char     *filename;
 
+        path = strdup(im.graphfile);
+        filename = basename(path);
         info.u_str =
             sprintf_alloc(im.imginfo,
-                          im.graphfile,
+                          filename,
                           (long) (im.zoom *
                                   im.ximg), (long) (im.zoom * im.yimg));
         grinfo_push(&im, sprintf_alloc("image_info"), RD_I_STR, info);
         free(info.u_str);
+        free(path);
     }
     if (im.rendered_image) {
         rrd_infoval_t img;
@@ -3688,11 +3774,30 @@ rrd_info_t *rrd_graph_v(
     return grinfo;
 }
 
+static void 
+rrd_set_font_desc (
+    image_desc_t *im,int prop,char *font, double size ){
+    if (font){
+        strncpy(im->text_prop[prop].font, font, sizeof(text_prop[prop].font) - 1);        
+        im->text_prop[prop].font[sizeof(text_prop[prop].font) - 1] = '\0';   
+        im->text_prop[prop].font_desc = pango_font_description_from_string( font );        
+    };
+    if (size > 0){  
+        im->text_prop[prop].size = size;
+    };
+    if (im->text_prop[prop].font_desc && im->text_prop[prop].size ){
+        pango_font_description_set_size(im->text_prop[prop].font_desc, im->text_prop[prop].size * PANGO_SCALE);
+    };
+}
+
 void rrd_graph_init(
     image_desc_t
     *im)
 {
     unsigned int i;
+    char     *deffont = getenv("RRD_DEFAULT_FONT");
+    static PangoFontMap *fontmap = NULL;
+    PangoContext *context;
 
 #ifdef HAVE_TZSET
     tzset();
@@ -3704,7 +3809,6 @@ void rrd_graph_init(
 #endif
 #endif
     im->base = 1000;
-    im->cr = NULL;
     im->draw_x_grid = 1;
     im->draw_y_grid = 1;
     im->extra_flags = 0;
@@ -3731,7 +3835,6 @@ void rrd_graph_init(
     im->rendered_image = NULL;
     im->slopemode = 0;
     im->step = 0;
-    im->surface = NULL;
     im->symbol = ' ';
     im->tabwidth = 40.0;
     im->title[0] = '\0';
@@ -3747,33 +3850,51 @@ void rrd_graph_init(
     im->ygridstep = DNAN;
     im->yimg = 0;
     im->ylegend[0] = '\0';
+    im->second_axis_scale = 0; /* 0 disables it */
+    im->second_axis_shift = 0; /* no shift by default */
+    im->second_axis_legend[0] = '\0';
+    im->second_axis_format[0] = '\0'; 
     im->yorigin = 0;
     im->ysize = 100;
     im->zoom = 1;
+
+    im->surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 10, 10);     
+    im->cr = cairo_create(im->surface);
+
+    for (i = 0; i < DIM(text_prop); i++) {
+        im->text_prop[i].size = -1;
+        rrd_set_font_desc(im,i, deffont ? deffont : text_prop[i].font,text_prop[i].size);
+    }
+
+    if (fontmap == NULL){
+        fontmap = pango_cairo_font_map_get_default();
+    }
+
+    context =  pango_cairo_font_map_create_context((PangoCairoFontMap*)fontmap);
+
+    pango_cairo_context_set_resolution(context, 100);
+
+    pango_cairo_update_context(im->cr,context);
+
+    im->layout = pango_layout_new(context);
+
+//  im->layout = pango_cairo_create_layout(im->cr);
+
+
     cairo_font_options_set_hint_style
         (im->font_options, CAIRO_HINT_STYLE_FULL);
     cairo_font_options_set_hint_metrics
         (im->font_options, CAIRO_HINT_METRICS_ON);
     cairo_font_options_set_antialias(im->font_options, CAIRO_ANTIALIAS_GRAY);
+
+
+
     for (i = 0; i < DIM(graph_col); i++)
         im->graph_col[i] = graph_col[i];
-    {
-        char     *deffont;
 
-        deffont = getenv("RRD_DEFAULT_FONT");
-        if (deffont != NULL) {
-            for (i = 0; i < DIM(text_prop); i++) {
-                strncpy(text_prop[i].font, deffont,
-                        sizeof(text_prop[i].font) - 1);
-                text_prop[i].font[sizeof(text_prop[i].font) - 1] = '\0';
-            }
-        }
-    }
-    for (i = 0; i < DIM(text_prop); i++) {
-        im->text_prop[i].size = text_prop[i].size;
-        strcpy(im->text_prop[i].font, text_prop[i].font);
-    }
+
 }
+
 
 void rrd_graph_options(
     int argc,
@@ -3821,6 +3942,10 @@ void rrd_graph_options(
         { "force-rules-legend", no_argument,       0, 'F'},
         { "only-graph",         no_argument,       0, 'j'},
         { "alt-y-grid",         no_argument,       0, 'Y'},
+        {"disable-rrdtool-tag", no_argument,       0,  1001},
+        {"right-axis",          required_argument, 0,  1002},
+        {"right-axis-label",    required_argument, 0,  1003},
+        {"right-axis-format",   required_argument, 0,  1004},     
         { "no-minor",           no_argument,       0, 'I'}, 
         { "slope-mode",         no_argument,       0, 'E'},
         { "alt-autoscale",      no_argument,       0, 'A'},
@@ -3881,6 +4006,9 @@ void rrd_graph_options(
         case 'F':
             im->extra_flags |= FORCE_RULES_LEGEND;
             break;
+        case 1001:
+            im->extra_flags |= NO_RRDTOOL_TAG;
+            break;              
         case LONGOPT_UNITS_SI:
             if (im->extra_flags & FORCE_UNITS) {
                 rrd_set_error("--units can only be used once!");
@@ -3988,6 +4116,33 @@ void rrd_graph_options(
                 rrd_set_error("invalid y-grid format");
                 return;
             }
+            break;
+        case 1002: /* right y axis */
+
+            if(sscanf(optarg,
+                      "%lf:%lf",
+                      &im->second_axis_scale,
+                      &im->second_axis_shift) == 2) {
+                if(im->second_axis_scale==0){
+                    rrd_set_error("the second_axis_scale  must not be 0");
+                    return;
+                }
+            } else {
+                rrd_set_error("invalid right-axis format expected scale:shift");
+                return;
+            }
+            break;
+        case 1003:
+            strncpy(im->second_axis_legend,optarg,150);
+            im->second_axis_legend[150]='\0';
+            break;
+        case 1004:
+            if (bad_format(optarg)){
+                rrd_set_error("use either %le or %lf formats");
+                return;
+            }
+            strncpy(im->second_axis_format,optarg,150);
+            im->second_axis_format[150]='\0';
             break;
         case 'v':
             strncpy(im->ylegend, optarg, 150);
@@ -4115,13 +4270,11 @@ void rrd_graph_options(
                     for (propidx = sindex;
                          propidx < TEXT_PROP_LAST; propidx++) {
                         if (size > 0) {
-                            im->text_prop[propidx].size = size;
+                            rrd_set_font_desc(im,propidx,NULL,size);   
                         }
-                        if ((int) strlen(optarg) > end) {
+                        if ((int) strlen(optarg) > end+2) {
                             if (optarg[end] == ':') {
-                                strncpy(im->text_prop[propidx].font,
-                                        optarg + end + 1, 255);
-                                im->text_prop[propidx].font[255] = '\0';
+                                rrd_set_font_desc(im,propidx,optarg + end + 1,0);   
                             } else {
                                 rrd_set_error
                                     ("expected : after font size in '%s'",
@@ -4204,6 +4357,11 @@ void rrd_graph_options(
             return;
         }
     }
+    
+    pango_cairo_context_set_font_options(pango_layout_get_context(im->layout), im->font_options);
+    pango_layout_context_changed(im->layout);
+
+
 
     if (im->logarithmic && im->minval <= 0) {
         rrd_set_error
@@ -4442,27 +4600,22 @@ int vdef_calc(
     graph_desc_t *src, *dst;
     rrd_value_t *data;
     long      step, steps;
-    unsigned long end;
 
     dst = &im->gdes[gdi];
     src = &im->gdes[dst->vidx];
     data = src->data + src->ds;
-    end =
-        src->end_orig % (long)src->step ==
-        0 ? src->end_orig : (src->end_orig + (long)src->step -
-                             src->end_orig % (long)src->step);
 
-    steps = (end - src->start) / src->step;
+    steps = (src->end - src->start) / src->step;
 #if 0
     printf
         ("DEBUG: start == %lu, end == %lu, %lu steps\n",
-         src->start, src->end_orig, steps);
+         src->start, src->end, steps);
 #endif
     switch (dst->vf.op) {
     case VDEF_PERCENT:{
         rrd_value_t *array;
         int       field;
-        if ((array = malloc(steps * sizeof(double))) == NULL) {
+        if ((array = (rrd_value_t*)(malloc(steps * sizeof(double)))) == NULL) {
             rrd_set_error("malloc VDEV_PERCENT");
             return -1;
         }

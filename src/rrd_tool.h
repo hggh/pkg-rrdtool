@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.1  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.h   Common Header File
  *****************************************************************************/
@@ -50,7 +50,13 @@ extern    "C" {
 #endif
 
 /* local include files -- need to be after the system ones */
+#ifdef HAVE_GETOPT_LONG
+#define _GNU_SOURCE
+#include <getopt.h>
+#else
 #include "rrd_getopt.h"
+#endif
+
 #include "rrd_format.h"
 
 #ifndef max

@@ -9,13 +9,13 @@
 
 Summary: Round Robin Database Tool to store and display time-series data
 Name: rrdtool
-Version: 1.3.1
-Release: 0.20%{?pre:.%{pre}}%{?dist}
+Version: 1.3.5
+Release: 1
 License: GPLv2+ with exceptions
 Group: Applications/Databases
 URL: http://oss.oetiker.ch/rrdtool/
 #Source0: http://oss.oetiker.ch/%{name}/pub/%{name}-%{version}.tar.gz
-Source0: http://oss.oetiker.ch/rrdtool/pub/beta/%{name}-%{version}%{pre}.tar.gz
+Source0: http://oss.oetiker.ch/rrdtool/pub/beta/%{name}-%{version}.tar.gz
 %if %{with_php}
 Source1: php4-%{svnrev}.tar.gz
 Patch1: rrdtool-1.3.0-beta4-fix-rrd_update-in-php-bindings.patch
@@ -145,10 +145,10 @@ The %{name}-ruby package includes RRDtool bindings for Ruby.
 
 %prep
 %if %{with_php}
-%setup -q -n %{name}-%{version}%{pre} -a 1
+%setup -q -n %{name}-%{version} -a 1
 %patch1 -p1
 %else
-%setup -q -n %{name}-%{version}%{pre}
+%setup -q -n %{name}-%{version}
 %endif
 
 # Fix to find correct python dir on lib64
@@ -293,6 +293,7 @@ find examples/ -type f -exec chmod 0644 {} \;
 %{_includedir}/*.h
 %exclude %{_libdir}/*.la
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/librrd.pc
 
 %files doc
 %defattr(-,root,root,-)
@@ -310,8 +311,7 @@ find examples/ -type f -exec chmod 0644 {} \;
 %files python
 %defattr(-,root,root,-)
 %doc bindings/python/AUTHORS bindings/python/COPYING bindings/python/README
-%{python_sitearch}/rrdtoolmodule.so
-%{python_sitearch}/py_rrdtool-*.egg-info
+%{python_sitearch}/*
 %endif
 
 %if %{with_php}
