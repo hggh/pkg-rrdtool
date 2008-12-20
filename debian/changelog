@@ -13,11 +13,13 @@ rrdtool (1.3.5-1) unstable; urgency=low
     - Removed bts499349-memleaks - included upstream.
     - Removed bts499350-data-corruption - included upstream.
     - Removed typo-ruby - included upstream.
+    - Added bts494874-gnu-kfreebsd to fix a FTBFS on GNU/kFreeBSD - thanks to
+      Petr Salinger for the patch (Closes: #494874).
   * debian/rules:
     - Remove src/librrd.sym in the clean target - this file is automatically
       created during the build but not cleaned up in the upstream Makefiles.
 
- -- Sebastian Harl <sh@tokkee.org>  Sat, 20 Dec 2008 17:46:08 +0100
+ -- Sebastian Harl <sh@tokkee.org>  Sat, 20 Dec 2008 17:57:57 +0100
 
 rrdtool (1.3.1-4) unstable; urgency=high
 
