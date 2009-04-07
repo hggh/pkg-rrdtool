@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrd_fetch.c  read date from an rrd to use for further processing
  *****************************************************************************
- * $Id: rrd_fetch.c 1710 2008-12-15 22:06:22Z oetiker $
+ * $Id: rrd_fetch.c 1781 2009-04-07 07:31:53Z oetiker $
  * $Log$
  * Revision 1.8  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -443,6 +443,8 @@ int rrd_fetch_fn(
     }
 
     rrd_close(rrd_file);
+    rrd_free(&rrd);
+
     return (0);
   err_free_data:
     free(*data);

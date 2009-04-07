@@ -129,14 +129,13 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDTUTORIAL 1"
-.TH RRDTUTORIAL 1 "2008-03-15" "1.3.5" "rrdtool"
-.SH "NAME"
+.TH RRDTUTORIAL 1 "2009-02-21" "1.3.7" "rrdtool"
 rrdtutorial \- Alex van den Bogaerdt's RRDtool tutorial
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 RRDtool is written by Tobias Oetiker <tobi@oetiker.ch> with
 contributions from many people all around the world. This document is
-written by Alex van den Bogaerdt <alex@ergens.op.het.net> to help you
+written by Alex van den Bogaerdt <alex@vandenbogaerdt.nl> to help you
 understand what RRDtool is and what it can do for you.
 .PP
 The documentation provided with RRDtool can be too technical for some
@@ -151,13 +150,32 @@ networking.
 Please don't skip ahead in this document!  The first part of this
 document explains the basics and may be boring.  But if you don't
 understand the basics, the examples will not be as meaningful to you.
+.PP
+Sometimes things change.  This example used to provide numbers like
+\&\*(L"0.04\*(R" in stead of \*(L"4.00000e\-02\*(R".  Those are really the same numbers,
+just written down differently.  Don't be alarmed if a future version
+of rrdtool displays a slightly different form of output. The examples
+in this document are correct for version 1.2.0 of RRDtool.
+.PP
+Also, sometimes bugs do occur. They may also influence the outcome of
+the examples. Example speed4.png was suffering from this (the handling
+of unknown data in an if-statement was wrong). Normal data will be
+just fine (a bug in rrdtool wouldn't last long) but special cases like
+NaN, \s-1INF\s0 and so on may last a bit longer.  Try another version if you
+can, or just live with it.
+.PP
+I fixed the speed4.png example (and added a note). There may be other
+examples which suffer from the same or a similar bug.  Try to fix it
+yourself, which is a great excercise. But please do not submit your
+result as a fix to the source of this document. Discuss it on the
+user's list, or write to me.
 .Sh "What is RRDtool?"
 .IX Subsection "What is RRDtool?"
 RRDtool refers to Round Robin Database tool.
 Round robin is a technique that works with a fixed amount of data, and a
 pointer to the current element. Think of a circle with some dots plotted
-on the edge \*(-- these dots are the places where data can be stored. Draw an
-arrow from the center of the circle to one of the dots \*(-- this is the pointer.
+on the edge. These dots are the places where data can be stored. Draw an
+arrow from the center of the circle to one of the dots; this is the pointer.
 When the current data is read or written, the pointer moves to the next
 element. As we are on a circle there is neither a beginning nor an end, you can
 go on and on and on. After a while, all the available places will be used and
@@ -167,15 +185,15 @@ RRDtool works with with Round Robin Databases (RRDs). It stores and retrieves
 data from them.
 .Sh "What data can be put into an \s-1RRD\s0?"
 .IX Subsection "What data can be put into an RRD?"
-You name it, it will probably fit as long as it is some sort of time-series
-data. This means you have to be able to measure some value at several points in time and
-provide this information to RRDtool. If you can do this, RRDtool will be
-able to store it. The values must be numerical but don't have to be
-integers, as is the case with \s-1MRTG\s0 (the next section will give more details
-on this more specialized application).
+You name it, it will probably fit as long as it is some sort of
+time-series data. This means you have to be able to measure some value
+at several points in time and provide this information to RRDtool. If
+you can do this, RRDtool will be able to store it. The values must be
+numerical but don't have to be integers, as is the case with \s-1MRTG\s0 (the
+next section will give more details on this more specialized application).
 .PP
 Many examples below talk about \s-1SNMP\s0 which is an acronym for Simple Network
-Management Protocol. \*(L"Simple\*(R" refers to the protocol \*(-- it does not
+Management Protocol. \*(L"Simple\*(R" refers to the protocol. It does not
 mean it is simple to manage or monitor a network. After working your
 way through this document, you should know enough to be able to
 understand what people are talking about. For now, just realize that
@@ -261,7 +279,7 @@ Most discussions about networking talk about bits per second so lets
 get used to that right away. Assume a byte is eight bits and start to
 think in bits not bytes. The counter, however, still counts bytes!
 In the \s-1SNMP\s0 world most of the counters are 32 bits. That means they are
-counting from 0 to 4'294'967'295. We will use these values in the examples.
+counting from 0 to 4294967295. We will use these values in the examples.
 The device, when asked, returns the current value of the counter. We
 know the time that has passes since we last asked so we now know how
 many bytes have been transfered ***on average*** per second. This is
@@ -287,36 +305,36 @@ most into miles per hour by dividing km by 1.6 (close enough).
 I will use the following abbreviations:
 .PP
 .Vb 6
-\& M:    meter
-\& KM:   kilometer (= 1\(aq000 meters).
-\& H:    hour
-\& S:    second
-\& KM/H: kilometers per hour
-\& M/S:  meters per second
+\& m:    meter
+\& km:   kilometer (= 1000 meters).
+\& h:    hour
+\& s:    second
+\& km/h: kilometers per hour
+\& m/s:  meters per second
 .Ve
 .PP
 You are driving a car. At 12:05 you read the counter in the dashboard
-and it tells you that the car has moved 12'345 \s-1KM\s0 until that moment.
-At 12:10 you look again, it reads 12'357 \s-1KM\s0. This means you have
-traveled 12 \s-1KM\s0 in five minutes. A scientist would translate that
+and it tells you that the car has moved 12345 km until that moment.
+At 12:10 you look again, it reads 12357 km. This means you have
+traveled 12 km in five minutes. A scientist would translate that
 into meters per second and this makes a nice comparison toward the
 problem of (bytes per five minutes) versus (bits per second).
 .PP
-We traveled 12 kilometers which is 12'000 meters. We did that in five
-minutes or 300 seconds. Our speed is 12'000M / 300S or 40 M/S.
+We traveled 12 kilometers which is 12000 meters. We did that in five
+minutes or 300 seconds. Our speed is 12000m / 300s or 40 m/s.
 .PP
-We could also calculate the speed in \s-1KM/H:\s0 12 times 5 minutes
-is an hour, so we have to multiply 12 \s-1KM\s0 by 12 to get 144 \s-1KM/H\s0.
-For our native English speaking friends: that's 90 \s-1MPH\s0 so don't
+We could also calculate the speed in km/h: 12 times 5 minutes
+is an hour, so we have to multiply 12 km by 12 to get 144 km/h.
+For our native English speaking friends: that's 90 mph so don't
 try this example at home or where I live :)
 .PP
 Remember: these numbers are averages only.  There is no way to figure out
 from the numbers, if you drove at a constant speed.  There is an example
 later on in this tutorial that explains this.
 .PP
-I hope you understand that there is no difference in calculating M/S or
-bps; only the way we collect the data is different. Even the K from kilo
-is the same as in networking terms k also means 1'000.
+I hope you understand that there is no difference in calculating m/s or
+bps; only the way we collect the data is different. Even the k from kilo
+is the same as in networking terms k also means 1000.
 .PP
 We will now create a database where we can keep all these interesting
 numbers. The method used to start the program may differ slightly from
@@ -339,7 +357,7 @@ and skip all of the '\e' characters.
 .IX Subsection "What has been created?"
 We created the round robin database called test (test.rrd) which starts at
 noon the day I started writing this document, 7th of March, 1999 (this date
-translates to 920'804'400 seconds as explained below). Our database holds
+translates to 920804400 seconds as explained below). Our database holds
 one data source (\s-1DS\s0) named \*(L"speed\*(R" that represents a counter. This counter
 is read every five minutes (this is the default therefore you don't have to
 put \f(CW\*(C`\-\-step=300\*(C'\fR).  In the same database two round robin archives (RRAs)
@@ -362,21 +380,21 @@ We now have to fill our database with some numbers. We'll pretend to
 have read the following numbers:
 .PP
 .Vb 15
-\& 12:05  12345 KM
-\& 12:10  12357 KM
-\& 12:15  12363 KM
-\& 12:20  12363 KM
-\& 12:25  12363 KM
-\& 12:30  12373 KM
-\& 12:35  12383 KM
-\& 12:40  12393 KM
-\& 12:45  12399 KM
-\& 12:50  12405 KM
-\& 12:55  12411 KM
-\& 13:00  12415 KM
-\& 13:05  12420 KM
-\& 13:10  12422 KM
-\& 13:15  12423 KM
+\& 12:05  12345 km
+\& 12:10  12357 km
+\& 12:15  12363 km
+\& 12:20  12363 km
+\& 12:25  12363 km
+\& 12:30  12373 km
+\& 12:35  12383 km
+\& 12:40  12393 km
+\& 12:45  12399 km
+\& 12:50  12405 km
+\& 12:55  12411 km
+\& 13:00  12415 km
+\& 13:05  12420 km
+\& 13:10  12422 km
+\& 13:15  12423 km
 .Ve
 .PP
 We fill the database as follows:
@@ -438,12 +456,7 @@ If it doesn't, something may be wrong.  Perhaps your \s-1OS\s0 will print
 writes \*(L"U\*(R" or \*(L"\s-1UNKN\s0\*(R" or something similar that's okay.  If something
 else is wrong, it will probably be due to an error you made (assuming
 that my tutorial is correct of course :\-). In that case: delete the
-database and try again.  Sometimes things change.  This example used
-to provide numbers like \*(L"0.04\*(R" in stead of \*(L"4.00000e\-02\*(R".  Those are
-really the same numbers, just written down differently.  Don't be
-alarmed if a future version of rrdtool displays a slightly different
-form of output. The examples in this document are correct for version
-1.2.0 of RRDtool.
+database and try again. 
 .PP
 The meaning of the above output will become clear below.
 .Sh "Time to create some graphics"
@@ -484,8 +497,8 @@ The \*(L"color\*(R" black is all colors off: 000000
 \&   gray    #555555     (one third of all components)
 .Ve
 .PP
-Additionally you can add an alpha channel (transparency).  The default
-will be \*(L"\s-1FF\s0\*(R" which means non\-transparent.
+Additionally you can (with a recent RRDtool)  add an alpha channel
+(transparency).  The default will be \*(L"\s-1FF\s0\*(R" which means non\-transparent.
 .PP
 The \s-1PNG\s0 you just created can be displayed using your favorite image
 viewer.  Web browsers will display the \s-1PNG\s0 via the \s-1URL\s0
@@ -494,18 +507,18 @@ viewer.  Web browsers will display the \s-1PNG\s0 via the \s-1URL\s0
 .IX Subsection "Graphics with some math"
 When looking at the image, you notice that the horizontal axis is labeled
 12:10, 12:20, 12:30, 12:40 and 12:50. Sometimes a label doesn't fit (12:00
-and 13:00 would be candidates) so they are skipped.
+and 13:00 would be likely candidates) so they are skipped.
 .PP
 The vertical axis displays the range we entered. We provided
 kilometers and when divided by 300 seconds, we get very small
-numbers. To be exact, the first value was 12 (12'357\-12'345) and divided
+numbers. To be exact, the first value was 12 (12357\-12345) and divided
 by 300 this makes 0.04, which is displayed by RRDtool as \*(L"40 m\*(R"
-meaning \*(L"40/1'000\*(R". The \*(L"m\*(R" (milli) has nothing to do with meters,
+meaning \*(L"40/1000\*(R". The \*(L"m\*(R" (milli) has nothing to do with meters (also m),
 kilometers or millimeters! RRDtool doesn't know about the physical
 units of our data, it just works with dimensionless numbers.
 .PP
 If we had measured our distances in meters, this would have been
-(12'357'000\-12'345'000)/300 = 12'000/300 = 40.
+(12357000\-12345000)/300 = 12000/300 = 40.
 .PP
 As most people have a better feel for numbers in this range, we'll
 correct that. We could recreate our database and store the correct
@@ -521,10 +534,19 @@ the png file!
 \&      LINE2:realspeed#FF0000
 .Ve
 .PP
-Note: Make sure not to forget the backslash \e in front of the
-multiplication operator * above. The backslash is needed to \*(L"escape\*(R"
-the * as some operating systems might interpret and expand * instead
-of passing it to the rrdtool command.
+Note: I need to escape the multiplication operator * with a backslash.
+If I don't, the operating system may interpret it and use it for file
+name expansion. You could also place the line within quotation marks
+like so:
+.PP
+.Vb 1
+\&      "CDEF:realspeed=myspeed,1000,*"                  \e
+.Ve
+.PP
+It boils down to: it is RRDtool which should see *, not your shell.
+And it is your shell interpreting \e, not RRDtool. You may need to
+adjust examples accordingly if you happen to use an operating
+system or shell which behaves differently.
 .PP
 After viewing this \s-1PNG\s0, you notice the \*(L"m\*(R" (milli) has
 disappeared. This it what the correct result would be. Also, a label
@@ -538,22 +560,22 @@ those\*(R". Don't bother with \s-1RPN\s0 yet, it will be explained later on in
 more detail. Also, you may want to read my tutorial on CDEFs and Steve
 Rader's tutorial on \s-1RPN\s0. But first finish this tutorial.
 .PP
-Hang on! If we can multiply values with 1'000, it should also be possible
+Hang on! If we can multiply values with 1000, it should also be possible
 to display kilometers per hour from the same data!
 .PP
 To change a value that is measured in meters per second:
 .PP
 .Vb 3
-\& Calculate meters per hour:     value * 3\(aq600
-\& Calculate kilometers per hour: value / 1\(aq000
-\& Together this makes:           value * (3\(aq600/1\(aq000) or value * 3.6
+\& Calculate meters per hour:     value * 3600
+\& Calculate kilometers per hour: value / 1000
+\& Together this makes:           value * (3600/1000) or value * 3.6
 .Ve
 .PP
 In our example database we made a mistake and we need to compensate for
-this by multiplying with 1'000. Applying that correction:
+this by multiplying with 1000. Applying that correction:
 .PP
 .Vb 1
-\& value * 3.6  * 1\(aq000 == value * 3\(aq600
+\& value * 3.6  * 1000 == value * 3600
 .Ve
 .PP
 Now let's create this \s-1PNG\s0, and add some more magic ...
@@ -574,7 +596,7 @@ Now let's create this \s-1PNG\s0, and add some more magic ...
 Note: here we use another means to escape the * operator by enclosing
 the whole string in double quotes.
 .PP
-This graph looks much better. Speed is shown in \s-1KM/H\s0 and there is even
+This graph looks much better. Speed is shown in km/h and there is even
 an extra line with the maximum allowed speed (on the road I travel
 on). I also changed the colors used to display speed and changed it
 from a line into an area.
@@ -599,12 +621,13 @@ I like to believe there are virtually no limits to how RRDtool graph
 can manipulate data. I will not explain how it works, but look at the
 following \s-1PNG:\s0
 .PP
-.Vb 12
+.Vb 13
 \&   rrdtool graph speed4.png                           \e
 \&      \-\-start 920804400 \-\-end 920808000               \e
 \&      \-\-vertical\-label km/h                           \e
 \&      DEF:myspeed=test.rrd:speed:AVERAGE              \e
-\&      "CDEF:kmh=myspeed,3600,*"                       \e
+\&      CDEF:nonans=myspeed,UN,0,myspeed,IF             \e
+\&      CDEF:kmh=nonans,3600,*                          \e
 \&      CDEF:fast=kmh,100,GT,100,0,IF                   \e
 \&      CDEF:over=kmh,100,GT,kmh,100,\-,0,IF             \e
 \&      CDEF:good=kmh,100,GT,0,kmh,IF                   \e
@@ -613,6 +636,10 @@ following \s-1PNG:\s0
 \&      AREA:fast#550000:"Too fast"                     \e
 \&      STACK:over#FF0000:"Over speed"
 .Ve
+.PP
+Remember the note in the beginning?  I had to remove unknown data from
+this example. The 'nonans' \s-1CDEF\s0 is new, and the 6th line (which used to
+be the 5th line) used to read 'CDEF:kmh=myspeed,3600,*'
 .PP
 Let's create a quick and dirty \s-1HTML\s0 page to view the three PNGs:
 .PP
@@ -670,7 +697,7 @@ whatever. Any incrementing counter can be monitored and graphed using
 the stuff you learned so far. Later on we will also be able to monitor
 other types of values like temperature.
 .PP
-Most (?) people interested in RRDtool will use the counter that keeps track
+Many people interested in RRDtool will use the counter that keeps track
 of octets (bytes) transfered by a network device. So let's do just
 that next. We will start with a description of how to collect data.
 .PP
@@ -898,8 +925,8 @@ Then, after collecting data for a day, try to create an image using:
 .Ve
 .PP
 This should produce a picture with one day worth of traffic.
-One day is 24 hours of 60 minutes of 60 seconds: 24*60*60=86'400, we
-start at now minus 86'400 seconds. We define (with DEFs) inoctets and
+One day is 24 hours of 60 minutes of 60 seconds: 24*60*60=86400, we
+start at now minus 86400 seconds. We define (with DEFs) inoctets and
 outoctets as the average values from the database myrouter.rrd and draw
 an area for the \*(L"in\*(R" traffic and a line for the \*(L"out\*(R" traffic.
 .PP
@@ -917,16 +944,16 @@ the maximum values instead of the average values. Let's go
 into this a bit more.
 .PP
 Recall all the stuff about the speed of the car. Suppose we drove at 144
-\&\s-1KM/H\s0 during 5 minutes and then were stopped by the police for 25 minutes.
+km/h during 5 minutes and then were stopped by the police for 25 minutes.
 At the end of the lecture we would take our laptop and create and view the
 image taken from the database. If we look at the second \s-1RRA\s0 we did
 create, we would have the average from 6 samples. The samples measured
 would be 144+0+0+0+0+0=144, divided by 30 minutes, corrected for the
-error by 1000, translated into \s-1KM/H\s0, with a result of 24 \s-1KM/H\s0.
+error by 1000, translated into km/h, with a result of 24 km/h.
 I would still get a ticket but not for speeding anymore :)
 .PP
 Obviously, in this case we shouldn't look at the averages. In some
-cases they are handy. If you want to know how many \s-1KM\s0 you had traveled,
+cases they are handy. If you want to know how many km you had traveled,
 the averaged picture would be the right one to look at. On the other hand, for
 the speed that we traveled at, the maximum numbers seen is much more
 interesting. Later we will see more types.
@@ -938,9 +965,9 @@ we have created, there are two archives that keep data per day. The
 archive that keeps averages will show low numbers, the archive that
 shows maxima will have higher numbers.
 .PP
-For my car this would translate in averages per day of 96/24=4 \s-1KM/H\s0
+For my car this would translate in averages per day of 96/24=4 km/h
 (as I travel about 94 kilometers on a day) during working days, and
-maxima of 120 \s-1KM/H\s0 (my top speed that I reach every day).
+maxima of 120 km/h (my top speed that I reach every day).
 .PP
 Big difference. Do not look at the second graph to estimate the
 distances that I travel and do not look at the first graph to
@@ -948,11 +975,11 @@ estimate my speed. This will work if the samples are close together,
 as they are in five minutes, but not if you average.
 .PP
 On some days, I go for a long ride. If I go across Europe and travel
-for 12 hours, the first graph will rise to about 60 \s-1KM/H\s0. The second
-one will show 180 \s-1KM/H\s0. This means that I traveled a distance of 60
-\&\s-1KM/H\s0 times 24 H = 1440 \s-1KM\s0. I did this with a higher speed and a
-maximum around 180 \s-1KM/H\s0. However, it probably doesn't mean that I
-traveled for 8 hours at a constant speed of 180 \s-1KM/H\s0!
+for 12 hours, the first graph will rise to about 60 km/h. The second
+one will show 180 km/h. This means that I traveled a distance of 60
+km/h times 24 h = 1440 km. I did this with a higher speed and a
+maximum around 180 km/h. However, it probably doesn't mean that I
+traveled for 8 hours at a constant speed of 180 km/h!
 .PP
 This is a real example: go with the flow through Germany (fast!) and stop
 a few times for gas and coffee. Drive slowly through Austria and the
@@ -969,7 +996,7 @@ day. From this one value, we cannot see much detail, of course.
 .PP
 Make sure you understand the last few paragraphs. There is no value
 in only a line and a few axis, you need to know what they mean and
-interpret the data in ana appropriate way. This is true for all data.
+interpret the data in an appropriate way. This is true for all data.
 .PP
 The biggest mistake you can make is to use the collected data for
 something that it is not suitable for. You would be better off if
@@ -978,8 +1005,8 @@ you didn't have the graph at all.
 .IX Subsection "Let's review what you now should know"
 You know how to create a database and can put data in it. You can get
 the numbers out again by creating an image, do math on the data from
-the database and view the resulte instead of the raw data.  You know
-about the difference between averages and maxima, and when to use
+the database and view the result instead of the raw data.  You know
+about the difference between averages and maximum, and when to use
 which (or at least you should have an idea).
 .PP
 RRDtool can do more than what we have learned up to now. Before you
@@ -1026,7 +1053,7 @@ The two additional types are \s-1DERIVE\s0 and \s-1ABSOLUTE\s0. Absolute can be 
 counter with one difference: RRDtool assumes the counter is reset when
 it's read. That is: its delta is known without calculation by RRDtool
 whereas RRDtool needs to calculate it for the counter type.
-Example: our first example (12'345, 12'357, 12'363, 12'363) would read:
+Example: our first example (12345, 12357, 12363, 12363) would read:
 unknown, 12, 6, 0. The rest of the calculations stay the same.
 The other one, derive, is like counter. Unlike counter, it can also
 decrease so it can have a negative delta. Again, the rest of the
@@ -1070,7 +1097,7 @@ Line B is of type \s-1GAUGE\s0. These are \*(L"real\*(R" values so they should m
 what we put in: a sort of a wave.
 .IP "\(bu" 2
 Line C is of type \s-1DERIVE\s0. It should be a counter that can decrease. It does
-so between 2'400 and 0, with 1'800 in\-between.
+so between 2400 and 0, with 1800 in\-between.
 .IP "\(bu" 2
 Line D is of type \s-1ABSOLUTE\s0. This is like counter but it works on
 values without calculating the difference. The numbers are the same
@@ -1123,10 +1150,10 @@ increasing values.
 .IX Subsection "Counter Wraps"
 There are a few more basics to show. Some important options are still to
 be covered and we haven't look at counter wraps yet. First the counter wrap:
-In our car we notice that the counter shows 999'987. We travel 20 \s-1KM\s0 and
-the counter should go to 1'000'007. Unfortunately, there are only six digits
-on our counter so it really shows 000'007. If we would plot that on a type
-\&\s-1DERIVE\s0, it would mean that the counter was set back 999'980 \s-1KM\s0. It wasn't,
+In our car we notice that the counter shows 999987. We travel 20 km and
+the counter should go to 1000007. Unfortunately, there are only six digits
+on our counter so it really shows 000007. If we would plot that on a type
+\&\s-1DERIVE\s0, it would mean that the counter was set back 999980 km. It wasn't,
 and there has to be some protection for this. This protection is only
 available for type \s-1COUNTER\s0 which should be used for this kind of counter
 anyways. How does it work? Type counter should never decrease and
@@ -1135,11 +1162,11 @@ If the delta is negative, this can be compensated for by adding the
 maximum value of the counter + 1. For our car this would be:
 .PP
 .Vb 1
-\& Delta = 7 \- 999\(aq987 = \-999\(aq980    (instead of 1\(aq000\(aq007\-999\(aq987=20)
+\& Delta = 7 \- 999987 = \-999980    (instead of 1000007\-999987=20)
 .Ve
 .PP
 .Vb 1
-\& Real delta = \-999\(aq980 + 999\(aq999 + 1 = 20
+\& Real delta = \-999980 + 999999 + 1 = 20
 .Ve
 .PP
 At the time of writing this document, RRDtool knows of counters that
@@ -1147,8 +1174,8 @@ are either 32 bits or 64 bits of size. These counters can handle the
 following different values:
 .PP
 .Vb 2
-\& \- 32 bits: 0 ..           4\(aq294\(aq967\(aq295
-\& \- 64 bits: 0 .. 18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615
+\& \- 32 bits: 0 ..           4294967295
+\& \- 64 bits: 0 .. 18446744073709551615
 .Ve
 .PP
 If these numbers look strange to you, you can view them in
@@ -1181,50 +1208,50 @@ can't handle the numbers :)
 Correction numbers:
 .PP
 .Vb 3
-\& \- 32 bits: (4\(aq294\(aq967\(aq295 + 1) =                                4\(aq294\(aq967\(aq296
-\& \- 64 bits: (18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 + 1)
-\&                                    \- correction1 = 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320
+\& \- 32 bits: (4294967295 + 1) =                                4294967296
+\& \- 64 bits: (18446744073709551615 + 1)
+\&                                    \- correction1 = 18446744069414584320
 .Ve
 .PP
 .Vb 6
-\& Before:        4\(aq294\(aq967\(aq200
+\& Before:        4294967200
 \& Increase:                100
-\& Should become: 4\(aq294\(aq967\(aq300
+\& Should become: 4294967300
 \& But really is:             4
-\& Delta:        \-4\(aq294\(aq967\(aq196
-\& Correction1:  \-4\(aq294\(aq967\(aq196 + 4\(aq294\(aq967\(aq296 = 100
+\& Delta:        \-4294967196
+\& Correction1:  \-4294967196 + 4294967296 = 100
 .Ve
 .PP
 .Vb 9
-\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq000
+\& Before:        18446744073709551000
 \& Increase:                             800
-\& Should become: 18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq800
+\& Should become: 18446744073709551800
 \& But really is:                        184
-\& Delta:        \-18\(aq446\(aq744\(aq073\(aq709\(aq550\(aq816
-\& Correction1:  \-18\(aq446\(aq744\(aq073\(aq709\(aq550\(aq816
-\&                                + 4\(aq294\(aq967\(aq296 = \-18\(aq446\(aq744\(aq069\(aq414\(aq583\(aq520
-\& Correction2:  \-18\(aq446\(aq744\(aq069\(aq414\(aq583\(aq520
-\&                   + 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 = 800
+\& Delta:        \-18446744073709550816
+\& Correction1:  \-18446744073709550816
+\&                                + 4294967296 = \-18446744069414583520
+\& Correction2:  \-18446744069414583520
+\&                   + 18446744069414584320 = 800
 .Ve
 .PP
 .Vb 7
-\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 ( maximum value )
-\& Increase:      18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 ( absurd increase, minimum for
-\& Should become: 36\(aq893\(aq488\(aq143\(aq124\(aq135\(aq935             this example to work )
-\& But really is: 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319
-\& Delta:                     \-4\(aq294\(aq967\(aq296
-\& Correction1:  \-4\(aq294\(aq967\(aq296 + 4\(aq294\(aq967\(aq296 = 0
+\& Before:        18446744073709551615 ( maximum value )
+\& Increase:      18446744069414584320 ( absurd increase, minimum for
+\& Should become: 36893488143124135935             this example to work )
+\& But really is: 18446744069414584319
+\& Delta:                     \-4294967296
+\& Correction1:  \-4294967296 + 4294967296 = 0
 \& (not negative \-> no correction2)
 .Ve
 .PP
 .Vb 7
-\& Before:        18\(aq446\(aq744\(aq073\(aq709\(aq551\(aq615 ( maximum value )
-\& Increase:      18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319 ( one less increase )
-\& Should become: 36\(aq893\(aq488\(aq143\(aq124\(aq135\(aq934
-\& But really is: 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq318
-\& Delta:                     \-4\(aq294\(aq967\(aq297
-\& Correction1:  \-4\(aq294\(aq967\(aq297 + 4\(aq294\(aq967\(aq296 = \-1
-\& Correction2:  \-1 + 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq320 = 18\(aq446\(aq744\(aq069\(aq414\(aq584\(aq319
+\& Before:        18446744073709551615 ( maximum value )
+\& Increase:      18446744069414584319 ( one less increase )
+\& Should become: 36893488143124135934
+\& But really is: 18446744069414584318
+\& Delta:                     \-4294967297
+\& Correction1:  \-4294967297 + 4294967296 = \-1
+\& Correction2:  \-1 + 18446744069414584320 = 18446744069414584319
 .Ve
 .PP
 As you can see from the last two examples, you need strange numbers
@@ -1278,8 +1305,8 @@ RRDtool interpolates and stores 300 as it should be.
 \& time+900: 900 delta=300   time+900:  900 delta=297
 .Ve
 .PP
-Let's create two identical databases. I've chosen the time range 920'805'000
-to 920'805'900 as this goes very well with the example numbers.
+Let's create two identical databases. I've chosen the time range 920805000
+to 920805900 as this goes very well with the example numbers.
 .PP
 .Vb 4
 \&   rrdtool create seconds1.rrd   \e
@@ -1335,7 +1362,7 @@ It's time now to wrap up this tutorial. We covered all the basics for
 you to be able to work with RRDtool and to read the additional
 documentation available. There is plenty more to discover about
 RRDtool and you will find more and more uses for this package. You can
-easly create graphs using just the examples provided and using only
+easily create graphs using just the examples provided and using only
 RRDtool. You can also use one of the front ends to RRDtool that are
 available.
 .SH "MAILINGLIST"
@@ -1360,4 +1387,4 @@ basic questions. They will not only get their answers, but at the same
 time learn a whole lot more.
 .PP
 Alex van den Bogaerdt
-<alex@ergens.op.het.net>
+<alex@vandenbogaerdt.nl>

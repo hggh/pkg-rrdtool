@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 1710 2008-12-15 22:06:22Z oetiker $
+ * $Id: rrd_open.c 1781 2009-04-07 07:31:53Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <utime.h>
 #endif
 
 #define MEMBLK 8192

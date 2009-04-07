@@ -1,10 +1,10 @@
 
 /*****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1710 2008-12-15 22:06:22Z oetiker $
+ * $Id: rrd_update.c 1781 2009-04-07 07:31:53Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -1943,7 +1943,7 @@ static int write_RRA_row(
             /* append info to the return hash */
             *pcdp_summary = rrd_info_push(*pcdp_summary,
                                           sprintf_alloc
-                                          ("[%d]RRA[%s][%lu]DS[%s]", rra_time,
+                                          ("[%lli]RRA[%s][%lu]DS[%s]", (long long)rra_time,
                                            rrd->rra_def[rra_idx].cf_nam,
                                            rrd->rra_def[rra_idx].pdp_cnt,
                                            rrd->ds_def[ds_idx].ds_nam),

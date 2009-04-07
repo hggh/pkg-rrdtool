@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "BIN_DEC_HEX 1"
-.TH BIN_DEC_HEX 1 "2008-03-15" "1.3.5" "rrdtool"
+.TH BIN_DEC_HEX 1 "2009-02-21" "1.3.7" "rrdtool"
 .SH "NAME"
 bin_dec_hex \- How to use binary, decimal, and hexadecimal notation.
 .SH "DESCRIPTION"
@@ -300,7 +300,8 @@ you're writing in. Some of the prefixes are \*(L"0x\*(R" for C, \*(L"$\*(R" for
 Pascal, \*(L"#\*(R" for \s-1HTML\s0.  It is common to assume that if a number starts
 with a zero, it is octal. It does not matter what is used as long as
 you know what it is. I will use \*(L"0x\*(R" for hexadecimal, \*(L"%\*(R" for binary
-and \*(L"0\*(R" for octal.  The following numbers are all the same, just their represenatation (base) is different: 021 0x11 17 \f(CW%00010001\fR
+and \*(L"0\*(R" for octal.  The following numbers are all the same, just their
+representation (base) is different: 021 0x11 17 \f(CW%00010001\fR
 .PP
 To do arithmetics and conversions you need to understand one more thing.
 It is something you already know but perhaps you do not \*(L"see\*(R" it yet:
@@ -408,7 +409,7 @@ is therefore \*(L"0\*(R" and we now have 0xA0??.
 (which is just plain 16) four times and write down \*(L"4\*(R" to get 0xA04?.
 Subtract 64 from 69 (69 \- 4*16) and the last digit is 5 \-\-> 0xA045.
 .PP
-The other method builds ub the number from the right. Let's try 41'029
+The other method builds up the number from the right. Let's try 41'029
 again.  Divide by 16 and do not use fractions (only whole numbers).
 .PP
 .Vb 4
@@ -532,4 +533,4 @@ other people by pointing them to this document when they are asking
 basic questions. They will not only get their answer, but at the same
 time learn a whole lot more.
 .PP
-Alex van den Bogaerdt  <alex@ergens.op.het.net>
+Alex van den Bogaerdt  <alex@vandenbogaerdt.nl>

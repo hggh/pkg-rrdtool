@@ -136,7 +136,7 @@ will all use the same magnitude unit except for zero values.</p>
 </dd>
 </dl>
 <p>If you PRINT a VDEF value, you can also print the time associated with it by appending the string
-<strong>:strftime</strong> to the format. Note that rrdtool uses the strftime function of your OSs clibrary. This means that
+<strong>:strftime</strong> to the format. Note that rrdtool uses the strftime function of your OSs C library. This means that
 the conversion specifier may vary. Check the manual page if you are uncertain. The following is a list of
 conversion specifiers usually supported across the board.</p>
 <dl>
@@ -338,7 +338,7 @@ be filled.</p>
 <p>Plot a tick mark (a vertical line) for each value of <em>vname</em> that is
 non-zero and not *UNKNOWN*. The <em>fraction</em> argument specifies the length of
 the tick mark as a fraction of the y-axis; the default value is 0.1 (10% of
-the axis). Note that the color specification is not optional. The TICK marks normaly
+the axis). Note that the color specification is not optional. The TICK marks normally
 start at the lower edge of the graphing area. If the fraction is negative they start
 at the upper border of the graphing area.</p>
 <p>
@@ -396,7 +396,7 @@ specified.</p>
 right aligned, and <strong>\c</strong> for centered. In the next section there is an
 example showing how to use centered formatting.</p>
 <p><strong>\n</strong> is a valid alias for <strong>\l</strong> since incomplete parsing in earlier
-versions of rrdtool lead to this behaviour and a number of people has been using it.</p>
+versions of rrdtool lead to this behavior and a number of people has been using it.</p>
 <p>Normally there are two space characters inserted between every two items
 printed into the graph. The space following a string can be suppressed by
 putting a <strong>\g</strong> at the end of the string. The <strong>\g</strong> also ignores any space
@@ -580,7 +580,8 @@ Pango uses the xml <strong>span</strong> tags for inline formatting instructions
 <hr />
 <h1><a name="author">AUTHOR</a></h1>
 <p>Program by Tobias Oetiker &lt;<a href="mailto:tobi@oetiker.ch">tobi@oetiker.ch</a>&gt;</p>
-<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;</p>
+<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@vandenbogaerdt.nl">alex@vandenbogaerdt.nl</a>&gt;
+with corrections and/or additions by several people</p>
 
 </body>
 

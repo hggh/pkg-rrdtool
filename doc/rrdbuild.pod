@@ -41,7 +41,7 @@ Where you want to install the software.
 Once you have decided. Save the two locations into environment variables.
 
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.3.5
+ INSTALL_DIR=/usr/local/rrdtool-1.3.7
 
 
 If your F</tmp> is mounted with the option noexec (RHEL seems todo that) you have to choose
@@ -55,9 +55,9 @@ Now make sure the BUILD_DIR exists and go there:
 Lets first assume you already have all the necessary libraries
 pre-installed. 
 
- wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.5.tar.gz
- gunzip -c rrdtool-1.3.5.tar.gz | tar xf -
- cd rrdtool-1.3.5
+ wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.7.tar.gz
+ gunzip -c rrdtool-1.3.7.tar.gz | tar xf -
+ cd rrdtool-1.3.7
  ./configure --prefix=$INSTALL_DIR && make && make install
 
 Ok, this was very optimistic. This try will probably have ended with
@@ -68,9 +68,11 @@ B<configure> complaining about several missing libraries.
 If your OS lets you install additional packages from a software repository,
 you may get away with installing the missing packages. When the packages are
 installed, run configure again and try to compile again. Below you find some
-hints on getting your OS ready for the rrdtool compilation.
+hints on getting your OS ready for the rrdtool compilation. 
 
-Additions to this list are welcome.
+Additions to this list are welcome. In general rrdtool should work with the
+latest versions of the libraries. The versions listed here are just what was
+current when I tested this.
 
 =head2 OpenSolaris 2008.05
 
@@ -79,9 +81,9 @@ Just add a compiler and the gnome development package:
  pkg install sunstudioexpress
  pkg install SUNWgnome-common-devel
 
-There is a problem with F<cairo.pc> on opensolaris. It suggests that
+There is a problem with F<cairo.pc> on OpenSolaris. It suggests that
 xrender is required for compilation with cairo. This is not true and also
-bad since opensolaris does not include an F<xrender.pc> file. Use perl to
+bad since OpenSolaris does not include an F<xrender.pc> file. Use Perl to
 fix this:
 
  perl -i~ -p -e 's/(Requires.*?)\s*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc 
@@ -90,7 +92,7 @@ Make sure rrdtool finds your new compiler
 
  export PATH=/opt/SunStudioExpress/bin
 
-Since there does not seem to ba a viable msgfmt tool on opensolaris (short
+Since there does not seem to be a viable msgfmt tool on OpenSolaris (short
 of installing it yourself). You have to call configure with the
 
  --disable-libintl
@@ -139,7 +141,7 @@ expectations, so you may want to compile their latest versions.
 
 =head2 General build tips for AIX
 
-If you are working with AIX, you may find the the B<--disable-shared> option
+If you are working with AIX, you may find the B<--disable-shared> option
 will cause things to break for you. In that case you may have to install the
 shared libraries into the rrdtool PREFIX and work with B<--disable-static>
 instead.
@@ -174,12 +176,13 @@ the syntax again differs from system to system:
 
 if you are using the Sun Studio/Forte compiler, you may also want to set
 
- CFLAGS="-xO3 -xcode=pic13"   (SPARC)
- CFLAGS="-xO3 -Kpic"          (x86)
+ export CFLAGS="-xO3 -xcode=pic13"   (SPARC)
+ export CFLAGS="-xO3 -Kpic"          (x86)
 
 
 =item Linux
 
+ export CFLAGS="-O3 -fPIC"
  export LDFLAGS="-Wl,--rpath -Wl,${INSTALL_DIR}/lib" 
 
 =item HPUX
@@ -192,7 +195,7 @@ if you are using the Sun Studio/Forte compiler, you may also want to set
 
 =back 
 
-If you have GNUmake installed and it is not called 'make',
+If you have GNU make installed and it is not called 'make',
 then do
 
  export MAKE=gmake
@@ -211,9 +214,14 @@ not available natively, here is how to compile it.
  wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz
  gunzip -c pkg-config-0.23.tar.gz | tar xf -
  cd pkg-config-0.23
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
+ ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install
+
+After installing pkgconfig in a custom directory, setting up the corresponding
+environment variable will be helpful.
+
+ export PKG_CONFIG=$INSTALL_DIR/bin/pkg-config
 
 =head3 Building zlib
 
@@ -223,7 +231,7 @@ Chances are very high that you already have that on your system ...
  wget http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz
  gunzip -c zlib-1.2.3.tar.gz | tar xf -
  cd zlib-1.2.3
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC" --shared
+ ./configure --prefix=$INSTALL_DIR --shared
  $MAKE
  $MAKE install
 
@@ -237,8 +245,8 @@ the end of line 4 means that line 4 and line 5 are on one line.
  cd $BUILD_DIR
  wget http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz
  gunzip -c libpng-1.2.18.tar.gz | tar xf -
- cd libpng-1.2.10
- env CFLAGS="-O3 -fPIC" ./configure --prefix=$INSTALL_DIR
+ cd libpng-1.2.18
+ ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install
 
@@ -260,10 +268,10 @@ add the following at the start the configure line:
 =head3 Building LibXML2
 
  cd $BUILD_DIR
- wget http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-sources-2.6.31.tar.gz
- gunzip -c libxml2-sources-2.6.31.tar.gz | tar xf -
- cd libxml2-sources-2.6.31
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
+ wget http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-2.6.32.tar.gz
+ gunzip -c libxml2-2.6.32.tar.gz | tar xf -
+ cd libxml2-2.6.32
+ ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install
 
@@ -278,7 +286,7 @@ config file.
  wget http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz
  gunzip -c fontconfig-2.4.2.tar.gz   | tar xf -
  cd fontconfig-2.4.2
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
+ ./configure --prefix=$INSTALL_DIR --with-freetype-config=$INSTALL_DIR/bin/freetype-config
  $MAKE
  $MAKE install
 
@@ -288,7 +296,7 @@ config file.
  wget http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz
  gunzip -c pixman-0.10.0.tar.gz  | tar xf -
  cd pixman-0.10.0
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
+ ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install
 
@@ -297,12 +305,11 @@ config file.
  cd $BUILD_DIR
  wget http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz
  gunzip -c cairo-1.6.4.tar.gz   | tar xf -
- cd cairo-1.4.10
+ cd cairo-1.6.4
  ./configure --prefix=$INSTALL_DIR \
     --enable-xlib=no \
     --enable-xlib-render=no \
-    --enable-win32=no \
-    CFLAGS="-O3 -fPIC"
+    --enable-win32=no
  $MAKE
  $MAKE install
 
@@ -312,17 +319,17 @@ config file.
  wget http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz
  gunzip -c glib-2.15.4.tar.gz  | tar xf -
  cd glib-2.15.4
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
+ ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install
 
 =head3 Building Pango
 
  cd $BUILD_DIR
- wget http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.gz
- gunzip -c pango-1.21.1.tar.gz  | tar xf -
+ wget http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.bz2
+ bunzip2 -c pango-1.21.1.tar.bz2 | tar xf -
  cd pango-1.21.1
- ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC" --without-x
+ ./configure --prefix=$INSTALL_DIR --without-x
  $MAKE
  $MAKE install
 
@@ -338,13 +345,13 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.
 
- cd $BUILD_DIR/rrdtool-1.3.5
+ cd $BUILD_DIR/rrdtool-1.3.7
  ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
  $MAKE clean
  $MAKE
  $MAKE install
 
-SOLARIS HINT: if you want to build  the perl module for the native perl (the
+SOLARIS HINT: if you want to build  the Perl module for the native Perl (the
 one shipping with Solaris) you will need the Sun Forte compiler installed on
 your box or you have to hand-tune bindings/perl-shared/Makefile while
 building!

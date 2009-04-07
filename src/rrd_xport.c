@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  ****************************************************************************
  * rrd_xport.c  export RRD data 
  ****************************************************************************/
@@ -227,7 +227,7 @@ int rrd_xport_fn(
         case GF_XPORT:
             ref_list[xport_counter++] = i;
             *step_list_ptr = im->gdes[im->gdes[i].vidx].step;
-            printf("%s:%lu\n",im->gdes[i].legend,*step_list_ptr);
+            /* printf("%s:%lu\n",im->gdes[i].legend,*step_list_ptr); */
             *step_list_ptr++;
             /* reserve room for one legend entry */
             /* is FMT_LEG_LEN + 5 the correct size? */
@@ -255,7 +255,7 @@ int rrd_xport_fn(
     *step_list_ptr=0;    
     /* find a common step */
     *step = lcd(step_list);
-    printf("step: %lu\n",*step);
+    /* printf("step: %lu\n",*step); */
     free(step_list);
     
     *start =  im->start - im->start % (*step);

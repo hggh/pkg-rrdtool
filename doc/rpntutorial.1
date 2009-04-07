@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RPNTUTORIAL 1"
-.TH RPNTUTORIAL 1 "2008-03-15" "1.3.5" "rrdtool"
+.TH RPNTUTORIAL 1 "2008-12-22" "1.3.7" "rrdtool"
 .SH "NAME"
 rpntutorial \- Reading RRDtool RPN Expressions by Steve Rader
 .SH "DESCRIPTION"
@@ -181,7 +181,7 @@ important to be able to read \s-1IF\s0 operators along with the \s-1LT\s0, \s-1L
 .IX Header "Some Examples"
 While compound expressions can look overly complex, they can be
 considered elegantly simple.  To quickly comprehend \s-1RPN\s0 expressions,
-you must know the the algorithm for evaluating \s-1RPN\s0 expressions:
+you must know the algorithm for evaluating \s-1RPN\s0 expressions:
 iterate searches from the left to the right looking for an operator.
 When it's found, apply that operator by popping the operator and some
 number of values (and by definition, not operators) off the stack.
@@ -239,7 +239,7 @@ with \*(L"A\*(R":
 .Ve
 .PP
 read \*(L"if A then 10 else input\*(R".  Now replace A with it's verbose
-description againg and\*(--voila!\-\-you have a easily readable description
+description again and\*(--voila!\-\-you have a easily readable description
 of the expression:
 .PP
 .Vb 1

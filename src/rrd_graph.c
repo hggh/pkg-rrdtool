@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -9,7 +9,9 @@
 
 #ifdef WIN32
 #include "strftime.h"
+#include "plbasename.h"
 #endif
+
 #include "rrd_tool.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
@@ -3030,16 +3032,7 @@ int graph_paint(
     graph_desc_t *lastgdes = NULL;
     rrd_infoval_t info;
 
-//    PangoFontMap *font_map = pango_cairo_font_map_get_default();
 
-    /* if we want and can be lazy ... quit now */
-    if (lazy) {
-        info.u_cnt = im->ximg;
-        grinfo_push(im, sprintf_alloc("image_width"), RD_I_CNT, info);
-        info.u_cnt = im->yimg;
-        grinfo_push(im, sprintf_alloc("image_height"), RD_I_CNT, info);
-        return 0;
-    }
     /* pull the data from the rrd files ... */
     if (data_fetch(im) == -1)
         return -1;
@@ -3055,7 +3048,7 @@ int graph_paint(
     if (i < 0)
         return -1;
 
-    if ((i == 0) || lazy)
+    if (i == 0)
         return 0;
 
 /**************************************************************
@@ -3077,6 +3070,14 @@ int graph_paint(
     grinfo_push(im, sprintf_alloc("image_width"), RD_I_CNT, info);
     info.u_cnt = im->yimg;
     grinfo_push(im, sprintf_alloc("image_height"), RD_I_CNT, info);
+    info.u_cnt = im->start;
+    grinfo_push(im, sprintf_alloc("graph_start"), RD_I_CNT, info);
+    info.u_cnt = im->end;
+    grinfo_push(im, sprintf_alloc("graph_end"), RD_I_CNT, info);
+
+    /* if we want and can be lazy ... quit now */
+    if (lazy)
+        return 0;
 
     /* get actual drawing data and find min and max values */
     if (data_proc(im) == -1)
@@ -3187,7 +3188,7 @@ int graph_paint(
                     if (im->gdes[i].yrule > 0) {
                         gfx_line(im,
                                  im->xorigin + ii,
-                                 im->yorigin,
+                                 im->yorigin + 1.0,
                                  im->xorigin + ii,
                                  im->yorigin -
                                  im->gdes[i].yrule *
@@ -3195,11 +3196,11 @@ int graph_paint(
                     } else if (im->gdes[i].yrule < 0) {
                         gfx_line(im,
                                  im->xorigin + ii,
-                                 im->yorigin - im->ysize,
+                                 im->yorigin - im->ysize - 1.0,
                                  im->xorigin + ii,
-                                 im->yorigin - (1 -
+                                 im->yorigin - im->ysize -
                                                 im->gdes[i].
-                                                yrule) *
+                                                yrule *
                                  im->ysize, 1.0, im->gdes[i].col);
                     }
                 }
@@ -3652,9 +3653,9 @@ int rrd_graph(
     *ymax = 0;
     while (walker) {
         if (strcmp(walker->key, "image_width") == 0) {
-            *xsize = walker->value.u_int;
+            *xsize = walker->value.u_cnt;
         } else if (strcmp(walker->key, "image_height") == 0) {
-            *ysize = walker->value.u_int;
+            *ysize = walker->value.u_cnt;
         } else if (strcmp(walker->key, "value_min") == 0) {
             *ymin = walker->value.u_val;
         } else if (strcmp(walker->key, "value_max") == 0) {
