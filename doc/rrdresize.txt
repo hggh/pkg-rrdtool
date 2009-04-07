@@ -37,8 +37,8 @@ NNOOTTEESS
        RRA.
 
 AAUUTTHHOORR
-       Alex van den Bogaerdt <alex@ergens.op.het.net>
+       Alex van den Bogaerdt <alex@vandenbogaerdt.nl>
 
 
 
-1.3.5                             2008-03-15                      RRDRESIZE(1)
+1.3.7                             2009-02-21                      RRDRESIZE(1)

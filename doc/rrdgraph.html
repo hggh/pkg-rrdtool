@@ -26,6 +26,7 @@
 		<li><a href="#filename"><em>filename</em></a></li>
 		<li><a href="#time_range">Time range</a></li>
 		<li><a href="#labels">Labels</a></li>
+		<li><a href="#right_axis">Right Axis</a></li>
 		<li><a href="#size">Size</a></li>
 		<li><a href="#limits">Limits</a></li>
 		<li><a href="#grid">Grid</a></li>
@@ -130,10 +131,9 @@ one pixel will silently be ignored.</p>
 [<strong>-v</strong>|<strong>--vertical-label</strong> <em>string</em>]</p>
 <p>A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.</p>
-<dl>
-<dt><strong><a name="item_right_axis">Right Axis</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="right_axis">Right Axis</a></h2>
 <p>[<strong>--right-axis</strong> <em>scale</em><strong>:</strong><em>shift</em>]
 [<strong>--right-axis-label</strong> <em>label</em>]</p>
 <p>A second axis will be drawn to the right of the graph. It is tied to the
@@ -143,8 +143,6 @@ for the right axis.</p>
 <p>By default the format of the axis lables gets determined automatically. If
 you want todo this your self, use this option with the same %lf arguments
 you know from the PRING and GPRINT commands.</p>
-</dd>
-</dl>
 <p>
 </p>
 <h2><a name="size">Size</a></h2>
@@ -196,7 +194,7 @@ and thus the throughput may be higher than the WAN line speed.</p>
 <p>[<strong>-N</strong>|<strong>--no-gridfit</strong>]</p>
 <p>In order to avoid anti-aliasing blurring effects rrdtool snaps
 points to device resolution pixels, this results in a crisper
-aperance. If this is not to your liking, you can use this switch
+appearance. If this is not to your liking, you can use this switch
 to turn this behaviour off.</p>
 <p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
 <p>
@@ -243,7 +241,7 @@ as they specify the complete day and not just midnight.</p>
 placed every <em>label factor</em> lines.  You can specify <code>-y none</code> to
 suppress the grid and labels altogether.  The default for this option is
 to automatically select sensible values.</p>
-<p>If you have set --y-grid to 'none' not only the labels get supressed, also
+<p>If you have set --y-grid to 'none' not only the labels get suppressed, also
 the space reserved for the labels is removed. You can still add space
 manually if you use the --units-length command to explicitly reserve space.</p>
 <p>[<strong>-Y</strong>|<strong>--alt-y-grid</strong>]</p>
@@ -284,8 +282,12 @@ Note that for linear graphs, SI notation is used by default.</p>
 <h2><a name="miscellaneous">Miscellaneous</a></h2>
 <p>[<strong>-z</strong>|<strong>--lazy</strong>]</p>
 <p>Only generate the graph if the current graph is out of date or not existent.
-Note, that only the image size will be returned, if you run with lazy even
-when using graphv and even when using PRINT.</p>
+Note, that all the calculations will happen regardless so that the output of
+PRINT and graphv will be complete regardless. Note that the behaviour of
+lazy in this regard has seen several changes over time. The only thing you
+can realy rely on before rrdtool 1.3.7 is that lazy will not generate the
+graph when it is already there and up to date, and also that it will output
+the size of the graph.</p>
 <p>[<strong>-f</strong>|<strong>--imginfo</strong> <em>printfstr</em>]</p>
 <p>After the image has been created, the graph function uses printf
 together with this format string to create output similar to the PRINT
@@ -317,10 +319,10 @@ for the title, <code>AXIS</code> for the axis labels, <code>UNIT</code> for the 
 label, <code>LEGEND</code> for the graph legend, <code>WATERMARK</code> for the watermark on the
 edge of the graph.</p>
 <p>Use Times for the title: <code>--font TITLE:13:Times</code></p>
-<p>If you do not give a font string you can modify just the sice of the default font:
+<p>If you do not give a font string you can modify just the size of the default font:
 <code>--font TITLE:13:</code>.</p>
 <p>If you specify the size 0 then you can modify just the font without touching
-the size. This is especially usefull for altering the default font without
+the size. This is especially useful for altering the default font without
 resetting the default fontsizes: <code>--font DEFAULT:0:Courier</code>.</p>
 <p>RRDtool comes with a preset default font. You can set the environment
 variable <code>RRD_DEFAULT_FONT</code> if you want to change this.</p>
@@ -391,7 +393,7 @@ behaviour of pre 1.0.42 versions).</p>
 should be set to 1024 so that one Kb is 1024 byte. For traffic
 measurement, 1 kb/s is 1000 b/s.</p>
 <p>[<strong>-W</strong>|<strong>--watermark</strong> <em>string</em>]</p>
-<p>Adds the given string as a watermark, horizontally centred, at the bottom 
+<p>Adds the given string as a watermark, horizontally centered, at the bottom 
 of the graph.</p>
 <p>
 </p>
@@ -411,7 +413,7 @@ See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exa
 <h2><a name="graphv">graphv</a></h2>
 <p>Calling rrdtool with the graphv option will return information in the
 rrdtool info format. On the command line this means that all output will be
-in key=value format. When used from the perl and ruby bindings a hash
+in key=value format. When used from the Perl and Ruby bindings a hash
 pointer will be returned from the call.</p>
 <p>When the filename '-' is given, the contents of the graph itself will also
 be returned through this interface (hash key 'image'). On the command line
@@ -423,6 +425,8 @@ the output will look like this:</p>
  graph_top = 22
  graph_width = 400
  graph_height = 100
+ graph_start = 1232908800
+ graph_end = 1232914200
  image_width = 481
  image_height = 154
  value_min = 0.0000000000e+00
@@ -446,7 +450,8 @@ know what is where on the graph.</p>
 <hr />
 <h1><a name="author">AUTHOR</a></h1>
 <p>Program by Tobias Oetiker &lt;<a href="mailto:tobi@oetiker.ch">tobi@oetiker.ch</a>&gt;</p>
-<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@ergens.op.het.net">alex@ergens.op.het.net</a>&gt;</p>
+<p>This manual page by Alex van den Bogaerdt &lt;<a href="mailto:alex@vandenbogaerdt.nl">alex@vandenbogaerdt.nl</a>&gt;
+with corrections and/or additions by several people</p>
 
 </body>
 

@@ -37,7 +37,7 @@ DDEESSCCRRIIPPTTIIOONN
        amount of startup time when you plan to make RRRRDDttooooll do a lot of things
        quickly. Check the section on Remote_Control further down. There is
        also a number of language bindings for RRDtool which allow you to use
-       it directly from perl, python, tcl, php, etc.
+       it directly from Perl, python, Tcl, PHP, etc.
 
        ccrreeaattee  Set up a new Round Robin Database (RRD). Check rrdcreate.
 
@@ -85,7 +85,7 @@ DDEESSCCRRIIPPTTIIOONN
                you want to. Therefore RRRRDDttooooll lets you update the logfile at
                any time you want. It will automatically interpolate the value
                of the data-source (DDSS) at the latest official time-slot
-               (intervall) and write this interpolated value to the log. The
+               (interval) and write this interpolated value to the log. The
                original value you have supplied is stored as well and is also
                taken into account when interpolating the next log entry.
 
@@ -231,7 +231,7 @@ DDEESSCCRRIIPPTTIIOONN
        Both values are the running totals of seconds since RRDtool was
        started. If an error occurs, a line of the form '"ERROR:" _D_e_s_c_r_i_p_t_i_o_n
        _o_f _e_r_r_o_r' will be printed instead. RRRRDDttooooll will not abort, unless some-
-       thing realy serious happens. If a wwoorrkkddiirr is specified and the UID is
+       thing really serious happens. If a wwoorrkkddiirr is specified and the UID is
        0, RRDtool will do a chroot to that workdir. If the UID is not 0, RRD-
        tool only changes the current directory to wwoorrkkddiirr.
 
@@ -254,7 +254,7 @@ DDEESSCCRRIIPPTTIIOONN
        Don't forget to create the database directory /var/rrd and reinitialize
        your inetd.
 
-       If all was setup correctly, you can access the server with perl sock-
+       If all was setup correctly, you can access the server with Perl sock-
        ets, tools like netcat, or in a quick interactive test by using 'telnet
        localhost rrdsrv'.
 
@@ -273,4 +273,4 @@ AAUUTTHHOORR
 
 
 
-1.3.5                             2008-09-06                        RRDTOOL(1)
+1.3.7                             2008-12-22                        RRDTOOL(1)

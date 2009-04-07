@@ -93,7 +93,7 @@ one pixel will silently be ignored.
 A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.
 
-=item Right Axis
+=head2 Right Axis
 
 [B<--right-axis> I<scale>B<:>I<shift>]
 [B<--right-axis-label> I<label>]
@@ -170,7 +170,7 @@ and thus the throughput may be higher than the WAN line speed.
 
 In order to avoid anti-aliasing blurring effects rrdtool snaps
 points to device resolution pixels, this results in a crisper
-aperance. If this is not to your liking, you can use this switch
+appearance. If this is not to your liking, you can use this switch
 to turn this behaviour off.
 
 Gridfitting is turned off for PDF, EPS, SVG output by default.
@@ -225,7 +225,7 @@ placed every I<label factor> lines.  You can specify C<-y none> to
 suppress the grid and labels altogether.  The default for this option is
 to automatically select sensible values.
 
-If you have set --y-grid to 'none' not only the labels get supressed, also
+If you have set --y-grid to 'none' not only the labels get suppressed, also
 the space reserved for the labels is removed. You can still add space
 manually if you use the --units-length command to explicitly reserve space.
 
@@ -278,8 +278,12 @@ Note that for linear graphs, SI notation is used by default.
 [B<-z>|B<--lazy>]
 
 Only generate the graph if the current graph is out of date or not existent.
-Note, that only the image size will be returned, if you run with lazy even
-when using graphv and even when using PRINT.
+Note, that all the calculations will happen regardless so that the output of
+PRINT and graphv will be complete regardless. Note that the behaviour of
+lazy in this regard has seen several changes over time. The only thing you
+can realy rely on before rrdtool 1.3.7 is that lazy will not generate the
+graph when it is already there and up to date, and also that it will output
+the size of the graph.
 
 
 [B<-f>|B<--imginfo> I<printfstr>]
@@ -323,11 +327,11 @@ edge of the graph.
 
 Use Times for the title: C<--font TITLE:13:Times>
 
-If you do not give a font string you can modify just the sice of the default font:
+If you do not give a font string you can modify just the size of the default font:
 C<--font TITLE:13:>.
 
 If you specify the size 0 then you can modify just the font without touching
-the size. This is especially usefull for altering the default font without
+the size. This is especially useful for altering the default font without
 resetting the default fontsizes: C<--font DEFAULT:0:Courier>.
 
 RRDtool comes with a preset default font. You can set the environment
@@ -435,7 +439,7 @@ measurement, 1 kb/s is 1000 b/s.
 
 [B<-W>|B<--watermark> I<string>]
 
-Adds the given string as a watermark, horizontally centred, at the bottom 
+Adds the given string as a watermark, horizontally centered, at the bottom 
 of the graph.
 
 =head2 Data and variables
@@ -460,7 +464,7 @@ See L<rrdgraph_graph> for the exact format.
 
 Calling rrdtool with the graphv option will return information in the
 rrdtool info format. On the command line this means that all output will be
-in key=value format. When used from the perl and ruby bindings a hash
+in key=value format. When used from the Perl and Ruby bindings a hash
 pointer will be returned from the call.
 
 When the filename '-' is given, the contents of the graph itself will also
@@ -473,6 +477,8 @@ the output will look like this:
  graph_top = 22
  graph_width = 400
  graph_height = 100
+ graph_start = 1232908800
+ graph_end = 1232914200
  image_width = 481
  image_height = 154
  value_min = 0.0000000000e+00
@@ -497,5 +503,6 @@ Make sure to read L<rrdgraph_examples> for tipsE<amp>tricks.
 
 Program by Tobias Oetiker E<lt>tobi@oetiker.chE<gt>
 
-This manual page by Alex van den Bogaerdt E<lt>alex@ergens.op.het.netE<gt>
+This manual page by Alex van den Bogaerdt E<lt>alex@vandenbogaerdt.nlE<gt>
+with corrections and/or additions by several people
 

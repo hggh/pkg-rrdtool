@@ -75,7 +75,7 @@ VVDDEEFF
 
        Example: "VDEF:avg=mydata,AVERAGE"
 
-       Note that currently only agregation functions work in VDEF rpn expres-
+       Note that currently only aggregation functions work in VDEF rpn expres-
        sions.  Patches to change this are welcome.
 
 CCDDEEFF
@@ -100,8 +100,9 @@ SSEEEE AALLSSOO
 AAUUTTHHOORR
        Program by Tobias Oetiker <tobi@oetiker.ch>
 
-       This manual page by Alex van den Bogaerdt <alex@ergens.op.het.net>
+       This manual page by Alex van den Bogaerdt <alex@vandenbogaerdt.nl> with
+       corrections and/or additions by several people
 
 
 
-1.3.5                             2008-07-28                  RRDGRAPH_DATA(1)
+1.3.7                             2009-02-21                  RRDGRAPH_DATA(1)

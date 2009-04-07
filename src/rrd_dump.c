@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.5  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.3.7  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrd_dump  Display a RRD
  *****************************************************************************
- * $Id: rrd_dump.c 1710 2008-12-15 22:06:22Z oetiker $
+ * $Id: rrd_dump.c 1781 2009-04-07 07:31:53Z oetiker $
  * $Log$
  * Revision 1.7  2004/05/25 20:53:21  oetiker
  * prevent small leak when resources are exhausted -- Mike Slifcak
@@ -46,8 +46,13 @@
 #include <stdlib.h>
 #endif
 
+
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
+
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 #if !(defined(NETWARE) || defined(WIN32))
 extern char *tzname[2];
@@ -69,7 +74,7 @@ int rrd_dump_opt_r(
     rrd_t     rrd;
     rrd_value_t value;
     struct tm tm;
-
+    char *old_locale = "";
     rrd_file = rrd_open(filename, &rrd, RRD_READONLY | RRD_READAHEAD);
     if (rrd_file == NULL) {
         rrd_free(&rrd);
@@ -84,7 +89,9 @@ int rrd_dump_opt_r(
     } else {
         out_file = stdout;
     }
-
+#ifdef HAVE_SETLOCALE
+    old_locale = setlocale(LC_NUMERIC, "C");
+#endif
     if (!opt_noheader) {
         fputs("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n", out_file);
         fputs
@@ -100,7 +107,7 @@ int rrd_dump_opt_r(
     }
     fprintf(out_file, "\t<step> %lu </step> <!-- Seconds -->\n",
             rrd.stat_head->pdp_step);
-#if HAVE_STRFTIME
+#ifdef HAVE_STRFTIME
     localtime_r(&rrd.live_head->last_up, &tm);
     strftime(somestring, 200, "%Y-%m-%d %H:%M:%S %Z", &tm);
 #else
@@ -389,7 +396,7 @@ int rrd_dump_opt_r(
         rrd_seek(rrd_file, (rra_start + (rrd.rra_ptr[i].cur_row + 1)
                             * rrd.stat_head->ds_cnt
                             * sizeof(rrd_value_t)), SEEK_SET);
-        timer = -(rrd.rra_def[i].row_cnt - 1);
+        timer = - (long)(rrd.rra_def[i].row_cnt - 1);
         ii = rrd.rra_ptr[i].cur_row;
         for (ix = 0; ix < rrd.rra_def[i].row_cnt; ix++) {
             ii++;
@@ -429,6 +436,9 @@ int rrd_dump_opt_r(
     if (out_file != stdout) {
         fclose(out_file);
     }
+#ifdef HAVE_SETLOCALE
+    setlocale(LC_NUMERIC, old_locale);
+#endif
     return rrd_close(rrd_file);
 }
 

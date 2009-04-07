@@ -9,12 +9,12 @@ SSYYNNOOPPSSIISS
        _R_P_N _e_x_p_r_e_s_s_i_o_n:=_v_n_a_m_e|_o_p_e_r_a_t_o_r|_v_a_l_u_e[,_R_P_N _e_x_p_r_e_s_s_i_o_n]
 
 DDEESSCCRRIIPPTTIIOONN
-       If you have ever used a traditional HP calculator you already know RRPPNN.
-       The idea behind RRPPNN is that you have a stack and push your data onto
-       this stack. Whenever you execute an operation, it takes as many ele-
-       ments from the stack as needed. Pushing is done implicitly, so whenever
-       you specify a number or a variable, it gets pushed onto the stack auto-
-       matically.
+       If you have ever used a traditional HP calculator you already know RRPPNN
+       (Reverse Polish Notation).  The idea behind RRPPNN is that you have a
+       stack and push your data onto this stack. Whenever you execute an oper-
+       ation, it takes as many elements from the stack as needed. Pushing is
+       done implicitly, so whenever you specify a number or a variable, it
+       gets pushed onto the stack automatically.
 
        At the end of the calculation there should be one and only one value
        left on the stack.  This is the outcome of the function and this is
@@ -302,8 +302,9 @@ SSEEEE AALLSSOO
 AAUUTTHHOORR
        Program by Tobias Oetiker <tobi@oetiker.ch>
 
-       This manual page by Alex van den Bogaerdt <alex@ergens.op.het.net>
+       This manual page by Alex van den Bogaerdt <alex@vandenbogaerdt.nl> with
+       corrections and/or additions by several people
 
 
 
-1.3.5                             2008-03-15                   RRDGRAPH_RPN(1)
+1.3.7                             2009-02-21                   RRDGRAPH_RPN(1)

@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH 1"
-.TH RRDGRAPH 1 "2008-12-09" "1.3.5" "rrdtool"
+.TH RRDGRAPH 1 "2009-04-07" "1.3.7" "rrdtool"
 .SH "NAME"
 rrdgraph \- Round Robin Database tool grapher functions
 .SH "SYNOPSIS"
@@ -213,9 +213,8 @@ one pixel will silently be ignored.
 .PP
 A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.
-.RE
-.IP "Right Axis"
-.IX Item "Right Axis"
+.Sh "Right Axis"
+.IX Subsection "Right Axis"
 [\fB\-\-right\-axis\fR \fIscale\fR\fB:\fR\fIshift\fR]
 [\fB\-\-right\-axis\-label\fR \fIlabel\fR]
 .PP
@@ -289,7 +288,7 @@ and thus the throughput may be higher than the \s-1WAN\s0 line speed.
 .PP
 In order to avoid anti-aliasing blurring effects rrdtool snaps
 points to device resolution pixels, this results in a crisper
-aperance. If this is not to your liking, you can use this switch
+appearance. If this is not to your liking, you can use this switch
 to turn this behaviour off.
 .PP
 Gridfitting is turned off for \s-1PDF\s0, \s-1EPS\s0, \s-1SVG\s0 output by default.
@@ -344,7 +343,7 @@ placed every \fIlabel factor\fR lines.  You can specify \f(CW\*(C`\-y none\*(C'\
 suppress the grid and labels altogether.  The default for this option is
 to automatically select sensible values.
 .Sp
-If you have set \-\-y\-grid to 'none' not only the labels get supressed, also
+If you have set \-\-y\-grid to 'none' not only the labels get suppressed, also
 the space reserved for the labels is removed. You can still add space
 manually if you use the \-\-units\-length command to explicitly reserve space.
 .Sp
@@ -394,8 +393,12 @@ Note that for linear graphs, \s-1SI\s0 notation is used by default.
 [\fB\-z\fR|\fB\-\-lazy\fR]
 .PP
 Only generate the graph if the current graph is out of date or not existent.
-Note, that only the image size will be returned, if you run with lazy even
-when using graphv and even when using \s-1PRINT\s0.
+Note, that all the calculations will happen regardless so that the output of
+\&\s-1PRINT\s0 and graphv will be complete regardless. Note that the behaviour of
+lazy in this regard has seen several changes over time. The only thing you
+can realy rely on before rrdtool 1.3.7 is that lazy will not generate the
+graph when it is already there and up to date, and also that it will output
+the size of the graph.
 .PP
 [\fB\-f\fR|\fB\-\-imginfo\fR \fIprintfstr\fR]
 .PP
@@ -440,11 +443,11 @@ edge of the graph.
 .PP
 Use Times for the title: \f(CW\*(C`\-\-font TITLE:13:Times\*(C'\fR
 .PP
-If you do not give a font string you can modify just the sice of the default font:
+If you do not give a font string you can modify just the size of the default font:
 \&\f(CW\*(C`\-\-font TITLE:13:\*(C'\fR.
 .PP
 If you specify the size 0 then you can modify just the font without touching
-the size. This is especially usefull for altering the default font without
+the size. This is especially useful for altering the default font without
 resetting the default fontsizes: \f(CW\*(C`\-\-font DEFAULT:0:Courier\*(C'\fR.
 .PP
 RRDtool comes with a preset default font. You can set the environment
@@ -555,7 +558,7 @@ measurement, 1 kb/s is 1000 b/s.
 .PP
 [\fB\-W\fR|\fB\-\-watermark\fR \fIstring\fR]
 .PP
-Adds the given string as a watermark, horizontally centred, at the bottom 
+Adds the given string as a watermark, horizontally centered, at the bottom 
 of the graph.
 .Sh "Data and variables"
 .IX Subsection "Data and variables"
@@ -578,20 +581,22 @@ See rrdgraph_graph for the exact format.
 .IX Subsection "graphv"
 Calling rrdtool with the graphv option will return information in the
 rrdtool info format. On the command line this means that all output will be
-in key=value format. When used from the perl and ruby bindings a hash
+in key=value format. When used from the Perl and Ruby bindings a hash
 pointer will be returned from the call.
 .PP
 When the filename '\-' is given, the contents of the graph itself will also
 be returned through this interface (hash key 'image'). On the command line
 the output will look like this:
 .PP
-.Vb 12
+.Vb 14
 \& print[0] = "0.020833"
 \& print[1] = "0.0440833"
 \& graph_left = 51
 \& graph_top = 22
 \& graph_width = 400
 \& graph_height = 100
+\& graph_start = 1232908800
+\& graph_end = 1232914200
 \& image_width = 481
 \& image_height = 154
 \& value_min = 0.0000000000e+00
@@ -615,4 +620,5 @@ Make sure to read rrdgraph_examples for tips&tricks.
 .IX Header "AUTHOR"
 Program by Tobias Oetiker <tobi@oetiker.ch>
 .PP
-This manual page by Alex van den Bogaerdt <alex@ergens.op.het.net>
+This manual page by Alex van den Bogaerdt <alex@vandenbogaerdt.nl>
+with corrections and/or additions by several people

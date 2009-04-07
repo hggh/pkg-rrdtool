@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_RPN 1"
-.TH RRDGRAPH_RPN 1 "2008-03-15" "1.3.5" "rrdtool"
+.TH RRDGRAPH_RPN 1 "2009-02-21" "1.3.7" "rrdtool"
 .SH "NAME"
 rrdgraph_rpn \- About RPN Math in rrdtool graph
 .SH "SYNOPSIS"
@@ -138,7 +138,8 @@ rrdgraph_rpn \- About RPN Math in rrdtool graph
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 If you have ever used a traditional \s-1HP\s0 calculator you already know
-\&\fB\s-1RPN\s0\fR. The idea behind \fB\s-1RPN\s0\fR is that you have a stack and push
+\&\fB\s-1RPN\s0\fR (Reverse Polish Notation).
+The idea behind \fB\s-1RPN\s0\fR is that you have a stack and push
 your data onto this stack. Whenever you execute an operation, it
 takes as many elements from the stack as needed. Pushing is done
 implicitly, so whenever you specify a number or a variable, it gets
@@ -433,4 +434,5 @@ Make sure to read rrdgraph_examples for tips&tricks.
 .IX Header "AUTHOR"
 Program by Tobias Oetiker <tobi@oetiker.ch>
 .PP
-This manual page by Alex van den Bogaerdt <alex@ergens.op.het.net>
+This manual page by Alex van den Bogaerdt <alex@vandenbogaerdt.nl>
+with corrections and/or additions by several people

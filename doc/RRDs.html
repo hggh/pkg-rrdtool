@@ -60,9 +60,9 @@
 <p>
 </p>
 <h2><a name="calling_sequence">Calling Sequence</a></h2>
-<p>This module accesses RRDtool functionality directly from within perl. The
+<p>This module accesses RRDtool functionality directly from within Perl. The
 arguments to the functions listed in the SYNOPSIS are explained in the regular
-RRDtool documentation. The commandline call</p>
+RRDtool documentation. The command line call</p>
 <pre>
  rrdtool update mydemo.rrd --template in:out N:12:13</pre>
 <p>gets turned into</p>
@@ -111,7 +111,7 @@ the values of the properties.</p>
  foreach my $key (keys %$hash){
    print &quot;$key = $$hash{$key}\n&quot;;
  }</pre>
-<p><strong>RRDs::graphv</strong> takes the same paramters as <strong>RRDs::graph</strong> but it returns a
+<p><strong>RRDs::graphv</strong> takes the same parameters as <strong>RRDs::graph</strong> but it returns a
 pointer to hash. The hash returned contains meta information about the
 graph. Like its size as well as the position of the graph area on the image.
 When calling with and empty filename than the contents of the graph will be
@@ -145,8 +145,8 @@ epoch (1970-01-01) for the supplied ``start'' and ``end'' arguments, respectivel
 </p>
 <hr />
 <h1><a name="note">NOTE</a></h1>
-<p>If you are manipulating the TZ variable you should also call the posixs
-function tzset to initialize all internal state of the library for properly
+<p>If you are manipulating the TZ variable you should also call the POSIX
+function <em>tzset(3)</em> to initialize all internal state of the library for properly
 operating in the timezone of your choice.</p>
 <pre>
  use POSIX qw(tzset);

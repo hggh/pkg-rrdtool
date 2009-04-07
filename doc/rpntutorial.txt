@@ -51,7 +51,7 @@ RReeaaddiinngg tthhee IIFF OOppeerraattoorr
 SSoommee EExxaammpplleess
        While compound expressions can look overly complex, they can be consid-
        ered elegantly simple.  To quickly comprehend RPN expressions, you must
-       know the the algorithm for evaluating RPN expressions: iterate searches
+       know the algorithm for evaluating RPN expressions: iterate searches
        from the left to the right looking for an operator.  When it's found,
        apply that operator by popping the operator and some number of values
        (and by definition, not operators) off the stack.
@@ -96,7 +96,7 @@ SSoommee EExxaammpplleess
         2) A,10,input,IF            eval is A,10,input,IF
 
        read "if A then 10 else input".  Now replace A with it's verbose
-       description againg and--voila!--you have a easily readable description
+       description again and--voila!--you have a easily readable description
        of the expression:
 
         if input > 10 then 10 else input
@@ -187,4 +187,4 @@ AAUUTTHHOORR
 
 
 
-1.3.5                             2008-03-15                    RPNTUTORIAL(1)
+1.3.7                             2008-12-22                    RPNTUTORIAL(1)

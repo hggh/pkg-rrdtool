@@ -9,14 +9,14 @@ dnl tell automake the this script is for rrdtool
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3.5])
+AC_INIT([rrdtool],[1.3.7])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.3005
+NUMVERS=1.3007
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -27,13 +27,14 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=4:4:0
+LIBVERS=4:6:0
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([rrd_config.h])
 
 dnl all our local stuff like install scripts and include files
@@ -160,7 +161,7 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
+AC_CHECK_HEADERS(libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -187,7 +188,9 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror strerror_r snprintf vsnprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror snprintf vsnprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+
+AC_FUNC_STRERROR_R
 
 CONFIGURE_PART(Map/Fadvis/Madvise checking)
 
