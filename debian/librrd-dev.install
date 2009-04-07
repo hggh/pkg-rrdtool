@@ -5,3 +5,4 @@ usr/lib/librrd.la
 usr/lib/librrd_th.la
 usr/lib/librrd.so
 usr/lib/librrd_th.so
+usr/lib/pkgconfig/librrd.pc
