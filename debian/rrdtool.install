@@ -1,3 +1,5 @@
 usr/share/doc/rrdtool
 usr/bin
+usr/lib/rrdtool/ifOctets.tcl usr/share/doc/rrdtool/examples/
 usr/share/man/man1
+usr/share/rrdtool/examples/* usr/share/doc/rrdtool/examples/
