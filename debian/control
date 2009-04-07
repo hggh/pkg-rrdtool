@@ -37,6 +37,7 @@ Description: Time-series data storage and display system (programs)
 Package: rrdtool-dbg
 Architecture: any
 Priority: extra
+Section: debug
 Depends: rrdtool (= ${binary:Version}), librrd4 (= ${binary:Version})
 Recommends: librrds-perl (= ${binary:Version}),
  rrdtool-tcl (= ${binary:Version}), python-rrdtool (= ${binary:Version}),
@@ -165,7 +166,7 @@ Description: Transitional dummy package
 
 Package: librrd-ruby
 Architecture: all
-Section: interpreters
+Section: ruby
 Depends: ${rubydefault:Depends}
 Description: Time-series data storage and display system (Ruby interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
@@ -180,7 +181,7 @@ Description: Time-series data storage and display system (Ruby interface)
 
 Package: librrd-ruby1.8
 Architecture: any
-Section: interpreters
+Section: ruby
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Time-series data storage and display system (Ruby 1.8 interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
@@ -194,7 +195,7 @@ Description: Time-series data storage and display system (Ruby 1.8 interface)
 
 Package: librrd-ruby1.9
 Architecture: any
-Section: interpreters
+Section: ruby
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Time-series data storage and display system (Ruby 1.9 interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
