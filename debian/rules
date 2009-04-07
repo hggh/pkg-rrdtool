@@ -144,7 +144,7 @@ install-common-stamp: build-arch-stamp
 	make install DESTDIR=$(CURDIR)/debian/tmp
 	# we don't want .txt and .pod documentation in the package
 	rm -rf debian/tmp/usr/share/doc/rrdtool/txt
-	dh_install --sourcedir=$(CURDIR)/debian/tmp --list-missing
+	dh_install --sourcedir=$(CURDIR)/debian/tmp --fail-missing
 
 	touch $@
 
