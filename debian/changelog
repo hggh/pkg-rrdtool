@@ -24,7 +24,7 @@ rrdtool (1.3.7-1) unstable; urgency=low
     - Pass --fail-missing (instead of --list-missing) to dh_install.
   * Added new binary package rrdtool-dbg. Unfortunately, segfaults and the
     like are not uncommon in rrdtool - this will help to trace them back more
-    easily.
+    easily (Closes: #518480).
   * debian/README.Debian:
     - Added new file with a short paragraph about the available documentation.
   * debian/control:
