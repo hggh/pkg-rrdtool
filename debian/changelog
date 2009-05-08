@@ -24,6 +24,7 @@ rrdtool (1.3.7-1) unstable; urgency=low
     - Remove .txt and .pod documentation from the 'rrdtool' binary package -
       the manpages are a lot more useful.
     - Pass --fail-missing (instead of --list-missing) to dh_install.
+    - Use 'pyversions -vr' instead of 'pysupport-parseversions'.
   * Added new binary package rrdtool-dbg. Unfortunately, segfaults and the
     like are not uncommon in rrdtool - this will help to trace them back more
     easily (Closes: #518480).
@@ -33,14 +34,17 @@ rrdtool (1.3.7-1) unstable; urgency=low
     - Moved librrd-ruby* packages from section "interpreters" to the newly
       added section "ruby".
     - Updated standards-version to 3.8.1 - no changes.
+    - Added XS-Python-Version field, specifying versions >= 2.3.
   * debian/librrd-dev.install:
     - Added /usr/lib/pkgconfig/librrd.pc (Closes: #522144).
   * debian/rrdtool.install, debian/rrdtool.examples:
     - Install examples/* and ifOctets.tcl using dh_install instead of
       dh_installexamples. This allows the use of --fail-missing when running
       dh_install.
+  * Removed debian/pyversions - has been replaced by the XS-Python-Version
+    field.
 
- -- Sebastian Harl <sh@tokkee.org>  Fri, 08 May 2009 18:00:59 +0200
+ -- Sebastian Harl <sh@tokkee.org>  Fri, 08 May 2009 22:13:21 +0200
 
 rrdtool (1.3.1-4) unstable; urgency=high
 

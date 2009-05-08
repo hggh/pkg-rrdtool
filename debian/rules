@@ -12,11 +12,7 @@ include /usr/share/quilt/quilt.make
 RUBY_VERS := 1.8 1.9
 RUBY_DEFAULT_VERS := 1.8
 
-#Python versions to build for. The work-around-doko way.
-PY_VERS := $(shell set -e; \
-                   for py in `pysupport-parseversions debian/pyversions`; do \
-                       if [ -x /usr/bin/python$$py ]; then echo $$py; fi;    \
-                   done)
+PY_VERS := $(shell pyversions -vr)
 
 #tcl version we're building for
 TCL_VERS := $(shell dpkg -s tcl-dev | grep '^Depends' \

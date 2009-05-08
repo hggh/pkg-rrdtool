@@ -14,6 +14,7 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
 Vcs-Git: git://git.snow-crash.org/pkg-rrdtool.git/
+XS-Python-Version: >= 2.3
 
 Package: rrdtool
 Architecture: any
