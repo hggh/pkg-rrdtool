@@ -9,7 +9,8 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, quilt,
  libxml2-dev,
  tcl-dev,
  perl (>= 5.8.0),
- python-all-dev (>= 2.3.5-10), python-support (>= 0.4),
+ python-all-dev (>= 2.3.5-10), python-all-dbg (>= 2.3.5-10),
+ python-support (>= 0.7.1),
  ruby1.8, ruby1.8-dev, ruby1.9, ruby1.9-dev
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
@@ -39,10 +40,12 @@ Package: rrdtool-dbg
 Architecture: any
 Priority: extra
 Section: debug
-Depends: rrdtool (= ${binary:Version}), librrd4 (= ${binary:Version})
+Depends: rrdtool (= ${binary:Version}), librrd4 (= ${binary:Version}),
+ ${python:Depends}, ${misc:Depends}
 Recommends: librrds-perl (= ${binary:Version}),
  rrdtool-tcl (= ${binary:Version}), python-rrdtool (= ${binary:Version}),
- librrd-ruby1.8 (= ${binary:Version}), librrd-ruby1.9 (= ${binary:Version})
+ librrd-ruby1.8 (= ${binary:Version}), librrd-ruby1.9 (= ${binary:Version}),
+ python-all-dbg
 Description: Time-series data storage and display system (debugging symbols)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,

@@ -1,5 +1,6 @@
 rrdtool (1.3.8-1) unstable; urgency=low
 
+  [ Sebastian Harl ]
   * New upstream release:
     - Fixed various memory leaks in the Python bindings, thanks to Anders
       Hammarquist for reporting this and providing a patch (Closes: #529291).
@@ -7,8 +8,13 @@ rrdtool (1.3.8-1) unstable; urgency=low
     - Added bts530814-hurd to fix a FTBFS on Hurd, thanks to Marc Dequènes for
       reporting this and providing a patch (Closes: #530814).
     - Removed doc-fixes - applied upstream.
-  * debian/control, debian/rules:
+  * debian/control:
     - Removed transitional package "python-rrd" which is no longer required.
+
+  [ Bernd Zeimetz ]
+  * debian/rules, debian/control:
+    - Build Python dbg modules into rrdtool-dbg. Add necessary
+      (build-) dependencies.
 
  -- Sebastian Harl <tokkee@debian.org>  Mon, 01 Jun 2009 13:23:33 +0200
 
