@@ -41,7 +41,7 @@ Architecture: any
 Priority: extra
 Section: debug
 Depends: rrdtool (= ${binary:Version}), librrd4 (= ${binary:Version}),
- ${python:Depends}, ${misc:Depends}
+ ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}
 Recommends: librrds-perl (= ${binary:Version}),
  rrdtool-tcl (= ${binary:Version}), python-rrdtool (= ${binary:Version}),
  librrd-ruby1.8 (= ${binary:Version}), librrd-ruby1.9 (= ${binary:Version}),

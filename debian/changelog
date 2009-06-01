@@ -10,13 +10,14 @@ rrdtool (1.3.8-1) unstable; urgency=low
     - Removed doc-fixes - applied upstream.
   * debian/control:
     - Removed transitional package "python-rrd" which is no longer required.
+    - Let rrdtool-dbg depend on ${shlibs:Depends}.
 
   [ Bernd Zeimetz ]
   * debian/rules, debian/control:
     - Build Python dbg modules into rrdtool-dbg. Add necessary
       (build-) dependencies.
 
- -- Sebastian Harl <tokkee@debian.org>  Mon, 01 Jun 2009 13:23:33 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Mon, 01 Jun 2009 13:53:11 +0200
 
 rrdtool (1.3.7-1) unstable; urgency=low
 
