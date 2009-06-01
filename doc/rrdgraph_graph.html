@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -33,9 +35,9 @@
 			<li><a href="#gprint_vname_format"><strong>GPRINT</strong><strong>:</strong><em>vname</em><strong>:</strong><em>format</em></a></li>
 			<li><a href="#gprint_vname_cf_format"><strong>GPRINT</strong><strong>:</strong><em>vname</em><strong>:</strong><em>CF</em><strong>:</strong><em>format</em></a></li>
 			<li><a href="#comment_text"><strong>COMMENT</strong><strong>:</strong><em>text</em></a></li>
-			<li><a href="#vrule_time_color__legend___dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>VRULE</strong><strong>:</strong><em>time</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
-			<li><a href="#hrule_value_color__legend___dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>HRULE</strong><strong>:</strong><em>value</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
-			<li><a href="#line_width__value__color____legend___stack____dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>LINE</strong>[<em>width</em>]<strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
+			<li><a href="#vrule_time_color__legend___dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>VRULE</strong><strong>:</strong><em>time</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
+			<li><a href="#hrule_value_color__legend___dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>HRULE</strong><strong>:</strong><em>value</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
+			<li><a href="#line_width__value__color____legend___stack____dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>LINE</strong>[<em>width</em>]<strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></li>
 			<li><a href="#area_value__color____legend___stack__"><strong>AREA</strong><strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]]</a></li>
 			<li><a href="#tick_vname_rrggbb_aa___fraction__legend__"><strong>TICK</strong><strong>:</strong><em>vname</em><strong>#</strong><em>rrggbb</em>[<em>aa</em>][<strong>:</strong><em>fraction</em>[<strong>:</strong><em>legend</em>]]</a></li>
 			<li><a href="#shift_vname_offset"><strong>SHIFT</strong><strong>:</strong><em>vname</em><strong>:</strong><em>offset</em></a></li>
@@ -55,7 +57,11 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -101,31 +107,31 @@ The percent character introduces a formatter string. This string
 can be:</p>
 <p>For printing values:</p>
 <dl>
-<dt><strong><a name="item___"><strong>%%</strong></a></strong></dt>
+<dt><strong><a name="__" class="item"><strong>%%</strong></a></strong></dt>
 
 <dd>
 <p>just prints a literal '%' character</p>
 </dd>
-<dt><strong><a name="item_____le"><strong>%#.#le</strong></a></strong></dt>
+<dt><strong><a name="____le" class="item"><strong>%#.#le</strong></a></strong></dt>
 
 <dd>
 <p>prints numbers like 1.2346e+04. The optional integers # denote field
 width and decimal precision.</p>
 </dd>
-<dt><strong><a name="item_____lf"><strong>%#.#lf</strong></a></strong></dt>
+<dt><strong><a name="____lf" class="item"><strong>%#.#lf</strong></a></strong></dt>
 
 <dd>
 <p>prints numbers like 12345.6789, with optional field width
 and precision.</p>
 </dd>
-<dt><strong><a name="item__s"><strong>%s</strong></a></strong></dt>
+<dt><strong><a name="_s" class="item"><strong>%s</strong></a></strong></dt>
 
 <dd>
 <p>place this after <strong>%le</strong>, <strong>%lf</strong> or <strong>%lg</strong>. This will be replaced by the
 appropriate SI magnitude unit and the value will be scaled
 accordingly (123456 -&gt; 123.456 k).</p>
 </dd>
-<dt><strong><a name="item__s"><strong>%S</strong></a></strong></dt>
+<dt><strong><a name="_s" class="item"><strong>%S</strong></a></strong></dt>
 
 <dd>
 <p>is similar to <strong>%s</strong>. It does, however, use a previously defined
@@ -140,62 +146,62 @@ will all use the same magnitude unit except for zero values.</p>
 the conversion specifier may vary. Check the manual page if you are uncertain. The following is a list of
 conversion specifiers usually supported across the board.</p>
 <dl>
-<dt><strong><a name="item__a"><strong>%a</strong></a></strong></dt>
+<dt><strong><a name="_a" class="item"><strong>%a</strong></a></strong></dt>
 
 <dd>
 <p>The abbreviated weekday name according to the current locale.</p>
 </dd>
-<dt><strong><a name="item__a"><strong>%A</strong></a></strong></dt>
+<dt><strong><a name="_a" class="item"><strong>%A</strong></a></strong></dt>
 
 <dd>
 <p>The full weekday name according to the current locale.</p>
 </dd>
-<dt><strong><a name="item__b"><strong>%b</strong></a></strong></dt>
+<dt><strong><a name="_b" class="item"><strong>%b</strong></a></strong></dt>
 
 <dd>
 <p>The abbreviated month name according to the current locale.</p>
 </dd>
-<dt><strong><a name="item__b"><strong>%B</strong></a></strong></dt>
+<dt><strong><a name="_b" class="item"><strong>%B</strong></a></strong></dt>
 
 <dd>
 <p>The full month name according to the current locale.</p>
 </dd>
-<dt><strong><a name="item__c"><strong>%c</strong></a></strong></dt>
+<dt><strong><a name="_c" class="item"><strong>%c</strong></a></strong></dt>
 
 <dd>
 <p>The preferred date and time representation for the current locale.</p>
 </dd>
-<dt><strong><a name="item__d"><strong>%d</strong></a></strong></dt>
+<dt><strong><a name="_d" class="item"><strong>%d</strong></a></strong></dt>
 
 <dd>
 <p>The day of the month as a decimal number (range 01 to 31).</p>
 </dd>
-<dt><strong><a name="item__h"><strong>%H</strong></a></strong></dt>
+<dt><strong><a name="_h" class="item"><strong>%H</strong></a></strong></dt>
 
 <dd>
 <p>The hour as a decimal number using a 24-hour clock (range 00 to 23).</p>
 </dd>
-<dt><strong><a name="item__i"><strong>%I</strong></a></strong></dt>
+<dt><strong><a name="_i" class="item"><strong>%I</strong></a></strong></dt>
 
 <dd>
 <p>The hour as a decimal number using a 12-hour clock (range 01 to 12).</p>
 </dd>
-<dt><strong><a name="item__j"><strong>%j</strong></a></strong></dt>
+<dt><strong><a name="_j" class="item"><strong>%j</strong></a></strong></dt>
 
 <dd>
 <p>The day of the year as a decimal number (range 001 to 366).</p>
 </dd>
-<dt><strong><a name="item__m"><strong>%m</strong></a></strong></dt>
+<dt><strong><a name="_m" class="item"><strong>%m</strong></a></strong></dt>
 
 <dd>
 <p>The month as a decimal number (range 01 to 12).</p>
 </dd>
-<dt><strong><a name="item__m"><strong>%M</strong></a></strong></dt>
+<dt><strong><a name="_m" class="item"><strong>%M</strong></a></strong></dt>
 
 <dd>
 <p>The minute as a decimal number (range 00 to 59).</p>
 </dd>
-<dt><strong><a name="item__p"><strong>%p</strong></a></strong></dt>
+<dt><strong><a name="_p" class="item"><strong>%p</strong></a></strong></dt>
 
 <dd>
 <p>Either `AM' or `PM' according to the given time value, or the corresponding
@@ -213,51 +219,51 @@ such cases %p will return an empty string.</p>
 <dd>
 <p>The seconds since the epoch (1.1.1970) (libc dependant non standard!)</p>
 </dd>
-<dt><strong><a name="item__u"><strong>%U</strong></a></strong></dt>
+<dt><strong><a name="_u" class="item"><strong>%U</strong></a></strong></dt>
 
 <dd>
 <p>The  week  number  of  the current year as a decimal number, range 00 to 53, starting with the
 first Sunday as the first day of week 01. See also %V and %W.</p>
 </dd>
-<dt><strong><a name="item__v"><strong>%V</strong></a></strong></dt>
+<dt><strong><a name="_v" class="item"><strong>%V</strong></a></strong></dt>
 
 <dd>
 <p>The ISO 8601:1988 week number of the current year as a decimal number, range 01 to  53,  where
 week  1 is the first week that has at least 4 days in the current year, and with Monday as the
 first day of the week. See also %U and %W.</p>
 </dd>
-<dt><strong><a name="item__w"><strong>%w</strong></a></strong></dt>
+<dt><strong><a name="_w" class="item"><strong>%w</strong></a></strong></dt>
 
 <dd>
 <p>The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also %u.</p>
 </dd>
-<dt><strong><a name="item__w"><strong>%W</strong></a></strong></dt>
+<dt><strong><a name="_w" class="item"><strong>%W</strong></a></strong></dt>
 
 <dd>
 <p>The week number of the current year as a decimal number, range 00 to  53,  starting  with  the
 first Monday as the first day of week 01.</p>
 </dd>
-<dt><strong><a name="item__x"><strong>%x</strong></a></strong></dt>
+<dt><strong><a name="_x" class="item"><strong>%x</strong></a></strong></dt>
 
 <dd>
 <p>The preferred date representation for the current locale without the time.</p>
 </dd>
-<dt><strong><a name="item__x"><strong>%X</strong></a></strong></dt>
+<dt><strong><a name="_x" class="item"><strong>%X</strong></a></strong></dt>
 
 <dd>
 <p>The preferred time representation for the current locale without the date.</p>
 </dd>
-<dt><strong><a name="item__y"><strong>%y</strong></a></strong></dt>
+<dt><strong><a name="_y" class="item"><strong>%y</strong></a></strong></dt>
 
 <dd>
 <p>The year as a decimal number without a century (range 00 to 99).</p>
 </dd>
-<dt><strong><a name="item__y"><strong>%Y</strong></a></strong></dt>
+<dt><strong><a name="_y" class="item"><strong>%Y</strong></a></strong></dt>
 
 <dd>
 <p>The year as a decimal number including the century.</p>
 </dd>
-<dt><strong><a name="item__z"><strong>%Z</strong></a></strong></dt>
+<dt><strong><a name="_z" class="item"><strong>%Z</strong></a></strong></dt>
 
 <dd>
 <p>The time zone or name or abbreviation.</p>
@@ -293,7 +299,7 @@ RRDtool 1.2 you have to escape colons in COMMENT text in the same way you
 have to escape them in <strong>*PRINT</strong> commands by writing <strong>'\:'</strong>.</p>
 <p>
 </p>
-<h3><a name="vrule_time_color__legend___dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>VRULE</strong><strong>:</strong><em>time</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
+<h3><a name="vrule_time_color__legend___dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>VRULE</strong><strong>:</strong><em>time</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
 <p>Draw a vertical line at <em>time</em>.  Its color is composed from three
 hexadecimal numbers specifying the rgb color components (00 is off, FF is
 maximum) red, green and blue followed by an optional alpha. Optionally, a legend box and string is
@@ -303,13 +309,13 @@ Dashed lines can be drawn using the <strong>dashes</strong> modifier. See <stron
 details.</p>
 <p>
 </p>
-<h3><a name="hrule_value_color__legend___dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>HRULE</strong><strong>:</strong><em>value</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
+<h3><a name="hrule_value_color__legend___dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>HRULE</strong><strong>:</strong><em>value</em><strong>#</strong><em>color</em>[<strong>:</strong><em>legend</em>][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
 <p>Draw a horizontal line at <em>value</em>.  HRULE acts much like LINE except that
 will have no effect on the scale of the graph. If a HRULE is outside the
 graphing area it will just not be visible.</p>
 <p>
 </p>
-<h3><a name="line_width__value__color____legend___stack____dashes__on_s__off_s__on_s_off_s________dashoffset_offset__"><strong>LINE</strong>[<em>width</em>]<strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
+<h3><a name="line_width__value__color____legend___stack____dashes__on_s__off_s__on_s_off_s________dash_offset_offset__"><strong>LINE</strong>[<em>width</em>]<strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]][<strong>:dashes</strong>[<strong>=</strong><em>on_s</em>[,<em>off_s</em>[,<em>on_s</em>,<em>off_s</em>]...]][<strong>:dash-offset=</strong><em>offset</em>]]</a></h3>
 <p>Draw a line of the specified width onto the graph. <em>width</em> can be a
 floating point number. If the color is not specified, the drawing is done
 'invisibly'. This is useful when stacking something else on top of this
@@ -326,7 +332,7 @@ provides the length of alternate <em>on_s</em> and <em>off_s</em> portions of th
 stroke. The <strong>dash-offset</strong> parameter specifies an <em>offset</em> into the pattern
 at which the stroke begins.</p>
 <p>When you do not specify a color, you cannot specify a legend.  Should
-you want to use STACK, use the ``LINEx:&lt;value&gt;::STACK'' form.</p>
+you want to use STACK, use the &quot;LINEx:&lt;value&gt;::STACK&quot; form.</p>
 <p>
 </p>
 <h3><a name="area_value__color____legend___stack__"><strong>AREA</strong><strong>:</strong><em>value</em>[<strong>#</strong><em>color</em>][<strong>:</strong>[<em>legend</em>][<strong>:STACK</strong>]]</a></h3>
@@ -346,7 +352,7 @@ at the upper border of the graphing area.</p>
 <h3><a name="shift_vname_offset"><strong>SHIFT</strong><strong>:</strong><em>vname</em><strong>:</strong><em>offset</em></a></h3>
 <p>Using this command <strong>RRDtool</strong> will graph the following elements
 with the specified offset.  For instance, you can specify an
-offset of (&nbsp;7*24*60*60&nbsp;=&nbsp;)&nbsp;604'800&nbsp;seconds to ``look back'' one
+offset of (&nbsp;7*24*60*60&nbsp;=&nbsp;)&nbsp;604'800&nbsp;seconds to &quot;look back&quot; one
 week. Make sure to tell the viewer of your graph you did this ...
 As with the other graphing elements, you can specify a number or
 a variable here.</p>
@@ -417,102 +423,102 @@ Pango uses the xml <strong>span</strong> tags for inline formatting instructions
  &lt;span foreground=&quot;blue&quot; size=&quot;x-large&quot;&gt;Blue text&lt;/span&gt; is &lt;i&gt;cool&lt;/i&gt;!</pre>
 <p>The complete list of attributes for the span tag (taken from the pango documentation):</p>
 <dl>
-<dt><strong><a name="item_font_desc"><strong>font_desc</strong></a></strong></dt>
+<dt><strong><a name="font_desc" class="item"><strong>font_desc</strong></a></strong></dt>
 
 <dd>
-<p>A font description string, such as ``Sans Italic 12''; note that any other span attributes will override this description. So if you have ``Sans Italic'' and also a style=``normal'' attribute, you will get Sans normal, not italic.</p>
+<p>A font description string, such as &quot;Sans Italic 12&quot;; note that any other span attributes will override this description. So if you have &quot;Sans Italic&quot; and also a style=&quot;normal&quot; attribute, you will get Sans normal, not italic.</p>
 </dd>
-<dt><strong><a name="item_font_family"><strong>font_family</strong></a></strong></dt>
+<dt><strong><a name="font_family" class="item"><strong>font_family</strong></a></strong></dt>
 
 <dd>
 <p>A font family name</p>
 </dd>
-<dt><strong><a name="item_face"><strong>face</strong></a></strong></dt>
+<dt><strong><a name="face" class="item"><strong>face</strong></a></strong></dt>
 
 <dd>
 <p>Synonym for font_family</p>
 </dd>
-<dt><strong><a name="item_size"><strong>size</strong></a></strong></dt>
+<dt><strong><a name="size" class="item"><strong>size</strong></a></strong></dt>
 
 <dd>
 <p>Font size in 1024ths of a point, or one of the absolute sizes 'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', or one of the relative sizes 'smaller' or 'larger'. If you want to specify a absolute size, it's usually easier to take advantage of the ability to specify a partial font description using 'font_desc'; you can use font_desc='12.5' rather than size='12800'.</p>
 </dd>
-<dt><strong><a name="item_style"><strong>style</strong></a></strong></dt>
+<dt><strong><a name="style" class="item"><strong>style</strong></a></strong></dt>
 
 <dd>
 <p>One of 'normal', 'oblique', 'italic'</p>
 </dd>
-<dt><strong><a name="item_weight"><strong>weight</strong></a></strong></dt>
+<dt><strong><a name="weight" class="item"><strong>weight</strong></a></strong></dt>
 
 <dd>
 <p>One of 'ultralight', 'light', 'normal', 'bold', 'ultrabold', 'heavy', or a numeric weight</p>
 </dd>
-<dt><strong><a name="item_variant"><strong>variant</strong></a></strong></dt>
+<dt><strong><a name="variant" class="item"><strong>variant</strong></a></strong></dt>
 
 <dd>
 <p>'normal' or 'smallcaps'</p>
 </dd>
-<dt><strong><a name="item_stretch"><strong>stretch</strong></a></strong></dt>
+<dt><strong><a name="stretch" class="item"><strong>stretch</strong></a></strong></dt>
 
 <dd>
 <p>One of 'ultracondensed', 'extracondensed', 'condensed', 'semicondensed', 'normal', 'semiexpanded', 'expanded', 'extraexpanded', 'ultraexpanded'</p>
 </dd>
-<dt><strong><a name="item_foreground"><strong>foreground</strong></a></strong></dt>
+<dt><strong><a name="foreground" class="item"><strong>foreground</strong></a></strong></dt>
 
 <dd>
 <p>An RGB color specification such as '#00FF00' or a color name such as 'red'</p>
 </dd>
-<dt><strong><a name="item_background"><strong>background</strong></a></strong></dt>
+<dt><strong><a name="background" class="item"><strong>background</strong></a></strong></dt>
 
 <dd>
 <p>An RGB color specification such as '#00FF00' or a color name such as 'red'</p>
 </dd>
-<dt><strong><a name="item_underline"><strong>underline</strong></a></strong></dt>
+<dt><strong><a name="underline" class="item"><strong>underline</strong></a></strong></dt>
 
 <dd>
 <p>One of 'none', 'single', 'double', 'low', 'error'</p>
 </dd>
-<dt><strong><a name="item_underline_color"><strong>underline_color</strong></a></strong></dt>
+<dt><strong><a name="underline_color" class="item"><strong>underline_color</strong></a></strong></dt>
 
 <dd>
 <p>The color of underlines; an RGB color specification such as '#00FF00' or a color name such as 'red'</p>
 </dd>
-<dt><strong><a name="item_rise"><strong>rise</strong></a></strong></dt>
+<dt><strong><a name="rise" class="item"><strong>rise</strong></a></strong></dt>
 
 <dd>
 <p>Vertical displacement, in 10000ths of an em. Can be negative for subscript, positive for superscript.</p>
 </dd>
-<dt><strong><a name="item_strikethrough"><strong>strikethrough</strong></a></strong></dt>
+<dt><strong><a name="strikethrough" class="item"><strong>strikethrough</strong></a></strong></dt>
 
 <dd>
 <p>'true' or 'false' whether to strike through the text</p>
 </dd>
-<dt><strong><a name="item_strikethrough_color"><strong>strikethrough_color</strong></a></strong></dt>
+<dt><strong><a name="strikethrough_color" class="item"><strong>strikethrough_color</strong></a></strong></dt>
 
 <dd>
 <p>The color of strikethrough lines; an RGB color specification such as '#00FF00' or a color name such as 'red'</p>
 </dd>
-<dt><strong><a name="item_fallback"><strong>fallback</strong></a></strong></dt>
+<dt><strong><a name="fallback" class="item"><strong>fallback</strong></a></strong></dt>
 
 <dd>
 <p>'true' or 'false' whether to enable fallback. If disabled, then characters will only be used from the closest matching font on the system. No fallback will be done to other fonts on the system that might contain the characters in the text. Fallback is enabled by default. Most applications should not disable fallback.</p>
 </dd>
-<dt><strong><a name="item_lang"><strong>lang</strong></a></strong></dt>
+<dt><strong><a name="lang" class="item"><strong>lang</strong></a></strong></dt>
 
 <dd>
 <p>A language code, indicating the text language</p>
 </dd>
-<dt><strong><a name="item_letter_spacing"><strong>letter_spacing</strong></a></strong></dt>
+<dt><strong><a name="letter_spacing" class="item"><strong>letter_spacing</strong></a></strong></dt>
 
 <dd>
 <p>Inter-letter spacing in 1024ths of a point.</p>
 </dd>
-<dt><strong><a name="item_gravity"><strong>gravity</strong></a></strong></dt>
+<dt><strong><a name="gravity" class="item"><strong>gravity</strong></a></strong></dt>
 
 <dd>
 <p>One of 'south', 'east', 'north', 'west', 'auto'.</p>
 </dd>
-<dt><strong><a name="item_gravity_hint"><strong>gravity_hint</strong></a></strong></dt>
+<dt><strong><a name="gravity_hint" class="item"><strong>gravity_hint</strong></a></strong></dt>
 
 <dd>
 <p>One of 'natural', 'strong', 'line'.</p>
@@ -520,47 +526,47 @@ Pango uses the xml <strong>span</strong> tags for inline formatting instructions
 </dl>
 <p>To save you some typing, there are also some shortcuts:</p>
 <dl>
-<dt><strong><a name="item_b"><strong>b</strong></a></strong></dt>
+<dt><strong><a name="b" class="item"><strong>b</strong></a></strong></dt>
 
 <dd>
 <p>Bold</p>
 </dd>
-<dt><strong><a name="item_big"><strong>big</strong></a></strong></dt>
+<dt><strong><a name="big" class="item"><strong>big</strong></a></strong></dt>
 
 <dd>
-<p>Makes font relatively larger, equivalent to &lt;span size=``larger''&gt;</p>
+<p>Makes font relatively larger, equivalent to &lt;span size=&quot;larger&quot;&gt;</p>
 </dd>
-<dt><strong><a name="item_i"><strong>i</strong></a></strong></dt>
+<dt><strong><a name="i" class="item"><strong>i</strong></a></strong></dt>
 
 <dd>
 <p>Italic</p>
 </dd>
-<dt><strong><a name="item_s"><strong>s</strong></a></strong></dt>
+<dt><strong><a name="s" class="item"><strong>s</strong></a></strong></dt>
 
 <dd>
 <p>Strikethrough</p>
 </dd>
-<dt><strong><a name="item_sub"><strong>sub</strong></a></strong></dt>
+<dt><strong><a name="sub" class="item"><strong>sub</strong></a></strong></dt>
 
 <dd>
 <p>Subscript</p>
 </dd>
-<dt><strong><a name="item_sup"><strong>sup</strong></a></strong></dt>
+<dt><strong><a name="sup" class="item"><strong>sup</strong></a></strong></dt>
 
 <dd>
 <p>Superscript</p>
 </dd>
-<dt><strong><a name="item_small"><strong>small</strong></a></strong></dt>
+<dt><strong><a name="small" class="item"><strong>small</strong></a></strong></dt>
 
 <dd>
-<p>Makes font relatively smaller, equivalent to &lt;span size=``smaller''&gt;</p>
+<p>Makes font relatively smaller, equivalent to &lt;span size=&quot;smaller&quot;&gt;</p>
 </dd>
-<dt><strong><a name="item_tt"><strong>tt</strong></a></strong></dt>
+<dt><strong><a name="tt" class="item"><strong>tt</strong></a></strong></dt>
 
 <dd>
 <p>Monospace font</p>
 </dd>
-<dt><strong><a name="item_u"><strong>u</strong></a></strong></dt>
+<dt><strong><a name="u" class="item"><strong>u</strong></a></strong></dt>
 
 <dd>
 <p>Underline</p>

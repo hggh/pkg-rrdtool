@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -19,7 +21,11 @@
 	<li><a href="#description">DESCRIPTION</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -54,16 +60,16 @@ it is not the first one.</p>
 <p>and so on.</p>
 <p>Each time the digit nine is incremented, it is reset to 0 and the
 position before (to the left) is incremented (from 0 to 1). Then
-number 9 can be seen as ``00009'' and when we should increment 9, we
+number 9 can be seen as &quot;00009&quot; and when we should increment 9, we
 reset it to zero and increment the digit just before the 9 so the
-number becomes ``00010''. Leading zeros we don't write except if it is
+number becomes &quot;00010&quot;. Leading zeros we don't write except if it is
 the only digit (number 0). And of course, we write zeros if they occur
 anywhere inside or at the end of a number:</p>
 <pre>
  &quot;00010&quot; -&gt; &quot; 0010&quot; -&gt; &quot; 010&quot; -&gt; &quot;  10&quot;, but not &quot;  1 &quot;.</pre>
 <p>This was pretty basic, you already knew this. Why did I tell it?
 Well, computers usually do not represent numbers with 10 different
-digits. They only use two different symbols, namely ``0'' and ``1''. Apply
+digits. They only use two different symbols, namely &quot;0&quot; and &quot;1&quot;. Apply
 the same rules to this set of digits and you get the binary numbering
 system:</p>
 <pre>
@@ -90,7 +96,7 @@ numbering system or base.  Normally, if we do not explicitly specify
 the numbering system used, we implicitly use the decimal system. If we
 want to use any other numbering system, we'll have to make that
 clear. There are a few widely adopted methods to do so. One common
-form is to write <code>1010(2)</code> which means that you wrote down a number in
+form is to write 1010(2) which means that you wrote down a number in
 its binary representation. It is the number ten. If you would write
 1010 without specifying the base, the number is interpreted as one
 thousand and ten using base 10.</p>
@@ -107,7 +113,7 @@ on the context.</p>
 (...programming...), but the numbers will have large
 representations. The number 65'535 (often in the decimal system a ' is
 used to separate blocks of three digits for readability) would be
-written down as <code>1111111111111111(2)</code> which is 16 times the digit 1.
+written down as 1111111111111111(2) which is 16 times the digit 1.
 This is difficult and prone to errors. Therefore, we usually would use
 another base, called hexadecimal. It uses 16 different symbols. First
 the symbols from the decimal system are used, thereafter we continue
@@ -166,14 +172,14 @@ each digit, write down its binary equivalent.</p>
 <p>Computers (or rather the parsers running on them) would have a hard
 time converting a number like 1234(16). Therefore hexadecimal numbers
 are specified with a prefix. This prefix depends on the language
-you're writing in. Some of the prefixes are ``0x'' for C, ``$'' for
-Pascal, ``#'' for HTML.  It is common to assume that if a number starts
+you're writing in. Some of the prefixes are &quot;0x&quot; for C, &quot;$&quot; for
+Pascal, &quot;#&quot; for HTML.  It is common to assume that if a number starts
 with a zero, it is octal. It does not matter what is used as long as
-you know what it is. I will use ``0x'' for hexadecimal, ``%'' for binary
-and ``0'' for octal.  The following numbers are all the same, just their
+you know what it is. I will use &quot;0x&quot; for hexadecimal, &quot;%&quot; for binary
+and &quot;0&quot; for octal.  The following numbers are all the same, just their
 representation (base) is different: 021 0x11 17 %00010001</p>
 <p>To do arithmetics and conversions you need to understand one more thing.
-It is something you already know but perhaps you do not ``see'' it yet:</p>
+It is something you already know but perhaps you do not &quot;see&quot; it yet:</p>
 <p>If you write down 1234, (no prefix, so it is decimal) you are talking
 about the number one thousand, two hundred and thirty four. In sort of
 a formula:</p>
@@ -188,7 +194,7 @@ a formula:</p>
  2 * 10^2
  3 * 10^1
  4 * 10^0</pre>
-<p>where ^ means ``to the power of''.</p>
+<p>where ^ means &quot;to the power of&quot;.</p>
 <p>We are using the base 10, and the positions 0,1,2 and 3.
 The right-most position should NOT be multiplied with 10. The second
 from the right should be multiplied one time with 10. The third from
@@ -225,8 +231,8 @@ yet another way afterwards.</p>
 <p>First you need to know how many positions will be used in the other
 system. To do so, you need to know the maximum numbers you'll be
 using. Well, that's not as hard as it looks. In decimal, the maximum
-number that you can form with two digits is ``99''. The maximum for
-three: ``999''. The next number would need an extra position. Reverse
+number that you can form with two digits is &quot;99&quot;. The maximum for
+three: &quot;999&quot;. The next number would need an extra position. Reverse
 this idea and you will see that the number can be found by taking 10^3
 (10*10*10 is 1000) minus 1 or 10^2 minus one.</p>
 <p>This can be done for hexadecimal as well:</p>
@@ -243,12 +249,12 @@ from 1 to 15 (0x1 to 0xF). Do the same for the other positions.</p>
 <p>Let's try with 41'029. It is smaller than 16^4 but bigger than 16^3-1. This
 means that we have to use four positions.
 We can subtract 16^3 from 41'029 ten times without going below zero.
-The left-most digit will therefore be ``A'', so we have 0xA????.
+The left-most digit will therefore be &quot;A&quot;, so we have 0xA????.
 The number is reduced to 41'029 - 10*4'096 = 41'029-40'960 = 69.
 69 is smaller than 16^3 but not bigger than 16^2-1. The second digit
-is therefore ``0'' and we now have 0xA0??.
+is therefore &quot;0&quot; and we now have 0xA0??.
 69 is smaller than 16^2 and bigger than 16^1-1. We can subtract 16^1
-(which is just plain 16) four times and write down ``4'' to get 0xA04?.
+(which is just plain 16) four times and write down &quot;4&quot; to get 0xA04?.
 Subtract 64 from 69 (69 - 4*16) and the last digit is 5 --&gt; 0xA045.</p>
 <p>The other method builds up the number from the right. Let's try 41'029
 again.  Divide by 16 and do not use fractions (only whole numbers).</p>
@@ -335,7 +341,7 @@ find that you didn't make mistakes. In the end, you'll do calculi in
 other bases as easily as you do them in decimal.</p>
 <p>When the numbers get bigger, you'll have to realize that a computer is
 not called a computer just to have a nice name. There are many
-different calculators available, use them. For Unix you could use ``bc''
+different calculators available, use them. For Unix you could use &quot;bc&quot;
 which is short for Binary Calculator. It calculates not only in
 decimal, but in all bases you'll ever want to use (among them Binary).</p>
 <p>For people on Windows:

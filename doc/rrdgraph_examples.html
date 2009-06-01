@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -23,7 +25,7 @@
 
 		<li><a href="#data_with_multiple_resolutions">Data with multiple resolutions</a></li>
 		<li><a href="#nicely_formatted_legend_section">Nicely formatted legend section</a></li>
-		<li><a href="#offsetting_a_line_on_the_yaxis">Offsetting a line on the y-axis</a></li>
+		<li><a href="#offsetting_a_line_on_the_y_axis">Offsetting a line on the y-axis</a></li>
 		<li><a href="#drawing_dashed_lines">Drawing dashed lines</a></li>
 		<li><a href="#time_ranges">Time ranges</a></li>
 		<li><a href="#viewing_the_current_and_previous_week_together">Viewing the current and previous week together</a></li>
@@ -38,7 +40,11 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -113,14 +119,14 @@ ready because comments are intermixed with the examples.</p>
     GPRINT:ds1pct:&quot;%6.2lf %Sbps\l&quot;</pre>
 <p>
 </p>
-<h2><a name="offsetting_a_line_on_the_yaxis">Offsetting a line on the y-axis</a></h2>
+<h2><a name="offsetting_a_line_on_the_y_axis">Offsetting a line on the y-axis</a></h2>
 <p>Depending on your needs you can do this in two ways:</p>
 <ul>
 <li>
 <p>Offset the data, then graph this</p>
 <pre>
     DEF:mydata=my.rrd:ds:AVERAGE</pre>
-<p>Note: this will also influence any other command that uses ``data''</p>
+<p>Note: this will also influence any other command that uses &quot;data&quot;</p>
 <pre>
     CDEF:data=mydata,100,+
     LINE1:data#FF0000:&quot;Data with offset&quot;</pre>
@@ -144,11 +150,11 @@ ready because comments are intermixed with the examples.</p>
 <ul>
 <li>
 <p>default style: - - - - -
-    LINE1:data#FF0000:``dashed line'':dashes</p>
+    LINE1:data#FF0000:&quot;dashed line&quot;:dashes</p>
 </li>
 <li>
 <p>more fancy style with offset: - -  --- -  --- -
-    LINE1:data#FF0000:``another dashed line'':dashes=15,5,5,10:dash-offset=10</p>
+    LINE1:data#FF0000:&quot;another dashed line&quot;:dashes=15,5,5,10:dash-offset=10</p>
 </li>
 </ul>
 <p>
