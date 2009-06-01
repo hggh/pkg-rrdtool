@@ -71,7 +71,7 @@ endif
 
 build: build-arch build-indep 
 
-build-arch: build-arch-stamp $(PY_VERS:%=build-python%)
+build-arch: build-arch-stamp $(PY_VERS:%=build-python%) $(PY_VERS:%=build-python%-dbg)
 build-arch-stamp: config.status 
 	make
 	#Fix library path to tcl bindings
@@ -86,7 +86,7 @@ build-arch-stamp: config.status
 build-python%: build-arch-stamp
 	set -e ;\
 	 cd bindings/python ;\
-	 BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build
+	 BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build ;\
 	touch $@
 
 build-indep: build-arch-stamp
@@ -163,7 +163,8 @@ install-python%: install-common-stamp
 	dh_testroot
 	set -e ;\
 	 cd bindings/python ;\
-	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool
+	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool ;\
+	 python$*-dbg setup.py install --root=$(CURDIR)/debian/rrdtool-dbg
 
 
 binary-indep: build-indep install-indep
