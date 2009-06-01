@@ -87,13 +87,13 @@ build-python%: build-arch-stamp
 	set -e ;\
 	 cd bindings/python ;\
 	 BUILDLIBDIR=../../src/.libs LIBDIR=../../src/.libs python$* setup.py build ;\
-	touch $@
+	 touch $@
 
 build-indep: build-arch-stamp
 	#indep stuff is built in build-arch-stamp, too.
 
 clean: clean-patched
-clean-patched: unpatch $(PY_VERS:%=clean-python%)
+clean-patched: unpatch $(PY_VERS:%=clean-python%) $(PY_VERS:%=clean-python%-dbg)
 	dh_testdir
 	dh_testroot
 
@@ -123,8 +123,8 @@ endif
 clean-python%: unpatch
 	set -e ;\
 	 cd bindings/python ;\
-	 python$* setup.py clean
-	rm -f build-python$*
+	 python$* setup.py clean ;\
+	 rm -f build-python$*
 
 
 install: install-arch install-indep
