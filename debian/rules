@@ -170,10 +170,9 @@ binary-indep: build-indep install-indep
 	dh_testdir
 	dh_testroot
 	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
-	dh_link -ppython-rrd /usr/share/doc/python-rrdtool /usr/share/doc/python-rrd
-	dh_installchangelogs -i -Nlibrrd-ruby -Npython-rrd CHANGES
-	dh_installdocs -i -Nlibrrd-ruby -Npython-rrd -A CONTRIBUTORS NEWS
-	dh_link -i -Nlibrrd-ruby -Npython-rrd
+	dh_installchangelogs -i -Nlibrrd-ruby CHANGES
+	dh_installdocs -i -Nlibrrd-ruby -A CONTRIBUTORS NEWS
+	dh_link -i -Nlibrrd-ruby
 	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
 	dh_perl -i
 	dh_compress -i

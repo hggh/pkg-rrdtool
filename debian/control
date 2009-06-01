@@ -149,21 +149,6 @@ Description: Time-series data storage and display system (Python interface)
  .
  This package contains a Python interface to RRDs.
 
-Package: python-rrd
-Architecture: all
-Section: python
-Depends: python-rrdtool
-Description: Transitional dummy package
- The Round Robin Database Tool (RRDtool) is a system to store and display
- time-series data (e.g. network bandwidth, machine-room temperature,
- server load average). It stores the data in Round Robin Databases (RRDs),
- a very compact way that will not expand over time. RRDtool processes the
- extracted data to enforce a certain data density, allowing for useful
- graphical representation of data values.
- .
- This package is a transitional dummy package to rename the package to
- python-rrdtool as required by the Python policy.  It can be safely removed.
-
 Package: librrd-ruby
 Architecture: all
 Section: ruby
