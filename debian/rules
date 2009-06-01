@@ -165,6 +165,8 @@ install-python%: install-common-stamp
 	 cd bindings/python ;\
 	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool ;\
 	 python$*-dbg setup.py install --root=$(CURDIR)/debian/rrdtool-dbg
+	find $(CURDIR)/debian/rrdtool-dbg -type f -name '*.egg-info' -print0 |\
+		 xargs -0r rm -f
 
 
 binary-indep: build-indep install-indep
