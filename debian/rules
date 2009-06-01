@@ -193,6 +193,7 @@ binary-arch: build-arch install-arch
 	dh_installdocs -a
 	echo 'tcl:Depends=tcl$(TCL_VERS) | tclsh' >> debian/rrdtool-tcl.substvars
 	dh_pysupport -ppython-rrdtool
+	dh_pysupport -prrdtool-dbg
 	dh_perl -a
 	dh_installman -a
 	dh_link -a
