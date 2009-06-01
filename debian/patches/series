@@ -5,5 +5,4 @@ no-rpath-for-ruby
 no-rpath-for-perl
 implicit-decl-fix
 compiler-warning-fixes
-doc-fixes
 bts530814-hurd
