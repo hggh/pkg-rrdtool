@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -26,7 +28,11 @@
 
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -44,7 +50,7 @@ on the way to use the multi-threaded version of librrd in your own
 programs. It also gives hints for future RRD development to keep the
 library thread-safe.</p>
 <p>Currently only some RRD operations are implemented in a thread-safe
-way. They all end in the usual ``<code>_r</code>'' suffix.</p>
+way. They all end in the usual &quot;<code>_r</code>&quot; suffix.</p>
 <p>
 </p>
 <hr />
@@ -52,11 +58,11 @@ way. They all end in the usual ``<code>_r</code>'' suffix.</p>
 <p>In order to use librrd in multi-threaded programs you must:</p>
 <ul>
 <li>
-<p>Link with <em>librrd_th</em> instead of <em>librrd</em> (use <code>-lrrd_th</code> when
+<p>Link with <em class="file">librrd_th</em> instead of <em class="file">librrd</em> (use <code>-lrrd_th</code> when
 linking)</p>
 </li>
 <li>
-<p>Use the ``<code>_r</code>'' functions instead of the normal API-functions</p>
+<p>Use the &quot;<code>_r</code>&quot; functions instead of the normal API-functions</p>
 </li>
 <li>
 <p>Do not use any at-style time specifications. Parsing of such time
@@ -112,8 +118,8 @@ instead, it provides a per-thread error message.</p>
 </ul>
 </li>
 <li>
-<p>A header file named <em>rrd_is_thread_safe.h</em> is provided
-that works with the GNU C-preprocessor to ``poison'' some of the most
+<p>A header file named <em class="file">rrd_is_thread_safe.h</em> is provided
+that works with the GNU C-preprocessor to &quot;poison&quot; some of the most
 common non-thread-safe functions using the <code>#pragma GCC poison</code>
 directive. Just include this header in source files you want to keep
 thread-safe.</p>
@@ -121,8 +127,8 @@ thread-safe.</p>
 <li>
 <p>Do not introduce global variables!</p>
 <p>If you really, really have to use a global variable you may add a new
-field to the <code>rrd_context</code> structure and modify <em>rrd_error.c</em>,
-<em>rrd_thread_safe.c</em> and <em>rrd_non_thread_safe.c</em></p>
+field to the <code>rrd_context</code> structure and modify <em class="file">rrd_error.c</em>,
+<em class="file">rrd_thread_safe.c</em> and <em class="file">rrd_non_thread_safe.c</em></p>
 </li>
 <li>
 <p>Do not use <code>getopt</code> or <code>getopt_long</code> in *<code>_r</code> (neither directly nor

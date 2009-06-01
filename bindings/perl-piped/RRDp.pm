@@ -45,6 +45,9 @@ start RRDtool. The argument must be the path to the RRDtool executable
 pass commands on to RRDtool. check the RRDtool documentation for
 more info on the RRDtool commands.
 
+B<Note>: Due to design limitations, B<RRDp::cmd> does not support the
+C<graph -> command - use C<graphv -> instead.
+
 =item $answer = B<RRDp::read>
 
 read RRDtool's response to your command. Note that the $answer variable will
@@ -121,7 +124,7 @@ sub cmd (@);
 sub end ();
 sub read ();
 
-$VERSION=1.3007;
+$VERSION=1.3008;
 
 sub start ($){
   croak "rrdtool is already running"
@@ -187,6 +190,13 @@ sub cmd (@){
   }
   $cmd =~ s/\n/ /gs;
   $cmd =~ s/\s/ /gs;
+
+  # The generated graphs aren't necessarily terminated by a newline,
+  # causing RRDp::read() to wait for a line matching '^OK' forever.
+  if ($cmd =~ m/^\s*graph\s+-\s+/) {
+    croak "RRDp does not support the 'graph -' command - "
+        . "use 'graphv -' instead";
+  }
   print RRDwriteHand "$cmd\n";
 }
 

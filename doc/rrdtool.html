@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -31,7 +33,11 @@
 	<li><a href="#bugs">BUGS</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -77,71 +83,71 @@ further down. There is also a number of language bindings
 for RRDtool which allow you to use it directly from Perl, python, Tcl,
 PHP, etc.</p>
 <dl>
-<dt><strong><a name="item_create"><strong>create</strong></a></strong></dt>
+<dt><strong><a name="create" class="item"><strong>create</strong></a></strong></dt>
 
 <dd>
 <p>Set up a new Round Robin Database (RRD). Check <a href="././rrdcreate.html">the rrdcreate manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_update"><strong>update</strong></a></strong></dt>
+<dt><strong><a name="update" class="item"><strong>update</strong></a></strong></dt>
 
 <dd>
 <p>Store new data values into an RRD. Check <a href="././rrdupdate.html">the rrdupdate manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_updatev"><strong>updatev</strong></a></strong></dt>
+<dt><strong><a name="updatev" class="item"><strong>updatev</strong></a></strong></dt>
 
 <dd>
 <p>Operationally equivalent to <strong>update</strong> except for output. Check <a href="././rrdupdate.html">the rrdupdate manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_graph"><strong>graph</strong></a></strong></dt>
+<dt><strong><a name="graph" class="item"><strong>graph</strong></a></strong></dt>
 
 <dd>
 <p>Create a graph from data stored in one or several RRDs. Apart from
 generating graphs, data can also be extracted to stdout. Check <a href="././rrdgraph.html">the rrdgraph manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_dump"><strong>dump</strong></a></strong></dt>
+<dt><strong><a name="dump" class="item"><strong>dump</strong></a></strong></dt>
 
 <dd>
 <p>Dump the contents of an RRD in plain ASCII. In connection with restore
 you can use this to move an RRD from one computer architecture to
 another.  Check <a href="././rrddump.html">the rrddump manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_restore"><strong>restore</strong></a></strong></dt>
+<dt><strong><a name="restore" class="item"><strong>restore</strong></a></strong></dt>
 
 <dd>
 <p>Restore an RRD in XML format to a binary RRD. Check <a href="././rrdrestore.html">the rrdrestore manpage</a></p>
 </dd>
-<dt><strong><a name="item_fetch"><strong>fetch</strong></a></strong></dt>
+<dt><strong><a name="fetch" class="item"><strong>fetch</strong></a></strong></dt>
 
 <dd>
 <p>Get data for a certain time period from a RRD. The graph function
 uses fetch to retrieve its data from an RRD. Check <a href="././rrdfetch.html">the rrdfetch manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_tune"><strong>tune</strong></a></strong></dt>
+<dt><strong><a name="tune" class="item"><strong>tune</strong></a></strong></dt>
 
 <dd>
 <p>Alter setup of an RRD. Check <a href="././rrdtune.html">the rrdtune manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_last"><strong>last</strong></a></strong></dt>
+<dt><strong><a name="last" class="item"><strong>last</strong></a></strong></dt>
 
 <dd>
 <p>Find the last update time of an RRD. Check <a href="././rrdlast.html">the rrdlast manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_info"><strong>info</strong></a></strong></dt>
+<dt><strong><a name="info" class="item"><strong>info</strong></a></strong></dt>
 
 <dd>
 <p>Get information about an RRD. Check <a href="././rrdinfo.html">the rrdinfo manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_rrdresize"><strong>rrdresize</strong></a></strong></dt>
+<dt><strong><a name="rrdresize" class="item"><strong>rrdresize</strong></a></strong></dt>
 
 <dd>
 <p>Change the size of individual RRAs. This is dangerous! Check <a href="././rrdresize.html">the rrdresize manpage</a>.</p>
 </dd>
-<dt><strong><a name="item_xport"><strong>xport</strong></a></strong></dt>
+<dt><strong><a name="xport" class="item"><strong>xport</strong></a></strong></dt>
 
 <dd>
 <p>Export data retrieved from one or several RRDs. Check <a href="././rrdxport.html">the rrdxport manpage</a></p>
 </dd>
-<dt><strong><a name="item_rrdcgi"><strong>rrdcgi</strong></a></strong></dt>
+<dt><strong><a name="rrdcgi" class="item"><strong>rrdcgi</strong></a></strong></dt>
 
 <dd>
 <p>This is a standalone tool for producing RRD graphs on the fly. Check
@@ -152,7 +158,7 @@ uses fetch to retrieve its data from an RRD. Check <a href="././rrdfetch.html">t
 </p>
 <h2><a name="how_does_rrdtool_work">HOW DOES RRDTOOL WORK?</a></h2>
 <dl>
-<dt><strong><a name="item_data_acquisition">Data Acquisition</a></strong></dt>
+<dt><strong><a name="data_acquisition" class="item">Data Acquisition</a></strong></dt>
 
 <dd>
 <p>When monitoring the state of a system, it is convenient to have the
@@ -165,7 +171,7 @@ interpolated value to the log. The original value you have supplied is
 stored as well and is also taken into account when interpolating the
 next log entry.</p>
 </dd>
-<dt><strong><a name="item_consolidation">Consolidation</a></strong></dt>
+<dt><strong><a name="consolidation" class="item">Consolidation</a></strong></dt>
 
 <dd>
 <p>You may log data at a 1 minute interval, but you might also be
@@ -182,7 +188,7 @@ consolidated values (see rrdcreate). You can define any number of
 different consolidation setups within one <strong>RRD</strong>. They will all be
 maintained on the fly when new data is loaded into the <strong>RRD</strong>.</p>
 </dd>
-<dt><strong><a name="item_round_robin_archives">Round Robin Archives</a></strong></dt>
+<dt><strong><a name="round_robin_archives" class="item">Round Robin Archives</a></strong></dt>
 
 <dd>
 <p>Data values of the same consolidation setup are stored into Round
@@ -209,7 +215,7 @@ exactly the type of information that actually interests you: the maximum
 one minute traffic on the LAN, the minimum temperature of your wine cellar,
 the total minutes of down time, etc.</p>
 </dd>
-<dt><strong><a name="item_unknown_data">Unknown Data</a></strong></dt>
+<dt><strong><a name="unknown_data" class="item">Unknown Data</a></strong></dt>
 
 <dd>
 <p>As mentioned earlier, the <strong>RRD</strong> stores data at a constant
@@ -225,7 +231,7 @@ performed to make sure that the percentage of unknown values in the
 data point is above a configurable level. If not, an <em>*UNKNOWN*</em> value
 will be written to the <strong>RRA</strong>.</p>
 </dd>
-<dt><strong><a name="item_graphing">Graphing</a></strong></dt>
+<dt><strong><a name="graphing" class="item">Graphing</a></strong></dt>
 
 <dd>
 <p><strong>RRDtool</strong> allows you to generate reports in numerical and
@@ -234,7 +240,7 @@ graphical form based on the data stored in one or several
 contents of the graph can be defined freely. Check <a href="././rrdgraph.html">the rrdgraph manpage</a>
 for more information on this.</p>
 </dd>
-<dt><strong><a name="item_aberrant_behavior_detection">Aberrant Behavior Detection</a></strong></dt>
+<dt><strong><a name="aberrant_behavior_detection" class="item">Aberrant Behavior Detection</a></strong></dt>
 
 <dd>
 <p>by Jake Brutlag</p>
@@ -261,7 +267,7 @@ a time series. Its forecast is the sum of three components: a baseline
 coefficient (a periodic effect, such as a daily cycle). There is one
 seasonal coefficient for each time point in the period (cycle). After
 a value is observed, each of these components is updated via
-exponential smoothing. This means that the algorithm ``learns'' from
+exponential smoothing. This means that the algorithm &quot;learns&quot; from
 past values and uses them to predict the future. The rate of
 adaptation is governed by 3 parameters, alpha (intercept), beta
 (slope), and gamma (seasonal). The prediction can also be viewed as a

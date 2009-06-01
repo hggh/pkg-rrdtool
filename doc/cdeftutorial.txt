@@ -12,25 +12,23 @@ DDEESSCCRRIIPPTTIIOONN
        If you think some important feature is not explained properly, and if
        adding it to this document would benefit most users, please do ask me
        to add it.  I will then try to provide an answer in the next release of
-       this tutorial.  No feedback equals no changes! Additions to this docu-
-       ment are also welcome.  -- Alex van den Bogaerdt <alex@vandenbo-
-       gaerdt.nl>
+       this tutorial.  No feedback equals no changes! Additions to this
+       document are also welcome.  -- Alex van den Bogaerdt
+       <alex@vandenbogaerdt.nl>
 
-       WWhhyy tthhiiss ttuuttoorriiaall??
-
+   WWhhyy tthhiiss ttuuttoorriiaall??
        One of the powerful parts of RRDtool is its ability to do all sorts of
-       calculations on the data retrieved from its databases. However, RRD-
-       tool's many options and syntax make it difficult for the average user
-       to understand. The manuals are good at explaining what these options
-       do; however they do not (and should not) explain in detail why they are
-       useful. As with my RRDtool tutorial: if you want a simple document in
-       simple language you should read this tutorial.  If you are happy with
-       the official documentation, you may find this document too simple or
-       even boring. If you do choose to read this tutorial, I also expect you
-       to have read and fully understand my other tutorial.
+       calculations on the data retrieved from its databases. However,
+       RRDtool's many options and syntax make it difficult for the average
+       user to understand. The manuals are good at explaining what these
+       options do; however they do not (and should not) explain in detail why
+       they are useful. As with my RRDtool tutorial: if you want a simple
+       document in simple language you should read this tutorial.  If you are
+       happy with the official documentation, you may find this document too
+       simple or even boring. If you do choose to read this tutorial, I also
+       expect you to have read and fully understand my other tutorial.
 
-       MMoorree rreeaaddiinngg
-
+   MMoorree rreeaaddiinngg
        If you have difficulties with the way I try to explain it please read
        Steve Rader's rpntutorial. It may help you understand how this all
        works.
@@ -121,9 +119,9 @@ RRPPNN--eexxpprreessssiioonnss
        reverse the order of the variables.
 
 CCoonnvveerrttiinngg yyoouurr wwiisshheess ttoo RRPPNN
-       First, get a clear picture of what you want to do. Break down the prob-
-       lem in smaller portions until they cannot be split anymore. Then it is
-       rather simple to convert your ideas into RPN.
+       First, get a clear picture of what you want to do. Break down the
+       problem in smaller portions until they cannot be split anymore. Then it
+       is rather simple to convert your ideas into RPN.
 
        Suppose you have several RRDs and would like to add up some counters in
        them. These could be, for instance, the counters for every WAN link you
@@ -183,8 +181,8 @@ CCoonnvveerrttiinngg yyoouurr wwiisshheess ttoo RRPPNN
        This is correct but it can be made more clear to humans. It does not
        matter if you add a to b and then add c to the result or first add b to
        c and then add a to the result. This makes it possible to rewrite the
-       RPN into "CDEF:result=a,b,c,d,e,+,+,+,+" which is evaluated differ-
-       ently:
+       RPN into "CDEF:result=a,b,c,d,e,+,+,+,+" which is evaluated
+       differently:
 
           push value of variable a on the stack: a
           push value of variable b on the stack: a b
@@ -222,8 +220,8 @@ CCoonnvveerrttiinngg yyoouurr wwiisshheess ttoo RRPPNN
        also be converted into RPN. The parenthesis just tell you to first add
        b and c, and then multiply a with the result. Again, now it is easy to
        write it in RPN: "result=a,b,c,+,*". Note that this is very similar to
-       one of the expressions in the previous paragraph, only the multiplica-
-       tion and the addition changed places.
+       one of the expressions in the previous paragraph, only the
+       multiplication and the addition changed places.
 
        When you have problems with RPN or when RRDtool is complaining, it's
        usually a good thing to write down the stack on a piece of paper and
@@ -232,8 +230,7 @@ CCoonnvveerrttiinngg yyoouurr wwiisshheess ttoo RRPPNN
        solve most, if not all, problems you encounter.
 
 SSoommee ssppeecciiaall nnuummbbeerrss
-       TThhee uunnkknnoowwnn vvaalluuee
-
+   TThhee uunnkknnoowwnn vvaalluuee
        Sometimes collecting your data will fail. This can be very common,
        especially when querying over busy links. RRDtool can be configured to
        allow for one (or even more) unknown value(s) and calculate the missing
@@ -276,8 +273,7 @@ SSoommee ssppeecciiaall nnuummbbeerrss
        CDP and the xff factor. As you can see from the previous text they
        define the behavior of your RRA.
 
-       WWoorrkkiinngg wwiitthh uunnkknnoowwnn ddaattaa iinn yyoouurr ddaattaabbaassee
-
+   WWoorrkkiinngg wwiitthh uunnkknnoowwnn ddaattaa iinn yyoouurr ddaattaabbaassee
        As you have read in the previous chapter, entries in an RRA can be set
        to the unknown value. If you do calculations with this type of value,
        the result has to be unknown too. This means that an expression such as
@@ -303,15 +299,14 @@ SSoommee ssppeecciiaall nnuummbbeerrss
 
        There are some examples below that make this change.
 
-       IInnffiinniittyy
-
+   IInnffiinniittyy
        Infinite data is another form of a special number. It cannot be graphed
        because by definition you would never reach the infinite value. You can
-       think of positive and negative infinity depending on the position rela-
-       tive to zero.
+       think of positive and negative infinity depending on the position
+       relative to zero.
 
-       RRDtool is capable of representing (-not- graphing!) infinity by stop-
-       ping at its current maximum (for positive infinity) or minimum (for
+       RRDtool is capable of representing (-not- graphing!) infinity by
+       stopping at its current maximum (for positive infinity) or minimum (for
        negative infinity) without knowing this maximum (minimum).
 
        Infinity in RRDtool is mostly used to draw an AREA without knowing its
@@ -320,17 +315,15 @@ SSoommee ssppeecciiaall nnuummbbeerrss
        current graph. This is probably a good way to approximate infinity and
        it sure allows for some neat tricks. See below for examples.
 
-       WWoorrkkiinngg wwiitthh uunnkknnoowwnn ddaattaa aanndd iinnffiinniittyy
-
+   WWoorrkkiinngg wwiitthh uunnkknnoowwnn ddaattaa aanndd iinnffiinniittyy
        Sometimes you would like to discard unknown data and pretend it is zero
        (or any other value for that matter) and sometimes you would like to
        pretend that known data is unknown (to discard known-to-be-wrong data).
-       This is why CDEFs have support for unknown data. There are also exam-
-       ples available that show unknown data by using infinity.
+       This is why CDEFs have support for unknown data. There are also
+       examples available that show unknown data by using infinity.
 
 SSoommee eexxaammpplleess
-       EExxaammppllee:: uussiinngg aa rreecceennttllyy ccrreeaatteedd RRRRDD
-
+   EExxaammppllee:: uussiinngg aa rreecceennttllyy ccrreeaatteedd RRRRDD
        You are keeping statistics on your router for over a year now. Recently
        you installed an extra router and you would like to show the combined
        throughput for these two devices.
@@ -399,12 +392,11 @@ SSoommee eexxaammpplleess
        Eventually, when all unknown data is removed from the RRD, you may want
        to remove this rule so that unknown data is properly displayed.
 
-       EExxaammppllee:: bbeetttteerr hhaannddlliinngg ooff uunnkknnoowwnn ddaattaa,, bbyy uussiinngg ttiimmee
-
+   EExxaammppllee:: bbeetttteerr hhaannddlliinngg ooff uunnkknnoowwnn ddaattaa,, bbyy uussiinngg ttiimmee
        The above example has one drawback. If you do log unknown data in your
-       database after installing your new equipment, it will also be trans-
-       lated into zero and therefore you won't see that there was a problem.
-       This is not good and what you really want to do is:
+       database after installing your new equipment, it will also be
+       translated into zero and therefore you won't see that there was a
+       problem. This is not good and what you really want to do is:
 
        ·   If there is unknown data, look at the time that this sample was
            taken.
@@ -430,9 +422,9 @@ SSoommee eexxaammpplleess
        You could also dump the database and see where the data starts to be
        known. There are several other ways of doing this, just pick one.
 
-       Now we have to create the magic that allows us to process unknown val-
-       ues different depending on the time that the sample was taken.  This is
-       a three step process:
+       Now we have to create the magic that allows us to process unknown
+       values different depending on the time that the sample was taken.  This
+       is a three step process:
 
        1.  If the timestamp of the value is after 937'521'357, leave it as is.
 
@@ -477,13 +469,12 @@ SSoommee eexxaammpplleess
        This looks very complex, however, as you can see, it was not too hard
        to come up with.
 
-       EExxaammppllee:: PPrreetteennddiinngg wweeiirrdd ddaattaa iissnn''tt tthheerree
-
+   EExxaammppllee:: PPrreetteennddiinngg wweeiirrdd ddaattaa iissnn''tt tthheerree
        Suppose you have a problem that shows up as huge spikes in your graph.
-       You know this happens and why, so you decide to work around the prob-
-       lem.  Perhaps you're using your network to do a backup at night and by
-       doing so you get almost 10mb/s while the rest of your network activity
-       does not produce numbers higher than 100kb/s.
+       You know this happens and why, so you decide to work around the
+       problem.  Perhaps you're using your network to do a backup at night and
+       by doing so you get almost 10mb/s while the rest of your network
+       activity does not produce numbers higher than 100kb/s.
 
        There are two options:
 
@@ -512,8 +503,7 @@ SSoommee eexxaammpplleess
            CDEF:result=number,100000,GT,UNKN,number,IF
            CDEF:result=number,100000,GT,100000,number,IF
 
-       EExxaammppllee:: wwoorrkkiinngg oonn aa cceerrttaaiinn ttiimmee ssppaann
-
+   EExxaammppllee:: wwoorrkkiinngg oonn aa cceerrttaaiinn ttiimmee ssppaann
        If you want a graph that spans a few weeks, but would only want to see
        some routers' data for one week, you need to "hide" the rest of the
        time frame. Don't ask me when this would be useful, it's just here for
@@ -530,8 +520,8 @@ SSoommee eexxaammpplleess
        but, as Wataru Satoh pointed out, we can use the "*" or "+" functions
        as logical AND and logical OR.
 
-       For "*", the result will be zero (false) if either one of the two oper-
-       ators is zero.  For "+", the result will only be false (0) when two
+       For "*", the result will be zero (false) if either one of the two
+       operators is zero.  For "+", the result will only be false (0) when two
        false (0) operators will be added.  Warning: *any* number not equal to
        0 will be considered "true". This means that, for instance, "-1,1,+"
        (which should be "true or true") will become FALSE ...  In other words,
@@ -551,8 +541,7 @@ SSoommee eexxaammpplleess
 
        This will return an UNKNOWN if either comparison returns true.
 
-       EExxaammppllee:: YYoouu ssuussppeecctt ttoo hhaavvee pprroobblleemmss aanndd wwaanntt ttoo sseeee uunnkknnoowwnn ddaattaa..
-
+   EExxaammppllee:: YYoouu ssuussppeecctt ttoo hhaavvee pprroobblleemmss aanndd wwaanntt ttoo sseeee uunnkknnoowwnn ddaattaa..
        Suppose you add up the number of active users on several terminal
        servers.  If one of them doesn't give an answer (or an incorrect one)
        you get "NaN" in the database ("Not a Number") and NaN is evaluated as
@@ -594,8 +583,7 @@ SSoommee eexxaammpplleess
           AREA:allusers#0000FF:combined user count
           AREA:wrongdata#FF0000:unknown data
 
-       SSaammee eexxaammppllee uusseeffuull wwiitthh SSTTAACCKKeedd ddaattaa::
-
+   SSaammee eexxaammppllee uusseeffuull wwiitthh SSTTAACCKKeedd ddaattaa::
        If you use stack in the previous example (as I would do) then you don't
        add up the values. Therefore, there is no relationship between the four
        values and you don't get a single value to test.  Suppose users3 would
@@ -641,8 +629,7 @@ SSoommee eexxaammpplleess
           GPRINT:allusers:LAST:"Current: %6.0lf\n"
 
 TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapphh mmaannuuaall ppaaggee
-       DDeeggrreeeess CCeellssiiuuss vvss.. DDeeggrreeeess FFaahhrreennhheeiitt
-
+   DDeeggrreeeess CCeellssiiuuss vvss.. DDeeggrreeeess FFaahhrreennhheeiitt
        To convert Celsius into Fahrenheit use the formula F=9/5*C+32
 
           rrdtool graph demo.png --title="Demo Graph" \
@@ -652,8 +639,8 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
              LINE2:far#ff0000:"D. Fahrenheit\c"
 
        This example gets the DS called "exhaust" from database "demo.rrd" and
-       puts the values in variable "cel". The CDEF used is evaluated as fol-
-       lows:
+       puts the values in variable "cel". The CDEF used is evaluated as
+       follows:
 
           CDEF:far=9,5,/,cel,*,32,+
           1. push 9, push 5
@@ -666,8 +653,7 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
           6. push function "plus" and process it
              the stack contains now the temperature in Fahrenheit
 
-       CChhaannggiinngg uunnkknnoowwnn iinnttoo zzeerroo
-
+   CChhaannggiinngg uunnkknnoowwnn iinnttoo zzeerroo
           rrdtool graph demo.png --title="Demo Graph" \
              DEF:idat1=interface1.rrd:ds0:AVERAGE \
              DEF:idat2=interface2.rrd:ds0:AVERAGE \
@@ -699,8 +685,7 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
        process we effectively ignored unknown values. The result is multiplied
        by eight, most likely to convert bytes/s to bits/s.
 
-       IInnffiinniittyy ddeemmoo
-
+   IInnffiinniittyy ddeemmoo
           rrdtool graph example.png --title="INF demo" \
              DEF:val1=some.rrd:ds0:AVERAGE \
              DEF:val2=some.rrd:ds1:AVERAGE \
@@ -751,16 +736,15 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
        background. Suppose one of val1..val4 would be unknown, in that case
        you end up with only three bars stacked on top of each other.  You
        don't want to see this because the data is only valid when all four
-       variables are valid. This is why you use the second CDEF, it will over-
-       lay the data with an AREA so the data cannot be seen anymore.
+       variables are valid. This is why you use the second CDEF, it will
+       overlay the data with an AREA so the data cannot be seen anymore.
 
        If your data can also have negative values you also need to overwrite
        the other half of your graph. This can be done in a relatively simple
        way: what you need is the "wipeout" variable and place a negative sign
        before it:  "CDEF:wipeout2=wipeout,-1,*"
 
-       FFiilltteerriinngg ddaattaa
-
+   FFiilltteerriinngg ddaattaa
        You may do some complex data filtering:
 
          MEDIAN FILTER: filters shot noise
@@ -772,6 +756,7 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
            CDEF:median=prev1,prev2,prev3,+,+,3,/
            LINE3:median#000077:filtered
            LINE1:prev2#007700:'raw data'
+
 
          DERIVATE:
 
@@ -799,4 +784,4 @@ AAUUTTHHOORR
 
 
 
-1.3.7                             2009-02-21                   CDEFTUTORIAL(1)
+1.3.8                             2009-02-21                   CDEFTUTORIAL(1)

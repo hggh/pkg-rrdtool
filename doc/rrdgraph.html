@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -38,7 +40,11 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -201,7 +207,7 @@ to turn this behaviour off.</p>
 </p>
 <h2><a name="grid">Grid</a></h2>
 <dl>
-<dt><strong><a name="item_x_2daxis">X-Axis</a></strong></dt>
+<dt><strong><a name="x_axis" class="item">X-Axis</a></strong></dt>
 
 <dd>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
@@ -232,7 +238,7 @@ lines as they specify exactly that time.</p>
 each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.</p>
 </dd>
-<dt><strong><a name="item_y_2daxis">Y-Axis</a></strong></dt>
+<dt><strong><a name="y_axis" class="item">Y-Axis</a></strong></dt>
 
 <dd>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <em>grid step</em><strong>:</strong><em>label factor</em>]</p>
@@ -328,12 +334,12 @@ resetting the default fontsizes: <code>--font DEFAULT:0:Courier</code>.</p>
 variable <code>RRD_DEFAULT_FONT</code> if you want to change this.</p>
 <p>RRDtool uses Pango for its font handling. This means you can to use
 the full Pango syntax when selecting your font:</p>
-<p>The font name has the form ``[<em>FAMILY-LIST</em>] [<em>STYLE-OPTIONS</em>] [<em>SIZE</em>]'',
+<p>The font name has the form &quot;[<em>FAMILY-LIST</em>] [<em>STYLE-OPTIONS</em>] [<em>SIZE</em>]&quot;,
 where <em>FAMILY-LIST</em> is a comma separated list of families optionally
 terminated by a comma, <em>STYLE_OPTIONS</em> is a whitespace separated list of
 words where each WORD describes one of style, variant, weight, stretch, or
 gravity, and <em>SIZE</em> is a decimal number (size in points) or optionally
-followed by the unit modifier ``px'' for absolute size. Any one of the options
+followed by the unit modifier &quot;px&quot; for absolute size. Any one of the options
 may be absent.</p>
 <p>[<strong>-R</strong>|<strong>--font-render-mode</strong> {<strong>normal</strong>,<strong>light</strong>,<strong>mono</strong>}]</p>
 <p>There are 3 font render modes:</p>

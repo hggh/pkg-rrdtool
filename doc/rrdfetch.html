@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -21,7 +23,7 @@
 	<ul>
 
 		<li><a href="#resolution_interval">RESOLUTION INTERVAL</a></li>
-		<li><a href="#atstyle_time_specification">AT-STYLE TIME SPECIFICATION</a></li>
+		<li><a href="#at_style_time_specification">AT-STYLE TIME SPECIFICATION</a></li>
 		<li><a href="#time_reference_specification">TIME REFERENCE SPECIFICATION</a></li>
 		<li><a href="#time_offset_specification">TIME OFFSET SPECIFICATION</a></li>
 		<li><a href="#time_specification_examples">TIME SPECIFICATION EXAMPLES</a></li>
@@ -29,7 +31,11 @@
 
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -52,28 +58,28 @@
 function to get data from <strong>RRD</strong>s. <strong>fetch</strong> will analyze the <strong>RRD</strong>
 and try to retrieve the data in the resolution requested.
 The data fetched is printed to stdout. <em>*UNKNOWN*</em> data is often
-represented by the string ``NaN'' depending on your OS's printf
+represented by the string &quot;NaN&quot; depending on your OS's printf
 function.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong></dt>
+<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
 
 <dd>
 <p>the name of the <strong>RRD</strong> you want to fetch the data from.</p>
 </dd>
-<dt><strong><a name="item_cf"><em>CF</em></a></strong></dt>
+<dt><strong><a name="cf" class="item"><em>CF</em></a></strong></dt>
 
 <dd>
 <p>the consolidation function that is applied to the data you
 want to fetch (AVERAGE,MIN,MAX,LAST)</p>
 </dd>
-<dt><strong><a name="item_resolution"><strong>--resolution</strong>|<strong>-r</strong> <em>resolution</em> (default is the highest resolution)</a></strong></dt>
+<dt><strong><a name="resolution" class="item"><strong>--resolution</strong>|<strong>-r</strong> <em>resolution</em> (default is the highest resolution)</a></strong></dt>
 
 <dd>
 <p>the interval you want the values to have (seconds per
 value). <strong>rrdfetch</strong> will try to match your request, but it will return
 data even if no absolute match is possible. <strong>NB.</strong> See note below.</p>
 </dd>
-<dt><strong><a name="item_start"><strong>--start</strong>|<strong>-s</strong> <em>start</em> (default end-1day)</a></strong></dt>
+<dt><strong><a name="start" class="item"><strong>--start</strong>|<strong>-s</strong> <em>start</em> (default end-1day)</a></strong></dt>
 
 <dd>
 <p>start of the time series. A time in seconds since epoch (1970-01-01)
@@ -81,7 +87,7 @@ is required. Negative numbers are relative to the current time. By default,
 one day worth of data will be fetched. See also AT-STYLE TIME SPECIFICATION
 section for a detailed explanation on  ways to specify the start time.</p>
 </dd>
-<dt><strong><a name="item_end"><strong>--end</strong>|<strong>-e</strong> <em>end</em> (default now)</a></strong></dt>
+<dt><strong><a name="end" class="item"><strong>--end</strong>|<strong>-e</strong> <em>end</em> (default now)</a></strong></dt>
 
 <dd>
 <p>the end of the time series in seconds since epoch. See also AT-STYLE
@@ -123,7 +129,7 @@ what you want.</p>
 <p>both start and end time are within the desired RRA</p>
 </li>
 </ol>
-<p>So, if time now is called ``t'', do</p>
+<p>So, if time now is called &quot;t&quot;, do</p>
 <pre>
  end time == int(t/900)*900,
  start time == end time - 1hour,
@@ -141,10 +147,10 @@ what you want.</p>
                   -r $rrdres -e @{[int($ctime/$rrdres)*$rrdres]} -s e-1h&quot;'</pre>
 <p>
 </p>
-<h2><a name="atstyle_time_specification">AT-STYLE TIME SPECIFICATION</a></h2>
+<h2><a name="at_style_time_specification">AT-STYLE TIME SPECIFICATION</a></h2>
 <p>Apart from the traditional <em>Seconds since epoch</em>, RRDtool does also
 understand at-style time specification. The specification is called
-``at-style'' after the Unix command <code>at(1)</code> that has moderately complex
+&quot;at-style&quot; after the Unix command <code>at(1)</code> that has moderately complex
 ways to specify time to run your job at a certain date and time. The
 at-style specification consists of two parts: the <strong>TIME REFERENCE</strong>
 specification and the <strong>TIME OFFSET</strong> specification.</p>

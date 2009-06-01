@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -23,7 +25,11 @@
 	<li><a href="#example_2">EXAMPLE 2</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -51,7 +57,7 @@ representation of the data stored in one or several <strong>RRD</strong>s. It
 can also extract numerical reports.</p>
 <p>If no <em>XPORT</em> statements are found, there will be no output.</p>
 <dl>
-<dt><strong><a name="item_seconds"><strong>-s</strong>|<strong>--start</strong> <em>seconds</em> (default end-1day)</a></strong></dt>
+<dt><strong><a name="seconds" class="item"><strong>-s</strong>|<strong>--start</strong> <em>seconds</em> (default end-1day)</a></strong></dt>
 
 <dd>
 <p>The time when the exported range should begin. Time in seconds since
@@ -67,7 +73,7 @@ documentation for a detailed explanation on how to specify time.</p>
 See also AT-STYLE TIME SPECIFICATION section in the <em>rrdfetch</em>
 documentation for a detailed explanation of ways to specify time.</p>
 </dd>
-<dt><strong><a name="item_rows"><strong>-m</strong>|<strong>--maxrows</strong> <em>rows</em> (default 400 rows)</a></strong></dt>
+<dt><strong><a name="rows" class="item"><strong>-m</strong>|<strong>--maxrows</strong> <em>rows</em> (default 400 rows)</a></strong></dt>
 
 <dd>
 <p>This works like the <strong>-w</strong>|<strong>--width</strong> parameter of <em>rrdgraph</em>.
@@ -75,29 +81,29 @@ In fact it is exactly the same, but the parameter was renamed to
 describe its purpose in this module. See <em>rrdgraph</em> documentation
 for details.</p>
 </dd>
-<dt><strong><a name="item_value"><strong>--step</strong> <em>value</em> (default automatic)</a></strong></dt>
+<dt><strong><a name="value" class="item"><strong>--step</strong> <em>value</em> (default automatic)</a></strong></dt>
 
 <dd>
 <p>See <a href="././rrdgraph.html">the rrdgraph manpage</a> documentation.</p>
 </dd>
-<dt><strong><a name="item__2d_2denumds"><strong>--enumds</strong></a></strong></dt>
+<dt><strong><a name="enumds" class="item"><strong>--enumds</strong></a></strong></dt>
 
 <dd>
 <p>The generated xml should contain the data values in enumerated tags.</p>
 <pre>
  &lt;v0&gt;val&lt;/v0&gt;&lt;v1&gt;val&lt;/v1&gt;</pre>
 </dd>
-<dt><strong><a name="item_def_3avname_3drrd_3ads_2dname_3acf"><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em></a></strong></dt>
+<dt><strong><a name="def_vname_rrd_ds_name_cf" class="item"><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em></a></strong></dt>
 
 <dd>
 <p>See <em>rrdgraph</em> documentation.</p>
 </dd>
-<dt><strong><a name="item_cdef_3avname_3drpn_2dexpression"><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em></a></strong></dt>
+<dt><strong><a name="cdef_vname_rpn_expression" class="item"><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em></a></strong></dt>
 
 <dd>
 <p>See <em>rrdgraph</em> documentation.</p>
 </dd>
-<dt><strong><a name="item_xport_3avname_3a_3alegend"><strong>XPORT:</strong><em>vname</em><strong>:</strong><strong>:</strong><em>legend</em></a></strong></dt>
+<dt><strong><a name="xport_vname_legend" class="item"><strong>XPORT:</strong><em>vname</em><strong>:</strong><strong>:</strong><em>legend</em></a></strong></dt>
 
 <dd>
 <p>At least one <em>XPORT</em> statement should be present. The values

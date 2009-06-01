@@ -9,14 +9,14 @@ dnl tell automake the this script is for rrdtool
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3.7])
+AC_INIT([rrdtool],[1.3.8])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.3007
+NUMVERS=1.3008
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -27,7 +27,7 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=4:6:0
+LIBVERS=4:7:0
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
@@ -356,6 +356,19 @@ CONFIGURE_PART(Resolve Portability Issues)
 CHECK_FOR_WORKING_MS_ASYNC
 
 dnl Do we need getopt_long
+
+dnl even when including our own getopt implementation
+dnl we may want to make sure we use the external
+dnl defined by libc to not run into linker resolve trouble
+
+AC_CACHE_CHECK([for opterr], rd_cv_var_int_opterr,
+[AC_TRY_LINK([#include <unistd.h>],
+  [extern int opterr; opterr = 1;],
+  [rd_cv_var_int_opterr=yes],
+  [rd_cv_var_int_opterr=no])])
+if test x"$rd_cv_var_int_opterr" = x"yes"; then
+  AC_DEFINE(HAVE_INT_OPTERR, 1, [Define to 1 if you have the global variable 'int opterr'.])
+fi
 
 build_getopt=no
 RRD_GETOPT_LONG="LIBC_HAS_GETOPT_LONG"

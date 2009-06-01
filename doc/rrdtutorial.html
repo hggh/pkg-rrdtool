@@ -9,12 +9,15 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
 
+	<li><a href="#name">NAME</a></li>
 	<li><a href="#description">DESCRIPTION</a></li>
 	<li><a href="#tutorial">TUTORIAL</a></li>
 	<ul>
@@ -46,9 +49,17 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
 <p>rrdtutorial - Alex van den Bogaerdt's RRDtool tutorial</p>
 <p>
 </p>
@@ -74,7 +85,7 @@ networking.</p>
 document explains the basics and may be boring.  But if you don't
 understand the basics, the examples will not be as meaningful to you.</p>
 <p>Sometimes things change.  This example used to provide numbers like
-``0.04'' in stead of ``4.00000e-02''.  Those are really the same numbers,
+&quot;0.04&quot; in stead of &quot;4.00000e-02&quot;.  Those are really the same numbers,
 just written down differently.  Don't be alarmed if a future version
 of rrdtool displays a slightly different form of output. The examples
 in this document are correct for version 1.2.0 of RRDtool.</p>
@@ -114,7 +125,7 @@ you can do this, RRDtool will be able to store it. The values must be
 numerical but don't have to be integers, as is the case with MRTG (the
 next section will give more details on this more specialized application).</p>
 <p>Many examples below talk about SNMP which is an acronym for Simple Network
-Management Protocol. ``Simple'' refers to the protocol. It does not
+Management Protocol. &quot;Simple&quot; refers to the protocol. It does not
 mean it is simple to manage or monitor a network. After working your
 way through this document, you should know enough to be able to
 understand what people are talking about. For now, just realize that
@@ -160,8 +171,8 @@ and not only for this particular one. Look in the documentation that
 came with RRDtool for the location and usage of the list.</p>
 <p>I suggest you take a moment to subscribe to the mailing list right now
 by sending an email to &lt;<a href="mailto:rrd-users-request@lists.oetiker.ch">rrd-users-request@lists.oetiker.ch</a>&gt; with a
-subject of ``subscribe''. If you ever want to leave this list, just write
-an email to the same address but now with a subject of ``unsubscribe''.</p>
+subject of &quot;subscribe&quot;. If you ever want to leave this list, just write
+an email to the same address but now with a subject of &quot;unsubscribe&quot;.</p>
 <p>
 </p>
 <h2><a name="how_will_you_help_me">How will you help me?</a></h2>
@@ -264,7 +275,7 @@ and skip all of the '\' characters.</p>
 <p>We created the round robin database called test (test.rrd) which starts at
 noon the day I started writing this document, 7th of March, 1999 (this date
 translates to 920804400 seconds as explained below). Our database holds
-one data source (DS) named ``speed'' that represents a counter. This counter
+one data source (DS) named &quot;speed&quot; that represents a counter. This counter
 is read every five minutes (this is the default therefore you don't have to
 put <code>--step=300</code>).  In the same database two round robin archives (RRAs)
 are kept, one averages the data every time it is read (e.g., there's nothing
@@ -278,7 +289,7 @@ it will therefore look different for different time zones.</p>
 This means your time zone is different. In all examples where I talk
 about time, the hours may be wrong for you. This has little effect on
 the results of the examples, just correct the hours while reading.
-As an example: where I will see ``12:05'' the UK folks will see ``11:05''.</p>
+As an example: where I will see &quot;12:05&quot; the UK folks will see &quot;11:05&quot;.</p>
 <p>We now have to fill our database with some numbers. We'll pretend to
 have read the following numbers:</p>
 <pre>
@@ -312,7 +323,7 @@ have read the following numbers:</p>
 <p>As you can see, it is possible to feed more than one value into the
 database in one command. I had to stop at three for readability but
 the real maximum per line is OS dependent.</p>
-<p>We can now retrieve the data from our database using ``rrdtool fetch'':</p>
+<p>We can now retrieve the data from our database using &quot;rrdtool fetch&quot;:</p>
 <pre>
  rrdtool fetch test.rrd AVERAGE --start 920804400 --end 920809200</pre>
 <p>It should return the following output:</p>
@@ -336,8 +347,8 @@ the real maximum per line is OS dependent.</p>
  920808900: 3.3333333333e-03
  920809200: nan</pre>
 <p>If it doesn't, something may be wrong.  Perhaps your OS will print
-``NaN'' in a different form. ``NaN'' stands for ``Not A Number''.  If your OS
-writes ``U'' or ``UNKN'' or something similar that's okay.  If something
+&quot;NaN&quot; in a different form. &quot;NaN&quot; stands for &quot;Not A Number&quot;.  If your OS
+writes &quot;U&quot; or &quot;UNKN&quot; or something similar that's okay.  If something
 else is wrong, it will probably be due to an error you made (assuming
 that my tutorial is correct of course :-). In that case: delete the
 database and try again.</p>
@@ -353,7 +364,7 @@ database and try again.</p>
          LINE2:myspeed#FF0000</pre>
 <p>This will create speed.png which starts at 12:00 and ends at 13:00.
 There is a definition of a variable called myspeed, using the data from RRA
-``speed'' out of database ``test.rrd''. The line drawn is 2 pixels high
+&quot;speed&quot; out of database &quot;test.rrd&quot;. The line drawn is 2 pixels high
 and represents the variable myspeed. The color is red (specified by
 its rgb-representation, see below).</p>
 <p>You'll notice that the start of the graph is not at 12:00 but at 12:05.
@@ -364,8 +375,8 @@ not happen a lot, hopefully.</p>
 <p>The colors are built up from red, green and blue. For each of the
 components, you specify how much to use in hexadecimal where 00 means
 not included and FF means fully included.
-The ``color'' white is a mixture of red, green and blue: FFFFFF
-The ``color'' black is all colors off: 000000</p>
+The &quot;color&quot; white is a mixture of red, green and blue: FFFFFF
+The &quot;color&quot; black is all colors off: 000000</p>
 <pre>
    red     #FF0000
    green   #00FF00
@@ -373,10 +384,10 @@ The ``color'' black is all colors off: 000000</p>
    magenta #FF00FF     (mixed red with blue)
    gray    #555555     (one third of all components)</pre>
 <p>Additionally you can (with a recent RRDtool)  add an alpha channel
-(transparency).  The default will be ``FF'' which means non-transparent.</p>
+(transparency).  The default will be &quot;FF&quot; which means non-transparent.</p>
 <p>The PNG you just created can be displayed using your favorite image
 viewer.  Web browsers will display the PNG via the URL
-``file:///the/path/to/speed.png''</p>
+&quot;file:///the/path/to/speed.png&quot;</p>
 <p>
 </p>
 <h2><a name="graphics_with_some_math">Graphics with some math</a></h2>
@@ -386,8 +397,8 @@ and 13:00 would be likely candidates) so they are skipped.</p>
 <p>The vertical axis displays the range we entered. We provided
 kilometers and when divided by 300 seconds, we get very small
 numbers. To be exact, the first value was 12 (12357-12345) and divided
-by 300 this makes 0.04, which is displayed by RRDtool as ``40 m''
-meaning ``40/1000''. The ``m'' (milli) has nothing to do with meters (also m),
+by 300 this makes 0.04, which is displayed by RRDtool as &quot;40 m&quot;
+meaning &quot;40/1000&quot;. The &quot;m&quot; (milli) has nothing to do with meters (also m),
 kilometers or millimeters! RRDtool doesn't know about the physical
 units of our data, it just works with dimensionless numbers.</p>
 <p>If we had measured our distances in meters, this would have been
@@ -413,14 +424,14 @@ like so:</p>
 And it is your shell interpreting \, not RRDtool. You may need to
 adjust examples accordingly if you happen to use an operating
 system or shell which behaves differently.</p>
-<p>After viewing this PNG, you notice the ``m'' (milli) has
+<p>After viewing this PNG, you notice the &quot;m&quot; (milli) has
 disappeared. This it what the correct result would be. Also, a label
 has been added to the image.  Apart from the things mentioned above,
 the PNG should look the same.</p>
 <p>The calculations are specified in the CDEF part above and are in
-Reverse Polish Notation (``RPN''). What we requested RRDtool to do is:
-``take the data source myspeed and the number 1000; multiply
-those''. Don't bother with RPN yet, it will be explained later on in
+Reverse Polish Notation (&quot;RPN&quot;). What we requested RRDtool to do is:
+&quot;take the data source myspeed and the number 1000; multiply
+those&quot;. Don't bother with RPN yet, it will be explained later on in
 more detail. Also, you may want to read my tutorial on CDEFs and Steve
 Rader's tutorial on RPN. But first finish this tutorial.</p>
 <p>Hang on! If we can multiply values with 1000, it should also be possible
@@ -493,7 +504,7 @@ be the 5th line) used to read 'CDEF:kmh=myspeed,3600,*'</p>
    &lt;BR&gt;
    &lt;IMG src=&quot;speed4.png&quot; alt=&quot;Traveled too fast?&quot;&gt;
    &lt;/BODY&gt;&lt;/HTML&gt;</pre>
-<p>Name the file ``speed.html'' or similar, and look at it in your web browser.</p>
+<p>Name the file &quot;speed.html&quot; or similar, and look at it in your web browser.</p>
 <p>Now, all you have to do is measure the values regularly and update the
 database.  When you want to view the data, recreate the PNGs and make
 sure to refresh them in your browser. (Note: just clicking reload may
@@ -503,9 +514,9 @@ or ctrl-F5).</p>
 </p>
 <h2><a name="updates_in_reality">Updates in Reality</a></h2>
 <p>We've already used the <code>update</code> command: it took one or more
-parameters in the form of ``&lt;time&gt;:&lt;value&gt;''. You'll be glad to know
-that you can specify the current time by filling in a ``N'' as the time.
-Or you could use the ``time'' function in Perl (the shortest example in
+parameters in the form of &quot;&lt;time&gt;:&lt;value&gt;&quot;. You'll be glad to know
+that you can specify the current time by filling in a &quot;N&quot; as the time.
+Or you could use the &quot;time&quot; function in Perl (the shortest example in
 this tutorial):</p>
 <pre>
    perl -e 'print time, &quot;\n&quot; '</pre>
@@ -539,7 +550,7 @@ you understand they are not necessary. When you have to determine why
 things went wrong you need to know how they work.</p>
 <p>One tool used in the example has been talked about very briefly in the
 beginning of this document, it is called SNMP. It is a way of talking
-to networked equipment. The tool I use below is called ``snmpget'' and
+to networked equipment. The tool I use below is called &quot;snmpget&quot; and
 this is how it works:</p>
 <pre>
    snmpget device password OID</pre>
@@ -547,14 +558,14 @@ this is how it works:</p>
 <pre>
    snmpget -v[version] -c[password] device OID</pre>
 <p>For device you substitute the name, or the IP address, of your device.
-For password you use the ``community read string'' as it is called in the
-SNMP world.  For some devices the default of ``public'' might work, however
+For password you use the &quot;community read string&quot; as it is called in the
+SNMP world.  For some devices the default of &quot;public&quot; might work, however
 this can be disabled, altered or protected for privacy and security
 reasons.  Read the documentation that comes with your device or program.</p>
-<p>Then there is this parameter, called OID, which means ``object identifier''.</p>
+<p>Then there is this parameter, called OID, which means &quot;object identifier&quot;.</p>
 <p>When you start to learn about SNMP it looks very confusing. It isn't
 all that difficult when you look at the Management Information Base
-(``MIB'').  It is an upside-down tree that describes data, with a single node
+(&quot;MIB&quot;).  It is an upside-down tree that describes data, with a single node
 as the root and from there a number of branches.  These branches end
 up in another node, they branch out, etc.  All the branches have a name
 and they form the path that we follow all the way down.  The branches
@@ -570,7 +581,7 @@ you specify the complete OID.  Often those programs will leave out
 the default portion when returning the data to you.  To make things
 worse, they have several default prefixes ...</p>
 <p>Ok, lets continue to the start of our OID: we had 1.3.6.1.2.1
-From there, we are especially interested in the branch ``interfaces''
+From there, we are especially interested in the branch &quot;interfaces&quot;
 which has number 2 (e.g., 1.3.6.1.2.1.2 or 1.3.6.1.2.1.interfaces).</p>
 <p>First, we have to get some SNMP program. First look if there is a
 pre-compiled package available for your OS. This is the preferred way.
@@ -587,12 +598,12 @@ adapt the example to make it work.</p>
    snmpget -v2c -c public myrouter system.sysDescr.0</pre>
 <p>The device should answer with a description of itself, perhaps an
 empty one. Until you got a valid answer from a device, perhaps using a
-different ``password'', or a different device, there is no point in
+different &quot;password&quot;, or a different device, there is no point in
 continuing.</p>
 <pre>
    snmpget -v2c -c public myrouter interfaces.ifNumber.0</pre>
 <p>Hopefully you get a number as a result, the number of interfaces.
-If so, you can carry on and try a different program called ``snmpwalk''.</p>
+If so, you can carry on and try a different program called &quot;snmpwalk&quot;.</p>
 <pre>
    snmpwalk -v2c -c public myrouter interfaces.ifTable.ifEntry.ifDescr</pre>
 <p>If it returns with a list of interfaces, you're almost there.
@@ -604,7 +615,7 @@ Here's an example:
    interfaces.ifTable.ifEntry.ifDescr.3 = &quot;BRI0&quot; Hex: 42 52 49 30
    interfaces.ifTable.ifEntry.ifDescr.4 = &quot;Ethernet0&quot;
    interfaces.ifTable.ifEntry.ifDescr.5 = &quot;Loopback0&quot;</pre>
-<p>On this cisco equipment, I would like to monitor the ``Ethernet0''
+<p>On this cisco equipment, I would like to monitor the &quot;Ethernet0&quot;
 interface and from the above output I see that it is number four. I try:</p>
 <pre>
    [user@host /home/alex]$ snmpget -v2c -c public cisco 2.2.1.10.4 2.2.1.16.4</pre>
@@ -649,9 +660,9 @@ amount of data:</p>
  732 1-day samples:     732   days</pre>
 <p>These ranges are appended, so the total amount of data stored in the
 database is approximately 797 days. RRDtool stores the data
-differently, it doesn't start the ``weekly'' archive where the ``daily''
+differently, it doesn't start the &quot;weekly&quot; archive where the &quot;daily&quot;
 archive stopped. For both archives the most recent data will be near
-``now'' and therefore we will need to keep more data than MRTG does!</p>
+&quot;now&quot; and therefore we will need to keep more data than MRTG does!</p>
 <p>We will need:</p>
 <pre>
  600 samples of 5 minutes  (2 days and 2 hours)
@@ -698,7 +709,7 @@ to do exactly on your OS to make it work.</p>
 One day is 24 hours of 60 minutes of 60 seconds: 24*60*60=86400, we
 start at now minus 86400 seconds. We define (with DEFs) inoctets and
 outoctets as the average values from the database myrouter.rrd and draw
-an area for the ``in'' traffic and a line for the ``out'' traffic.</p>
+an area for the &quot;in&quot; traffic and a line for the &quot;out&quot; traffic.</p>
 <p>View the image and keep logging data for a few more days.
 If you like, you could try the examples from the test database and
 see if you can get various options and calculations to work.</p>
@@ -849,7 +860,7 @@ difference by the amount of time lapsed. This should end up as a
 straight line at 1 (the deltas are 300, the time is 300).</p>
 </li>
 <li>
-<p>Line B is of type GAUGE. These are ``real'' values so they should match
+<p>Line B is of type GAUGE. These are &quot;real&quot; values so they should match
 what we put in: a sort of a wave.</p>
 </li>
 <li>
@@ -863,7 +874,7 @@ and as you can see (hopefully) this has a different result.</p>
 </li>
 </ul>
 <p>This translates in the following values, starting at 23:10 and ending
-at 00:10 the next day (where ``u'' means unknown/unplotted):</p>
+at 00:10 the next day (where &quot;u&quot; means unknown/unplotted):</p>
 <pre>
  - Line A:  u  u  1  1  1  1  1  1  1  1  1  u
  - Line B:  u  1  3  5  3  1  2  4  6  4  2  u
@@ -993,10 +1004,10 @@ can't handle the numbers :)</p>
 for RRDtool to fail (provided it's bug free of course), so this should
 not happen. However, SNMP or whatever method you choose to collect the
 data, might also report wrong numbers occasionally.  We can't prevent all
-errors, but there are some things we can do. The RRDtool ``create'' command
+errors, but there are some things we can do. The RRDtool &quot;create&quot; command
 takes two special parameters for this. They define
-the minimum and maximum allowed values. Until now, we used ``U'', meaning
-``unknown''. If you provide values for one or both of them and if RRDtool
+the minimum and maximum allowed values. Until now, we used &quot;U&quot;, meaning
+&quot;unknown&quot;. If you provide values for one or both of them and if RRDtool
 receives data points that are outside these limits, it will ignore those
 values. For a thermometer in degrees Celsius, the absolute minimum is
 just under -273. For my router, I can assume this minimum is much higher

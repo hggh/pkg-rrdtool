@@ -14,8 +14,8 @@ DDEESSCCRRIIPPTTIIOONN
        _f_i_l_e_n_a_m_e
                the name of the RRRRDD you want to alter.
 
-       _r_r_a_-_n_u_m the RRRRAA you want to alter. You can find the number using rrrrdd--
-               ttooooll iinnffoo.
+       _r_r_a_-_n_u_m the RRRRAA you want to alter. You can find the number using
+               rrrrddttooooll iinnffoo.
 
        GGRROOWW    used if you want to add extra rows to an RRA. The extra rows
                will be inserted as the rows that are oldest.
@@ -41,4 +41,4 @@ AAUUTTHHOORR
 
 
 
-1.3.7                             2009-02-21                      RRDRESIZE(1)
+1.3.8                             2009-02-21                      RRDRESIZE(1)

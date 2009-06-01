@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -22,7 +24,11 @@
 	<li><a href="#example_2">EXAMPLE 2</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -66,40 +72,40 @@ the data source header in the <strong>RRD</strong>.</p>
 <p>A second application of the <strong>tune</strong> function is to set or alter parameters
 used by the specialized function <strong>RRAs</strong> for aberrant behavior detection.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong></dt>
+<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
 
 <dd>
 <p>The name of the <strong>RRD</strong> you want to tune.</p>
 </dd>
-<dt><strong><a name="item__2d_2dheartbeat_7c_2dh_ds_2dname_3aheartbeat"><strong>--heartbeat</strong>|<strong>-h</strong>&nbsp;<em>ds-name</em>:<em>heartbeat</em></a></strong></dt>
+<dt><strong><a name="heartbeat_h_ds_name_heartbeat" class="item"><strong>--heartbeat</strong>|<strong>-h</strong>&nbsp;<em>ds-name</em>:<em>heartbeat</em></a></strong></dt>
 
 <dd>
 <p>modify the <em>heartbeat</em> of a data source. By setting this to a high
 value the RRD will accept things like one value per day.</p>
 </dd>
-<dt><strong><a name="item__2d_2dminimum_7c_2di_ds_2dname_3amin"><strong>--minimum</strong>|<strong>-i</strong>&nbsp;<em>ds-name</em>:<em>min</em></a></strong></dt>
+<dt><strong><a name="minimum_i_ds_name_min" class="item"><strong>--minimum</strong>|<strong>-i</strong>&nbsp;<em>ds-name</em>:<em>min</em></a></strong></dt>
 
 <dd>
 <p>alter the minimum value acceptable as input from the data source.
 Setting <em>min</em> to 'U' will disable this limit.</p>
 </dd>
-<dt><strong><a name="item__2d_2dmaximum_7c_2da_ds_2dname_3amax"><strong>--maximum</strong>|<strong>-a</strong>&nbsp;<em>ds-name</em>:<em>max</em></a></strong></dt>
+<dt><strong><a name="maximum_a_ds_name_max" class="item"><strong>--maximum</strong>|<strong>-a</strong>&nbsp;<em>ds-name</em>:<em>max</em></a></strong></dt>
 
 <dd>
 <p>alter the maximum value acceptable as input from the data source.
 Setting <em>max</em> to 'U' will disable this limit.</p>
 </dd>
-<dt><strong><a name="item__2d_2ddata_2dsource_2dtype_7c_2dd_ds_2dname_3adst"><strong>--data-source-type</strong>|<strong>-d</strong>&nbsp;<em>ds-name</em>:<em>DST</em></a></strong></dt>
+<dt><strong><a name="data_source_type_d_ds_name_dst" class="item"><strong>--data-source-type</strong>|<strong>-d</strong>&nbsp;<em>ds-name</em>:<em>DST</em></a></strong></dt>
 
 <dd>
 <p>alter the type <strong>DST</strong> of a data source.</p>
 </dd>
-<dt><strong><a name="item__2d_2ddata_2dsource_2drename_7c_2dr_old_2dname_3an"><strong>--data-source-rename</strong>|<strong>-r</strong>&nbsp;<em>old-name</em>:<em>new-name</em></a></strong></dt>
+<dt><strong><a name="data_source_rename_r_old_name_new_name" class="item"><strong>--data-source-rename</strong>|<strong>-r</strong>&nbsp;<em>old-name</em>:<em>new-name</em></a></strong></dt>
 
 <dd>
 <p>rename a data source.</p>
 </dd>
-<dt><strong><a name="item__2d_2ddeltapos_scale_2dvalue"><strong>--deltapos</strong>&nbsp;<em>scale-value</em></a></strong></dt>
+<dt><strong><a name="deltapos_scale_value" class="item"><strong>--deltapos</strong>&nbsp;<em>scale-value</em></a></strong></dt>
 
 <dd>
 <p>Alter the deviation scaling factor for the upper bound of the
@@ -110,7 +116,7 @@ CDEF argument to generate a graph with confidence bounds. The graph
 scale factor need not to agree with the value used internally by the
 FAILURES <strong>RRA</strong>.</p>
 </dd>
-<dt><strong><a name="item__2d_2ddeltaneg_scale_2dvalue"><strong>--deltaneg</strong>&nbsp;<em>scale-value</em></a></strong></dt>
+<dt><strong><a name="deltaneg_scale_value" class="item"><strong>--deltaneg</strong>&nbsp;<em>scale-value</em></a></strong></dt>
 
 <dd>
 <p>Alter the deviation scaling factor for the lower bound of the confidence band
@@ -118,7 +124,7 @@ used internally to calculate violations for the FAILURES <strong>RRA</strong>. T
 value is 2. As with <strong>--deltapos</strong>, this argument is unrelated to the scale
 factor chosen when graphing confidence bounds.</p>
 </dd>
-<dt><strong><a name="item__2d_2dfailure_2dthreshold_failure_2dthreshold"><strong>--failure-threshold</strong>&nbsp;<em>failure-threshold</em></a></strong></dt>
+<dt><strong><a name="failure_threshold_failure_threshold" class="item"><strong>--failure-threshold</strong>&nbsp;<em>failure-threshold</em></a></strong></dt>
 
 <dd>
 <p>Alter the number of confidence bound violations that constitute a failure for
@@ -127,7 +133,7 @@ the window length of the FAILURES <strong>RRA</strong>. This restriction is not 
 the tune option, so one can reset failure-threshold and window-length
 simultaneously. Setting this option will reset the count of violations to 0.</p>
 </dd>
-<dt><strong><a name="item__2d_2dwindow_2dlength_window_2dlength"><strong>--window-length</strong>&nbsp;<em>window-length</em></a></strong></dt>
+<dt><strong><a name="window_length_window_length" class="item"><strong>--window-length</strong>&nbsp;<em>window-length</em></a></strong></dt>
 
 <dd>
 <p>Alter the number of time points in the temporal window for determining
@@ -135,43 +141,43 @@ failures. This must be an integer greater than or equal to the window
 length of the FAILURES <strong>RRA</strong> and less than or equal to 28. Setting
 this option will reset the count of violations to 0.</p>
 </dd>
-<dt><strong><a name="item__2d_2dalpha_adaption_2dparameter"><strong>--alpha</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
+<dt><strong><a name="alpha_adaption_parameter" class="item"><strong>--alpha</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
 
 <dd>
 <p>Alter the intercept adaptation parameter for the Holt-Winters
 forecasting algorithm. This parameter must be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2dbeta_adaption_2dparameter"><strong>--beta</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
+<dt><strong><a name="beta_adaption_parameter" class="item"><strong>--beta</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
 
 <dd>
 <p>Alter the slope adaptation parameter for the Holt-Winters forecasting
 algorithm. This parameter must be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2dgamma_adaption_2dparameter"><strong>--gamma</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
+<dt><strong><a name="gamma_adaption_parameter" class="item"><strong>--gamma</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
 
 <dd>
 <p>Alter the seasonal coefficient adaptation parameter for the SEASONAL
 <strong>RRA</strong>. This parameter must be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2dgamma_2ddeviation_adaption_2dparameter"><strong>--gamma-deviation</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
+<dt><strong><a name="gamma_deviation_adaption_parameter" class="item"><strong>--gamma-deviation</strong>&nbsp;<em>adaption-parameter</em></a></strong></dt>
 
 <dd>
 <p>Alter the seasonal deviation adaptation parameter for the DEVSEASONAL
 <strong>RRA</strong>. This parameter must be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2dsmoothing_2dwindow_fraction_2dof_2dseason"><strong>--smoothing-window</strong>&nbsp;<em>fraction-of-season</em></a></strong></dt>
+<dt><strong><a name="smoothing_window_fraction_of_season" class="item"><strong>--smoothing-window</strong>&nbsp;<em>fraction-of-season</em></a></strong></dt>
 
 <dd>
 <p>Alter the size of the smoothing window for the SEASONAL <strong>RRA</strong>. This must
 be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2dsmoothing_2dwindow_2ddeviation_fraction_2dof"><strong>--smoothing-window-deviation</strong>&nbsp;<em>fraction-of-season</em></a></strong></dt>
+<dt><strong><a name="smoothing_window_deviation_fraction_of_season" class="item"><strong>--smoothing-window-deviation</strong>&nbsp;<em>fraction-of-season</em></a></strong></dt>
 
 <dd>
 <p>Alter the size of the smoothing window for the DEVSEASONAL <strong>RRA</strong>. This must
 be between 0 and 1.</p>
 </dd>
-<dt><strong><a name="item__2d_2daberrant_2dreset_ds_2dname"><strong>--aberrant-reset</strong>&nbsp;<em>ds-name</em></a></strong></dt>
+<dt><strong><a name="aberrant_reset_ds_name" class="item"><strong>--aberrant-reset</strong>&nbsp;<em>ds-name</em></a></strong></dt>
 
 <dd>
 <p>This option causes the aberrant behavior detection algorithm to reset

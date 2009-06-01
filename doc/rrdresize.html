@@ -9,8 +9,10 @@
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -21,7 +23,11 @@
 	<li><a href="#notes">NOTES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -40,29 +46,29 @@
 <p>The <strong>resize</strong> function is used to modify the number of rows in
 an <strong>RRA</strong>.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong></dt>
+<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
 
 <dd>
 <p>the name of the <strong>RRD</strong> you want to alter.</p>
 </dd>
-<dt><strong><a name="item_rra_2dnum"><em>rra-num</em></a></strong></dt>
+<dt><strong><a name="rra_num" class="item"><em>rra-num</em></a></strong></dt>
 
 <dd>
 <p>the <strong>RRA</strong> you want to alter. You can find the number using <strong>rrdtool info</strong>.</p>
 </dd>
-<dt><strong><a name="item_grow"><strong>GROW</strong></a></strong></dt>
+<dt><strong><a name="grow" class="item"><strong>GROW</strong></a></strong></dt>
 
 <dd>
 <p>used if you want to add extra rows to an RRA. The extra rows will be inserted
 as the rows that are oldest.</p>
 </dd>
-<dt><strong><a name="item_shrink"><strong>SHRINK</strong></a></strong></dt>
+<dt><strong><a name="shrink" class="item"><strong>SHRINK</strong></a></strong></dt>
 
 <dd>
 <p>used if you want to remove rows from an RRA. The rows that will be removed
 are the oldest rows.</p>
 </dd>
-<dt><strong><a name="item_rows"><em>rows</em></a></strong></dt>
+<dt><strong><a name="rows" class="item"><em>rows</em></a></strong></dt>
 
 <dd>
 <p>the number of rows you want to add or remove.</p>

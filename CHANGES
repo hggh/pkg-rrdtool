@@ -1,3 +1,118 @@
+2009-05-19 13:45  oetiker
+
+	* branches/1.3/program/bindings/perl-piped/RRDp.pm,
+	  branches/1.3/program/bindings/perl-shared/RRDs.pm,
+	  branches/1.3/program/configure.ac,
+	  branches/1.3/program/doc/rrdbuild.pod,
+	  branches/1.3/program/rrdtool.spec,
+	  branches/1.3/program/src/pngsize.c,
+	  branches/1.3/program/src/rrd.h,
+	  branches/1.3/program/src/rrd_cgi.c,
+	  branches/1.3/program/src/rrd_create.c,
+	  branches/1.3/program/src/rrd_datalang.c,
+	  branches/1.3/program/src/rrd_diff.c,
+	  branches/1.3/program/src/rrd_dump.c,
+	  branches/1.3/program/src/rrd_error.c,
+	  branches/1.3/program/src/rrd_fetch.c,
+	  branches/1.3/program/src/rrd_first.c,
+	  branches/1.3/program/src/rrd_format.c,
+	  branches/1.3/program/src/rrd_format.h,
+	  branches/1.3/program/src/rrd_gfx.c,
+	  branches/1.3/program/src/rrd_graph.c,
+	  branches/1.3/program/src/rrd_graph_helper.c,
+	  branches/1.3/program/src/rrd_hw.c,
+	  branches/1.3/program/src/rrd_hw.h,
+	  branches/1.3/program/src/rrd_i18n.h,
+	  branches/1.3/program/src/rrd_info.c,
+	  branches/1.3/program/src/rrd_is_thread_safe.h,
+	  branches/1.3/program/src/rrd_last.c,
+	  branches/1.3/program/src/rrd_lastupdate.c,
+	  branches/1.3/program/src/rrd_not_thread_safe.c,
+	  branches/1.3/program/src/rrd_open.c,
+	  branches/1.3/program/src/rrd_resize.c,
+	  branches/1.3/program/src/rrd_restore.c,
+	  branches/1.3/program/src/rrd_rpncalc.c,
+	  branches/1.3/program/src/rrd_rpncalc.h,
+	  branches/1.3/program/src/rrd_thread_safe.c,
+	  branches/1.3/program/src/rrd_thread_safe_nt.c,
+	  branches/1.3/program/src/rrd_tool.c,
+	  branches/1.3/program/src/rrd_tool.h,
+	  branches/1.3/program/src/rrd_tune.c,
+	  branches/1.3/program/src/rrd_update.c,
+	  branches/1.3/program/src/rrd_version.c,
+	  branches/1.3/program/src/rrd_xport.c,
+	  branches/1.3/program/src/rrd_xport.h,
+	  branches/1.3/program/src/rrdupdate.c: prepare for the release of
+	  rrdtool-1.3.8
+
+2009-05-18 14:23  oetiker
+
+	* branches/1.3/program/bindings/python/rrdtoolmodule.c,
+	  bindings/python/rrdtoolmodule.c: integrated fix for debian bug
+	  #529291 as supplied by Anders Hammarquist
+
+2009-05-11 21:25  oetiker
+
+	* branches/1.3/program/configure.ac,
+	  branches/1.3/program/src/rrd_getopt.c, configure.ac,
+	  src/rrd_getopt.c: fix rrd_getops use of external variables (optarg
+	  and friends) ... most prominently is kills a segfault when using
+	  rrdtool perl bindings on solaris ... thanks to Ihsan Dogan for
+	  helping with tracking this down and providing access to sparc
+	  solaris boxes.
+
+2009-04-29 07:17  oetiker
+
+	* branches/1.3/website/rrdworld/index.wml,
+	  branches/1.3/website/rrdworld/zerod.xml: added zerod
+
+2009-04-29 06:52  oetiker
+
+	* branches/1.3/program/CONTRIBUTORS,
+	  branches/1.3/program/doc/rrdgraph_data.pod, CONTRIBUTORS,
+	  doc/rrdgraph_data.pod: added some remarks on CDEF versus VDEF to
+	  the docs -- Pablo Sanchez
+
+2009-04-17 09:53  oetiker
+
+	* branches/1.3/program/src/rrd_tool.c, src/rrd_tool.c: add
+	  documentation for graph-render-mode
+
+2009-04-15 07:05  oetiker
+
+	* branches/1.3/program/src/rrd_restore.c, src/rrd_restore.c: fix
+	  comments and error messages in rrd_restore patch
+
+2009-04-15 07:02  oetiker
+
+	* branches/1.3/program/src/rrd_restore.c, src/rrd_restore.c: Fix
+	  casting issues in rrd_restore. The bug manifested when compiled on
+	  sparc v9 as explained in #218. Patch based in input provided by
+	  poster of #218.
+
+2009-04-14 13:55  oetiker
+
+	* branches/1.2/program/bindings/ruby/main.c,
+	  branches/1.3/program/bindings/ruby/main.c, bindings/ruby/main.c:
+	  make ruby bindings compile with newer ruby versions ... fix for
+	  #217 patch provided by rrd trac user.
+
+2009-04-14 07:51  oetiker
+
+	* branches/1.3/program/bindings/perl-piped/RRDp.pm,
+	  bindings/perl-piped/RRDp.pm: Generate an error message when using
+	  RRDp with graph - this can not work reliably. (Debian Bug#251701)
+	  -- Sebastian Harl
+
+2009-04-09 15:04  oetiker
+
+	* branches/1.3/program/doc/rrdtutorial.pod, doc/rrdtutorial.pod:
+	  added missing newline -- by sebastian harl
+
+2009-04-07 08:40  oetiker
+
+	* branches/1.3/website/index.wml: added feed updates
+
 2009-04-07 07:31  oetiker
 
 	* branches/1.3/program/bindings/perl-piped/RRDp.pm,
