@@ -6,3 +6,4 @@ no-rpath-for-perl
 implicit-decl-fix
 compiler-warning-fixes
 bts530814-hurd
+bts332766-negative-timestamps
