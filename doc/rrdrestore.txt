@@ -9,8 +9,8 @@ SSYYNNOOPPSSIISS
        rrrrddttooooll rreessttoorree _f_i_l_e_n_a_m_e_._x_m_l _f_i_l_e_n_a_m_e_._r_r_d [----rraannggee--cchheecckk|--rr]
 
 DDEESSCCRRIIPPTTIIOONN
-       The rreessttoorree function reads the XML representation of an RRD and
-       converts it to the native RRRRDD format.
+       The rreessttoorree function reads the XML representation of an RRD and con-
+       verts it to the native RRRRDD format.
 
        _f_i_l_e_n_a_m_e_._x_m_l
                The name of the XXMMLL file you want to restore.
@@ -30,4 +30,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2008-03-15                     RRDRESTORE(1)
+1.3.99909060808                   2008-03-15                     RRDRESTORE(1)

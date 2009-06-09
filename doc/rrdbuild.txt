@@ -16,9 +16,9 @@ OOVVEERRVVIIEEWW
        This document will tell you about all the necessary steps to get going.
 
        These instructions assume you are using a bbaasshh shell. If you use
-       csh/tcsh, then you can either type _b_a_s_h to switch to bash for the
-       compilation or if you know what you are doing just replace the export
-       bits with setenv.
+       csh/tcsh, then you can either type _b_a_s_h to switch to bash for the com-
+       pilation or if you know what you are doing just replace the export bits
+       with setenv.
 
        We further assume that your copies of ttaarr and mmaakkee are actually GGNNUU ttaarr
        and GGNNUU mmaakkee respectively. It could be that they are installed as ggttaarr
@@ -31,11 +31,11 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
 
        2.  Where you want to install the software.
 
-       Once you have decided. Save the two locations into environment
-       variables.
+       Once you have decided. Save the two locations into environment vari-
+       ables.
 
         BUILD_DIR=/tmp/rrdbuild
-        INSTALL_DIR=/usr/local/rrdtool-1.3.8
+        INSTALL_DIR=/usr/local/rrdtool-1.3.2
 
        If your _/_t_m_p is mounted with the option noexec (RHEL seems todo that)
        you have to choose a different directory!
@@ -45,38 +45,39 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
         mkdir -p $BUILD_DIR
         cd $BUILD_DIR
 
-       Lets first assume you already have all the necessary libraries pre-
-       installed.
+       Lets first assume you already have all the necessary libraries
+       pre-installed.
 
-        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.8.tar.gz
-        gunzip -c rrdtool-1.3.8.tar.gz | tar xf -
-        cd rrdtool-1.3.8
+        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.2.tar.gz
+        gunzip -c rrdtool-1.3.2.tar.gz | tar xf -
+        cd rrdtool-1.3.2
         ./configure --prefix=$INSTALL_DIR && make && make install
 
        Ok, this was very optimistic. This try will probably have ended with
        ccoonnffiigguurree complaining about several missing libraries.
 
 IINNSSTTAALLLLIINNGG DDEEPPEENNDDEENNCCIIEESS
-       If your OS lets you install additional packages from a software
-       repository, you may get away with installing the missing packages. When
-       the packages are installed, run configure again and try to compile
-       again. Below you find some hints on getting your OS ready for the
-       rrdtool compilation.
+       If your OS lets you install additional packages from a software reposi-
+       tory, you may get away with installing the missing packages. When the
+       packages are installed, run configure again and try to compile again.
+       Below you find some hints on getting your OS ready for the rrdtool com-
+       pilation.
 
        Additions to this list are welcome. In general rrdtool should work with
        the latest versions of the libraries. The versions listed here are just
        what was current when I tested this.
 
-   OOppeennSSoollaarriiss 22000088..0055
+       OOppeennSSoollaarriiss 22000088..0055
+
        Just add a compiler and the gnome development package:
 
         pkg install sunstudioexpress
         pkg install SUNWgnome-common-devel
 
-       There is a problem with _c_a_i_r_o_._p_c on OpenSolaris. It suggests that
-       xrender is required for compilation with cairo. This is not true and
-       also bad since OpenSolaris does not include an _x_r_e_n_d_e_r_._p_c file. Use
-       Perl to fix this:
+       There is a problem with _c_a_i_r_o_._p_c on OpenSolaris. It suggests that xren-
+       der is required for compilation with cairo. This is not true and also
+       bad since OpenSolaris does not include an _x_r_e_n_d_e_r_._p_c file. Use Perl to
+       fix this:
 
         perl -i~ -p -e 's/(Requires.*?)\s*xrender.*/$1/' /usr/lib/pkgconfig/cairo.pc
 
@@ -91,18 +92,20 @@ IINNSSTTAALLLLIINNGG DDEEPPEENNDDEENNCCIIEESS
 
        option.
 
-   DDeebbiiaann // UUbbuunnttuu
+       DDeebbiiaann // UUbbuunnttuu
+
        Use apt-get to make sure you have all that is required. A number of
        packages will get added through dependencies.
 
         apt-get install libpango1.0-dev libxml2-dev
 
-   GGeennttoooo
+       GGeennttoooo
+
        In Gentoo installing rrdtool is really simple you just need to eemmeerrggee
        rrrrddttooooll. All dependencies will be handled automatically by the portage
        system. The only thing you should care about are USE flags, which allow
-       you fine tune features rrdtool will be built with. Currently the
-       following USE flags are available:
+       you fine tune features rrdtool will be built with. Currently the fol-
+       lowing USE flags are available:
 
         doc    - install .html and .txt documentation
                  into /usr/share/doc/rrdtool-1.x.xx/
@@ -129,21 +132,23 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        don't live up to our expectations, so you may want to compile their
        latest versions.
 
-   GGeenneerraall bbuuiilldd ttiippss ffoorr AAIIXX
+       GGeenneerraall bbuuiilldd ttiippss ffoorr AAIIXX
+
        If you are working with AIX, you may find the ----ddiissaabbllee--sshhaarreedd option
        will cause things to break for you. In that case you may have to
        install the shared libraries into the rrdtool PREFIX and work with
        ----ddiissaabbllee--ssttaattiicc instead.
 
-       Another hint to get rrdtool working on AIX is to use the IBM XL C
-       Compiler:
+       Another hint to get rrdtool working on AIX is to use the IBM XL C Com-
+       piler:
 
         export CC=/usr/vac/bin/cc
         export PERLCC=$CC
 
        (Better instructions for AIX welcome!)
 
-   BBuuiilldd IInnssttrruuccttiioonnss
+       BBuuiilldd IInnssttrruuccttiioonnss
+
        Some libraries want to know where other libraries are. For this to
        work, set the following environment variable
 
@@ -154,8 +159,8 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        find instructions on how to compile pkgconfig.
 
        Since we are compiling libraries dynamically, they must know where to
-       find each other. This is done by setting an appropriate LDFLAGS.
-       Unfortunately, the syntax again differs from system to system:
+       find each other. This is done by setting an appropriate LDFLAGS. Unfor-
+       tunately, the syntax again differs from system to system:
 
        Solaris
             export LDFLAGS=-R${INSTALL_DIR}/lib
@@ -163,11 +168,10 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
            if you are using the Sun Studio/Forte compiler, you may also want
            to set
 
-            export CFLAGS="-xO3 -xcode=pic13"   (SPARC)
-            export CFLAGS="-xO3 -Kpic"          (x86)
+            CFLAGS="-xO3 -xcode=pic13"   (SPARC)
+            CFLAGS="-xO3 -Kpic"          (x86)
 
        Linux
-            export CFLAGS="-O3 -fPIC"
             export LDFLAGS="-Wl,--rpath -Wl,${INSTALL_DIR}/lib"
 
        HPUX
@@ -188,18 +192,18 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        _B_u_i_l_d_i_n_g _p_k_g_c_o_n_f_i_g
 
        As mentioned above, without pkgconfig the whole build process will be
-       lots of pain and suffering, so make sure you have a copy on your
-       system. If it is not available natively, here is how to compile it.
+       lots of pain and suffering, so make sure you have a copy on your sys-
+       tem. If it is not available natively, here is how to compile it.
 
         wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz
         gunzip -c pkg-config-0.23.tar.gz | tar xf -
         cd pkg-config-0.23
-        ./configure --prefix=$INSTALL_DIR
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
 
-       After installing pkgconfig in a custom directory, setting up the
-       corresponding environment variable will be helpful.
+       After installing pkgconfig in a custom directory, setting up the corre-
+       sponding environment variable will be helpful.
 
         export PKG_CONFIG=$INSTALL_DIR/bin/pkg-config
 
@@ -211,7 +215,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         wget http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz
         gunzip -c zlib-1.2.3.tar.gz | tar xf -
         cd zlib-1.2.3
-        ./configure --prefix=$INSTALL_DIR --shared
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC" --shared
         $MAKE
         $MAKE install
 
@@ -225,8 +229,8 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz
         gunzip -c libpng-1.2.18.tar.gz | tar xf -
-        cd libpng-1.2.18
-        ./configure --prefix=$INSTALL_DIR
+        cd libpng-1.2.10
+        env CFLAGS="-O3 -fPIC" ./configure --prefix=$INSTALL_DIR
         $MAKE
         $MAKE install
 
@@ -251,7 +255,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         wget http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-2.6.32.tar.gz
         gunzip -c libxml2-2.6.32.tar.gz | tar xf -
         cd libxml2-2.6.32
-        ./configure --prefix=$INSTALL_DIR
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
 
@@ -259,14 +263,14 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
        Note that fontconfig has a run time configuration file in
        INSTALL_DIR/etc you may want to adjust that so that fontconfig finds
-       the fonts on your system.  Run the fc-cache program to build the
-       fontconfig cache after changing the config file.
+       the fonts on your system.  Run the fc-cache program to build the font-
+       config cache after changing the config file.
 
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz
         gunzip -c fontconfig-2.4.2.tar.gz   | tar xf -
         cd fontconfig-2.4.2
-        ./configure --prefix=$INSTALL_DIR --with-freetype-config=$INSTALL_DIR/bin/freetype-config
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC" --with-freetype-config=$INSTALL_DIR/bin/freetype-config
         $MAKE
         $MAKE install
 
@@ -276,7 +280,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         wget http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz
         gunzip -c pixman-0.10.0.tar.gz  | tar xf -
         cd pixman-0.10.0
-        ./configure --prefix=$INSTALL_DIR
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
 
@@ -285,11 +289,12 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         cd $BUILD_DIR
         wget http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz
         gunzip -c cairo-1.6.4.tar.gz   | tar xf -
-        cd cairo-1.6.4
+        cd cairo-1.4.10
         ./configure --prefix=$INSTALL_DIR \
            --enable-xlib=no \
            --enable-xlib-render=no \
-           --enable-win32=no
+           --enable-win32=no \
+           CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
 
@@ -299,7 +304,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         wget http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz
         gunzip -c glib-2.15.4.tar.gz  | tar xf -
         cd glib-2.15.4
-        ./configure --prefix=$INSTALL_DIR
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC"
         $MAKE
         $MAKE install
 
@@ -309,11 +314,12 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         wget http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.bz2
         bunzip2 -c pango-1.21.1.tar.bz2 | tar xf -
         cd pango-1.21.1
-        ./configure --prefix=$INSTALL_DIR --without-x
+        ./configure --prefix=$INSTALL_DIR CFLAGS="-O3 -fPIC" --without-x
         $MAKE
         $MAKE install
 
-   BBuuiillddiinngg rrrrddttooooll ((sseeccoonndd ttrryy))
+       BBuuiillddiinngg rrrrddttooooll ((sseeccoonndd ttrryy))
+
        Now all the dependent libraries are built and you can try again. This
        time you tell configure where it should be looking for libraries and
        include files. This is done via environment variables. Depending on the
@@ -325,7 +331,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        python and tcl setups that would prevent rrdtool from building if they
        are included in their current state.
 
-        cd $BUILD_DIR/rrdtool-1.3.8
+        cd $BUILD_DIR/rrdtool-1.3.2
         ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
         $MAKE clean
         $MAKE
@@ -333,8 +339,8 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
 
        SOLARIS HINT: if you want to build  the Perl module for the native Perl
        (the one shipping with Solaris) you will need the Sun Forte compiler
-       installed on your box or you have to hand-tune
-       bindings/perl-shared/Makefile while building!
+       installed on your box or you have to hand-tune bind-
+       ings/perl-shared/Makefile while building!
 
        Now go to _$_I_N_S_T_A_L_L___D_I_R//sshhaarree//rrrrddttooooll//eexxaammpplleess// and run them to see if
        your build has been successful.
@@ -344,4 +350,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2009-05-19                       RRDBUILD(1)
+1.3.99909060808                   2008-12-26                       RRDBUILD(1)

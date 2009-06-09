@@ -1,0 +1,700 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>rrdcached</title>
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+<!--
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#options">OPTIONS</a></li>
+	<li><a href="#affected_rrdtool_commands">AFFECTED RRDTOOL COMMANDS</a></li>
+	<li><a href="#error_reporting">ERROR REPORTING</a></li>
+	<li><a href="#how_it_works">HOW IT WORKS</a></li>
+	<li><a href="#security_considerations">SECURITY CONSIDERATIONS</a></li>
+	<li><a href="#protocol">PROTOCOL</a></li>
+	<ul>
+
+		<li><a href="#valid_commands">Valid Commands</a></li>
+		<li><a href="#performance_values">Performance Values</a></li>
+	</ul>
+
+	<li><a href="#signals">SIGNALS</a></li>
+	<li><a href="#bugs">BUGS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#contributors">CONTRIBUTORS</a></li>
+</ul>
+-->
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>rrdcached - Data caching daemon for rrdtool</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p><strong>rrdcached</strong>
+[<strong>-l/-L</strong>&nbsp;<em>address</em>]
+[<strong>-w</strong>&nbsp;<em>timeout</em>]
+[<strong>-z</strong>&nbsp;<em>delay</em>]
+[<strong>-f</strong>&nbsp;<em>timeout</em>]
+[<strong>-p</strong>&nbsp;<em>pid_file</em>]
+[<strong>-t</strong>&nbsp;<em>write_threads</em>]
+[<strong>-j</strong>&nbsp;<em>journal_dir</em>]
+[-F]
+[-g]
+[<strong>-b</strong>&nbsp;<em>base_dir</em>&nbsp;[<strong>-B</strong>]]</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>rrdcached</strong> is a daemon that receives updates to existing RRD files,
+accumulates them and, if enough have been received or a defined time has
+passed, writes the updates to the RRD file. A <em>flush</em> command may be used to
+force writing of values to disk, so that graphing facilities and similar can
+work with up-to-date data.</p>
+<p>The daemon was written with big setups in mind. Those setups usually run into
+IO&nbsp;related problems sooner or later for reasons that are beyond the scope
+of this document. Check the wiki at the RRDTool homepage for details. Also
+check <a href="#security_considerations">SECURITY CONSIDERATIONS</a> below before using this daemon! A detailed
+description of how the daemon operates can be found in the <a href="#how_it_works">HOW IT WORKS</a>
+section below.</p>
+<p>
+</p>
+<hr />
+<h1><a name="options">OPTIONS</a></h1>
+<dl>
+<dt><strong><a name="item__2dl_address"><strong>-l</strong> <em>address</em></a></strong><br />
+</dt>
+<dd>
+Tells the daemon to bind to <em>address</em> and accept incoming connections on that
+socket. If <em>address</em> begins with <code>unix:</code>, everything following that prefix is
+interpreted as the path to a UNIX domain socket. Otherwise the address or node
+name are resolved using <em>getaddrinfo</em>.
+</dd>
+<dd>
+<p>For network sockets, a port may be specified by using the form
+<code>[address]:port</code>. If the address is an IPv4 address or a fully
+qualified domain name (i.&nbsp;e. the address contains at least one dot
+(<code>.</code>)), the square brackets can be omitted, resulting in the (simpler)
+<code>address:port</code> pattern.. The default port is <strong>42217/udp</strong>.</p>
+</dd>
+<dd>
+<p>The following formats are accepted. Please note that the address of the UNIX
+domain socket <strong>must</strong> start with a slash in the second case!</p>
+</dd>
+<dd>
+<pre>
+   unix:&lt;/path/to/unix.sock&gt;
+   /&lt;path/to/unix.sock&gt;
+   &lt;hostname-or-ip&gt;
+   [&lt;hostname-or-ip&gt;]:&lt;port&gt;
+   &lt;hostname-or-ipv4&gt;:&lt;port&gt;</pre>
+</dd>
+<dd>
+<p>If the <strong>-l</strong> option is not specified the default address,
+<code>unix:/tmp/rrdcached.sock</code>, will be used.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item__2dl_address"><strong>-L</strong> <em>address</em></a></strong><br />
+</dt>
+<dd>
+Same as <strong>-l</strong>, except creates a low-privilege socket.  See <strong>SECURITY
+CONSIDERATIONS</strong> for more information.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dw_timeout"><strong>-w</strong> <em>timeout</em></a></strong><br />
+</dt>
+<dd>
+Data is written to disk every <em>timeout</em> seconds. If this option is not
+specified the default interval of 300&nbsp;seconds will be used.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dz_delay"><strong>-z</strong> <em>delay</em></a></strong><br />
+</dt>
+<dd>
+If specified, rrdcached will delay writing of each RRD for a random number
+of seconds in the range&nbsp;[0,<em>delay</em>).  This will avoid too many
+writes being queued simultaneously.  This value should be no greater than
+the value specified in <strong>-w</strong>.  By default, there is no delay.
+</dd>
+<p></p>
+<dt><strong><a name="item__2df_timeout"><strong>-f</strong> <em>timeout</em></a></strong><br />
+</dt>
+<dd>
+Every <em>timeout</em> seconds the entire cache is searched for old values which are
+written to disk. This only concerns files to which updates have stopped, so
+setting this to a high value, such as 3600&nbsp;seconds, is acceptable in most
+cases. This timeout defaults to 3600&nbsp;seconds.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dp_file"><strong>-p</strong> <em>file</em></a></strong><br />
+</dt>
+<dd>
+Sets the name and location of the PID-file. If not specified, the default,
+<code>$localststedir/run/rrdcached.pid</code> will be used.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dt_write_threads"><strong>-t</strong> <em>write_threads</em></a></strong><br />
+</dt>
+<dd>
+Specifies the number of threads used for writing RRD files.  The default
+is&nbsp;4.  Increasing this number will allow rrdcached to have more
+simultaneous I/O requests into the kernel.  This may allow the kernel to
+re-order disk writes, resulting in better disk throughput.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dj_dir"><strong>-j</strong> <em>dir</em></a></strong><br />
+</dt>
+<dd>
+Write updates to a journal in <em>dir</em>.  In the event of a program or system
+crash, this will allow the daemon to write any updates that were pending
+at the time of the crash.
+</dd>
+<dd>
+<p>On startup, the daemon will check for journal files in this directory.  If
+found, all updates therein will be read into memory before the daemon
+starts accepting new connections.</p>
+</dd>
+<dd>
+<p>The journal will be rotated with the same frequency as the flush timer
+given by <strong>-f</strong>.</p>
+</dd>
+<dd>
+<p>When journaling is enabled, the daemon will use a fast shutdown procedure.
+Rather than flushing all files to disk, it will make sure the journal is
+properly written and exit immediately.  Although the RRD data files are
+not fully up-to-date, no information is lost; all pending updates will be
+replayed from the journal next time the daemon starts up.</p>
+</dd>
+<dd>
+<p>To disable fast shutdown, use the <strong>-F</strong> option.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item__2df"><strong>-F</strong></a></strong><br />
+</dt>
+<dd>
+ALWAYS flush all updates to the RRD data files when the daemon is shut
+down, regardless of journal setting.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dg"><strong>-g</strong></a></strong><br />
+</dt>
+<dd>
+Run in the foreground.  The daemon will not fork().
+</dd>
+<p></p>
+<dt><strong><a name="item__2db_dir"><strong>-b</strong> <em>dir</em></a></strong><br />
+</dt>
+<dd>
+The daemon will change into a specific directory at startup. All files passed
+to the daemon, that are specified by a <strong>relative</strong> path, will be interpreted
+to be relative to this directory. If not given the default, <code>/tmp</code>, will be
+used.
+</dd>
+<dd>
+<pre>
+  +------------------------+------------------------+
+  ! Command line           ! File updated           !
+  +------------------------+------------------------+
+  ! foo.rrd                ! /tmp/foo.rrd           !
+  ! foo/bar.rrd            ! /tmp/foo/bar.rrd       !
+  ! /var/lib/rrd/foo.rrd   ! /var/lib/rrd/foo.rrd   !
+  +------------------------+------------------------+
+  Paths given on the command  line and paths actually
+  updated by the daemon,  assuming the base directory
+  &quot;/tmp&quot;.</pre>
+</dd>
+<dd>
+<p><strong>WARNING:</strong> The paths up to and including the base directory <strong>MUST NOT BE</strong>
+symbolic links.  In other words, if the base directory is
+specified as:</p>
+</dd>
+<dd>
+<pre>
+    -b /base/dir/somewhere</pre>
+</dd>
+<dd>
+<p>... then <strong>NONE</strong> of the following should be symbolic links:</p>
+</dd>
+<dd>
+<pre>
+    /base
+    /base/dir
+    /base/dir/somewhere</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item__2db"><strong>-B</strong></a></strong><br />
+</dt>
+<dd>
+Only permit writes into the base directory specified in <strong>-b</strong> (and any
+sub-directories).  This does <strong>NOT</strong> detect symbolic links.  Paths
+containing <code>../</code> will also be blocked.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="affected_rrdtool_commands">AFFECTED RRDTOOL COMMANDS</a></h1>
+<p>The following commands may be made aware of the <strong>rrdcached</strong> using the command
+line argument <strong>--daemon</strong> or the environment variable <strong>RRDCACHED_ADDRESS</strong>:</p>
+<dl>
+<dt><strong><a name="item_dump"><strong>dump</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_fetch"><strong>fetch</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_flush"><strong>flush</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_graph"><strong>graph</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_graphv"><strong>graphv</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_info"><strong>info</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_last"><strong>last</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_lastupdate"><strong>lastupdate</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_update"><strong>update</strong></a></strong><br />
+</dt>
+<dt><strong><a name="item_xport"><strong>xport</strong></a></strong><br />
+</dt>
+</dl>
+<p>The <strong>update</strong> command can send values to the daemon instead of writing them to
+the disk itself. All other commands can send a <strong>FLUSH</strong> command (see below) to
+the daemon before accessing the files, so they work with up-to-date data even
+if the cache timeout is large.</p>
+<p>
+</p>
+<hr />
+<h1><a name="error_reporting">ERROR REPORTING</a></h1>
+<p>The daemon reports errors in one of two ways: During startup, error messages
+are printed to <code>STDERR</code>. One of the steps when starting up is to fork to the
+background and closing <code>STDERR</code> - after this writing directly to the user is
+no longer possible. Once this has happened, the daemon will send log messages
+to the system logging daemon using <em>syslog(3)</em>. The facility used is
+<code>LOG_DAEMON</code>.</p>
+<p>
+</p>
+<hr />
+<h1><a name="how_it_works">HOW IT WORKS</a></h1>
+<p>When receiving an update, <strong>rrdcached</strong> does not write to disk but looks for an
+entry for that file in its internal tree. If not found, an entry is created
+including the current time (called ``First'' in the diagram below). This time is
+<strong>not</strong> the time specified on the command line but the time the operating system
+considers to be ``now''. The value and time of the value (called ``Time'' in the
+diagram below) are appended to the tree node.</p>
+<p>When appending a value to a tree node, it is checked whether it's time to write
+the values to disk. Values are written to disk if
+<code>now()&nbsp;-&nbsp;First&nbsp;&gt;=&nbsp;timeout</code>, where <code>timeout</code> is the timeout specified
+using the <strong>-w</strong> option, see <em>OPTIONS</em>. If the values are ``old enough'' they
+will be enqueued in the ``update queue'', i.&nbsp;e. they will be appended to
+the linked list shown below.  Because the tree nodes and the elements of the
+linked list are the same data structures in memory, any update to a file that
+has already been enqueued will be written with the next write to the RRD file,
+too.</p>
+<p>A separate ``update thread'' constantly dequeues the first element in the update
+queue and writes all its values to the appropriate file. So as long as the
+update queue is not empty files are written at the highest possible rate.</p>
+<p>Since the timeout of files is checked only when new values are added to the
+file, ``dead'' files, i.&nbsp;e. files that are not updated anymore, would never
+be written to disk. Therefore, every now and then, controlled by the <strong>-f</strong>
+option, the entire tree is walked and all ``old'' values are enqueued. Since this
+only affects ``dead'' files and walking the tree is relatively expensive, you
+should set the ``flush interval'' to a reasonably high value. The default is
+3600&nbsp;seconds (one hour).</p>
+<p>The downside of caching values is that they won't show up in graphs generated
+from the RRD&nbsp;files. To get around this, the daemon provides the ``flush
+command'' to flush specific files. This means that the file is inserted at the
+<strong>head</strong> of the update queue or moved there if it is already enqueued. The flush
+command will return only after the file's pending updates have been written
+to disk.</p>
+<pre>
+ +------+   +------+                               +------+
+ ! head !   ! root !                               ! tail !
+ +---+--+   +---+--+                               +---+--+
+     !         /\                                      !
+     !        /  \                                     !
+     !       /\  /\                                    !
+     !      /\/\ \ `----------------- ... --------,    !
+     V     /      `-------,                       !    V
+ +---+----+---+    +------+-----+             +---+----+---+
+ ! File:  foo !    ! File:  bar !             ! File:  qux !
+ ! First: 101 !    ! First: 119 !             ! First: 180 !
+ ! Next:&amp;bar -+---&gt;! Next:&amp;... -+---&gt; ... ---&gt;! Next:NULL  !
+ | Prev:NULL  !&lt;---+-Prev:&amp;foo  !&lt;--- ... ----+-Prev: &amp;... !
+ +============+    +============+             +============+
+ ! Time:  100 !    ! Time:  120 !             ! Time:  180 !
+ ! Value:  10 !    ! Value: 0.1 !             ! Value: 2,2 !
+ +------------+    +------------+             +------------+
+ ! Time:  110 !    ! Time:  130 !             ! Time:  190 !
+ ! Value:  26 !    ! Value: 0.1 !             ! Value: 7,3 !
+ +------------+    +------------+             +------------+
+ :            :    :            :             :            :
+ +------------+    +------------+             +------------+
+ ! Time:  230 !    ! Time:  250 !             ! Time:  310 !
+ ! Value:  42 !    ! Value: 0.2 !             ! Value: 1,2 !
+ +------------+    +------------+             +------------+</pre>
+<p>The above diagram demonstrates:</p>
+<ul>
+<li></li>
+Files/values are stored in a (balanced) tree.
+<p></p>
+<li></li>
+Tree nodes and entries in the update queue are the same data structure.
+<p></p>
+<li></li>
+The local time (``First'') and the time specified in updates (``Time'') may differ.
+<p></p>
+<li></li>
+Timed out values are inserted at the ``tail''.
+<p></p>
+<li></li>
+Explicitly flushed values are inserted at the ``head''.
+<p></p>
+<li></li>
+ASCII art rocks.
+<p></p></ul>
+<p>
+</p>
+<hr />
+<h1><a name="security_considerations">SECURITY CONSIDERATIONS</a></h1>
+<p>The client/server protocol does not have any authentication or
+authorization mechanism.  Therefore, take care to restrict which users can
+connect to the daemon.</p>
+<p>Control sockets are divided into high-privilege (<strong>-l</strong>) and low-privilege
+(<strong>-L</strong>) sockets.  High-privilege sockets accept all commands, whereas
+low-privilege sockets accept only <strong>FLUSH</strong>, <strong>STATS</strong>, and <strong>HELP</strong>.</p>
+<p>For a multi-user environment where only certain users require read/write
+access, the recommended configuration uses two sockets as follows:</p>
+<dl>
+<dt><strong><a name="item__2dl__2fprotected_2fdir_2frrd_2esock"><strong>-l</strong> <em>/protected/dir/rrd.sock</em></a></strong><br />
+</dt>
+<dd>
+Create a high-privilege unix-domain socket.  This should be protected with
+the same Unix permissions that are used to protect the RRD files.  Updates
+should be directed to this socket.
+</dd>
+<p></p>
+<dt><strong><a name="item__2dl_127_2e0_2e0_2e1"><strong>-L</strong> <em>127.0.0.1</em></a></strong><br />
+</dt>
+<dd>
+Create a low-privilege TCP socket listening on localhost.  All users on
+the local system may use this to trigger FLUSH of individual files.  Users
+with read-only access should be directed to this socket.
+</dd>
+<p></p></dl>
+<p>If you (want to) use the network capability, i.&nbsp;e. let the daemon bind to
+an IPv4 or IPv6 socket, it is <strong>your</strong> job to install a packet filter or similar
+mechanism to prevent unauthorized connections. Unless you have a dedicated VLAN
+or VPN for this, using the network option is probably a bad idea!</p>
+<p>The daemon will blindly write to any file it gets told, so you really should
+create a separate user just for this daemon. Also it does not do any sanity
+checks, so if it gets told to write values for a time far in the future, your
+files will be messed up good!</p>
+<p>You have been warned.</p>
+<p>
+</p>
+<hr />
+<h1><a name="protocol">PROTOCOL</a></h1>
+<p>The daemon communicates with clients using a line based ASCII protocol which is
+easy to read and easy to type. This makes it easy for scripts to implement the
+protocol and possible for users to use <em>telnet</em> to connect to the daemon
+and test stuff ``by hand''.</p>
+<p>The protocol is line based, this means that each record consists of one or more
+lines. A line is terminated by the line feed character <code>0x0A</code>, commonly
+written as <code>\n</code>. In the examples below, this character will be written as
+<code>&lt;LF&gt;</code> (``line feed'').</p>
+<p>After the connection has been established, the client is expected to send a
+``command''. A command consists of the command keyword, possibly some arguments,
+and a terminating newline character. For a list of commands, see
+<a href="#valid_commands">Valid Commands</a> below.</p>
+<p>Example:</p>
+<pre>
+  FLUSH /tmp/foo.rrd&lt;LF&gt;</pre>
+<p>The daemon answers with a line consisting of a status code and a short status
+message, separated by one or more space characters. A negative status code
+signals an error, a positive status code or zero signal success. If the status
+code is greater than zero, it indicates the number of lines that follow the
+status line.</p>
+<p>Examples:</p>
+<pre>
+ 0 Success&lt;LF&gt;</pre>
+<pre>
+ 2 Two lines follow&lt;LF&gt;
+ This is the first line&lt;LF&gt;
+ And this is the second line&lt;LF&gt;</pre>
+<p>
+</p>
+<h2><a name="valid_commands">Valid Commands</a></h2>
+<p>The following commands are understood by the daemon:</p>
+<dl>
+<dt><strong><a name="item_flush_filename"><strong>FLUSH</strong> <em>filename</em></a></strong><br />
+</dt>
+<dd>
+Causes the daemon to put <em>filename</em> to the <strong>head</strong> of the update queue
+(possibly moving it there if the node is already enqueued). The answer will be
+sent <strong>after</strong> the node has been dequeued.
+</dd>
+<p></p>
+<dt><strong><a name="item_flushall"><strong>FLUSHALL</strong></a></strong><br />
+</dt>
+<dd>
+Causes the daemon to start flushing ALL pending values to disk.  This
+returns immediately, even though the writes may take a long time.
+</dd>
+<p></p>
+<dt><strong><a name="item_pending_filename"><strong>PENDING</strong> <em>filename</em></a></strong><br />
+</dt>
+<dd>
+Shows any ``pending'' updates for a file, in order.  The updates shown have
+not yet been written to the underlying RRD file.
+</dd>
+<p></p>
+<dt><strong><a name="item_forget_filename"><strong>FORGET</strong> <em>filename</em></a></strong><br />
+</dt>
+<dd>
+Removes <em>filename</em> from the cache.  Any pending updates <strong>WILL BE LOST</strong>.
+</dd>
+<p></p>
+<dt><strong><a name="item_queue"><strong>QUEUE</strong></a></strong><br />
+</dt>
+<dd>
+Shows the files that are on the output queue.  Returns zero or more lines
+in the following format, where &lt;num_vals&gt; is the number of values
+to be written for the &lt;file&gt;:
+</dd>
+<dd>
+<pre>
+    &lt;num_vals&gt; &lt;file&gt;</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_help__5bcommand_5d"><strong>HELP</strong> [<em>command</em>]</a></strong><br />
+</dt>
+<dd>
+Returns a short usage message. If no command is given, or <em>command</em> is
+<strong>HELP</strong>, a list of commands supported by the daemon is returned. Otherwise a
+short description, possibly containing a pointer to a manual page, is returned.
+Obviously, this is meant for interactive usage and the format in which the
+commands and usage summaries are returned is not well defined.
+</dd>
+<p></p>
+<dt><strong><a name="item_stats"><strong>STATS</strong></a></strong><br />
+</dt>
+<dd>
+Returns a list of metrics which can be used to measure the daemons performance
+and check its status. For a description of the values returned, see
+<a href="#performance_values">Performance Values</a> below.
+</dd>
+<dd>
+<p>The format in which the values are returned is similar to many other line based
+protocols: Each value is printed on a separate line, each consisting of the
+name of the value, a colon, one or more spaces and the actual value.</p>
+</dd>
+<dd>
+<p>Example:</p>
+</dd>
+<dd>
+<pre>
+ 9 Statistics follow
+ QueueLength: 0
+ UpdatesReceived: 30
+ FlushesReceived: 2
+ UpdatesWritten: 13
+ DataSetsWritten: 390
+ TreeNodesNumber: 13
+ TreeDepth: 4
+ JournalBytes: 190
+ JournalRotate: 0</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_update_filename_values__5bvalues__2e_2e_2e_5d"><strong>UPDATE</strong> <em>filename</em> <em>values</em> [<em>values</em> ...]</a></strong><br />
+</dt>
+<dd>
+Adds more data to a filename. This is <strong>the</strong> operation the daemon was designed
+for, so describing the mechanism again is unnecessary. Read <a href="#how_it_works">HOW IT WORKS</a>
+above for a detailed explanation.
+</dd>
+<dd>
+<p>Note that rrdcached only accepts absolute timestamps in the update values.
+Updates strings like ``N:1:2:3'' are automatically converted to absolute
+time by the RRD client library before sending to rrdcached.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_wrote_filename"><strong>WROTE</strong> <em>filename</em></a></strong><br />
+</dt>
+<dd>
+This command is written to the journal after a file is successfully
+written out to disk.  It is used during journal replay to determine which
+updates have already been applied.  It is <em>only</em> valid in the journal; it
+is not accepted from the other command channels.
+</dd>
+<p></p>
+<dt><strong><a name="item_batch"><strong>BATCH</strong></a></strong><br />
+</dt>
+<dd>
+This command initiates the bulk load of multiple commands.  This is
+designed for installations with extremely high update rates, since it
+permits more than one command to be issued per <code>read()</code> and write().
+</dd>
+<dd>
+<p>All commands are executed just as they would be if given individually,
+except for output to the user.  Messages indicating success are
+suppressed, and error messages are delayed until the client is finished.</p>
+</dd>
+<dd>
+<p>Command processing is finished when the client sends a dot (``.'') on its
+own line.  After the client has finished, the server responds with an
+error count and the list of error messages (if any).  Each error messages
+indicates the number of the command to which it corresponds, and the error
+message itself.  The first user command after <strong>BATCH</strong> is command number one.</p>
+</dd>
+<dd>
+<pre>
+    client:  BATCH
+    server:  0 Go ahead.  End with dot '.' on its own line.
+    client:  UPDATE x.rrd 1223661439:1:2:3            &lt;--- command #1
+    client:  UPDATE y.rrd 1223661440:3:4:5            &lt;--- command #2
+    client:  and so on...
+    client:  .
+    server:  2 Errors
+    server:  1 message for command 1
+    server:  12 message for command 12</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_quit"><strong>QUIT</strong></a></strong><br />
+</dt>
+<dd>
+Disconnect from rrdcached.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<h2><a name="performance_values">Performance Values</a></h2>
+<p>The following counters are returned by the <strong>STATS</strong> command:</p>
+<dl>
+<dt><strong><a name="item_queuelength"><strong>QueueLength</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Number of nodes currently enqueued in the update queue.
+</dd>
+<p></p>
+<dt><strong><a name="item_updatesreceived"><strong>UpdatesReceived</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Number of UPDATE commands received.
+</dd>
+<p></p>
+<dt><strong><a name="item_flushesreceived"><strong>FlushesReceived</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Number of FLUSH commands received.
+</dd>
+<p></p>
+<dt><strong><a name="item_updateswritten"><strong>UpdatesWritten</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Total number of updates, i.&nbsp;e. calls to <code>rrd_update_r</code>, since the
+daemon was started.
+</dd>
+<p></p>
+<dt><strong><a name="item_datasetswritten"><strong>DataSetsWritten</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Total number of ``data sets'' written to disk since the daemon was
+started. A data set is one or more values passed to the <strong>UPDATE</strong>
+command. For example: <code>1223661439:123:456</code> is one data set with two
+values. The term ``data set'' is used to prevent confusion whether
+individual values or groups of values are counted.
+</dd>
+<p></p>
+<dt><strong><a name="item_treenodesnumber"><strong>TreeNodesNumber</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Number of nodes in the cache.
+</dd>
+<p></p>
+<dt><strong><a name="item_treedepth"><strong>TreeDepth</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Depth of the tree used for fast key lookup.
+</dd>
+<p></p>
+<dt><strong><a name="item_journalbytes"><strong>JournalBytes</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Total number of bytes written to the journal since startup.
+</dd>
+<p></p>
+<dt><strong><a name="item_journalrotate"><strong>JournalRotate</strong> <em>(unsigned 64bit integer)</em></a></strong><br />
+</dt>
+<dd>
+Number of times the journal has been rotated since startup.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="signals">SIGNALS</a></h1>
+<dl>
+<dt><strong><a name="item_sigint_and_sigterm">SIGINT and SIGTERM</a></strong><br />
+</dt>
+<dd>
+The daemon exits normally on receipt of either of these signals.  Pending
+updates are handled in accordance with the <strong>-j</strong> and <strong>-F</strong> options.
+</dd>
+<p></p>
+<dt><strong><a name="item_sigusr1">SIGUSR1</a></strong><br />
+</dt>
+<dd>
+The daemon exits AFTER flushing all updates out to disk.  This may take a
+while.
+</dd>
+<p></p>
+<dt><strong><a name="item_sigusr2">SIGUSR2</a></strong><br />
+</dt>
+<dd>
+The daemon exits immediately, without flushing updates out to disk.
+Pending updates will be replayed from the journal when the daemon starts
+up again.  <strong>WARNING: if journaling (-j) is NOT enabled, any pending
+updates WILL BE LOST</strong>.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<p>No known bugs at the moment.</p>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="././rrdtool.html">the rrdtool manpage</a>, <a href="././rrdgraph.html">the rrdgraph manpage</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p><strong>rrdcached</strong> and this manual page have been written by Florian Forster
+&lt;octo&nbsp;at&nbsp;verplant.org&gt;.</p>
+<p>
+</p>
+<hr />
+<h1><a name="contributors">CONTRIBUTORS</a></h1>
+<p>kevin brintnall &lt;<a href="mailto:kbrint@rufus.net">kbrint@rufus.net</a>&gt;</p>
+
+</body>
+
+</html>

@@ -12,6 +12,8 @@ endif
 INCLUDES = -DLOCALEDIR="\"$(datadir)/locale\""
 RRD_DEFAULT_FONT=@RRD_DEFAULT_FONT@
 AM_CPPFLAGS = -DRRD_DEFAULT_FONT=\"$(RRD_DEFAULT_FONT)\" -DNUMVERS=@NUMVERS@
+AM_CFLAGS = @CFLAGS@
+## no including this by default @WERROR@
 
 UPD_C_FILES =		\
 	rrd_parsetime.c	\
@@ -23,8 +25,10 @@ UPD_C_FILES =		\
 	rrd_info.c	\
 	rrd_error.c	\
 	rrd_open.c	\
+	rrd_client.c	\
 	rrd_nan_inf.c	\
 	rrd_rpncalc.c	\
+	rrd_utils.c	\
 	rrd_update.c
 
 RRD_C_FILES =		\
@@ -41,18 +45,24 @@ RRD_C_FILES =		\
 	rrd_xport.c	\
 	rrd_gfx.c \
 	rrd_dump.c	\
+	rrd_flushcached.c \
 	rrd_fetch.c	\
 	rrd_resize.c \
 	rrd_tune.c
 
 noinst_HEADERS = \
 	unused.h \
+        gettext.h \
 	rrd_getopt.h rrd_parsetime.h \
 	rrd_config_bottom.h rrd_i18n.h \
 	rrd_format.h rrd_tool.h rrd_xport.h rrd.h rrd_rpncalc.h \
 	rrd_hw.h rrd_hw_math.h rrd_hw_update.h \
 	fnv.h rrd_graph.h \
 	rrd_is_thread_safe.h
+
+if BUILD_LIBDBI
+RRD_C_FILES += rrd_fetch_libdbi.c
+endif
 
 if BUILD_GETOPT
 noinst_HEADERS += rrd_getopt.h
@@ -77,14 +87,14 @@ librrd_la_LDFLAGS         += -export-symbols librrd.sym
 
 librrd_th_la_SOURCES         = $(UPD_C_FILES) $(RRD_C_FILES) rrd_thread_safe.c
 librrd_th_la_DEPENDENCIES    = librrd.sym
-librrd_th_la_CFLAGS          = $(MULTITHREAD_CFLAGS)
+librrd_th_la_CFLAGS          = $(AM_CFLAGS) $(MULTITHREAD_CFLAGS)
 librrd_th_la_LDFLAGS         = $(MULTITHREAD_LDFLAGS) -version-info @LIBVERS@
 librrd_th_la_LDFLAGS         += -export-symbols librrd.sym
 librrd_th_la_LIBADD          = $(ALL_LIBS)
 
-include_HEADERS	= rrd.h rrd_format.h
+include_HEADERS	= rrd.h rrd_format.h rrd_client.h
 
-bin_PROGRAMS	= rrdtool rrdupdate
+bin_PROGRAMS	= rrdtool rrdupdate rrdcached
 
 if BUILD_RRDCGI
 bin_PROGRAMS += rrdcgi
@@ -100,6 +110,11 @@ rrdtool_SOURCES = rrd_tool.c
 rrdtool_DEPENDENCIES = librrd.la
 rrdtool_LDADD	= librrd.la
 
+rrdcached_SOURCES = rrd_daemon.c
+rrdcached_DEPENDENCIES = librrd_th.la
+rrdcached_CPPFLAGS = -DVERSION='"$(VERSION)"' -DLOCALSTATEDIR='"$(localstatedir)"'
+rrdcached_LDADD = librrd_th.la
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = librrd.pc
 
@@ -108,5 +123,6 @@ pkgconfig_DATA = librrd.pc
 EXTRA_DIST= librrd.pc.in strftime.c strftime.h  rrd_getopt.c rrd_getopt1.c rrd_getopt.h \
 	win32comp.c  rrd_thread_safe_nt.c get_ver.awk librrd.sym.in.in plbasename.c   plbasename.h   
 
+
 librrd.sym: librrd.sym.in
-	grep -v LIBC_HAS_GETOPT_LONG librrd.sym.in >$@
+	$(AM_V_GEN)grep -v LIBC_HAS_GETOPT_LONG librrd.sym.in >$@

@@ -1,0 +1,58 @@
+LIBRRD(1)                           rrdtool                          LIBRRD(1)
+
+
+
+NNAAMMEE
+       librrd - RRD library functions
+
+DDEESSCCRRIIPPTTIIOONN
+       lliibbrrrrdd contains most of the functionality in RRRRDDTTooooll.  The command line
+       utilities and language bindings are often just wrappers around the code
+       contained in lliibbrrrrdd.
+
+       This manual page documents the lliibbrrrrdd API.
+
+       NNOOTTEE:: This document is a work in progress, and should be considered
+       incomplete as long as this warning persists.  For more information
+       about the lliibbrrrrdd functions, always consult the source code.
+
+UUTTIILLIITTYY FFUUNNCCTTIIOONNSS
+       _rr_rr_dd____rr_aa_nn_dd_oo_mm_((_))
+           Generates random numbers just like _r_a_n_d_o_m_(_).  This further ensures
+           that the random number generator is seeded exactly once per pro-
+           cess.
+
+       rrrrdd__aadddd__ppttrr((vvooiidd ******ddeesstt,, ssiizzee__tt **ddeesstt__ssiizzee,, vvooiidd **ssrrcc))
+           Dynamically resize the array pointed to by "dest".  "dest_size" is
+           a pointer to the current size of "dest".  Upon successful _r_e_a_l_-
+           _l_o_c_(_), the "dest_size" is incremented by 1 and the "src" pointer is
+           stored at the end of the new "dest".  Returns 1 on success, 0 on
+           failure.
+
+               type **arr = NULL;
+               type *elem = "whatever";
+               size_t arr_size = 0;
+               if (!rrd_add_ptr(&arr, &arr_size, elem))
+                   handle_failure();
+
+       rrrrdd__aadddd__ssttrrdduupp((cchhaarr ******ddeesstt,, ssiizzee__tt **ddeesstt__ssiizzee,, cchhaarr **ssrrcc))
+           Like "rrd_add_ptr", except adds a "strdup" of the source string.
+
+               char **arr = NULL;
+               size_t arr_size = NULL;
+               char *str  = "example text";
+               if (!rrd_add_strdup(&arr, &arr_size, str))
+                   handle_failure();
+
+       rrrrdd__ffrreeee__ppttrrss((vvooiidd ******ssrrcc,, ssiizzee__tt **ccnntt))
+           Free an array of pointers allocated by "rrd_add_ptr" or
+           "rrd_add_strdup".  Also frees the array pointer itself.  On return,
+           the source pointer will be NULL and the count will be zero.
+
+               /* created as above */
+               rrd_free_ptrs(&arr, &arr_size);
+               /* here, arr == NULL && arr_size == 0 */
+
+
+
+1.3.99909060808                   2009-04-20                         LIBRRD(1)

@@ -10,11 +10,18 @@ CLEANFILES = *.1 *.html *.txt *-dircache RRD?.pod *.pdf *~ core *itemcache *.rej
 
 POD = bin_dec_hex.pod        rrddump.pod            rrdgraph_examples.pod  rrdrestore.pod         rrdupdate.pod  \
       cdeftutorial.pod       rrdfetch.pod           rrdgraph_graph.pod     rrdthreads.pod         rrdxport.pod   \
-      rpntutorial.pod        rrdfirst.pod           rrdgraph_rpn.pod       rrdtool.pod                           \
-      rrd-beginners.pod      rrdinfo.pod            rrdtune.pod            rrdbuild.pod                          \
+      rpntutorial.pod        rrdfirst.pod           rrdgraph_rpn.pod       rrdtool.pod            rrdcached.pod  \
+      rrd-beginners.pod      rrdinfo.pod            rrdtune.pod            rrdbuild.pod           rrdflushcached.pod   \
       rrdcgi.pod             rrdgraph.pod           rrdlast.pod            rrdlastupdate.pod                     \
-      rrdcreate.pod          rrdgraph_data.pod      rrdresize.pod          rrdtutorial.pod                       
+      rrdcreate.pod          rrdgraph_data.pod      rrdresize.pod          rrdtutorial.pod        librrd.pod
 
+if BUILD_LIBDBI
+  POD += rrdgraph_libdbi.pod
+endif
+
+if BUILD_LUA
+  POD += rrdlua.pod
+endif
 
 PMP = RRDs.pod RRDp.pod
 
@@ -24,7 +31,7 @@ HTML = $(POD:.pod=.html) $(PMP:.pod=.html)
 PDF = $(MAN:.1=.pdf)
 
 # what should go into the distribution
-EXTRA_DIST= $(POD) $(HTML) $(MAN) $(TXT) rrdtool-dump.dtd rrdtool-xport.dtd
+EXTRA_DIST= $(POD) $(HTML) $(MAN) $(TXT) rrdtool-dump.dtd rrdtool-xport.dtd rrdgraph_libdbi.pod rrdlua.pod
 
 idocdir = $(RRDDOCDIR)/txt
 idoc_DATA = $(POD) $(TXT)
@@ -39,22 +46,22 @@ all-local: link txt man html-local
 	perl -n -e 'if (/^=include\s+(\S+)/){open F,"$$1.inc" || die $$?;print <F>; close F} else {print}'  $<  > $@
 
 .pod.1 .pm.1 .pl.1:
-	@POD2MAN@ --release=$(VERSION) --center=rrdtool $<  > $@
+	$(AM_V_GEN)@POD2MAN@ --release=$(VERSION) --center=rrdtool $<  > $@
 
 .1.txt:
-	GROFF_NO_SGR=1 @NROFF@ -man -Tlp $< > $@
+	$(AM_V_GEN)GROFF_NO_SGR=1 @NROFF@ -man -Tlp $< > $@
 
 .1.pdf:
-	@TROFF@ -man $< | ps2pdf - $@
+	$(AM_V_GEN)@TROFF@ -man $< | ps2pdf - $@
 
 .pm.html .pod.html .pl.html:
-	@POD2HTML@ --infile=$< --outfile=$@ --noindex --htmlroot=. --podpath=. --title=$*
+	$(AM_V_GEN)@POD2HTML@ --infile=$< --outfile=$@ --noindex --htmlroot=. --podpath=. --title=$*
 
 RRDs.pod:
-	$(LN_S) $(top_srcdir)/bindings/perl-shared/RRDs.pm RRDs.pod
+	$(AM_V_GEN)$(LN_S) $(top_srcdir)/bindings/perl-shared/RRDs.pm RRDs.pod
 
 RRDp.pod:
-	$(LN_S) $(top_srcdir)/bindings/perl-piped/RRDp.pm RRDp.pod
+	$(AM_V_GEN)$(LN_S) $(top_srcdir)/bindings/perl-piped/RRDp.pm RRDp.pod
 
 link: RRDp.pod RRDs.pod
 
@@ -69,4 +76,4 @@ pdf-local: $(PDF)
 pod: $(POD)
 
 install-data-hook:
-	cd $(DESTDIR)$(ihtmldir) && rm -f index.html && $(LN_S) rrdtool.html index.html
+	$(AM_V_GEN)cd $(DESTDIR)$(ihtmldir) && rm -f index.html && $(LN_S) rrdtool.html index.html

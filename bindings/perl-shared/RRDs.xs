@@ -444,3 +444,13 @@ rrd_restore(...)
        OUTPUT:
                RETVAL
 
+int
+rrd_flushcached(...)
+	PROTOTYPE: @
+	PREINIT:
+	int i;
+	char **argv;
+	CODE:
+		rrdcode(rrd_flushcached);
+	OUTPUT:
+		RETVAL

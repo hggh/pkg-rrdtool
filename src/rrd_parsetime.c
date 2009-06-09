@@ -114,13 +114,11 @@
 
 /* Local headers */
 
-#include "rrd_tool.h"
 #include <stdarg.h>
-
-#ifdef WIN32
 #include <stdlib.h>
 #include <ctype.h>
-#endif
+
+#include "rrd_tool.h"
 
 /* Structures and unions */
 

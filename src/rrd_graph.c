@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -7,9 +7,15 @@
 
 #include <sys/stat.h>
 
+/* for basename */
+#ifdef HAVE_LIBGEN_H
+#  include <libgen.h>
+#eles
+#include "plbasename.h"
+#endif
+
 #ifdef WIN32
 #include "strftime.h"
-#include "plbasename.h"
 #endif
 
 #include "rrd_tool.h"
@@ -28,6 +34,7 @@
 #endif
 
 #include "rrd_graph.h"
+#include "rrd_client.h"
 
 /* some constant definitions */
 
@@ -303,10 +310,14 @@ int im_free(
     image_desc_t *im)
 {
     unsigned long i, ii;
-    cairo_status_t status = CAIRO_STATUS_SUCCESS;
+    cairo_status_t status = (cairo_status_t) 0;
 
     if (im == NULL)
         return 0;
+
+    if (im->daemon_addr != NULL)
+      free(im->daemon_addr);
+
     for (i = 0; i < (unsigned) im->gdes_c; i++) {
         if (im->gdes[i].data_first) {
             /* careful here, because a single pointer can occur several times */
@@ -835,6 +846,36 @@ int data_fetch(
         if (!skip) {
             unsigned long ft_step = im->gdes[i].step;   /* ft_step will record what we got from fetch */
 
+            /* Flush the file if
+             * - a connection to the daemon has been established
+             * - this is the first occurrence of that RRD file
+             */
+            if (rrdc_is_connected(im->daemon_addr))
+            {
+                int status;
+
+                status = 0;
+                for (ii = 0; ii < i; ii++)
+                {
+                    if (strcmp (im->gdes[i].rrd, im->gdes[ii].rrd) == 0)
+                    {
+                        status = 1;
+                        break;
+                    }
+                }
+
+                if (status == 0)
+                {
+                    status = rrdc_flush (im->gdes[i].rrd);
+                    if (status != 0)
+                    {
+                        rrd_set_error ("rrdc_flush (%s) failed with status %i.",
+                                im->gdes[i].rrd, status);
+                        return (-1);
+                    }
+                }
+            } /* if (rrdc_is_connected()) */
+
             if ((rrd_fetch_fn(im->gdes[i].rrd,
                               im->gdes[i].cf,
                               &im->gdes[i].start,
@@ -905,7 +946,7 @@ long find_var(
     return -1;
 }
 
-/* find the largest common denominator for all the numbers
+/* find the greatest common divisor for all the numbers
    in the 0 terminated num array */
 long lcd(
     long *num)
@@ -1019,9 +1060,9 @@ int data_calc(
                         /* add one entry to the array that keeps track of the step sizes of the
                          * data sources going into the CDEF. */
                         if ((steparray =
-                                         (long*)(rrd_realloc(steparray,
+                             (long*)rrd_realloc(steparray,
                                          (++stepcnt +
-                                          1) * sizeof(*steparray)))) == NULL) {
+                                          1) * sizeof(*steparray))) == NULL) {
                             rrd_set_error("realloc steparray");
                             rpnstack_free(&rpnstack);
                             return -1;
@@ -1087,10 +1128,10 @@ int data_calc(
              */
             im->gdes[gdi].step = lcd(steparray);
             free(steparray);
-            if ((im->gdes[gdi].data = (rrd_value_t*)(malloc(((im->gdes[gdi].end -
+            if ((im->gdes[gdi].data = (rrd_value_t*)malloc(((im->gdes[gdi].end -
                                                im->gdes[gdi].start)
                                               / im->gdes[gdi].step)
-                                             * sizeof(double)))) == NULL) {
+                                             * sizeof(double))) == NULL) {
                 rrd_set_error("malloc im->gdes[gdi].data");
                 rpnstack_free(&rpnstack);
                 return -1;
@@ -1177,8 +1218,8 @@ int data_proc(
     for (i = 0; i < im->gdes_c; i++) {
         if ((im->gdes[i].gf == GF_LINE) ||
             (im->gdes[i].gf == GF_AREA) || (im->gdes[i].gf == GF_TICK)) {
-            if ((im->gdes[i].p_data = (rrd_value_t*)(malloc((im->xsize + 1)
-                                             * sizeof(rrd_value_t)))) == NULL) {
+            if ((im->gdes[i].p_data = (rrd_value_t*)malloc((im->xsize + 1)
+                                             * sizeof(rrd_value_t))) == NULL) {
                 rrd_set_error("malloc data_proc");
                 return -1;
             }
@@ -1534,7 +1575,7 @@ int print_calc(
                 rrd_infoval_t prline;
 
                 if (im->gdes[i].strftm) {
-                    prline.u_str = (char*)(malloc((FMT_LEG_LEN + 2) * sizeof(char)));
+                    prline.u_str = (char*)malloc((FMT_LEG_LEN + 2) * sizeof(char));
                     strftime(prline.u_str,
                              FMT_LEG_LEN, im->gdes[i].format, &tmvdef);
                 } else if (bad_format(im->gdes[i].format)) {
@@ -1613,34 +1654,49 @@ int print_calc(
 }
 
 
+
 /* place legends with color spots */
 int leg_place(
     image_desc_t *im,
-    int *gY)
+    int calc_width)
 {
     /* graph labels */
     int       interleg = im->text_prop[TEXT_PROP_LEGEND].size * 2.0;
     int       border = im->text_prop[TEXT_PROP_LEGEND].size * 2.0;
     int       fill = 0, fill_last;
+    double    legendwidth; // = im->ximg - 2 * border;
     int       leg_c = 0;
     double    leg_x = border;
-    int       leg_y = im->yimg;
-    int       leg_y_prev = im->yimg;
+    int       leg_y = 0; //im->yimg;
+    int       leg_y_prev = 0; // im->yimg;
     int       leg_cc;
     double    glue = 0;
     int       i, ii, mark = 0;
     char      default_txtalign = TXA_JUSTIFIED; /*default line orientation */
     int      *legspace;
     char     *tab;
+    char      saved_legend[FMT_LEG_LEN + 5];
+
+    if(calc_width){
+        legendwidth = 0;
+    }
+    else{
+        legendwidth = im->legendwidth - 2 * border;
+    }
+
 
     if (!(im->extra_flags & NOLEGEND) & !(im->extra_flags & ONLY_GRAPH)) {
-        if ((legspace = (int*)(malloc(im->gdes_c * sizeof(int)))) == NULL) {
+        if ((legspace = (int*)malloc(im->gdes_c * sizeof(int))) == NULL) {
             rrd_set_error("malloc for legspace");
             return -1;
         }
 
         for (i = 0; i < im->gdes_c; i++) {
             char      prt_fctn; /*special printfunctions */
+            if(calc_width){
+                strcpy(saved_legend, im->gdes[i].legend);
+            }
+
             fill_last = fill;
             /* hide legends for rules which are not displayed */
             if (im->gdes[i].gf == GF_TEXTALIGN) {
@@ -1663,6 +1719,7 @@ int leg_place(
                 memmove(tab, tab + 1, strlen(tab));
                 tab[0] = (char) 9;
             }
+
             leg_cc = strlen(im->gdes[i].legend);
             /* is there a controle code at the end of the legend string ? */
             if (leg_cc >= 2 && im->gdes[i].legend[leg_cc - 2] == '\\') {
@@ -1721,7 +1778,10 @@ int leg_place(
             }
 
             if (prt_fctn == '\0') {
-                if (i == im->gdes_c - 1 || fill > im->ximg - 2 * border) {
+                if(calc_width && (fill > legendwidth)){
+                    legendwidth = fill;
+                }
+                if (i == im->gdes_c - 1 || fill > legendwidth) {
                     /* just one legend item is left right or center */
                     switch (default_txtalign) {
                     case TXA_RIGHT:
@@ -1739,7 +1799,7 @@ int leg_place(
                     }
                 }
                 /* is it time to place the legends ? */
-                if (fill > im->ximg - 2 * border) {
+                if (fill > legendwidth) {
                     if (leg_c > 1) {
                         /* go back one */
                         i--;
@@ -1752,23 +1812,22 @@ int leg_place(
                 }
             }
 
-
             if (prt_fctn != '\0') {
                 leg_x = border;
                 if (leg_c >= 2 && prt_fctn == 'j') {
-                    glue = (double)(im->ximg - fill - 2 * border) / (double)(leg_c - 1);
+                    glue = (double)(legendwidth - fill) / (double)(leg_c - 1);
                 } else {
                     glue = 0;
                 }
                 if (prt_fctn == 'c')
-                    leg_x = (double)(im->ximg - fill) / 2.0;
+                    leg_x = (double)(legendwidth - fill) / 2.0;
                 if (prt_fctn == 'r')
-                    leg_x = im->ximg - fill - border;
+                    leg_x = legendwidth - fill - border;
                 for (ii = mark; ii <= i; ii++) {
                     if (im->gdes[ii].legend[0] == '\0')
                         continue;   /* skip empty legends */
                     im->gdes[ii].leg_x = leg_x;
-                    im->gdes[ii].leg_y = leg_y;
+                    im->gdes[ii].leg_y = leg_y + border;
                     leg_x +=
                         (double)gfx_get_text_width(im, leg_x,
                                            im->
@@ -1784,26 +1843,25 @@ int leg_place(
                     leg_y += im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
                 if (prt_fctn == 's')
                     leg_y -= im->text_prop[TEXT_PROP_LEGEND].size;
+
+                if(calc_width && (fill > legendwidth)){
+                    legendwidth = fill;
+                }
                 fill = 0;
                 leg_c = 0;
                 mark = ii;
             }
+
+            if(calc_width){
+                strcpy(im->gdes[i].legend, saved_legend);
+            }
         }
 
-        if (im->extra_flags & FULL_SIZE_MODE) {
-            /* now for some backpaddeling. We have to shift up all the
-               legend items into the graph and tell the caller about the
-               space we used up. */
-            long shift_up = leg_y - im->yimg - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 + border * 0.7;
-            for (i = 0; i < im->gdes_c; i++) {
-                im->gdes[i].leg_y -= shift_up;
-            }
-            im->yorigin = im->yorigin - leg_y + im->yimg - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 - border;            
-            *gY = im->yorigin;
-        } else {
-            im->yimg =
-                leg_y - im->text_prop[TEXT_PROP_LEGEND].size * 1.8 +
-                border * 0.6;
+        if(calc_width){
+            im->legendwidth = legendwidth + 2 * border;
+        }
+        else{
+            im->legendheight = leg_y + border * 0.6;
         }
         free(legspace);
     }
@@ -2058,7 +2116,7 @@ double frexp10(
     double    mnt;
     int       iexp;
 
-    iexp = floor(log((double)(fabs(x))) / log(10.0));
+    iexp = floor(log((double)fabs(x)) / log((double)10));
     mnt = x / pow(10.0, iexp);
     if (mnt >= 10.0) {
         iexp++;
@@ -2590,24 +2648,20 @@ void grid_paint(
     /* yaxis unit description */
     if (im->ylegend[0] != '\0'){
         gfx_text(im,
-                 10,
-                 (im->yorigin -
-                  im->ysize / 2),
+                 im->xOriginLegendY+10,
+                 im->yOriginLegendY,
                  im->graph_col[GRC_FONT],
                  im->
                  text_prop[TEXT_PROP_UNIT].
                  font_desc,
                  im->tabwidth,
                  RRDGRAPH_YLEGEND_ANGLE, GFX_H_CENTER, GFX_V_CENTER, im->ylegend);
+
     }
     if (im->second_axis_legend[0] != '\0'){
-            double Xylabel=gfx_get_text_width(im, 0,
-                        im->text_prop[TEXT_PROP_AXIS].font_desc,
-                        im->tabwidth,
-                        "0") * im->unitslength
-                    + im->text_prop[TEXT_PROP_UNIT].size *2;
             gfx_text( im,
-                  im->xorigin+im->xsize+Xylabel+8, (im->yorigin - im->ysize/2),
+                  im->xOriginLegendY2+10, 
+                  im->yOriginLegendY2,
                   im->graph_col[GRC_FONT],
                   im->text_prop[TEXT_PROP_UNIT].font_desc,
                   im->tabwidth, 
@@ -2618,7 +2672,7 @@ void grid_paint(
  
     /* graph title */
     gfx_text(im,
-             im->ximg / 2, 6,
+             im->xOriginTitle, im->yOriginTitle+6,
              im->graph_col[GRC_FONT],
              im->
              text_prop[TEXT_PROP_TITLE].
@@ -2628,7 +2682,8 @@ void grid_paint(
     if (!(im->extra_flags & NO_RRDTOOL_TAG)){
         water_color = im->graph_col[GRC_FONT];
         water_color.alpha = 0.3;
-        gfx_text(im, im->ximg - 4, 5,
+        double xpos = im->legendposition == EAST ? im->xOriginLegendY : im->ximg - 4;
+        gfx_text(im, xpos, 5,
                  water_color,
                  im->
                  text_prop[TEXT_PROP_WATERMARK].
@@ -2637,6 +2692,8 @@ void grid_paint(
     }    
     /* graph watermark */
     if (im->watermark[0] != '\0') {
+        water_color = im->graph_col[GRC_FONT];
+        water_color.alpha = 0.3;
         gfx_text(im,
                  im->ximg / 2, im->yimg - 6,
                  water_color,
@@ -2652,8 +2709,8 @@ void grid_paint(
             if (im->gdes[i].legend[0] == '\0')
                 continue;
             /* im->gdes[i].leg_y is the bottom of the legend */
-            X0 = im->gdes[i].leg_x;
-            Y0 = im->gdes[i].leg_y;
+            X0 = im->xOriginLegend + im->gdes[i].leg_x;
+            Y0 = im->legenddirection == TOP_DOWN ? im->yOriginLegend + im->gdes[i].leg_y : im->yOriginLegend + im->legendheight - im->gdes[i].leg_y;
             gfx_text(im, X0, Y0,
                      im->graph_col[GRC_FONT],
                      im->
@@ -2770,21 +2827,11 @@ int graph_size_location(
     /* The actual size of the image to draw is determined from
      ** several sources.  The size given on the command line is
      ** the graph area but we need more as we have to draw labels
-     ** and other things outside the graph area
+     ** and other things outside the graph area. If the option 
+     ** --full-size-mode is selected the size defines the total 
+     ** image size and the size available for the graph is 
+     ** calculated.
      */
-
-    int       Xvertical = 0, Ytitle =
-        0, Xylabel = 0, Xmain = 0, Ymain =
-        0, Yxlabel = 0, Xspacing = 15, Yspacing = 15, Ywatermark = 4;
-
-    if (im->extra_flags & ONLY_GRAPH) {
-        im->xorigin = 0;
-        im->ximg = im->xsize;
-        im->yimg = im->ysize;
-        im->yorigin = im->ysize;
-        ytr(im, DNAN);
-        return 0;
-    }
 
     /** +---+-----------------------------------+
      ** | y |...............graph title.........|
@@ -2806,8 +2853,35 @@ int graph_size_location(
      ** +---------------------------------------+
      */
 
+    int       Xvertical = 0, Xvertical2 = 0, Ytitle =
+        0, Xylabel = 0, Xmain = 0, Ymain =
+        0, Yxlabel = 0, Xspacing = 15, Yspacing = 15, Ywatermark = 4;
+
+    // no legends and no the shall be plotted it's easy
+    if (im->extra_flags & ONLY_GRAPH) {
+        im->xorigin = 0;
+        im->ximg = im->xsize;
+        im->yimg = im->ysize;
+        im->yorigin = im->ysize;
+        ytr(im, DNAN);
+        return 0;
+    }
+
+    if(im->watermark[0] != '\0') {
+        Ywatermark = im->text_prop[TEXT_PROP_WATERMARK].size * 2;
+    }
+
+    // calculate the width of the left vertical legend
     if (im->ylegend[0] != '\0') {
         Xvertical = im->text_prop[TEXT_PROP_UNIT].size * 2;
+    }
+
+    // calculate the width of the right vertical legend
+    if (im->second_axis_legend[0] != '\0') {
+        Xvertical2 = im->text_prop[TEXT_PROP_UNIT].size * 2;
+    }
+    else{
+        Xvertical2 = Xspacing;
     }
 
     if (im->title[0] != '\0') {
@@ -2818,92 +2892,112 @@ int graph_size_location(
         /* if necessary, reduce the font size of the title until it fits the image width */
         Ytitle = im->text_prop[TEXT_PROP_TITLE].size * 2.6 + 10;
     }
+    else{
+        // we have no title; get a little clearing from the top
+        Ytitle = 1.5 * Yspacing;
+    }
 
     if (elements) {
         if (im->draw_x_grid) {
+            // calculate the height of the horizontal labelling
             Yxlabel = im->text_prop[TEXT_PROP_AXIS].size * 2.5;
         }
         if (im->draw_y_grid || im->forceleftspace) {
+            // calculate the width of the vertical labelling
             Xylabel =
                 gfx_get_text_width(im, 0,
-                                   im->
-                                   text_prop
-                                   [TEXT_PROP_AXIS].
-                                   font_desc,
+                                   im->text_prop[TEXT_PROP_AXIS].font_desc,
                                    im->tabwidth, "0") * im->unitslength;
         }
     }
 
+    // add some space to the labelling
+    Xylabel += Xspacing;
+
+    /* If the legend is printed besides the graph the width has to be
+     ** calculated first. Placing the legend north or south of the 
+     ** graph requires the width calculation first, so the legend is 
+     ** skipped for the moment.
+     */
+    im->legendheight = 0;
+    im->legendwidth = 0;
+    if (!(im->extra_flags & NOLEGEND)) {
+        if(im->legendposition == WEST || im->legendposition == EAST){
+            if (leg_place(im, 1) == -1){
+                return -1;
+            }
+        }
+    }
+
     if (im->extra_flags & FULL_SIZE_MODE) {
+
         /* The actual size of the image to draw has been determined by the user.
          ** The graph area is the space remaining after accounting for the legend,
          ** the watermark, the axis labels, and the title.
          */
-        im->xorigin = 0;
         im->ximg = im->xsize;
         im->yimg = im->ysize;
-        im->yorigin = im->ysize;
         Xmain = im->ximg;
         Ymain = im->yimg;
+
         /* Now calculate the total size.  Insert some spacing where
            desired.  im->xorigin and im->yorigin need to correspond
            with the lower left corner of the main graph area or, if
            this one is not set, the imaginary box surrounding the
            pie chart area. */
         /* Initial size calculation for the main graph area */
-        Xmain = im->ximg - Xylabel - 3 * Xspacing;
 
-        im->xorigin = Xspacing + Xylabel;
-
-        if (Xvertical) {    /* unit description */
-            Xmain -= Xvertical;
-            im->xorigin += Xvertical;
+        Xmain -= Xylabel;// + Xspacing;
+        if((im->legendposition == WEST || im->legendposition == EAST) && !(im->extra_flags & NOLEGEND) ){
+            Xmain -= im->legendwidth;// + Xspacing;
         }
-
-        /* adjust space for second axis */
         if (im->second_axis_scale != 0){
-            Xmain -= Xylabel + Xspacing;
+            Xmain -= Xylabel;
         }
-        if (im->extra_flags & NO_RRDTOOL_TAG){
-            Xmain += Xspacing;
-        }
-        if (im->second_axis_legend[0] != '\0' ) {
-            Xmain -= im->text_prop[TEXT_PROP_UNIT].size * 1.5;
+        if (!(im->extra_flags & NO_RRDTOOL_TAG)){
+            Xmain -= Xspacing;
         }
 
+        Xmain -= Xvertical + Xvertical2;
+
+        /* limit the remaining space to 0 */
+        if(Xmain < 1){
+            Xmain = 1;
+        }
         im->xsize = Xmain;
 
-        xtr(im, 0);
-        /* The vertical size of the image is known in advance.  The main graph area
-         ** (Ymain) and im->yorigin must be set according to the space requirements
-         ** of the legend and the axis labels.
-         */
+        /* Putting the legend north or south, the height can now be calculated */
+        if (!(im->extra_flags & NOLEGEND)) {
+            if(im->legendposition == NORTH || im->legendposition == SOUTH){
+                im->legendwidth = im->ximg;
+                if (leg_place(im, 0) == -1){
+                    return -1;
+                }
+            }
+        }
+
+        if( (im->legendposition == NORTH || im->legendposition == SOUTH)  && !(im->extra_flags & NOLEGEND) ){
+            Ymain -=  Yxlabel + im->legendheight;
+        }
+        else{
+            Ymain -= Yxlabel;
+        }
+        
+        /* reserve space for the title *or* some padding above the graph */
+        Ymain -= Ytitle;
+
+            /* reserve space for padding below the graph */
         if (im->extra_flags & NOLEGEND) {
-            im->yorigin = im->yimg -
-                im->text_prop[TEXT_PROP_AXIS].size * 2.5 - Yspacing;
-            Ymain = im->yorigin;
-        }
-        else {            
-            /* Determine where to place the legends onto the image.
-             ** Set Ymain and adjust im->yorigin to match the space requirements.
-             */
-            if (leg_place(im, &Ymain) == -1)
-                return -1;
+            Ymain -= Yspacing;
         }
 
-
-        /* remove title space *or* some padding above the graph from the main graph area */
-        if (Ytitle) {
-            Ymain -= Ytitle;
-        } else {
-            Ymain -= 1.5 * Yspacing;
-        }
-
-        /* watermark doesn't seem to effect the vertical size of the main graph area, oh well! */
         if (im->watermark[0] != '\0') {
             Ymain -= Ywatermark;
         }
-
+        /* limit the remaining height to 0 */
+        if(Ymain < 1){
+            Ymain = 1;
+        }
         im->ysize = Ymain;
     } else {            /* dimension options -width and -height refer to the dimensions of the main graph area */
 
@@ -2913,94 +3007,171 @@ int graph_size_location(
          ** and other things outside the graph area.
          */
 
-        if (im->ylegend[0] != '\0') {
-            Xvertical = im->text_prop[TEXT_PROP_UNIT].size * 2;
-        }
-
-
-        if (im->title[0] != '\0') {
-            /* The title is placed "inbetween" two text lines so it
-             ** automatically has some vertical spacing.  The horizontal
-             ** spacing is added here, on each side.
-             */
-            /* don't care for the with of the title
-               Xtitle = gfx_get_text_width(im->canvas, 0,
-               im->text_prop[TEXT_PROP_TITLE].font_desc,
-               im->tabwidth,
-               im->title, 0) + 2*Xspacing; */
-            Ytitle = im->text_prop[TEXT_PROP_TITLE].size * 2.6 + 10;
-        }
-
         if (elements) {
-            Xmain = im->xsize;
+            Xmain = im->xsize; // + Xspacing;
             Ymain = im->ysize;
         }
-        /* Now calculate the total size.  Insert some spacing where
-           desired.  im->xorigin and im->yorigin need to correspond
-           with the lower left corner of the main graph area or, if
-           this one is not set, the imaginary box surrounding the
-           pie chart area. */
 
-        /* The legend width cannot yet be determined, as a result we
-         ** have problems adjusting the image to it.  For now, we just
-         ** forget about it at all; the legend will have to fit in the
-         ** size already allocated.
-         */
-        im->ximg = Xylabel + Xmain + 2 * Xspacing;
-
-        if (im->second_axis_scale != 0){
-            im->ximg += Xylabel + Xspacing;
-        }
-        if (im->extra_flags & NO_RRDTOOL_TAG){
-            im->ximg -= Xspacing;
-        }
-        
-        if (Xmain)
+        im->ximg = Xmain + Xylabel;
+        if (!(im->extra_flags & NO_RRDTOOL_TAG)){
             im->ximg += Xspacing;
-        im->xorigin = Xspacing + Xylabel;
-        /* the length of the title should not influence with width of the graph
-           if (Xtitle > im->ximg) im->ximg = Xtitle; */
-        if (Xvertical) {    /* unit description */
-            im->ximg += Xvertical;
-            im->xorigin += Xvertical;
         }
-        if (im->second_axis_legend[0] != '\0' ) {
-            im->ximg += Xvertical;
+
+        if( (im->legendposition == WEST || im->legendposition == EAST) && !(im->extra_flags & NOLEGEND) ){
+            im->ximg += im->legendwidth;// + Xspacing;
+        }
+        if (im->second_axis_scale != 0){
+            im->ximg += Xylabel;
+        }
+
+        im->ximg += Xvertical + Xvertical2;
+
+        if (!(im->extra_flags & NOLEGEND)) {
+            if(im->legendposition == NORTH || im->legendposition == SOUTH){
+                im->legendwidth = im->ximg;
+                if (leg_place(im, 0) == -1){
+                    return -1;
+                }
+            }
         }
       
-        xtr(im, 0);
-        /* The vertical size is interesting... we need to compare
-         ** the sum of {Ytitle, Ymain, Yxlabel, Ylegend, Ywatermark} with 
-         ** Yvertical however we need to know {Ytitle+Ymain+Yxlabel}
-         ** in order to start even thinking about Ylegend or Ywatermark.
-         **
-         ** Do it in three portions: First calculate the inner part,
-         ** then do the legend, then adjust the total height of the img,
-         ** adding space for a watermark if one exists;
-         */
-        /* reserve space for main and/or pie */
         im->yimg = Ymain + Yxlabel;
-        im->yorigin = im->yimg - Yxlabel;
+        if( (im->legendposition == NORTH || im->legendposition == SOUTH)  && !(im->extra_flags & NOLEGEND) ){
+             im->yimg += im->legendheight;
+        }
+        
         /* reserve space for the title *or* some padding above the graph */
         if (Ytitle) {
             im->yimg += Ytitle;
-            im->yorigin += Ytitle;
         } else {
             im->yimg += 1.5 * Yspacing;
-            im->yorigin += 1.5 * Yspacing;
         }
         /* reserve space for padding below the graph */
-        im->yimg += Yspacing;
-        /* Determine where to place the legends onto the image.
-         ** Adjust im->yimg to match the space requirements.
-         */
-        if (leg_place(im, 0) == -1)
-            return -1;
+        if (im->extra_flags & NOLEGEND) {
+            im->yimg += Yspacing;
+        }
+
         if (im->watermark[0] != '\0') {
             im->yimg += Ywatermark;
         }
     }
 
+
+    /* In case of putting the legend in west or east position the first 
+     ** legend calculation might lead to wrong positions if some items 
+     ** are not aligned on the left hand side (e.g. centered) as the 
+     ** legendwidth wight have been increased after the item was placed.
+     ** In this case the positions have to be recalculated.
+     */
+    if (!(im->extra_flags & NOLEGEND)) {
+        if(im->legendposition == WEST || im->legendposition == EAST){
+            if (leg_place(im, 0) == -1){
+                return -1;
+            }
+        }
+    }
+
+    /* After calculating all dimensions
+     ** it is now possible to calculate 
+     ** all offsets.
+     */
+    switch(im->legendposition){
+        case NORTH:
+            im->xOriginTitle   = Xvertical + Xylabel + (im->xsize / 2);
+            im->yOriginTitle   = 0;
+
+            im->xOriginLegend  = 0;
+            im->yOriginLegend  = Ytitle;
+
+            im->xOriginLegendY = 0;
+            im->yOriginLegendY = Ytitle + im->legendheight + (Ymain / 2) + Yxlabel;
+
+            im->xorigin        = Xvertical + Xylabel;
+            im->yorigin        = Ytitle + im->legendheight + Ymain;
+
+            im->xOriginLegendY2 = Xvertical + Xylabel + Xmain;
+            if (im->second_axis_scale != 0){
+                im->xOriginLegendY2 += Xylabel;
+            }
+            im->yOriginLegendY2 = Ytitle + im->legendheight + (Ymain / 2) + Yxlabel;
+
+            break;
+
+        case WEST:
+            im->xOriginTitle   = im->legendwidth + Xvertical + Xylabel + im->xsize / 2;
+            im->yOriginTitle   = 0;
+
+            im->xOriginLegend  = 0;
+            im->yOriginLegend  = Ytitle;
+
+            im->xOriginLegendY = im->legendwidth;
+            im->yOriginLegendY = Ytitle + (Ymain / 2);
+
+            im->xorigin        = im->legendwidth + Xvertical + Xylabel;
+            im->yorigin        = Ytitle + Ymain;
+
+            im->xOriginLegendY2 = im->legendwidth + Xvertical + Xylabel + Xmain;
+            if (im->second_axis_scale != 0){
+                im->xOriginLegendY2 += Xylabel;
+            }
+            im->yOriginLegendY2 = Ytitle + (Ymain / 2);
+
+            break;
+
+        case SOUTH:
+            im->xOriginTitle   = Xvertical + Xylabel + im->xsize / 2;
+            im->yOriginTitle   = 0;
+
+            im->xOriginLegend  = 0;
+            im->yOriginLegend  = Ytitle + Ymain + Yxlabel;
+
+            im->xOriginLegendY = 0;
+            im->yOriginLegendY = Ytitle + (Ymain / 2);
+
+            im->xorigin        = Xvertical + Xylabel;
+            im->yorigin        = Ytitle + Ymain;
+
+            im->xOriginLegendY2 = Xvertical + Xylabel + Xmain;
+            if (im->second_axis_scale != 0){
+                im->xOriginLegendY2 += Xylabel;
+            }
+            im->yOriginLegendY2 = Ytitle + (Ymain / 2);
+
+            break;
+
+        case EAST:
+            im->xOriginTitle   = Xvertical + Xylabel + im->xsize / 2;
+            im->yOriginTitle   = 0;
+
+            im->xOriginLegend  = Xvertical + Xylabel + Xmain + Xvertical2;
+            if (im->second_axis_scale != 0){
+                im->xOriginLegend += Xylabel;
+            }
+            im->yOriginLegend  = Ytitle;
+
+            im->xOriginLegendY = 0;
+            im->yOriginLegendY = Ytitle + (Ymain / 2);
+
+            im->xorigin        = Xvertical + Xylabel;
+            im->yorigin        = Ytitle + Ymain;
+
+            im->xOriginLegendY2 = Xvertical + Xylabel + Xmain;
+            if (im->second_axis_scale != 0){
+                im->xOriginLegendY2 += Xylabel;
+            }
+            im->yOriginLegendY2 = Ytitle + (Ymain / 2);
+
+            if (!(im->extra_flags & NO_RRDTOOL_TAG)){
+                im->xOriginTitle    += Xspacing;
+                im->xOriginLegend   += Xspacing;
+                im->xOriginLegendY  += Xspacing;
+                im->xorigin         += Xspacing;
+                im->xOriginLegendY2 += Xspacing;
+            }
+            break;
+    }
+
+    xtr(im, 0);
     ytr(im, DNAN);
     return 0;
 }
@@ -3011,10 +3182,10 @@ static cairo_status_t cairo_output(
     *data,
     unsigned int length)
 {
-    image_desc_t *im = (image_desc_t*)(closure);
+    image_desc_t *im = (image_desc_t*)closure;
 
     im->rendered_image =
-        (unsigned char*)(realloc(im->rendered_image, im->rendered_image_size + length));
+        (unsigned char*)realloc(im->rendered_image, im->rendered_image_size + length);
     if (im->rendered_image == NULL)
         return CAIRO_STATUS_WRITE_ERROR;
     memcpy(im->rendered_image + im->rendered_image_size, data, length);
@@ -3032,6 +3203,7 @@ int graph_paint(
     graph_desc_t *lastgdes = NULL;
     rrd_infoval_t info;
 
+//    PangoFontMap *font_map = pango_cairo_font_map_get_default();
 
     /* pull the data from the rrd files ... */
     if (data_fetch(im) == -1)
@@ -3048,6 +3220,7 @@ int graph_paint(
     if (i < 0)
         return -1;
 
+    /* if we want and can be lazy ... quit now */
     if (i == 0)
         return 0;
 
@@ -3095,6 +3268,7 @@ int graph_paint(
     grinfo_push(im, sprintf_alloc("value_min"), RD_I_VAL, info);
     info.u_val = im->maxval;
     grinfo_push(im, sprintf_alloc("value_max"), RD_I_VAL, info);
+
 
     if (!calc_horizontal_grid(im))
         return -1;
@@ -3632,14 +3806,14 @@ int rrd_graph(
         if (strcmp(walker->key, "image_info") == 0) {
             prlines++;
             if (((*prdata) =
-                 (char**)(rrd_realloc((*prdata),
-                             (prlines + 1) * sizeof(char *)))) == NULL) {
+                 (char**)rrd_realloc((*prdata),
+                             (prlines + 1) * sizeof(char *))) == NULL) {
                 rrd_set_error("realloc prdata");
                 return 0;
             }
             /* imginfo goes to position 0 in the prdata array */
-            (*prdata)[prlines - 1] = (char*)(malloc((strlen(walker->value.u_str)
-                                             + 2) * sizeof(char)));
+            (*prdata)[prlines - 1] = (char*)malloc((strlen(walker->value.u_str)
+                                             + 2) * sizeof(char));
             strcpy((*prdata)[prlines - 1], walker->value.u_str);
             (*prdata)[prlines] = NULL;
         }
@@ -3663,18 +3837,21 @@ int rrd_graph(
         } else if (strncmp(walker->key, "print", 5) == 0) { /* keys are prdate[0..] */
             prlines++;
             if (((*prdata) =
-                 (char**)(rrd_realloc((*prdata),
-                             (prlines + 1) * sizeof(char *)))) == NULL) {
+                 (char**)rrd_realloc((*prdata),
+                             (prlines + 1) * sizeof(char *))) == NULL) {
                 rrd_set_error("realloc prdata");
                 return 0;
             }
-            (*prdata)[prlines - 1] = (char*)(malloc((strlen(walker->value.u_str)
-                                             + 2) * sizeof(char)));
+            (*prdata)[prlines - 1] = (char*)malloc((strlen(walker->value.u_str)
+                                             + 2) * sizeof(char));
             (*prdata)[prlines] = NULL;
             strcpy((*prdata)[prlines - 1], walker->value.u_str);
         } else if (strcmp(walker->key, "image") == 0) {
-            fwrite(walker->value.u_blo.ptr, walker->value.u_blo.size, 1,
-                   (stream ? stream : stdout));
+            if ( fwrite(walker->value.u_blo.ptr, walker->value.u_blo.size, 1,
+                   (stream ? stream : stdout)) == 0 && ferror(stream ? stream : stdout)){
+                rrd_set_error("writing image");
+                return 0;
+            }
         }
         /* skip anything else */
         walker = walker->next;
@@ -3810,6 +3987,7 @@ void rrd_graph_init(
 #endif
 #endif
     im->base = 1000;
+    im->daemon_addr = NULL;
     im->draw_x_grid = 1;
     im->draw_y_grid = 1;
     im->extra_flags = 0;
@@ -3826,6 +4004,10 @@ void rrd_graph_init(
     im->imgformat = IF_PNG;
     im->imginfo = NULL;
     im->lazy = 0;
+    im->legenddirection = TOP_DOWN;
+    im->legendheight = 0;
+    im->legendposition = SOUTH;
+    im->legendwidth = 0;
     im->logarithmic = 0;
     im->maxval = DNAN;
     im->minval = 0;
@@ -3847,6 +4029,10 @@ void rrd_graph_init(
     im->ximg = 0;
     im->xlab_user.minsec = -1;
     im->xorigin = 0;
+    im->xOriginLegend = 0;
+    im->xOriginLegendY = 0;
+    im->xOriginLegendY2 = 0;
+    im->xOriginTitle = 0;
     im->xsize = 400;
     im->ygridstep = DNAN;
     im->yimg = 0;
@@ -3856,6 +4042,10 @@ void rrd_graph_init(
     im->second_axis_legend[0] = '\0';
     im->second_axis_format[0] = '\0'; 
     im->yorigin = 0;
+    im->yOriginLegend = 0;
+    im->yOriginLegendY = 0;
+    im->yOriginLegendY2 = 0;
+    im->yOriginTitle = 0;
     im->ysize = 100;
     im->zoom = 1;
 
@@ -3940,6 +4130,8 @@ void rrd_graph_options(
         { "lazy",               no_argument,       0, 'z'},
         { "zoom",               required_argument, 0, 'm'},
         { "no-legend",          no_argument,       0, 'g'},
+        { "legend-position",    required_argument, 0, 1005},
+        { "legend-direction",   required_argument, 0, 1006},
         { "force-rules-legend", no_argument,       0, 'F'},
         { "only-graph",         no_argument,       0, 'j'},
         { "alt-y-grid",         no_argument,       0, 'Y'},
@@ -3964,6 +4156,7 @@ void rrd_graph_options(
         { "watermark",          required_argument, 0, 'W'},
         { "alt-y-mrtg",         no_argument,       0, 1000},    /* this has no effect it is just here to save old apps from crashing when they use it */
         { "pango-markup",       no_argument,       0, 'P'},
+        { "daemon",             required_argument, 0, 'd'},
         {  0, 0, 0, 0}
 };
 /* *INDENT-ON* */
@@ -3978,7 +4171,7 @@ void rrd_graph_options(
         int       col_start, col_end;
 
         opt = getopt_long(argc, argv,
-                          "s:e:x:y:v:w:h:D:iu:l:rb:oc:n:m:t:f:a:I:zgjFYAMEX:L:S:T:NR:B:W:kP",
+                          "s:e:x:y:v:w:h:D:iu:l:rb:oc:n:m:t:f:a:I:zgjFYAMEX:L:S:T:NR:B:W:kPd:",
                           long_options, &option_index);
         if (opt == EOF)
             break;
@@ -4003,6 +4196,30 @@ void rrd_graph_options(
             break;
         case 'g':
             im->extra_flags |= NOLEGEND;
+            break;
+        case 1005:
+            if (strcmp(optarg, "north") == 0) {
+                im->legendposition = NORTH;
+            } else if (strcmp(optarg, "west") == 0) {
+                im->legendposition = WEST;
+            } else if (strcmp(optarg, "south") == 0) {
+                im->legendposition = SOUTH;
+            } else if (strcmp(optarg, "east") == 0) {
+                im->legendposition = EAST;
+            } else {
+                rrd_set_error("unknown legend-position '%s'", optarg);
+                return;
+            }
+            break;
+        case 1006:
+            if (strcmp(optarg, "topdown") == 0) {
+                im->legenddirection = TOP_DOWN;
+            } else if (strcmp(optarg, "bottomup") == 0) {
+                im->legenddirection = BOTTOM_UP;
+            } else {
+                rrd_set_error("unknown legend-position '%s'", optarg);
+                return;
+            }
             break;
         case 'F':
             im->extra_flags |= FORCE_RULES_LEGEND;
@@ -4350,6 +4567,24 @@ void rrd_graph_options(
             strncpy(im->watermark, optarg, 100);
             im->watermark[99] = '\0';
             break;
+        case 'd':
+        {
+            if (im->daemon_addr != NULL)
+            {
+                rrd_set_error ("You cannot specify --daemon "
+                        "more than once.");
+                return;
+            }
+
+            im->daemon_addr = strdup(optarg);
+            if (im->daemon_addr == NULL)
+            {
+              rrd_set_error("strdup failed");
+              return;
+            }
+
+            break;
+        }
         case '?':
             if (optopt != 0)
                 rrd_set_error("unknown option '%c'", optopt);
@@ -4357,6 +4592,11 @@ void rrd_graph_options(
                 rrd_set_error("unknown option '%s'", argv[optind - 1]);
             return;
         }
+    } /* while (1) */
+
+    {   /* try to connect to rrdcached */
+        int status = rrdc_connect(im->daemon_addr);
+        if (status != 0) return;
     }
     
     pango_cairo_context_set_font_options(pango_layout_get_context(im->layout), im->font_options);
@@ -4524,6 +4764,8 @@ int vdef_parse(
     }
     if (!strcmp("PERCENT", func))
         gdes->vf.op = VDEF_PERCENT;
+    else if (!strcmp("PERCENTNAN", func))
+        gdes->vf.op = VDEF_PERCENTNAN;
     else if (!strcmp("MAXIMUM", func))
         gdes->vf.op = VDEF_MAXIMUM;
     else if (!strcmp("AVERAGE", func))
@@ -4551,6 +4793,7 @@ int vdef_parse(
     };
     switch (gdes->vf.op) {
     case VDEF_PERCENT:
+    case VDEF_PERCENTNAN:
         if (isnan(param)) { /* no parameter given */
             rrd_set_error
                 ("Function '%s' needs parameter in VDEF '%s'\n",
@@ -4616,7 +4859,7 @@ int vdef_calc(
     case VDEF_PERCENT:{
         rrd_value_t *array;
         int       field;
-        if ((array = (rrd_value_t*)(malloc(steps * sizeof(double)))) == NULL) {
+        if ((array = (rrd_value_t*)malloc(steps * sizeof(double))) == NULL) {
             rrd_set_error("malloc VDEV_PERCENT");
             return -1;
         }
@@ -4633,6 +4876,34 @@ int vdef_calc(
             printf("DEBUG: %3li:%10.2f %c\n",
                    step, array[step], step == field ? '*' : ' ');
 #endif
+    }
+        break;
+    case VDEF_PERCENTNAN:{
+        rrd_value_t *array;
+        int       field;
+       /* count number of "valid" values */
+       int nancount=0;
+       for (step = 0; step < steps; step++) {
+         if (!isnan(data[step * src->ds_cnt])) { nancount++; }
+       }
+       /* and allocate it */
+        if ((array = (rrd_value_t*)malloc(nancount * sizeof(double))) == NULL) {
+            rrd_set_error("malloc VDEV_PERCENT");
+            return -1;
+        }
+       /* and fill it in */
+       field=0;
+        for (step = 0; step < steps; step++) {
+           if (!isnan(data[step * src->ds_cnt])) {
+                array[field] = data[step * src->ds_cnt];
+               field++;
+            }
+        }
+        qsort(array, nancount, sizeof(double), vdef_percent_compar);
+        field = (nancount - 1) * dst->vf.param / 100;
+        dst->vf.val = array[field];
+        dst->vf.when = 0;   /* no time component */
+        free(array);
     }
         break;
     case VDEF_MAXIMUM:

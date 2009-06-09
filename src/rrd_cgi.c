@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_cgi.c  RRD Web Page Generator
  *****************************************************************************/
@@ -374,7 +374,7 @@ static void calfree(
         if (calcpr) {
             free(calcpr);
         }
-        calcpr=NULL;
+        calcpr = NULL;
     }
 }
 
@@ -954,7 +954,6 @@ char     *drawgraph(
                         DS_NAM_SIZE) * sizeof(char));
             sprintf(err, "[ERROR: %s]", rrd_get_error());
             rrd_clear_error();
-            calfree();
             return err;
         }
     }
@@ -1388,7 +1387,8 @@ s_var   **rrdcgiReadVariables(
             length = atoi(ip);
             if ((line = (char *) malloc(length + 2)) == NULL)
                 return NULL;
-            fgets(line, length + 1, stdin);
+            if (fgets(line, length + 1, stdin) == NULL)
+                return NULL;
         } else
             return NULL;
     } else if (cp && !strcmp(cp, "GET")) {

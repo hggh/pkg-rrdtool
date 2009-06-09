@@ -30,9 +30,8 @@
 #define _NO_PROTO
 #endif
 
-#ifndef WIN32
 
-#if !defined (__STDC__) || !__STDC__
+#if !defined WIN32 && (!defined (__STDC__) || !__STDC__)
 /* This is a separate conditional since some stdc systems
    reject `defined (const)'.  */
 #ifndef const
@@ -40,7 +39,6 @@
 #endif
 #endif
 
-#endif // WIN32
 
 #ifdef HAVE_CONFIG_H
 #include "../rrd_config.h"
@@ -227,15 +225,7 @@ static char *posixly_correct;
 char     *getenv(
     );
 
-#ifdef WIN32
 static char* my_index(const char* str, int chr)
-#else // WIN32
-static char *my_index(
-    str,
-    chr)
-    const char *str;
-    int chr;
-#endif // wIN32
 {
     while (*str) {
         if (*str == chr)
@@ -312,13 +302,7 @@ static void exchange(
     char **);
 #endif
 
-#ifdef WIN32
 static void exchange(char** argv)
-#else // WIN32
-static void exchange(
-    argv)
-    char    **argv;
-#endif // WIN32
 {
     int       bottom = first_nonopt;
     int       middle = last_nonopt;
@@ -374,20 +358,9 @@ static const char *_getopt_initialize(
     char *const *,
     const char *);
 #endif
-
-#ifdef WIN32
 static const char* _getopt_initialize(int argc,
                                       char** argv,
                                       const char* optstring)
-#else // WIN32
-static const char *_getopt_initialize(
-    argc,
-    argv,
-    optstring)
-    int argc;
-    char     *const *argv;
-    const char *optstring;
-#endif // WIN32
 {
     /* Start processing options with ARGV-element 1 (since ARGV-element 0
        is the program name); the sequence of previously skipped
@@ -490,28 +463,12 @@ static const char *_getopt_initialize(
    If LONG_ONLY is nonzero, '-' as well as '--' can introduce
    long-named options.  */
 
-#ifdef WIN32
 int _getopt_internal(int argc,
                      char** argv,
                      const char *optstring,
                      const struct option *longopts,
                      int* longind,
                      int long_only)
-#else // WIN32
-int _getopt_internal(
-    argc,
-    argv,
-    optstring,
-    longopts,
-    longind,
-    long_only)
-    int argc;
-    char     *const *argv;
-    const char *optstring;
-    const struct option *longopts;
-    int      *longind;
-    int long_only;
-#endif // WIN32
 {
     optarg = NULL;
 
@@ -911,20 +868,10 @@ int _getopt_internal(
     }
 }
 
-#ifdef WIN32
 int getopt(
     int argc,
     char** argv,
     const char* optstring)
-#else // WIN32
-int getopt(
-    argc,
-    argv,
-    optstring)
-    int argc;
-    char     *const *argv;
-    const char *optstring;
-#endif // WIN32
 {
     return _getopt_internal(argc, argv, optstring,
                             (const struct option *) 0, (int *) 0, 0);

@@ -1,9 +1,10 @@
-/* $Id: main.c 1791 2009-04-14 13:55:29Z oetiker $
+/* $Id: main.c 1855 2009-06-07 20:48:39Z oetiker $
  * Substantial penalty for early withdrawal.
  */
 
 #include <unistd.h>
 #include <ruby.h>
+#include <math.h>
 #include "../../src/rrd_tool.h"
 
 typedef struct string_arr_t {
@@ -16,6 +17,11 @@ VALUE     rb_eRRDError;
 
 typedef int (
     *RRDFUNC) (
+    int argc,
+    char **argv);
+
+typedef rrd_info_t *(
+    *RRDINFOFUNC) (
     int argc,
     char **argv);
 
@@ -138,11 +144,18 @@ VALUE rb_rrd_update(
     return rrd_call(rrd_update, args);
 }
 
+VALUE rb_rrd_flushcached(
+    VALUE self,
+    VALUE args)
+{
+    return rrd_call(rrd_flushcached, args);
+}
+
 
 /* Calls Returning Data via the Info Interface */
 
 VALUE rb_rrd_infocall(
-    RRDFUNC func,
+    RRDINFOFUNC func,
     VALUE args)
 {
     string_arr a;
@@ -173,9 +186,12 @@ VALUE rb_rrd_infocall(
         case RD_I_STR:
             rb_hash_aset(result, key, rb_str_new2(data->value.u_str));
             break;
+        case RD_I_INT:
+            rb_hash_aset(result, key, INT2FIX(data->value.u_int));
+            break;
         case RD_I_BLO:
             rb_hash_aset(result, key,
-                         rb_str_new(data->value.u_blo.ptr,
+                         rb_str_new((char *)data->value.u_blo.ptr,
                                     data->value.u_blo.size));
             break;
         }
@@ -318,6 +334,7 @@ void Init_RRD(
     rb_define_module_function(mRRD, "restore", rb_rrd_restore, -2);
     rb_define_module_function(mRRD, "tune", rb_rrd_tune, -2);
     rb_define_module_function(mRRD, "update", rb_rrd_update, -2);
+    rb_define_module_function(mRRD, "flushcached", rb_rrd_flushcached, -2);
     rb_define_module_function(mRRD, "info", rb_rrd_info, -2);
     rb_define_module_function(mRRD, "updatev", rb_rrd_updatev, -2);
     rb_define_module_function(mRRD, "graphv", rb_rrd_graphv, -2);

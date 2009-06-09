@@ -11,10 +11,6 @@
 #include <cairo-ps.h>
 #include <pango/pangocairo.h>
 
-#ifdef HAVE_LIBGEN_H
-/* for basename */
-#  include <libgen.h>
-#endif
 
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
@@ -70,6 +66,7 @@ enum vdef_op_en {
         , VDEF_LSLSLOPE /* least squares line slope */
         , VDEF_LSLINT   /* least squares line y_intercept */
         , VDEF_LSLCORREL    /* least squares line correlation coefficient */
+        , VDEF_PERCENTNAN  /* Nth percentile ignoring NAN*/
 };
 enum text_prop_en { 
     TEXT_PROP_DEFAULT = 0,  /* default settings */
@@ -81,6 +78,8 @@ enum text_prop_en {
     TEXT_PROP_LAST
 };
 
+enum legend_pos{ NORTH = 0, WEST, SOUTH, EAST };
+enum legend_direction { TOP_DOWN = 0, BOTTOM_UP };
 
 enum gfx_if_en { IF_PNG = 0, IF_SVG, IF_EPS, IF_PDF };
 enum gfx_en { GFX_LINE = 0, GFX_AREA, GFX_TEXT };
@@ -227,10 +226,13 @@ typedef struct image_desc_t {
     char     *imginfo;  /* construct an <IMG ... tag and return 
                            as first retval */
     enum gfx_if_en imgformat;   /* image format */
+    char     *daemon_addr;  /* rrdcached connection string */
     int       lazy;     /* only update the image if there is
                            reasonable probablility that the
                            existing one is out of date */
     int       slopemode;    /* connect the dots of the curve directly, not using a stair */
+    enum legend_pos legendposition; /* the position of the legend: north, west, south or east */
+    enum legend_direction legenddirection; /* The direction of the legend topdown or bottomup */
     int       logarithmic;  /* scale the yaxis logarithmic */
     double    force_scale_min;  /* Force a scale--min */
     double    force_scale_max;  /* Force a scale--max */
@@ -238,7 +240,12 @@ typedef struct image_desc_t {
     /* status information */
     int       with_markup;
     long      xorigin, yorigin; /* where is (0,0) of the graph */
+    long      xOriginTitle, yOriginTitle; /* where is the origin of the title */
+    long      xOriginLegendY, yOriginLegendY; /* where is the origin of the y legend */
+    long      xOriginLegendY2, yOriginLegendY2; /* where is the origin of the second y legend */
+    long      xOriginLegend, yOriginLegend; /* where is the origin of the legend */
     long      ximg, yimg;   /* total size of the image */
+    long      legendwidth, legendheight; /* the calculated height and width of the legend */
     size_t    rendered_image_size;
     double    zoom;
     double    magfact;  /* numerical magnitude */
@@ -329,7 +336,7 @@ int       print_calc(
     image_desc_t *);
 int       leg_place(
     image_desc_t *,
-    int *);
+    int);
 int       calc_horizontal_grid(
     image_desc_t *);
 int       draw_horizontal_grid(

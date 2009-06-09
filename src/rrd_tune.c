@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * change header parameters of an rrd
  *****************************************************************************
- * $Id: rrd_tune.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id: rrd_tune.c 1677 2008-11-18 17:19:17Z oetiker $
  * $Log$
  * Revision 1.6  2004/05/26 22:11:12  oetiker
  * reduce compiler warnings. Many small fixes. -- Mike Slifcak <slif@bellsouth.net>
@@ -39,14 +39,12 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
+#include <locale.h>
+
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
 #include "rrd_hw.h"
-#include <locale.h>
-
-#ifdef WIN32
-#include <stdlib.h>
-#endif
 
 int       set_hwarg(
     rrd_t *rrd,
@@ -102,6 +100,7 @@ int rrd_tune(
     opterr = 0;         /* initialize getopt */
 
 
+    rrd_init(&rrd);
     rrd_file = rrd_open(argv[1], &rrd, RRD_READWRITE);
     if (rrd_file == NULL) {
         rrd_free(&rrd);

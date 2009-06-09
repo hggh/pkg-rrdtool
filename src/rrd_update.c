@@ -1,10 +1,10 @@
-
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
+ *                Copyright by Florian Forster, 2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id: rrd_update.c 1836 2009-06-01 13:58:58Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -17,15 +17,13 @@
 
 #include <locale.h>
 
-#ifdef WIN32
-#include <stdlib.h>
-#endif
-
 #include "rrd_hw.h"
 #include "rrd_rpncalc.h"
 
 #include "rrd_is_thread_safe.h"
 #include "unused.h"
+
+#include "rrd_client.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
 /*
@@ -284,7 +282,7 @@ static int write_changes_to_disk(
  * normalize time as returned by gettimeofday. usec part must
  * be always >= 0
  */
-static inline void normalize_time(
+static void normalize_time(
     struct timeval *t)
 {
     if (t->tv_usec < 0) {
@@ -297,7 +295,7 @@ static inline void normalize_time(
  * Sets current_time and current_time_usec based on the current time.
  * current_time_usec is set to 0 if the version number is 1 or 2.
  */
-static inline void initialize_time(
+static void initialize_time(
     time_t *current_time,
     unsigned long *current_time_usec,
     int version)
@@ -323,6 +321,7 @@ rrd_info_t *rrd_update_v(
     char     *tmplt = NULL;
     rrd_info_t *result = NULL;
     rrd_infoval_t rc;
+    char *opt_daemon = NULL;
     struct option long_options[] = {
         {"template", required_argument, 0, 't'},
         {0, 0, 0, 0}
@@ -352,6 +351,15 @@ rrd_info_t *rrd_update_v(
         }
     }
 
+    opt_daemon = getenv (ENV_RRDCACHED_ADDRESS);
+    if (opt_daemon != NULL) {
+        rrd_set_error ("The \"%s\" environment variable is defined, "
+                "but \"%s\" cannot work with rrdcached. Either unset "
+                "the environment variable or use \"update\" instead.",
+                ENV_RRDCACHED_ADDRESS, argv[0]);
+        goto end_tag;
+    }
+
     /* need at least 2 arguments: filename, data. */
     if (argc - optind < 2) {
         rrd_set_error("Not enough arguments");
@@ -373,18 +381,20 @@ int rrd_update(
 {
     struct option long_options[] = {
         {"template", required_argument, 0, 't'},
+        {"daemon",   required_argument, 0, 'd'},
         {0, 0, 0, 0}
     };
     int       option_index = 0;
     int       opt;
     char     *tmplt = NULL;
     int       rc = -1;
+    char     *opt_daemon = NULL;
 
     optind = 0;
     opterr = 0;         /* initialize getopt */
 
     while (1) {
-        opt = getopt_long(argc, argv, "t:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "t:d:", long_options, &option_index);
 
         if (opt == EOF)
             break;
@@ -392,6 +402,17 @@ int rrd_update(
         switch (opt) {
         case 't':
             tmplt = strdup(optarg);
+            break;
+
+        case 'd':
+            if (opt_daemon != NULL)
+                free (opt_daemon);
+            opt_daemon = strdup (optarg);
+            if (opt_daemon == NULL)
+            {
+                rrd_set_error("strdup failed.");
+                goto out;
+            }
             break;
 
         case '?':
@@ -406,10 +427,44 @@ int rrd_update(
         goto out;
     }
 
-    rc = rrd_update_r(argv[optind], tmplt,
-                      argc - optind - 1, (const char **) (argv + optind + 1));
+    {   /* try to connect to rrdcached */
+        int status = rrdc_connect(opt_daemon);
+        if (status != 0) return status;
+    }
+
+    if ((tmplt != NULL) && rrdc_is_connected(opt_daemon))
+    {
+        rrd_set_error("The caching daemon cannot be used together with "
+                "templates yet.");
+        goto out;
+    }
+
+    if (! rrdc_is_connected(opt_daemon))
+    {
+      rc = rrd_update_r(argv[optind], tmplt,
+                        argc - optind - 1, (const char **) (argv + optind + 1));
+    }
+    else /* we are connected */
+    {
+        rc = rrdc_update (argv[optind], /* file */
+                          argc - optind - 1, /* values_num */
+                          (const char *const *) (argv + optind + 1)); /* values */
+        if (rc > 0)
+            rrd_set_error("Failed sending the values to rrdcached: %s",
+                          rrd_strerror (rc));
+    }
+
   out:
-    free(tmplt);
+    if (tmplt != NULL)
+    {
+        free(tmplt);
+        tmplt = NULL;
+    }
+    if (opt_daemon != NULL)
+    {
+        free (opt_daemon);
+        opt_daemon = NULL;
+    }
     return rc;
 }
 
@@ -463,6 +518,7 @@ int _rrd_update(
         goto err_out;
     }
 
+    rrd_init(&rrd);
     if ((rrd_file = rrd_open(filename, &rrd, RRD_READWRITE)) == NULL) {
         goto err_free;
     }
@@ -558,41 +614,6 @@ int _rrd_update(
     rrd_free(&rrd);
   err_out:
     return -1;
-}
-
-/*
- * get exclusive lock to whole file.
- * lock gets removed when we close the file
- *
- * returns 0 on success
- */
-int rrd_lock(
-    rrd_file_t *file)
-{
-    int       rcstat;
-
-    {
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
-        struct _stat st;
-
-        if (_fstat(file->fd, &st) == 0) {
-            rcstat = _locking(file->fd, _LK_NBLCK, st.st_size);
-        } else {
-            rcstat = -1;
-        }
-#else
-        struct flock lock;
-
-        lock.l_type = F_WRLCK;  /* exclusive write lock */
-        lock.l_len = 0; /* whole file */
-        lock.l_start = 0;   /* start of file */
-        lock.l_whence = SEEK_SET;   /* end of file */
-
-        rcstat = fcntl(file->fd, F_SETLK, &lock);
-#endif
-    }
-
-    return (rcstat);
 }
 
 /*
@@ -943,8 +964,19 @@ static int get_time_from_reading(
         *current_time_usec = tmp_time.tv_usec;
     } else {
         old_locale = setlocale(LC_NUMERIC, "C");
+        errno = 0;
         tmp = strtod(updvals[0], 0);
+        if (errno > 0) {
+            rrd_set_error("converting '%s' to float: %s",
+                updvals[0], rrd_strerror(errno));
+            return -1;
+        };
         setlocale(LC_NUMERIC, old_locale);
+        if (tmp < 0.0){
+            gettimeofday(&tmp_time, 0);
+            tmp = (double)tmp_time.tv_sec + (double)tmp_time.tv_usec * 1e-6f + tmp;
+        }
+
         *current_time = floor(tmp);
         *current_time_usec = (long) ((tmp - (double) *current_time) * 1e6f);
     }
@@ -1039,12 +1071,12 @@ static int update_pdp_prep(
                 old_locale = setlocale(LC_NUMERIC, "C");
                 errno = 0;
                 pdp_new[ds_idx] = strtod(updvals[ds_idx + 1], &endptr);
-                setlocale(LC_NUMERIC, old_locale);
                 if (errno > 0) {
                     rrd_set_error("converting '%s' to float: %s",
                                   updvals[ds_idx + 1], rrd_strerror(errno));
                     return -1;
                 };
+                setlocale(LC_NUMERIC, old_locale);
                 if (endptr[0] != '\0') {
                     rrd_set_error
                         ("conversion of '%s' to float not complete: tail '%s'",
@@ -1054,16 +1086,16 @@ static int update_pdp_prep(
                 rate = pdp_new[ds_idx] / interval;
                 break;
             case DST_GAUGE:
-                errno = 0;
                 old_locale = setlocale(LC_NUMERIC, "C");
+                errno = 0;
                 pdp_new[ds_idx] =
                     strtod(updvals[ds_idx + 1], &endptr) * interval;
-                setlocale(LC_NUMERIC, old_locale);
                 if (errno) {
                     rrd_set_error("converting '%s' to float: %s",
                                   updvals[ds_idx + 1], rrd_strerror(errno));
                     return -1;
                 };
+                setlocale(LC_NUMERIC, old_locale);
                 if (endptr[0] != '\0') {
                     rrd_set_error
                         ("conversion of '%s' to float not complete: tail '%s'",
@@ -1500,7 +1532,7 @@ static int update_cdp_prep(
             if (elapsed_pdp_st > 2) {
                 reset_cdp(rrd, elapsed_pdp_st, pdp_temp, last_seasonal_coef,
                           seasonal_coef, rra_idx, ds_idx, cdp_idx,
-                          (enum cf_en)current_cf);
+                          current_cf);
             }
         }
 
@@ -1869,7 +1901,7 @@ static int write_to_rras(
                  scratch_idx = CDP_secondary_val,
                  step_subtract = 2) {
 
-            off_t rra_pos_new;
+            size_t rra_pos_new;
 #ifdef DEBUG
             fprintf(stderr, "  -- RRA Preseek %ld\n", rrd_file->pos);
 #endif
@@ -1882,7 +1914,7 @@ static int write_to_rras(
               + ds_cnt * rra_ptr->cur_row * sizeof(rrd_value_t);
 
             /* re-seek if the position is wrong or we wrapped around */
-            if (rra_pos_new != rrd_file->pos) {
+            if ((size_t)rra_pos_new != rrd_file->pos) {
                 if (rrd_seek(rrd_file, rra_pos_new, SEEK_SET) != 0) {
                     rrd_set_error("seek error in rrd");
                     return -1;
@@ -1906,6 +1938,8 @@ static int write_to_rras(
                 (rrd_file, rrd, rra_idx, scratch_idx,
                  pcdp_summary, rra_time) == -1)
                 return -1;
+
+            rrd_notify_row(rrd_file, rra_idx, rra_pos_new, rra_time);
         }
 
         rra_start += rra_def->row_cnt * ds_cnt * sizeof(rrd_value_t);
@@ -1943,12 +1977,14 @@ static int write_RRA_row(
             /* append info to the return hash */
             *pcdp_summary = rrd_info_push(*pcdp_summary,
                                           sprintf_alloc
-                                          ("[%lli]RRA[%s][%lu]DS[%s]", (long long)rra_time,
+                                          ("[%lli]RRA[%s][%lu]DS[%s]", 
+                                           (long long)rra_time,
                                            rrd->rra_def[rra_idx].cf_nam,
                                            rrd->rra_def[rra_idx].pdp_cnt,
                                            rrd->ds_def[ds_idx].ds_nam),
-                                          RD_I_VAL, iv);
+                                           RD_I_VAL, iv);
         }
+        errno = 0;
         if (rrd_write(rrd_file,
                       &(rrd->cdp_prep[cdp_idx].scratch[CDP_scratch_idx].
                         u_val), sizeof(rrd_value_t)) != sizeof(rrd_value_t)) {

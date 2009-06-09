@@ -28,9 +28,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
-#define NUMVERS 1.3040
+#define NUMVERS 1.3020
 #define PACKAGE_NAME "rrdtool"
-#define PACKAGE_VERSION "1.3.4"
+#define PACKAGE_VERSION "1.3.2"
 #define PACKAGE_STRING PACKAGE_NAME " " PACKAGE_VERSION
 
 #define isinf(a) (_fpclass(a) == _FPCLASS_NINF || _fpclass(a) == _FPCLASS_PINF)

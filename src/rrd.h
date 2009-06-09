@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id: rrd.h 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id: rrd.h 1812 2009-05-26 07:13:52Z oetiker $
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...
@@ -57,14 +57,13 @@ extern    "C" {
 #ifndef WIN32
 #include <unistd.h>     /* for off_t */
 #else
-#include <string.h>
-typedef size_t ssize_t;
-typedef long off_t;
+	typedef size_t ssize_t;
+	typedef long off_t;
 #endif 
 
 #include <time.h>
 #include <stdio.h>      /* for FILE */
-
+#include <string.h>
 
 /* Formerly rrd_nan_inf.h */
 #ifndef DNAN
@@ -87,12 +86,21 @@ typedef long off_t;
 
 /* information about an rrd file */
     typedef struct rrd_file_t {
-        int       fd;   /* file descriptor if this rrd file */
-        char     *file_start;   /* start address of an open rrd file */
-        off_t     header_len;   /* length of the header of this rrd file */
-        off_t     file_len; /* total size of the rrd file */
-        off_t     pos;  /* current pos in file */
+        size_t     header_len;   /* length of the header of this rrd file */
+        size_t     file_len; /* total size of the rrd file */
+        size_t     pos;  /* current pos in file */
+        void      *pvt;
     } rrd_file_t;
+
+/* information used for the conventional file access methods */
+    typedef struct rrd_simple_file_t {
+        int       fd;  /* file descriptor of this rrd file */
+#ifdef HAVE_MMAP
+        char     *file_start;   /* start address of an open rrd file */
+        int       mm_prot;
+        int       mm_flags;
+#endif
+    } rrd_simple_file_t;
 
 /* rrd info interface */
     typedef struct rrd_blob_t {
@@ -179,13 +187,7 @@ typedef long off_t;
     time_t    rrd_last(
     int,
     char **);
-    int       rrd_lastupdate(
-    int argc,
-    char **argv,
-    time_t *last_update,
-    unsigned long *ds_cnt,
-    char ***ds_namv,
-    char ***last_ds);
+    int rrd_lastupdate(int argc, char **argv);
     time_t    rrd_first(
     int,
     char **);
@@ -206,6 +208,7 @@ typedef long off_t;
     unsigned long *,
     char ***,
     rrd_value_t **);
+    int       rrd_flushcached (int argc, char **argv);
 
     void      rrd_freemem(
     void *mem);
@@ -217,6 +220,8 @@ typedef long off_t;
     time_t last_up,
     int argc,
     const char **argv);
+    rrd_info_t *rrd_info_r(
+    char *);
 /* NOTE: rrd_update_r are only thread-safe if no at-style time
    specifications get used!!! */
 
@@ -225,20 +230,24 @@ typedef long off_t;
     const char *_template,
     int argc,
     const char **argv);
-    int       rrd_fetch_r(
-    const char *filename,
-    const char *cf,
-    time_t *start,
-    time_t *end,
-    unsigned long *step,
-    unsigned long *ds_cnt,
-    char ***ds_namv,
-    rrd_value_t **data);
+    int rrd_fetch_r (
+            const char *filename,
+            const char *cf,
+            time_t *start,
+            time_t *end,
+            unsigned long *step,
+            unsigned long *ds_cnt,
+            char ***ds_namv,
+            rrd_value_t **data);
     int       rrd_dump_r(
     const char *filename,
     char *outname);
-    time_t    rrd_last_r(
-    const char *filename);
+    time_t    rrd_last_r (const char *filename);
+    int rrd_lastupdate_r (const char *filename,
+            time_t *ret_last_update,
+            unsigned long *ret_ds_count,
+            char ***ret_ds_names,
+            char ***ret_last_ds);
     time_t    rrd_first_r(
     const char *filename,
     int rraindex);
@@ -269,14 +278,14 @@ typedef long off_t;
     } rrd_context_t;
 
 /* returns the current per-thread rrd_context */
-    rrd_context_t *rrd_get_context(
-    void);
+    rrd_context_t *rrd_get_context(void);
 
 #ifdef WIN32
-rrd_context_t *rrd_force_new_context(void);
+/* this was added by the win32 porters Christof.Wegmann@exitgames.com */
+    rrd_context_t *rrd_force_new_context(void);
 #endif
 
-    int       rrd_proc_start_end(
+int       rrd_proc_start_end(
     rrd_time_value_t *,
     rrd_time_value_t *,
     time_t *,
@@ -309,6 +318,14 @@ rrd_context_t *rrd_force_new_context(void);
 /* void   rrd_clear_error_r(rrd_context_t *); */
 /* int    rrd_test_error_r (rrd_context_t *); */
 /* char  *rrd_get_error_r  (rrd_context_t *); */
+
+/** UTILITY FUNCTIONS */
+
+    long rrd_random(void);
+
+    int rrd_add_ptr(void ***dest, size_t *dest_size, void *src);
+    int rrd_add_strdup(char ***dest, size_t *dest_size, char *src);
+    void rrd_free_ptrs(void ***src, size_t *cnt);
 
 /*
  * The following functions are _internal_ functions needed to read the raw RRD
@@ -378,6 +395,18 @@ rrd_context_t *rrd_force_new_context(void);
               RRD_DEPRECATED;
     int       rrd_lock(
     rrd_file_t *file)
+              RRD_DEPRECATED;
+    void      rrd_notify_row(
+    rrd_file_t *rrd_file,
+    int rra_idx,
+    unsigned long rra_row,
+    time_t rra_time)
+              RRD_DEPRECATED;
+    unsigned long rrd_select_initial_row(
+    rrd_file_t *rrd_file,
+    int rra_idx,
+    rra_def_t *rra
+    )
               RRD_DEPRECATED;
 #endif                  /* defined(_RRD_TOOL_H) || defined(RRD_EXPORT_DEPRECATED) */
 
