@@ -1,23 +1,19 @@
-ACLOCAL_AMFLAGS = -I m4
+# $Id: Makefile.am 1846 2009-06-07 13:42:39Z oetiker $
+
 ## Process this file with automake to produce Makefile.in
 RSYNC = rsync --rsh=ssh
 
 # build the following subdirectories
-if BUILD_LIBINTL
-PO=po
-else
-PO=
-endif
 
-SUBDIRS = $(PO) src examples doc bindings
+SUBDIRS = po src examples doc bindings intl
 
  # the following files are not mentioned in any other Makefile
 EXTRA_DIST = COPYRIGHT CHANGES WIN32-BUILD-TIPS.txt TODO CONTRIBUTORS THREADS \
-             intltool-extract.in  intltool-merge.in    intltool-update.in \
-	     rrdtool.spec favicon.ico win32/Makefile win32/config.h \
-	     win32/rrd.dsp win32/rrd.sln win32/rrd.vcproj \
-	     win32/rrd_config.h.msvc win32/rrdlib.vcproj win32/rrdtool.dsp \
-	     win32/rrdtool.dsw win32/rrdtool.vcproj netware/Makefile
+	     rrdtool.spec favicon.ico  win32/Makefile win32/config.h autogen.sh \
+             win32/rrd.dsp win32/rrd.sln win32/rrd.vcproj libtool \
+             win32/rrd_config.h.msvc win32/rrdlib.vcproj win32/rrdtool.dsp \
+             win32/rrdtool.dsw win32/rrdtool.vcproj netware/Makefile  \
+             etc/rrdcached-default etc/rrdcached-init
 
 	     
 
@@ -27,7 +23,7 @@ CLEANFILES = config.cache
 AUTOMAKE_OPTIONS= foreign 
 
 # where we keep local rules for automake
-
+ACLOCAL_AMFLAGS=-I m4
 ACLOCAL_M4= $(top_srcdir)/aclocal.m4
 #AUTOHEADER = @AUTOHEADER@ --localdir=$(top_srcdir)/config
 #AUTOCONF = @AUTOCONF@ --localdir=$(top_srcdir)/config

@@ -1,18 +1,14 @@
-<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdlast</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-
-<!-- INDEX BEGIN -->
-<div name="index">
 <p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
 <!--
 
 <ul>
@@ -20,13 +16,10 @@
 	<li><a href="#name">NAME</a></li>
 	<li><a href="#synopsis">SYNOPSIS</a></li>
 	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
-
 -->
-
-
-</div>
 <!-- INDEX END -->
 
 <p>
@@ -37,7 +30,8 @@
 </p>
 <hr />
 <h1><a name="synopsis">SYNOPSIS</a></h1>
-<p><strong>rrdtool</strong> <strong>last</strong> <em>filename</em></p>
+<p><strong>rrdtool</strong> <strong>last</strong> <em>filename</em>
+[<strong>--daemon</strong>&nbsp;<em>address</em>]</p>
 <p>
 </p>
 <hr />
@@ -45,12 +39,40 @@
 <p>The <strong>last</strong> function returns the UNIX timestamp of the most recent
 update of the RRD.</p>
 <dl>
-<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
-
+<dt><strong><a name="item_filename"><em>filename</em></a></strong><br />
+</dt>
 <dd>
-<p>The name of the <strong>RRD</strong> that contains the data.</p>
+The name of the <strong>RRD</strong> that contains the data.
 </dd>
-</dl>
+<p></p>
+<dt><strong><a name="item__2d_2ddaemon_address"><strong>--daemon</strong> <em>address</em></a></strong><br />
+</dt>
+<dd>
+Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.
+</dd>
+<dd>
+<pre>
+ rrdtool last --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd</pre>
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoollast</code>:</p>
+<dl>
+<dt><strong><a name="item_rrdcached_address"><strong>RRDCACHED_ADDRESS</strong></a></strong><br />
+</dt>
+<dd>
+If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.
+</dd>
+<p></p></dl>
 <p>
 </p>
 <hr />

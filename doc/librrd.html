@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>librrd</title>
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+<!--
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#utility_functions">UTILITY FUNCTIONS</a></li>
+</ul>
+-->
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>librrd - RRD library functions</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>librrd</strong> contains most of the functionality in <strong>RRDTool</strong>.  The command
+line utilities and language bindings are often just wrappers around the
+code contained in <strong>librrd</strong>.</p>
+<p>This manual page documents the <strong>librrd</strong> API.</p>
+<p><strong>NOTE:</strong> This document is a work in progress, and should be considered
+incomplete as long as this warning persists.  For more information about
+the <strong>librrd</strong> functions, always consult the source code.</p>
+<p>
+</p>
+<hr />
+<h1><a name="utility_functions">UTILITY FUNCTIONS</a></h1>
+<dl>
+<dt><strong><a name="item_rrd_random"><strong>rrd_random()</strong></a></strong><br />
+</dt>
+<dd>
+Generates random numbers just like random().  This further ensures that
+the random number generator is seeded exactly once per process.
+</dd>
+<p></p>
+<dt><strong><a name="item_rrd_add_ptr"><strong>rrd_add_ptr(void ***dest, size_t *dest_size, void *src)</strong></a></strong><br />
+</dt>
+<dd>
+Dynamically resize the array pointed to by <code>dest</code>.  <code>dest_size</code> is a
+pointer to the current size of <code>dest</code>.  Upon successful realloc(), the
+<code>dest_size</code> is incremented by 1 and the <code>src</code> pointer is stored at the
+end of the new <code>dest</code>.  Returns 1 on success, 0 on failure.
+</dd>
+<dd>
+<pre>
+    type **arr = NULL;
+    type *elem = &quot;whatever&quot;;
+    size_t arr_size = 0;
+    if (!rrd_add_ptr(&amp;arr, &amp;arr_size, elem))
+        handle_failure();</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_rrd_add_strdup"><strong>rrd_add_strdup(char ***dest, size_t *dest_size, char *src)</strong></a></strong><br />
+</dt>
+<dd>
+Like <a href="#item_rrd_add_ptr"><code>rrd_add_ptr</code></a>, except adds a <code>strdup</code> of the source string.
+</dd>
+<dd>
+<pre>
+    char **arr = NULL;
+    size_t arr_size = NULL;
+    char *str  = &quot;example text&quot;;
+    if (!rrd_add_strdup(&amp;arr, &amp;arr_size, str))
+        handle_failure();</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_rrd_free_ptrs"><strong>rrd_free_ptrs(void ***src, size_t *cnt)</strong></a></strong><br />
+</dt>
+<dd>
+Free an array of pointers allocated by <a href="#item_rrd_add_ptr"><code>rrd_add_ptr</code></a> or
+<a href="#item_rrd_add_strdup"><code>rrd_add_strdup</code></a>.  Also frees the array pointer itself.  On return, the
+source pointer will be NULL and the count will be zero.
+</dd>
+<dd>
+<pre>
+    /* created as above */
+    rrd_free_ptrs(&amp;arr, &amp;arr_size);
+    /* here, arr == NULL &amp;&amp; arr_size == 0 */</pre>
+</dd>
+<p></p></dl>
+
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd_gfx.c  graphics wrapper for rrdtool
   **************************************************************************/
@@ -124,7 +124,7 @@ static PangoLayout *gfx_prep_text(
     const char *text)
 {
     PangoLayout  *layout = im->layout;
-    PangoFontDescription *pfd;
+    const PangoFontDescription *pfd;
     cairo_t  *cr = im->cr;
 
     static double last_tabwidth = -1;
@@ -154,7 +154,7 @@ static PangoLayout *gfx_prep_text(
         pango_layout_set_tabs(layout, tab_array);
         pango_tab_array_free(tab_array);
     }
-   pfd = (PangoFontDescription*)(pango_layout_get_font_description(layout));
+   pfd = pango_layout_get_font_description(layout);
 
    if (!pfd || !pango_font_description_equal (pfd,font_desc)){
         pango_layout_set_font_description(layout, font_desc);

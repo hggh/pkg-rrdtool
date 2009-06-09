@@ -1,18 +1,14 @@
-<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdfetch</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-
-<!-- INDEX BEGIN -->
-<div name="index">
 <p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
 <!--
 
 <ul>
@@ -23,19 +19,16 @@
 	<ul>
 
 		<li><a href="#resolution_interval">RESOLUTION INTERVAL</a></li>
-		<li><a href="#at_style_time_specification">AT-STYLE TIME SPECIFICATION</a></li>
+		<li><a href="#atstyle_time_specification">AT-STYLE TIME SPECIFICATION</a></li>
 		<li><a href="#time_reference_specification">TIME REFERENCE SPECIFICATION</a></li>
 		<li><a href="#time_offset_specification">TIME OFFSET SPECIFICATION</a></li>
 		<li><a href="#time_specification_examples">TIME SPECIFICATION EXAMPLES</a></li>
 	</ul>
 
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
-
 -->
-
-
-</div>
 <!-- INDEX END -->
 
 <p>
@@ -49,7 +42,8 @@
 <p><strong>rrdtool</strong> <strong>fetch</strong> <em>filename</em> <em>CF</em>
 [<strong>--resolution</strong>|<strong>-r</strong>&nbsp;<em>resolution</em>]
 [<strong>--start</strong>|<strong>-s</strong>&nbsp;<em>start</em>]
-[<strong>--end</strong>|<strong>-e</strong>&nbsp;<em>end</em>]</p>
+[<strong>--end</strong>|<strong>-e</strong>&nbsp;<em>end</em>]
+[<strong>--daemon</strong>&nbsp;<em>address</em>]</p>
 <p>
 </p>
 <hr />
@@ -58,43 +52,60 @@
 function to get data from <strong>RRD</strong>s. <strong>fetch</strong> will analyze the <strong>RRD</strong>
 and try to retrieve the data in the resolution requested.
 The data fetched is printed to stdout. <em>*UNKNOWN*</em> data is often
-represented by the string &quot;NaN&quot; depending on your OS's printf
+represented by the string ``NaN'' depending on your OS's printf
 function.</p>
 <dl>
-<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
-
+<dt><strong><a name="item_filename"><em>filename</em></a></strong><br />
+</dt>
 <dd>
-<p>the name of the <strong>RRD</strong> you want to fetch the data from.</p>
+the name of the <strong>RRD</strong> you want to fetch the data from.
 </dd>
-<dt><strong><a name="cf" class="item"><em>CF</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_cf"><em>CF</em></a></strong><br />
+</dt>
 <dd>
-<p>the consolidation function that is applied to the data you
-want to fetch (AVERAGE,MIN,MAX,LAST)</p>
+the consolidation function that is applied to the data you
+want to fetch (AVERAGE,MIN,MAX,LAST)
 </dd>
-<dt><strong><a name="resolution" class="item"><strong>--resolution</strong>|<strong>-r</strong> <em>resolution</em> (default is the highest resolution)</a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_resolution"><strong>--resolution</strong>|<strong>-r</strong> <em>resolution</em> (default is the highest resolution)</a></strong><br />
+</dt>
 <dd>
-<p>the interval you want the values to have (seconds per
+the interval you want the values to have (seconds per
 value). <strong>rrdfetch</strong> will try to match your request, but it will return
-data even if no absolute match is possible. <strong>NB.</strong> See note below.</p>
+data even if no absolute match is possible. <strong>NB.</strong> See note below.
 </dd>
-<dt><strong><a name="start" class="item"><strong>--start</strong>|<strong>-s</strong> <em>start</em> (default end-1day)</a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_start"><strong>--start</strong>|<strong>-s</strong> <em>start</em> (default end-1day)</a></strong><br />
+</dt>
 <dd>
-<p>start of the time series. A time in seconds since epoch (1970-01-01)
+start of the time series. A time in seconds since epoch (1970-01-01)
 is required. Negative numbers are relative to the current time. By default,
 one day worth of data will be fetched. See also AT-STYLE TIME SPECIFICATION
-section for a detailed explanation on  ways to specify the start time.</p>
+section for a detailed explanation on  ways to specify the start time.
 </dd>
-<dt><strong><a name="end" class="item"><strong>--end</strong>|<strong>-e</strong> <em>end</em> (default now)</a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_end"><strong>--end</strong>|<strong>-e</strong> <em>end</em> (default now)</a></strong><br />
+</dt>
 <dd>
-<p>the end of the time series in seconds since epoch. See also AT-STYLE
+the end of the time series in seconds since epoch. See also AT-STYLE
 TIME SPECIFICATION section for a detailed explanation of how to
-specify the end time.</p>
+specify the end time.
 </dd>
-</dl>
+<p></p>
+<dt><strong><a name="item__2d_2ddaemon_address"><strong>--daemon</strong> <em>address</em></a></strong><br />
+</dt>
+<dd>
+Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.
+</dd>
+<dd>
+<pre>
+ rrdtool fetch --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd AVERAGE</pre>
+</dd>
+<p></p></dl>
 <p>
 </p>
 <h2><a name="resolution_interval">RESOLUTION INTERVAL</a></h2>
@@ -122,14 +133,13 @@ i.e. 5 minute averages, will be chosen which in this case is not
 what you want.</p>
 <p>Hence, make sure that</p>
 <ol>
-<li>
-<p>both start and end time are a multiple of 900</p>
-</li>
-<li>
-<p>both start and end time are within the desired RRA</p>
-</li>
-</ol>
-<p>So, if time now is called &quot;t&quot;, do</p>
+<li></li>
+both start and end time are a multiple of 900
+<p></p>
+<li></li>
+both start and end time are within the desired RRA
+<p></p></ol>
+<p>So, if time now is called ``t'', do</p>
 <pre>
  end time == int(t/900)*900,
  start time == end time - 1hour,
@@ -147,10 +157,10 @@ what you want.</p>
                   -r $rrdres -e @{[int($ctime/$rrdres)*$rrdres]} -s e-1h&quot;'</pre>
 <p>
 </p>
-<h2><a name="at_style_time_specification">AT-STYLE TIME SPECIFICATION</a></h2>
+<h2><a name="atstyle_time_specification">AT-STYLE TIME SPECIFICATION</a></h2>
 <p>Apart from the traditional <em>Seconds since epoch</em>, RRDtool does also
 understand at-style time specification. The specification is called
-&quot;at-style&quot; after the Unix command <code>at(1)</code> that has moderately complex
+``at-style'' after the Unix command <code>at(1)</code> that has moderately complex
 ways to specify time to run your job at a certain date and time. The
 at-style specification consists of two parts: the <strong>TIME REFERENCE</strong>
 specification and the <strong>TIME OFFSET</strong> specification.</p>
@@ -225,21 +235,20 @@ equals 47 hours; on the other hand, '8:00&nbsp;Mar&nbsp;27&nbsp;1999&nbsp;+48&nb
 is <strong>m</strong>. To disambiguate them, the parser tries to read your mind&nbsp;:)
 by applying the following two heuristics:</p>
 <ol>
-<li>
-<p>If <strong>m</strong> is used in context of (i.e. right after the) years,
+<li></li>
+If <strong>m</strong> is used in context of (i.e. right after the) years,
 months, weeks, or days it is assumed to mean <strong>months</strong>, while
 in the context of hours, minutes, and seconds it means minutes.
 (e.g., in -1y6m or +3w1m <strong>m</strong> is interpreted as <strong>months</strong>, while in
--3h20m or +5s2m <strong>m</strong> the parser decides for <strong>minutes</strong>).</p>
-</li>
-<li>
-<p>Out of context (i.e. right after the <strong>+</strong> or <strong>-</strong> sign) the
+-3h20m or +5s2m <strong>m</strong> the parser decides for <strong>minutes</strong>).
+<p></p>
+<li></li>
+Out of context (i.e. right after the <strong>+</strong> or <strong>-</strong> sign) the
 meaning of <strong>m</strong> is guessed from the number it directly follows.
 Currently, if the number's absolute value is below 25 it is assumed
 that <strong>m</strong> means <strong>months</strong>, otherwise it is treated as <strong>minutes</strong>.
-(e.g., -25m == -25 minutes, while +24m == +24 months)</p>
-</li>
-</ol>
+(e.g., -25m == -25 minutes, while +24m == +24 months)
+<p></p></ol>
 <p><em>Final NOTES</em>: Time specification is case-insensitive.
 Whitespace can be inserted freely or omitted altogether.
 There are, however, cases when whitespace is required
@@ -266,6 +275,21 @@ as <em>9am-1day</em>.</p>
 (yes, seconds since 1970 are valid as well).</p>
 <p><em>19970703 12:45</em> -- 12:45  July 3th, 1997
 (my favorite, and its even got an ISO number (8601)).</p>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoolfetch</code>:</p>
+<dl>
+<dt><strong><a name="item_rrdcached_address"><strong>RRDCACHED_ADDRESS</strong></a></strong><br />
+</dt>
+<dd>
+If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.
+</dd>
+<p></p></dl>
 <p>
 </p>
 <hr />

@@ -14,25 +14,29 @@ DDEESSCCRRIIPPTTIIOONN
        (RRRRDD) files.  The file is created at its final, full size and filled
        with _*_U_N_K_N_O_W_N_* data.
 
-   _f_i_l_e_n_a_m_e
+       _f_i_l_e_n_a_m_e
+
        The name of the RRRRDD you want to create. RRRRDD files should end with the
        extension _._r_r_d. However, RRRRDDttooooll will accept any filename.
 
-   ----ssttaarrtt||--bb _s_t_a_r_t _t_i_m_e ((ddeeffaauulltt:: nnooww -- 1100ss))
+       ----ssttaarrtt||--bb _s_t_a_r_t _t_i_m_e ((ddeeffaauulltt:: nnooww -- 1100ss))
+
        Specifies the time in seconds since 1970-01-01 UTC when the first value
        should be added to the RRRRDD. RRRRDDttooooll will not accept any data timed
        before or at the time specified.
 
-       See also AT-STYLE TIME SPECIFICATION section in the _r_r_d_f_e_t_c_h
-       documentation for other ways to specify time.
+       See also AT-STYLE TIME SPECIFICATION section in the _r_r_d_f_e_t_c_h documenta-
+       tion for other ways to specify time.
 
-   ----sstteepp||--ss _s_t_e_p ((ddeeffaauulltt:: 330000 sseeccoonnddss))
+       ----sstteepp||--ss _s_t_e_p ((ddeeffaauulltt:: 330000 sseeccoonnddss))
+
        Specifies the base interval in seconds with which data will be fed into
        the RRRRDD.
 
-   DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s
-       A single RRRRDD can accept input from several data sources (DDSS), for
-       example incoming and outgoing traffic on a specific communication line.
+       DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s
+
+       A single RRRRDD can accept input from several data sources (DDSS), for exam-
+       ple incoming and outgoing traffic on a specific communication line.
        With the DDSS configuration option you must define some basic properties
        of each data source you want to store in the RRRRDD.
 
@@ -50,9 +54,9 @@ DDEESSCCRRIIPPTTIIOONN
 
        DDSS::_d_s_-_n_a_m_e::_C_O_M_P_U_T_E::_r_p_n_-_e_x_p_r_e_s_s_i_o_n
 
-       In order to decide which data source type to use, review the
-       definitions that follow. Also consult the section on "HOW TO MEASURE"
-       for further insight.
+       In order to decide which data source type to use, review the defini-
+       tions that follow. Also consult the section on "HOW TO MEASURE" for
+       further insight.
 
        GGAAUUGGEE
            is for things like temperatures or number of people in a room or
@@ -87,28 +91,28 @@ DDEESSCCRRIIPPTTIIOONN
            as "Unknown", but can mistake some counter resets for a legitimate
            counter wrap.
 
-           For a 5 minute step and 32-bit counter, the probability of
-           mistaking a counter reset for a legitimate wrap is arguably about
-           0.8% per 1Mbps of maximum bandwidth. Note that this equates to 80%
-           for 100Mbps interfaces, so for high bandwidth interfaces and a
-           32bit counter, DERIVE with min=0 is probably preferable. If you are
-           using a 64bit counter, just about any max setting will eliminate
-           the possibility of mistaking a reset for a counter wrap.
+           For a 5 minute step and 32-bit counter, the probability of mistak-
+           ing a counter reset for a legitimate wrap is arguably about 0.8%
+           per 1Mbps of maximum bandwidth. Note that this equates to 80% for
+           100Mbps interfaces, so for high bandwidth interfaces and a 32bit
+           counter, DERIVE with min=0 is probably preferable. If you are using
+           a 64bit counter, just about any max setting will eliminate the pos-
+           sibility of mistaking a reset for a counter wrap.
 
        AABBSSOOLLUUTTEE
            is for counters which get reset upon reading. This is used for fast
-           counters which tend to overflow. So instead of reading them
-           normally you reset them after every read to make sure you have a
-           maximum time available before the next overflow. Another usage is
-           for things you count like number of messages since the last update.
+           counters which tend to overflow. So instead of reading them nor-
+           mally you reset them after every read to make sure you have a maxi-
+           mum time available before the next overflow. Another usage is for
+           things you count like number of messages since the last update.
 
        CCOOMMPPUUTTEE
            is for storing the result of a formula applied to other data
            sources in the RRRRDD. This data source is not supplied a value on
            update, but rather its Primary Data Points (PDPs) are computed from
            the PDPs of the data sources according to the rpn-expression that
-           defines the formula. Consolidation functions are then applied
-           normally to the PDPs of the COMPUTE data source (that is the rpn-
+           defines the formula. Consolidation functions are then applied nor-
+           mally to the PDPs of the COMPUTE data source (that is the rpn-
            expression is only applied to generate PDPs). In database software,
            such data sets are referred to as "virtual" or "computed" columns.
 
@@ -130,15 +134,16 @@ DDEESSCCRRIIPPTTIIOONN
        _r_p_n_-_e_x_p_r_e_s_s_i_o_n defines the formula used to compute the PDPs of a
        COMPUTE data source from other data sources in the same <RRD>. It is
        similar to defining a CCDDEEFF argument for the graph command. Please refer
-       to that manual page for a list and description of RPN operations
-       supported. For COMPUTE data sources, the following RPN operations are
-       not supported: COUNT, PREV, TIME, and LTIME. In addition, in defining
-       the RPN expression, the COMPUTE data source may only refer to the names
-       of data source listed previously in the create command. This is similar
-       to the restriction that CCDDEEFFs must refer only to DDEEFFs and CCDDEEFFs
-       previously defined in the same graph command.
+       to that manual page for a list and description of RPN operations sup-
+       ported. For COMPUTE data sources, the following RPN operations are not
+       supported: COUNT, PREV, TIME, and LTIME. In addition, in defining the
+       RPN expression, the COMPUTE data source may only refer to the names of
+       data source listed previously in the create command. This is similar to
+       the restriction that CCDDEEFFs must refer only to DDEEFFs and CCDDEEFFs previously
+       defined in the same graph command.
 
-   RRRRAA::_C_F::_c_f _a_r_g_u_m_e_n_t_s
+       RRRRAA::_C_F::_c_f _a_r_g_u_m_e_n_t_s
+
        The purpose of an RRRRDD is to store data in the round robin archives
        (RRRRAA). An archive consists of a number of data values or statistics for
        each of the defined data-sources (DDSS) and is defined with an RRRRAA line.
@@ -163,8 +168,8 @@ DDEESSCCRRIIPPTTIIOONN
 
        Note that data aggregation inevitably leads to loss of precision and
        information. The trick is to pick the aggregate function such that the
-       _i_n_t_e_r_e_s_t_i_n_g properties of your data is kept across the aggregation
-       process.
+       _i_n_t_e_r_e_s_t_i_n_g properties of your data is kept across the aggregation pro-
+       cess.
 
        The format of RRRRAA line for these consolidation functions is:
 
@@ -192,11 +197,11 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
 
        �   RRRRAA::_M_H_W_P_R_E_D_I_C_T::_r_o_w_s::_a_l_p_h_a::_b_e_t_a::_s_e_a_s_o_n_a_l _p_e_r_i_o_d[::_r_r_a_-_n_u_m]
 
-       �   RRRRAA::_S_E_A_S_O_N_A_L::_s_e_a_s_o_n_a_l _p_e_r_i_o_d::_g_a_m_m_a::_r_r_a_-
-           _n_u_m[::ssmmooootthhiinngg--wwiinnddooww==_f_r_a_c_t_i_o_n]
+       �   RRRRAA::_S_E_A_S_O_N_A_L::_s_e_a_s_o_n_a_l _p_e_r_i_o_d::_g_a_m_m_a::_r_r_a_-_n_u_m[::ssmmooootthhiinngg--wwiinnddooww==_f_r_a_c_-
+           _t_i_o_n]
 
-       �   RRRRAA::_D_E_V_S_E_A_S_O_N_A_L::_s_e_a_s_o_n_a_l _p_e_r_i_o_d::_g_a_m_m_a::_r_r_a_-
-           _n_u_m[::ssmmooootthhiinngg--wwiinnddooww==_f_r_a_c_t_i_o_n]
+       �   RRRRAA::_D_E_V_S_E_A_S_O_N_A_L::_s_e_a_s_o_n_a_l _p_e_r_i_o_d::_g_a_m_m_a::_r_r_a_-_n_u_m[::ssmmooootthhiinngg--wwiinn--
+           ddooww==_f_r_a_c_t_i_o_n]
 
        �   RRRRAA::_D_E_V_P_R_E_D_I_C_T::_r_o_w_s::_r_r_a_-_n_u_m
 
@@ -206,25 +211,25 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
        ways.  First, each of the RRRRAAs is updated once for every primary data
        point.  Second, these RRRRAAss are interdependent. To generate real-time
        confidence bounds, a matched set of SEASONAL, DEVSEASONAL, DEVPREDICT,
-       and either HWPREDICT or MHWPREDICT must exist. Generating smoothed
-       values of the primary data points requires a SEASONAL RRRRAA and either an
-       HWPREDICT or MHWPREDICT RRRRAA. Aberrant behavior detection requires
-       FAILURES, DEVSEASONAL, SEASONAL, and either HWPREDICT or MHWPREDICT.
+       and either HWPREDICT or MHWPREDICT must exist. Generating smoothed val-
+       ues of the primary data points requires a SEASONAL RRRRAA and either an
+       HWPREDICT or MHWPREDICT RRRRAA. Aberrant behavior detection requires FAIL-
+       URES, DEVSEASONAL, SEASONAL, and either HWPREDICT or MHWPREDICT.
 
-       The predicted, or smoothed, values are stored in the HWPREDICT or
-       MHWPREDICT RRRRAA. HWPREDICT and MHWPREDICT are actually two variations on
+       The predicted, or smoothed, values are stored in the HWPREDICT or MHW-
+       PREDICT RRRRAA. HWPREDICT and MHWPREDICT are actually two variations on
        the Holt-Winters method. They are interchangeable. Both attempt to
-       decompose data into three components: a baseline, a trend, and a
-       seasonal coefficient.  HWPREDICT adds its seasonal coefficient to the
-       baseline to form a prediction, whereas MHWPREDICT multiplies its
-       seasonal coefficient by the baseline to form a prediction. The
-       difference is noticeable when the baseline changes significantly in the
-       course of a season; HWPREDICT will predict the seasonality to stay
-       constant as the baseline changes, but MHWPREDICT will predict the
-       seasonality to grow or shrink in proportion to the baseline. The proper
-       choice of method depends on the thing being modeled. For simplicity,
-       the rest of this discussion will refer to HWPREDICT, but MHWPREDICT may
-       be substituted in its place.
+       decompose data into three components: a baseline, a trend, and a sea-
+       sonal coefficient.  HWPREDICT adds its seasonal coefficient to the
+       baseline to form a prediction, whereas MHWPREDICT multiplies its sea-
+       sonal coefficient by the baseline to form a prediction. The difference
+       is noticeable when the baseline changes significantly in the course of
+       a season; HWPREDICT will predict the seasonality to stay constant as
+       the baseline changes, but MHWPREDICT will predict the seasonality to
+       grow or shrink in proportion to the baseline. The proper choice of
+       method depends on the thing being modeled. For simplicity, the rest of
+       this discussion will refer to HWPREDICT, but MHWPREDICT may be substi-
+       tuted in its place.
 
        The predicted deviations are stored in DEVPREDICT (think a standard
        deviation which can be scaled to yield a confidence band). The FAILURES
@@ -238,8 +243,8 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
        the Holt-Winters forecasting algorithm and the seasonal deviations,
        respectively.  There is one entry per observation time point in the
        seasonal cycle. For example, if primary data points are generated every
-       five minutes and the seasonal cycle is 1 day, both SEASONAL and
-       DEVSEASONAL will have 288 rows.
+       five minutes and the seasonal cycle is 1 day, both SEASONAL and DEVSEA-
+       SONAL will have 288 rows.
 
        In order to simplify the creation for the novice user, in addition to
        supporting explicit creation of the HWPREDICT, SEASONAL, DEVPREDICT,
@@ -252,46 +257,46 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
        and entries in these RRAs. For the HWPREDICT CF, _r_o_w_s should be larger
        than the _s_e_a_s_o_n_a_l _p_e_r_i_o_d. If the DEVPREDICT RRRRAA is implicitly created,
        the default number of rows is the same as the HWPREDICT _r_o_w_s argument.
-       If the FAILURES RRRRAA is implicitly created, _r_o_w_s will be set to the
-       _s_e_a_s_o_n_a_l _p_e_r_i_o_d argument of the HWPREDICT RRRRAA. Of course, the RRRRDDttooooll
+       If the FAILURES RRRRAA is implicitly created, _r_o_w_s will be set to the _s_e_a_-
+       _s_o_n_a_l _p_e_r_i_o_d argument of the HWPREDICT RRRRAA. Of course, the RRRRDDttooooll
        _r_e_s_i_z_e command is available if these defaults are not sufficient and
        the creator wishes to avoid explicit creations of the other specialized
        function RRRRAAss.
 
-       _s_e_a_s_o_n_a_l _p_e_r_i_o_d specifies the number of primary data points in a
-       seasonal cycle. If SEASONAL and DEVSEASONAL are implicitly created,
-       this argument for those RRRRAAss is set automatically to the value
-       specified by HWPREDICT. If they are explicitly created, the creator
-       should verify that all three _s_e_a_s_o_n_a_l _p_e_r_i_o_d arguments agree.
+       _s_e_a_s_o_n_a_l _p_e_r_i_o_d specifies the number of primary data points in a sea-
+       sonal cycle. If SEASONAL and DEVSEASONAL are implicitly created, this
+       argument for those RRRRAAss is set automatically to the value specified by
+       HWPREDICT. If they are explicitly created, the creator should verify
+       that all three _s_e_a_s_o_n_a_l _p_e_r_i_o_d arguments agree.
 
-       _a_l_p_h_a is the adaption parameter of the intercept (or baseline)
-       coefficient in the Holt-Winters forecasting algorithm. See rrdtool for
-       a description of this algorithm. _a_l_p_h_a must lie between 0 and 1. A
-       value closer to 1 means that more recent observations carry greater
-       weight in predicting the baseline component of the forecast. A value
-       closer to 0 means that past history carries greater weight in
-       predicting the baseline component.
+       _a_l_p_h_a is the adaption parameter of the intercept (or baseline) coeffi-
+       cient in the Holt-Winters forecasting algorithm. See rrdtool for a
+       description of this algorithm. _a_l_p_h_a must lie between 0 and 1. A value
+       closer to 1 means that more recent observations carry greater weight in
+       predicting the baseline component of the forecast. A value closer to 0
+       means that past history carries greater weight in predicting the base-
+       line component.
 
-       _b_e_t_a is the adaption parameter of the slope (or linear trend)
-       coefficient in the Holt-Winters forecasting algorithm. _b_e_t_a must lie
-       between 0 and 1 and plays the same role as _a_l_p_h_a with respect to the
-       predicted linear trend.
+       _b_e_t_a is the adaption parameter of the slope (or linear trend) coeffi-
+       cient in the Holt-Winters forecasting algorithm. _b_e_t_a must lie between
+       0 and 1 and plays the same role as _a_l_p_h_a with respect to the predicted
+       linear trend.
 
        _g_a_m_m_a is the adaption parameter of the seasonal coefficients in the
-       Holt-Winters forecasting algorithm (HWPREDICT) or the adaption
-       parameter in the exponential smoothing update of the seasonal
-       deviations. It must lie between 0 and 1. If the SEASONAL and
-       DEVSEASONAL RRRRAAss are created implicitly, they will both have the same
-       value for _g_a_m_m_a: the value specified for the HWPREDICT _a_l_p_h_a argument.
-       Note that because there is one seasonal coefficient (or deviation) for
-       each time point during the seasonal cycle, the adaptation rate is much
-       slower than the baseline. Each seasonal coefficient is only updated (or
-       adapts) when the observed value occurs at the offset in the seasonal
-       cycle corresponding to that coefficient.
+       Holt-Winters forecasting algorithm (HWPREDICT) or the adaption parame-
+       ter in the exponential smoothing update of the seasonal deviations. It
+       must lie between 0 and 1. If the SEASONAL and DEVSEASONAL RRRRAAss are cre-
+       ated implicitly, they will both have the same value for _g_a_m_m_a: the
+       value specified for the HWPREDICT _a_l_p_h_a argument. Note that because
+       there is one seasonal coefficient (or deviation) for each time point
+       during the seasonal cycle, the adaptation rate is much slower than the
+       baseline. Each seasonal coefficient is only updated (or adapts) when
+       the observed value occurs at the offset in the seasonal cycle corre-
+       sponding to that coefficient.
 
        If SEASONAL and DEVSEASONAL RRRRAAss are created explicitly, _g_a_m_m_a need not
-       be the same for both. Note that _g_a_m_m_a can also be changed via the
-       RRRRDDttooooll _t_u_n_e command.
+       be the same for both. Note that _g_a_m_m_a can also be changed via the RRRRDD--
+       ttooooll _t_u_n_e command.
 
        _s_m_o_o_t_h_i_n_g_-_w_i_n_d_o_w specifies the fraction of a season that should be
        averaged around each point. By default, the value of _s_m_o_o_t_h_i_n_g_-_w_i_n_d_o_w
@@ -300,15 +305,14 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
        nearest neighbors.  Setting _s_m_o_o_t_h_i_n_g_-_w_i_n_d_o_w to zero will disable the
        running-average smoother altogether.
 
-       _r_r_a_-_n_u_m provides the links between related RRRRAAss. If HWPREDICT is
-       specified alone and the other RRRRAAss are created implicitly, then there
-       is no need to worry about this argument. If RRRRAAss are created
-       explicitly, then carefully pay attention to this argument. For each RRRRAA
-       which includes this argument, there is a dependency between that RRRRAA
-       and another RRRRAA. The _r_r_a_-_n_u_m argument is the 1-based index in the order
-       of RRRRAA creation (that is, the order they appear in the _c_r_e_a_t_e command).
-       The dependent RRRRAA for each RRRRAA requiring the _r_r_a_-_n_u_m argument is listed
-       here:
+       _r_r_a_-_n_u_m provides the links between related RRRRAAss. If HWPREDICT is speci-
+       fied alone and the other RRRRAAss are created implicitly, then there is no
+       need to worry about this argument. If RRRRAAss are created explicitly, then
+       carefully pay attention to this argument. For each RRRRAA which includes
+       this argument, there is a dependency between that RRRRAA and another RRRRAA.
+       The _r_r_a_-_n_u_m argument is the 1-based index in the order of RRRRAA creation
+       (that is, the order they appear in the _c_r_e_a_t_e command). The dependent
+       RRRRAA for each RRRRAA requiring the _r_r_a_-_n_u_m argument is listed here:
 
        �   HWPREDICT _r_r_a_-_n_u_m is the index of the SEASONAL RRRRAA.
 
@@ -326,9 +330,9 @@ AAbbeerrrraanntt BBeehhaavviioorr DDeetteeccttiioonn w
 
        _w_i_n_d_o_w _l_e_n_g_t_h is the number of time points in the window. Specify an
        integer greater than or equal to the threshold and less than or equal
-       to 28.  The time interval this window represents depends on the
-       interval between primary data points. If the FAILURES RRRRAA is implicitly
-       created, the default value is 9.
+       to 28.  The time interval this window represents depends on the inter-
+       val between primary data points. If the FAILURES RRRRAA is implicitly cre-
+       ated, the default value is 9.
 
 TThhee HHEEAARRTTBBEEAATT aanndd tthhee SSTTEEPP
        Here is an explanation by Don Baarda on the inner workings of RRDtool.
@@ -339,14 +343,13 @@ TThhee HHEEAARRTTBBEEAATT aanndd tthhee SSTTEEPP
        builds Primary Data Points (PDPs) on every "step" interval. The PDPs
        are then accumulated into the RRAs.
 
-       The "heartbeat" defines the maximum acceptable interval between
-       samples/updates. If the interval between samples is less than
-       "heartbeat", then an average rate is calculated and applied for that
-       interval. If the interval between samples is longer than "heartbeat",
-       then that entire interval is considered "unknown". Note that there are
-       other things that can make a sample interval "unknown", such as the
-       rate exceeding limits, or a sample that was explicitly marked as
-       unknown.
+       The "heartbeat" defines the maximum acceptable interval between sam-
+       ples/updates. If the interval between samples is less than "heartbeat",
+       then an average rate is calculated and applied for that interval. If
+       the interval between samples is longer than "heartbeat", then that
+       entire interval is considered "unknown". Note that there are other
+       things that can make a sample interval "unknown", such as the rate
+       exceeding limits, or a sample that was explicitly marked as unknown.
 
        The known rates during a PDP's "step" interval are used to calculate an
        average rate for that PDP. If the total "unknown" time accounts for
@@ -360,10 +363,10 @@ TThhee HHEEAARRTTBBEEAATT aanndd tthhee SSTTEEPP
        multiple samples per PDP, and if you don't get them mark the PDP
        unknown. A long heartbeat can span multiple "steps", which means it is
        acceptable to have multiple PDPs calculated from a single sample. An
-       extreme example of this might be a "step" of 5 minutes and a
-       "heartbeat" of one day, in which case a single sample every day will
-       result in all the PDPs for that entire day period being set to the same
-       average rate. _-_- _D_o_n _B_a_a_r_d_a _<_d_o_n_._b_a_a_r_d_a_@_b_a_e_s_y_s_t_e_m_s_._c_o_m_>
+       extreme example of this might be a "step" of 5 minutes and a "heart-
+       beat" of one day, in which case a single sample every day will result
+       in all the PDPs for that entire day period being set to the same aver-
+       age rate. _-_- _D_o_n _B_a_a_r_d_a _<_d_o_n_._b_a_a_r_d_a_@_b_a_e_s_y_s_t_e_m_s_._c_o_m_>
 
               time|
               axis|
@@ -407,28 +410,28 @@ HHOOWW TTOO MMEEAASSUURREE
        Here are a few hints on how to measure:
 
        Temperature
-           Usually you have some type of meter you can read to get the
-           temperature.  The temperature is not really connected with a time.
-           The only connection is that the temperature reading happened at a
-           certain time. You can use the GGAAUUGGEE data source type for this.
-           RRDtool will then record your reading together with the time.
+           Usually you have some type of meter you can read to get the temper-
+           ature.  The temperature is not really connected with a time. The
+           only connection is that the temperature reading happened at a cer-
+           tain time. You can use the GGAAUUGGEE data source type for this. RRDtool
+           will then record your reading together with the time.
 
        Mail Messages
-           Assume you have a method to count the number of messages
-           transported by your mailserver in a certain amount of time, giving
-           you data like '5 messages in the last 65 seconds'. If you look at
-           the count of 5 like an AABBSSOOLLUUTTEE data type you can simply update the
-           RRD with the number 5 and the end time of your monitoring period.
-           RRDtool will then record the number of messages per second. If at
-           some later stage you want to know the number of messages
-           transported in a day, you can get the average messages per second
-           from RRDtool for the day in question and multiply this number with
-           the number of seconds in a day. Because all math is run with
-           Doubles, the precision should be acceptable.
+           Assume you have a method to count the number of messages trans-
+           ported by your mailserver in a certain amount of time, giving you
+           data like '5 messages in the last 65 seconds'. If you look at the
+           count of 5 like an AABBSSOOLLUUTTEE data type you can simply update the RRD
+           with the number 5 and the end time of your monitoring period. RRD-
+           tool will then record the number of messages per second. If at some
+           later stage you want to know the number of messages transported in
+           a day, you can get the average messages per second from RRDtool for
+           the day in question and multiply this number with the number of
+           seconds in a day. Because all math is run with Doubles, the preci-
+           sion should be acceptable.
 
        It's always a Rate
-           RRDtool stores rates in amount/second for COUNTER, DERIVE and
-           ABSOLUTE data.  When you plot the data, you will get on the y axis
+           RRDtool stores rates in amount/second for COUNTER, DERIVE and ABSO-
+           LUTE data.  When you plot the data, you will get on the y axis
            amount/second which you might be tempted to convert to an absolute
            amount by multiplying by the delta-time between the points. RRDtool
            plots continuous data, and as such is not appropriate for plotting
@@ -448,17 +451,17 @@ EEXXAAMMPPLLEE
          RRA:MAX:0.5:12:2400 \
          RRA:AVERAGE:0.5:12:2400
 
-       This sets up an RRRRDD called _t_e_m_p_e_r_a_t_u_r_e_._r_r_d which accepts one
-       temperature value every 300 seconds. If no new data is supplied for
-       more than 600 seconds, the temperature becomes _*_U_N_K_N_O_W_N_*.  The minimum
-       acceptable value is -273 and the maximum is 5'000.
+       This sets up an RRRRDD called _t_e_m_p_e_r_a_t_u_r_e_._r_r_d which accepts one tempera-
+       ture value every 300 seconds. If no new data is supplied for more than
+       600 seconds, the temperature becomes _*_U_N_K_N_O_W_N_*.  The minimum acceptable
+       value is -273 and the maximum is 5'000.
 
        A few archive areas are also defined. The first stores the temperatures
        supplied for 100 hours (1'200 * 300 seconds = 100 hours). The second
        RRA stores the minimum temperature recorded over every hour (12 * 300
        seconds = 1 hour), for 100 days (2'400 hours). The third and the fourth
-       RRA's do the same for the maximum and average temperature,
-       respectively.
+       RRA's do the same for the maximum and average temperature, respec-
+       tively.
 
 EEXXAAMMPPLLEE 22
         rrdtool create monitor.rrd --step 300        \
@@ -472,18 +475,18 @@ EEXXAAMMPPLLEE 22
        argument of HWPREDICT is missing, so the other RRRRAAss will implicitly be
        created with default parameter values. In this example, the forecasting
        algorithm baseline adapts quickly; in fact the most recent one hour of
-       observations (each at 5 minute intervals) accounts for 75% of the
-       baseline prediction. The linear trend forecast adapts much more slowly.
+       observations (each at 5 minute intervals) accounts for 75% of the base-
+       line prediction. The linear trend forecast adapts much more slowly.
        Observations made during the last day (at 288 observations per day)
-       account for only 65% of the predicted linear trend. Note: these
-       computations rely on an exponential smoothing formula described in the
-       LISA 2000 paper.
+       account for only 65% of the predicted linear trend. Note: these compu-
+       tations rely on an exponential smoothing formula described in the LISA
+       2000 paper.
 
-       The seasonal cycle is one day (288 data points at 300 second
-       intervals), and the seasonal adaption parameter will be set to 0.1. The
-       RRD file will store 5 days (1'440 data points) of forecasts and
-       deviation predictions before wrap around. The file will store 1 day (a
-       seasonal cycle) of 0-1 indicators in the FAILURES RRRRAA.
+       The seasonal cycle is one day (288 data points at 300 second inter-
+       vals), and the seasonal adaption parameter will be set to 0.1. The RRD
+       file will store 5 days (1'440 data points) of forecasts and deviation
+       predictions before wrap around. The file will store 1 day (a seasonal
+       cycle) of 0-1 indicators in the FAILURES RRRRAA.
 
        The same RRD file and RRRRAAss are created with the following command,
        which explicitly creates all specialized function RRRRAAss.
@@ -497,8 +500,8 @@ EEXXAAMMPPLLEE 22
           RRA:DEVSEASONAL:288:0.1:2 \
           RRA:FAILURES:288:7:9:5
 
-       Of course, explicit creation need not replicate implicit create, a
-       number of arguments could be changed.
+       Of course, explicit creation need not replicate implicit create, a num-
+       ber of arguments could be changed.
 
 EEXXAAMMPPLLEE 33
         rrdtool create proxy.rrd --step 300 \
@@ -517,15 +520,14 @@ EEXXAAMMPPLLEE 33
 
        In the RRRRDD, the first data source stores the requests per second rate
        during the interval. The second data source stores the total duration
-       of all requests processed during the interval divided by 300. The
-       COMPUTE data source divides each PDP of the AccumDuration by the
-       corresponding PDP of TotalRequests and stores the average request
-       duration. The remainder of the RPN expression handles the divide by
-       zero case.
+       of all requests processed during the interval divided by 300. The COM-
+       PUTE data source divides each PDP of the AccumDuration by the corre-
+       sponding PDP of TotalRequests and stores the average request duration.
+       The remainder of the RPN expression handles the divide by zero case.
 
 AAUUTTHHOORR
        Tobias Oetiker <tobi@oetiker.ch>
 
 
 
-1.3.8                             2008-06-11                      RRDCREATE(1)
+1.3.99909060808                   2008-06-11                      RRDCREATE(1)

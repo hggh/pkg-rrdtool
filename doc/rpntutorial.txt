@@ -19,8 +19,8 @@ RReeaaddiinngg CCoommppaarriissoonn OOppeerraattoorrss
 
        For example, think about "2,1,GT".  This RPN expression could be read
        as "is two greater than one?"  The answer to that question is "true".
-       So the three values should be replaced with "1".  Thus the RPN
-       expression 2,1,GT evaluates to 1.
+       So the three values should be replaced with "1".  Thus the RPN expres-
+       sion 2,1,GT evaluates to 1.
 
        Now consider "2,1,LE".  This RPN expression could be read as "is two
        less than or equal to one?".   The natural response is "no" and thus
@@ -33,8 +33,8 @@ RReeaaddiinngg tthhee IIFF OOppeerraattoorr
        So the IF operator acts on only one value on the stack: the third value
        to the left of the IF value.  The second value to the left of the IF
        corresponds to the true ("Y") branch.  And the first value to the left
-       of the IF corresponds to the false ("Z") branch.  Read the RPN
-       expression "X,Y,Z,IF" from left to right like so: "if X then Y else Z".
+       of the IF corresponds to the false ("Z") branch.  Read the RPN expres-
+       sion "X,Y,Z,IF" from left to right like so: "if X then Y else Z".
 
        For example, consider "1,10,100,IF".  It looks bizarre to me.  But when
        I read "if 1 then 10 else 100" it's crystal clear: 1 is true so the
@@ -49,12 +49,12 @@ RReeaaddiinngg tthhee IIFF OOppeerraattoorr
        operators.
 
 SSoommee EExxaammpplleess
-       While compound expressions can look overly complex, they can be
-       considered elegantly simple.  To quickly comprehend RPN expressions,
-       you must know the algorithm for evaluating RPN expressions: iterate
-       searches from the left to the right looking for an operator.  When it's
-       found, apply that operator by popping the operator and some number of
-       values (and by definition, not operators) off the stack.
+       While compound expressions can look overly complex, they can be consid-
+       ered elegantly simple.  To quickly comprehend RPN expressions, you must
+       know the algorithm for evaluating RPN expressions: iterate searches
+       from the left to the right looking for an operator.  When it's found,
+       apply that operator by popping the operator and some number of values
+       (and by definition, not operators) off the stack.
 
        For example, the stack "1,2,3,+,+" gets "2,3,+" evaluated (as "2+3")
        during the first iteration and is replaced by 5.  This results in the
@@ -65,8 +65,8 @@ SSoommee EExxaammpplleess
         2) 1,5,+        eval is 1,5,+ = 6    result is 6
         3) 6
 
-       Let's use that notation to conveniently solve some complex RPN
-       expressions with multiple logic operators:
+       Let's use that notation to conveniently solve some complex RPN expres-
+       sions with multiple logic operators:
 
         1) 20,10,GT,10,20,IF  eval is 20,10,GT = 1     result is 1,10,20,IF
 
@@ -77,8 +77,8 @@ SSoommee EExxaammpplleess
        read pop "if 1 then 10 else 20" so push 10.  Only 10 is left so 10 is
        the answer.
 
-       Let's read a complex RPN expression that also has the traditional
-       multiplication operator:
+       Let's read a complex RPN expression that also has the traditional mul-
+       tiplication operator:
 
         1) 128,8,*,7000,GT,7000,128,8,*,IF  eval 128,8,*       result is 1024
         2) 1024,7000,GT,7000,128,8,*,IF     eval 1024,7000,GT  result is 0
@@ -126,8 +126,8 @@ SSoommee EExxaammpplleess
 EExxeerrcciisseess
        Exercise 1:
 
-       Compute "3,2,*,1,+ and "3,2,1,+,*" by hand.  Rewrite them in
-       traditional notation.  Explain why they have different answers.
+       Compute "3,2,*,1,+ and "3,2,1,+,*" by hand.  Rewrite them in tradi-
+       tional notation.  Explain why they have different answers.
 
        Answer 1:
 
@@ -187,4 +187,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2008-12-22                    RPNTUTORIAL(1)
+1.3.99909060808                   2008-12-22                    RPNTUTORIAL(1)

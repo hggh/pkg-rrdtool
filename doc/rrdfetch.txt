@@ -7,14 +7,14 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll ffeettcchh _f_i_l_e_n_a_m_e _C_F [----rreessoolluuttiioonn|--rr _r_e_s_o_l_u_t_i_o_n]
-       [----ssttaarrtt|--ss _s_t_a_r_t] [----eenndd|--ee _e_n_d]
+       [----ssttaarrtt|--ss _s_t_a_r_t] [----eenndd|--ee _e_n_d] [----ddaaeemmoonn _a_d_d_r_e_s_s]
 
 DDEESSCCRRIIPPTTIIOONN
        The ffeettcchh function is normally used internally by the graph function to
        get data from RRRRDDs. ffeettcchh will analyze the RRRRDD and try to retrieve the
-       data in the resolution requested.  The data fetched is printed to
-       stdout. _*_U_N_K_N_O_W_N_* data is often represented by the string "NaN"
-       depending on your OS's printf function.
+       data in the resolution requested.  The data fetched is printed to std-
+       out. _*_U_N_K_N_O_W_N_* data is often represented by the string "NaN" depending
+       on your OS's printf function.
 
        _f_i_l_e_n_a_m_e
                the name of the RRRRDD you want to fetch the data from.
@@ -39,11 +39,21 @@ DDEESSCCRRIIPPTTIIOONN
                STYLE TIME SPECIFICATION section for a detailed explanation of
                how to specify the end time.
 
-   RREESSOOLLUUTTIIOONN IINNTTEERRVVAALL
-       In order to get RRDtool to fetch anything other than the finest
-       resolution RRA bbootthh the start and end time must be specified on
-       boundaries that are multiples of the desired resolution. Consider the
-       following example:
+       ----ddaaeemmoonn _a_d_d_r_e_s_s
+               Address of the rrdcached daemon. If specified, a "flush" com-
+               mand is sent to the server before reading the RRD files. This
+               allows rrrrddttooooll to return fresh data even if the daemon is con-
+               figured to cache values for a long time.  For a list of
+               accepted formats, see the --ll option in the rrdcached manual.
+
+                rrdtool fetch --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd AVERAGE
+
+       RREESSOOLLUUTTIIOONN IINNTTEERRVVAALL
+
+       In order to get RRDtool to fetch anything other than the finest resolu-
+       tion RRA bbootthh the start and end time must be specified on boundaries
+       that are multiples of the desired resolution. Consider the following
+       example:
 
         rrdtool create subdata.rrd -s 10 DS:ds0:GAUGE:300:0:U \
          RRA:AVERAGE:0.5:30:3600 \
@@ -91,20 +101,22 @@ DDEESSCCRRIIPPTTIIOONN
                  system "rrdtool fetch subdata.rrd AVERAGE \
                          -r $rrdres -e @{[int($ctime/$rrdres)*$rrdres]} -s e-1h"'
 
-   AATT--SSTTYYLLEE TTIIMMEE SSPPEECCIIFFIICCAATTIIOONN
+       AATT--SSTTYYLLEE TTIIMMEE SSPPEECCIIFFIICCAATTIIOONN
+
        Apart from the traditional _S_e_c_o_n_d_s _s_i_n_c_e _e_p_o_c_h, RRDtool does also
        understand at-style time specification. The specification is called
        "at-style" after the Unix command _a_t(1) that has moderately complex
        ways to specify time to run your job at a certain date and time. The
-       at-style specification consists of two parts: the TTIIMMEE RREEFFEERREENNCCEE
-       specification and the TTIIMMEE OOFFFFSSEETT specification.
+       at-style specification consists of two parts: the TTIIMMEE RREEFFEERREENNCCEE speci-
+       fication and the TTIIMMEE OOFFFFSSEETT specification.
 
-   TTIIMMEE RREEFFEERREENNCCEE SSPPEECCIIFFIICCAATTIIOONN
-       The time reference specification is used, well, to establish a
-       reference moment in time (to which the time offset is then applied to).
-       When present, it should come first, when omitted, it defaults to nnooww.
-       On its own part, time reference consists of a _t_i_m_e_-_o_f_-_d_a_y reference
-       (which should come first, if present) and a _d_a_y reference.
+       TTIIMMEE RREEFFEERREENNCCEE SSPPEECCIIFFIICCAATTIIOONN
+
+       The time reference specification is used, well, to establish a refer-
+       ence moment in time (to which the time offset is then applied to). When
+       present, it should come first, when omitted, it defaults to nnooww. On its
+       own part, time reference consists of a _t_i_m_e_-_o_f_-_d_a_y reference (which
+       should come first, if present) and a _d_a_y reference.
 
        The _t_i_m_e_-_o_f_-_d_a_y can be specified as HHHH::MMMM, HHHH..MMMM, or just HHHH. You can
        suffix it with aamm or ppmm or use 24-hours clock. Some special times of
@@ -123,17 +135,18 @@ DDEESSCCRRIIPPTTIIOONN
        _N_O_T_E_2: if you specify the _d_a_y in this way, the _t_i_m_e_-_o_f_-_d_a_y is REQUIRED
        as well.
 
-       Finally, you can use the words nnooww, ssttaarrtt, or eenndd as your time
-       reference. NNooww refers to the current moment (and is also the default
-       time reference). SSttaarrtt (eenndd) can be used to specify a time relative to
-       the start (end) time for those tools that use these categories
-       (rrrrddffeettcchh, rrdgraph).
+       Finally, you can use the words nnooww, ssttaarrtt, or eenndd as your time refer-
+       ence. NNooww refers to the current moment (and is also the default time
+       reference). SSttaarrtt (eenndd) can be used to specify a time relative to the
+       start (end) time for those tools that use these categories (rrrrddffeettcchh,
+       rrdgraph).
 
-       Month and day of the week names can be used in their naturally
-       abbreviated form (e.g., Dec for December, Sun for Sunday, etc.). The
-       words nnooww, ssttaarrtt, eenndd can be abbreviated as nn, ss, ee.
+       Month and day of the week names can be used in their naturally abbrevi-
+       ated form (e.g., Dec for December, Sun for Sunday, etc.). The words
+       nnooww, ssttaarrtt, eenndd can be abbreviated as nn, ss, ee.
 
-   TTIIMMEE OOFFFFSSEETT SSPPEECCIIFFIICCAATTIIOONN
+       TTIIMMEE OOFFFFSSEETT SSPPEECCIIFFIICCAATTIIOONN
+
        The time offset specification is used to add/subtract certain time
        intervals to/from the time reference moment. It consists of a _s_i_g_n
        (++ or --) and an _a_m_o_u_n_t. The following time units can be used to specify
@@ -144,10 +157,10 @@ DDEESSCCRRIIPPTTIIOONN
        = -5h-45min = -6h+15min = -7h+1h30m-15min, etc.)
 
        _N_O_T_E_3: If you specify time offset in days, weeks, months, or years, you
-       will end with the time offset that may vary depending on your time
-       reference, because all those time units have no single well defined
-       time interval value (1 year contains either 365 or 366 days, 1 month is
-       28 to 31 days long, and even 1 day may be not equal to 24 hours twice a
+       will end with the time offset that may vary depending on your time ref-
+       erence, because all those time units have no single well defined time
+       interval value (1 year contains either 365 or 366 days, 1 month is 28
+       to 31 days long, and even 1 day may be not equal to 24 hours twice a
        year, when DST-related clock adjustments take place).  To cope with
        this, when you use days, weeks, months, or years as your time offset
        units your time reference date is adjusted accordingly without too much
@@ -159,30 +172,30 @@ DDEESSCCRRIIPPTTIIOONN
        invalid time/date combination (because of 3am -> 4am DST forward clock
        adjustment, see the below example).
 
-       In contrast, hours, minutes, and seconds are well defined time
-       intervals, and these are guaranteed to always produce time offsets
-       exactly as specified (e.g. for EET timezone, '8:00 Mar 27 1999 +2 days'
-       = '8:00 Mar 29 1999', but since there is 1-hour DST forward clock
-       adjustment that occurs around 3:00 Mar 28 1999, the actual time
-       interval between 8:00 Mar 27 1999 and 8:00 Mar 29 1999 equals 47 hours;
-       on the other hand, '8:00 Mar 27 1999 +48 hours' = '9:00 Mar 29 1999',
-       as expected)
+       In contrast, hours, minutes, and seconds are well defined time inter-
+       vals, and these are guaranteed to always produce time offsets exactly
+       as specified (e.g. for EET timezone, '8:00 Mar 27 1999 +2 days' =
+       '8:00 Mar 29 1999', but since there is 1-hour DST forward clock adjust-
+       ment that occurs around 3:00 Mar 28 1999, the actual time interval
+       between 8:00 Mar 27 1999 and 8:00 Mar 29 1999 equals 47 hours; on the
+       other hand, '8:00 Mar 27 1999 +48 hours' = '9:00 Mar 29 1999', as
+       expected)
 
        _N_O_T_E_4: The single-letter abbreviation for both mmoonntthhss and mmiinnuutteess is mm.
        To disambiguate them, the parser tries to read your mind :) by applying
        the following two heuristics:
 
-       1. If mm is used in context of (i.e. right after the) years, months,
+       1  If mm is used in context of (i.e. right after the) years, months,
           weeks, or days it is assumed to mean mmoonntthhss, while in the context of
           hours, minutes, and seconds it means minutes.  (e.g., in -1y6m or
           +3w1m mm is interpreted as mmoonntthhss, while in -3h20m or +5s2m mm the
           parser decides for mmiinnuutteess).
 
-       2. Out of context (i.e. right after the ++ or -- sign) the meaning of mm
+       2  Out of context (i.e. right after the ++ or -- sign) the meaning of mm
           is guessed from the number it directly follows.  Currently, if the
           number's absolute value is below 25 it is assumed that mm means
-          mmoonntthhss, otherwise it is treated as mmiinnuutteess.  (e.g., -25m == -25
-          minutes, while +24m == +24 months)
+          mmoonntthhss, otherwise it is treated as mmiinnuutteess.  (e.g., -25m == -25 min-
+          utes, while +24m == +24 months)
 
        _F_i_n_a_l _N_O_T_E_S: Time specification is case-insensitive.  Whitespace can be
        inserted freely or omitted altogether.  There are, however, cases when
@@ -191,7 +204,8 @@ DDEESSCCRRIIPPTTIIOONN
        your shell or use '_' (underscore) or ',' (comma) which also count as
        whitespace (e.g., midnight_Thu or midnight,Thu).
 
-   TTIIMMEE SSPPEECCIIFFIICCAATTIIOONN EEXXAAMMPPLLEESS
+       TTIIMMEE SSPPEECCIIFFIICCAATTIIOONN EEXXAAMMPPLLEESS
+
        _O_c_t _1_2 -- October 12 this year
 
        _-_1_m_o_n_t_h or _-_1_m -- current time of day, only a month before (may yield
@@ -218,9 +232,18 @@ DDEESSCCRRIIPPTTIIOONN
        _1_9_9_7_0_7_0_3 _1_2_:_4_5 -- 12:45  July 3th, 1997 (my favorite, and its even got
        an ISO number (8601)).
 
+EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
+       The following environment variables may be used to change the behavior
+       of "rrdtool fetch":
+
+       RRRRDDCCAACCHHEEDD__AADDDDRREESSSS
+           If this environment variable is set it will have the same effect as
+           specifying the "--daemon" option on the command line. If both are
+           present, the command line argument takes precedence.
+
 AAUUTTHHOORR
        Tobias Oetiker <tobi@oetiker.ch>
 
 
 
-1.3.8                             2008-03-15                       RRDFETCH(1)
+1.3.99909060808                   2008-09-25                       RRDFETCH(1)

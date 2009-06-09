@@ -1,18 +1,14 @@
-<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdcgi</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-
-<!-- INDEX BEGIN -->
-<div name="index">
 <p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
 <!--
 
 <ul>
@@ -30,11 +26,7 @@
 	<li><a href="#example_3">EXAMPLE 3</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
-
 -->
-
-
-</div>
 <!-- INDEX END -->
 
 <p>
@@ -58,138 +50,172 @@ In the end it will printout a web page including the necessary CGI headers.</p>
 only for a subset of tags. This allows nesting of tags.</p>
 <p>The argument parser uses the same semantics as you are used from your C-shell.</p>
 <dl>
-<dt><strong><a name="filter" class="item"><strong>--filter</strong></a></strong></dt>
-
+<dt><strong><a name="item__2d_2dfilter"><strong>--filter</strong></a></strong><br />
+</dt>
 <dd>
-<p>Assume that rrdcgi is run as a filter and not as a cgi.</p>
+Assume that rrdcgi is run as a filter and not as a cgi.
 </dd>
-</dl>
+<p></p></dl>
 <p>
 </p>
 <h2><a name="keywords">Keywords</a></h2>
 <dl>
-<dt><strong><a name="rrd_cv_name" class="item">RRD::CV <em>name</em></a></strong></dt>
-
+<dt><strong><a name="item_rrd_3a_3acv_name">RRD::CV <em>name</em></a></strong><br />
+</dt>
 <dd>
-<p>Inserts the CGI variable of the given name.</p>
+Inserts the CGI variable of the given name.
 </dd>
-<dt><strong><a name="rrd_cv_quote_name" class="item">RRD::CV::QUOTE <em>name</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3acv_3a_3aquote_name">RRD::CV::QUOTE <em>name</em></a></strong><br />
+</dt>
 <dd>
-<p>Inserts the CGI variable of the given name but quotes it, ready for
+Inserts the CGI variable of the given name but quotes it, ready for
 use as an argument in another RRD:: tag. So even when there are spaces in the
-value of the CGI variable it will still be considered to be one argument.</p>
+value of the CGI variable it will still be considered to be one argument.
 </dd>
-<dt><strong><a name="rrd_cv_path_name" class="item">RRD::CV::PATH <em>name</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3acv_3a_3apath_name">RRD::CV::PATH <em>name</em></a></strong><br />
+</dt>
 <dd>
-<p>Inserts the CGI variable of the given name, quotes it and makes sure
+Inserts the CGI variable of the given name, quotes it and makes sure
 it starts neither with a '/' nor contains '..'. This is to make
 sure that no problematic pathnames can be introduced through the
-CGI interface.</p>
+CGI interface.
 </dd>
-<dt><strong><a name="rrd_getenv_variable" class="item">RRD::GETENV <em>variable</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3agetenv_variable">RRD::GETENV <em>variable</em></a></strong><br />
+</dt>
 <dd>
-<p>Get the value of an environment variable.</p>
+Get the value of an environment variable.
+</dd>
+<dd>
 <pre>
  &lt;RRD::GETENV REMOTE_USER&gt;</pre>
+</dd>
+<dd>
 <p>might give you the name of the remote user given you are using
 some sort of access control on the directory.</p>
 </dd>
-<dt><strong><a name="rrd_goodfor_seconds" class="item">RRD::GOODFOR <em>seconds</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3agoodfor_seconds">RRD::GOODFOR <em>seconds</em></a></strong><br />
+</dt>
 <dd>
-<p>Specify the number of seconds this page should remain valid. This will prompt
+Specify the number of seconds this page should remain valid. This will prompt
 the rrdcgi to output a Last-Modified, an Expire and if the number of
-seconds is <em>negative</em> a Refresh header.</p>
+seconds is <em>negative</em> a Refresh header.
 </dd>
-<dt><strong><a name="rrd_include_filename" class="item">RRD::INCLUDE <em>filename</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3ainclude_filename">RRD::INCLUDE <em>filename</em></a></strong><br />
+</dt>
 <dd>
-<p>Include the contents of the specified file into the page returned from the cgi.</p>
+Include the contents of the specified file into the page returned from the cgi.
 </dd>
-<dt><strong><a name="rrd_setenv_variable_value" class="item">RRD::SETENV <em>variable</em> <em>value</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3asetenv_variable_value">RRD::SETENV <em>variable</em> <em>value</em></a></strong><br />
+</dt>
 <dd>
-<p>If you want to present your graphs in another time zone than your own, you
-could use</p>
+If you want to present your graphs in another time zone than your own, you
+could use
+</dd>
+<dd>
 <pre>
  &lt;RRD::SETENV TZ UTC&gt;</pre>
+</dd>
+<dd>
 <p>to make sure everything is presented in Universal Time. Note that the
 values permitted to TZ depend on your OS.</p>
 </dd>
-<dt><strong><a name="rrd_setvar_variable_value" class="item">RRD::SETVAR <em>variable</em> <em>value</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3asetvar_variable_value">RRD::SETVAR <em>variable</em> <em>value</em></a></strong><br />
+</dt>
 <dd>
-<p>Analog to SETENV but for local variables.</p>
+Analog to SETENV but for local variables.
 </dd>
-<dt><strong><a name="rrd_getvar_variable" class="item">RRD::GETVAR <em>variable</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3agetvar_variable">RRD::GETVAR <em>variable</em></a></strong><br />
+</dt>
 <dd>
-<p>Analog to GETENV but for local variables.</p>
+Analog to GETENV but for local variables.
 </dd>
-<dt><strong><a name="rrd_time_last_rrd_file_strftime_format" class="item">RRD::TIME::LAST <em>rrd-file</em> <em>strftime-format</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3atime_3a_3alast_rrd_2dfile_strftime_2dform">RRD::TIME::LAST <em>rrd-file</em> <em>strftime-format</em></a></strong><br />
+</dt>
 <dd>
-<p>This gets replaced by the last modification time of the selected RRD. The
-time is <em>strftime</em>-formatted with the string specified in the second argument.</p>
+This gets replaced by the last modification time of the selected RRD. The
+time is <em>strftime</em>-formatted with the string specified in the second argument.
 </dd>
-<dt><strong><a name="rrd_time_now_strftime_format" class="item">RRD::TIME::NOW <em>strftime-format</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3atime_3a_3anow_strftime_2dformat">RRD::TIME::NOW <em>strftime-format</em></a></strong><br />
+</dt>
 <dd>
-<p>This gets replaced by the current time of day. The time is
-<em>strftime</em>-formatted with the string specified in the argument.</p>
+This gets replaced by the current time of day. The time is
+<em>strftime</em>-formatted with the string specified in the argument.
+</dd>
+<dd>
 <p>Note that if you return : (colons) from your strftime format you may
 have to escape them using \ if the time is to be used as an argument
 to a GRAPH command.</p>
 </dd>
-<dt><strong><a name="rrd_time_strftime_start_end_start_spec_end_spec_strftime_format" class="item">RRD::TIME::STRFTIME <em>START|END</em> <em>start-spec</em> <em>end-spec</em> <em>strftime-format</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3atime_3a_3astrftime_start_7cend_start_2dsp">RRD::TIME::STRFTIME <em>START|END</em> <em>start-spec</em> <em>end-spec</em> <em>strftime-format</em></a></strong><br />
+</dt>
 <dd>
-<p>This gets replaced by a strftime-formatted time using the format
+This gets replaced by a strftime-formatted time using the format
 <em>strftime-format</em> on either <em>start-spec</em> or <em>end-spec</em> depending on
 whether <em>START</em> or <em>END</em> is specified.  Both <em>start-spec</em> and <em>end-spec</em>
 must be supplied as either could be relative to the other.  This is intended
 to allow pretty titles on graphs with times that are easier for non RRDtool
-folks to figure out than &quot;-2weeks&quot;.</p>
+folks to figure out than ``-2weeks''.
+</dd>
+<dd>
 <p>Note that again, if you return : (colon) from your strftime format,
 you may have to escape them using \ if the time is to be used as an
 argument to a GRAPH command.</p>
 </dd>
-<dt><strong><a name="rrd_graph_rrdgraph_arguments" class="item">RRD::GRAPH <em>rrdgraph arguments</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3agraph_rrdgraph_arguments">RRD::GRAPH <em>rrdgraph arguments</em></a></strong><br />
+</dt>
 <dd>
-<p>This tag creates the RRD graph defined by its argument and then is
+This tag creates the RRD graph defined by its argument and then is
 replaced by an appropriate &lt;IMG ... &gt; tag referring to the graph.
 The <strong>--lazy</strong> option in RRD graph can be used to make sure that graphs
 are only regenerated when they are out of date. The arguments
-to the <strong>RRD::GRAPH</strong> tag work as described in the <strong>rrdgraph</strong> manual page.</p>
+to the <strong>RRD::GRAPH</strong> tag work as described in the <strong>rrdgraph</strong> manual page.
+</dd>
+<dd>
 <p>Use the <strong>--lazy</strong> option in your RRD::GRAPH tags, to reduce the load
 on your server. This option makes sure that graphs are only regenerated when
 the old ones are out of date.</p>
+</dd>
+<dd>
 <p>If you do not specify your own <strong>--imginfo</strong> format, the following will
 be used:</p>
+</dd>
+<dd>
 <pre>
  &lt;IMG SRC=&quot;%s&quot; WIDTH=&quot;%lu&quot; HEIGHT=&quot;%lu&quot;&gt;</pre>
+</dd>
+<dd>
 <p>Note that %s stands for the filename part of the graph generated, all
 directories given in the PNG file argument will get dropped.</p>
 </dd>
-<dt><strong><a name="rrd_print_number" class="item">RRD::PRINT <em>number</em></a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3aprint_number">RRD::PRINT <em>number</em></a></strong><br />
+</dt>
 <dd>
-<p>If the preceding  <strong>RRD::GRAPH</strong> tag contained and <strong>PRINT</strong> arguments,
+If the preceding  <strong>RRD::GRAPH</strong> tag contained and <strong>PRINT</strong> arguments,
 then you can access their output with this tag. The <em>number</em> argument refers to the
-number of the <strong>PRINT</strong> argument. This first <strong>PRINT</strong> has <em>number</em> 0.</p>
+number of the <strong>PRINT</strong> argument. This first <strong>PRINT</strong> has <em>number</em> 0.
 </dd>
-<dt><strong><a name="rrd_internal_var" class="item">RRD::INTERNAL &lt;var&gt;</a></strong></dt>
-
+<p></p>
+<dt><strong><a name="item_rrd_3a_3ainternal__3cvar_3e">RRD::INTERNAL &lt;var&gt;</a></strong><br />
+</dt>
 <dd>
-<p>This tag gets replaced by an internal var. Currently these vars are known:
+This tag gets replaced by an internal var. Currently these vars are known:
 VERSION, COMPILETIME.
-These vars represent the compiled-in values.</p>
+These vars represent the compiled-in values.
 </dd>
-</dl>
+<p></p></dl>
 <p>
 </p>
 <hr />
