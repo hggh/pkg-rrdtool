@@ -7,6 +7,17 @@
 #we use quilt
 include /usr/share/quilt/quilt.make
 
+#needed to build with Python 2.6
+-include /usr/share/python/python.mk
+ifeq (,$(py_sitename))
+  py_sitename = site-packages
+  py_libdir = /usr/lib/python$(subst python,,$(1))/site-packages
+  py_sitename_sh = $(py_sitename)
+  py_libdir_sh = $(py_libdir)
+  py_setup_install_args = 
+endif
+
+
 
 #Ruby versions to build for
 RUBY_VERS := 1.8 1.9
@@ -163,8 +174,11 @@ install-python%: install-common-stamp
 	dh_testroot
 	set -e ;\
 	 cd bindings/python ;\
-	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool ;\
-	 python$*-dbg setup.py install --root=$(CURDIR)/debian/rrdtool-dbg
+	 python$* setup.py install --root=$(CURDIR)/debian/python-rrdtool \
+		$(py_setup_install_args) ;\
+	 python$*-dbg setup.py install --root=$(CURDIR)/debian/rrdtool-dbg \
+		$(py_setup_install_args)
+
 	find $(CURDIR)/debian/rrdtool-dbg -type f -name '*.egg-info' -print0 |\
 		 xargs -0r rm -f
 
