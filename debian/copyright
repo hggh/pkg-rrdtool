@@ -114,6 +114,32 @@ can be found in the file /usr/share/common-licenses/GPL-2. The symlink
 
 Files with different copyrights/licenses:
 
+ * bindings/lua/compat-5.1r5/compat-5.1.{c,h,lua}:
+
+   Copyright (C) 2004-2006 Kepler Project
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+ * bindings/lua/rrdlua.c:
+
+   Copyright (C) 2008 Fidelis Assis
+
  * bindings/python/* (except rrd_extra.h):
 
    Author: Hye-Shik Chang <perky@fallin.lv>
@@ -161,9 +187,17 @@ Files with different copyrights/licenses:
 
     Author: Steve Rader <rader@wiscnet.net>
 
+ * doc/rrdcached.pod, doc/rrdflushcached.pod:
+
+    Author: Florian Forster <octo@verplant.org>
+
  * doc/rrdfirst.pod:
 
     Author: Burton Strauss <Burton@ntopSupport.com>
+
+ * doc/rrdgraph_libdbi.pod:
+
+    Author: Martin Sperl <rrdtool@martin.sperl.org>
 
  * doc/rrdlast.pod:
 
@@ -173,13 +207,41 @@ Files with different copyrights/licenses:
 
     Author: Andy Riebs <andy.riebs@hp.com>
 
+ * doc/rrdlua.pod:
+
+    Author: Fidelis Assis <fidelis@pobox.com>
+
  * doc/rrdthreads.pod:
 
     Author: Peter Stamfest <peter@stamfest.at>
 
+ * doc/rrdupdate.pod:
+
+    Authors: Tobias Oetiker <tobi@oetiker.ch>
+             Florian Forster <octo@verplant.org>
+
  * doc/rrd-beginners.pod:
 
     Author: Ketan Patel <k2pattu@yahoo.com>
+
+ * intl/:
+
+   Copyright (C) 1995-2005 Free Software Foundation, Inc.
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU Library General Public License as published
+   by the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA.
 
  * src/{fnv.h,hash_32.c}:
 
@@ -197,6 +259,10 @@ Files with different copyrights/licenses:
        chongo <Landon Curt Noll> /\oo/\
        http://reality.sgi.com/chongo/
        EMail: chongo_fnv at prime dot engr dot sgi dot com
+
+ * src/gettext.h:
+
+   Copyright (C) 1995-2006 Free Software Foundation, Inc.
 
  * src/parsetime.c:
 
@@ -242,6 +308,19 @@ Files with different copyrights/licenses:
     redistributed in its original form, as hardcopy or electronically,
     then you must include this copyright notice along with the code.
 
+ * src/rrd_client.{c,h}, src/rrd_flushcached.c:
+
+    Copyright (C) 2008 Florian octo Forster <octo@verplant.org>
+
+ * src/rrd_daemon.c:
+
+    Copyright (C) 2008 Florian octo Forster <octo@verplant.org>
+    Copyright (C) 2008 Kevin Brintnall <kbrint@rufus.net>
+
+ * src/rrd_fetch_libdbi.c:
+
+    Author: Martin Sperl <rrdtool@martin.sperl.org>
+
  * src/rrd_getopt.{c,h}, src/rrd_getopt1.c:
 
     Copyright (C) 1987, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97
@@ -267,7 +346,7 @@ Files with different copyrights/licenses:
 
  * src/rrd_hw.c:
 
-    Copyright (C) 1997-2008 Tobias Oetiker
+    Copyright (C) 1997-2009 Tobias Oetiker
     Initial version by Jake Brutlag, WebTV Networks, 5/1/00
 
  * src/rrd_i18n.h
@@ -277,18 +356,22 @@ Files with different copyrights/licenses:
  * src/rrd_is_thread_safe.h, src/rrd_not_thread_safe.c, src/rrd_thread_safe.c,
    src/rrd_thread_safe_nt.c:
 
-    Copyright 1997-2008 Tobias Oetiker
+    Copyright 1997-2009 Tobias Oetiker
     Copyright 2003 Peter Stamfest <peter@stamfest.at>
 
  * src/rrd_last.c:
 
-    Copyright (C) 1997-2008 Tobias Oetiker
+    Copyright (C) 1997-2009 Tobias Oetiker
     Initial version by Russ Wright, @Home Network, 9/28/98
 
- * src/rrd_restore.c
+ * src/rrd_lastupdate.c, src/rrd_restore.c, src/rrd_update.c:
 
-    Copyright (C) 1997-2008 Tobias Oetiker
+    Copyright (C) 1997-2009 Tobias Oetiker
     Copyright (C) 2008 Florian Forster
+
+ * src/rrd_utils.c:
+
+    Author: Kevin Brintnall <kbrint@rufus.net>
 
  * src/strftime.c:
 
