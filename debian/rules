@@ -160,6 +160,7 @@ install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	done
 
 	dh_installexamples -s
+	chmod 644 debian/rrdtool/usr/share/doc/rrdtool/examples/rrdcached/RRDCached.pm
 
 install-python%: install-common-stamp
 	dh_testdir
