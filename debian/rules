@@ -144,6 +144,10 @@ install-common-stamp: build-arch-stamp
 	# we don't want .txt and .pod documentation in the package
 	rm -rf debian/tmp/usr/share/doc/rrdtool/txt
 	dh_install --sourcedir=$(CURDIR)/debian/tmp --fail-missing
+	# remove duplicates
+	rm debian/rrdtool/usr/bin/rrdcached
+	rm debian/rrdtool/usr/share/man/man1/rrdcached.1
+	rm debian/rrdtool/usr/share/doc/rrdtool/html/rrdcached.html
 
 	touch $@
 
@@ -160,7 +164,7 @@ install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	done
 
 	dh_installexamples -s
-	chmod 644 debian/rrdtool/usr/share/doc/rrdtool/examples/rrdcached/RRDCached.pm
+	chmod 644 debian/rrdcached/usr/share/doc/rrdcached/examples/RRDCached.pm
 
 install-python%: install-common-stamp
 	dh_testdir
