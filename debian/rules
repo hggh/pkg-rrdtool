@@ -117,6 +117,7 @@ endif
 	rm -rf src/.libs src/.deps doc/*.html doc/*.1 doc/*.txt
 	rm -f intltool-extract intltool-merge intltool-update
 	rm -f src/librrd.sym
+	rm -f config.h
 
 	dh_clean
 
