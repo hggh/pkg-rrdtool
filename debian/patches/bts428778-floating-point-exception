@@ -11,7 +11,7 @@ diff a/src/rrd_create.c b/src/rrd_create.c
 +            {
 +                rrd_set_error("Invalid step: must be greater than 0.");
 +                rrd_free2(rrd);
-+                close(rrd_file);
++                rrd_close(rrd_file_dn);
 +                return(-1);
 +            }
              /* startup missing pdp count */
