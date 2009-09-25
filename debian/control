@@ -207,11 +207,11 @@ Description: time-series data storage and display system (Ruby 1.9 interface)
  .
  This package contains a Ruby 1.9 interface to RRDs.
 
-Package: liblua5.1-rrd
+Package: liblua5.1-rrd0
 Architecture: any
 Section: interpreters
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: time-series data storage and display system (Ruby 1.9 interface)
+Description: time-series data storage and display system (Lua 5.1 interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
  server load average). It stores the data in Round Robin Databases (RRDs),
@@ -220,3 +220,17 @@ Description: time-series data storage and display system (Ruby 1.9 interface)
  graphical representation of data values.
  .
  This package contains a Lua 5.1 interface to RRDs.
+
+Package: liblua5.1-rrd-dev
+Architecture: any
+Section: libdevel
+Depends: ${shlibs:Depends}, ${misc:Depends}, liblua5.1-rrd0 (= ${binary:Version})
+Description: time-series data storage and display system (Lua 5.1 interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains development files for the Lua 5.1 interface to RRDs.

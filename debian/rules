@@ -18,7 +18,7 @@ PY_VERS := $(shell pyversions -vr)
 TCL_VERS := $(shell dpkg -s tcl-dev | grep '^Depends' \
 	| sed 's,.*\<tcl\([0-9.]*\)-dev\>.*,\1,')
 
-LUA = /usr/bin/lua5.1
+LUA = lua5.1
 
 #let's help configure to figure out our host/build system
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
@@ -42,9 +42,6 @@ CONFFLAGS += --with-perl-options=INSTALLDIRS=vendor
 
 #path to tcl
 CONFFLAGS += --with-tcllib=/usr/lib/tcl$(TCL_VERS)
-
-#enable lua installation
-CONFFLAGS += --enable-lua-site-install
 
 #let's take care of optimization + debug builds
 CFLAGS += -Wall -g
@@ -73,7 +70,7 @@ endif
 	LDFLAGS="$(LINKER_FLAGS)" \
 	CFLAGS="$(CFLAGS)" \
 	RRDDOCDIR=/usr/share/doc/rrdtool \
-	LUA=$(LUA) \
+	LUA=/usr/bin/$(LUA) \
 	  ./configure $(CONFFLAGS)
 
 build: build-arch build-indep 
