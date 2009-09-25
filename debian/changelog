@@ -8,6 +8,8 @@ rrdtool (1.4~rc2-1) experimental; urgency=low
     - Build-depend on libdbi0-dev, required by rrdgraph to read values from an
       SQL database.
     - Updated Standards-Version to 3.8.3.
+    - Let the synopsis start with a small letter (as suggested in dev-ref
+      6.2.2).
   * debian/rules:
     - Remove config.h in the 'clean' target - this is created by configure but
       not cleaned up by any Makefile.
@@ -24,7 +26,7 @@ rrdtool (1.4~rc2-1) experimental; urgency=low
   * debian/librrd4.symbols:
     - Added symbols introduced in 1.4~rc2.
 
- -- Sebastian Harl <tokkee@debian.org>  Fri, 25 Sep 2009 17:04:48 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Fri, 25 Sep 2009 18:54:11 +0200
 
 rrdtool (1.3.8-1) unstable; urgency=low
 
