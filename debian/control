@@ -12,7 +12,8 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, gettext, quilt,
  perl (>= 5.8.0),
  python-all-dev (>= 2.3.5-10), python-all-dbg (>= 2.3.5-10),
  python-support (>= 0.7.1),
- ruby1.8, ruby1.8-dev, ruby1.9, ruby1.9-dev
+ ruby1.8, ruby1.8-dev, ruby1.9, ruby1.9-dev,
+ liblua5.1-0-dev, lua5.1
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
 Vcs-Git: git://git.snow-crash.org/pkg-rrdtool.git/
@@ -205,3 +206,17 @@ Description: time-series data storage and display system (Ruby 1.9 interface)
  graphical representation of data values.
  .
  This package contains a Ruby 1.9 interface to RRDs.
+
+Package: liblua5.1-rrd
+Architecture: any
+Section: interpreters
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: time-series data storage and display system (Ruby 1.9 interface)
+ The Round Robin Database Tool (RRDtool) is a system to store and display
+ time-series data (e.g. network bandwidth, machine-room temperature,
+ server load average). It stores the data in Round Robin Databases (RRDs),
+ a very compact way that will not expand over time. RRDtool processes the
+ extracted data to enforce a certain data density, allowing for useful
+ graphical representation of data values.
+ .
+ This package contains a Lua 5.1 interface to RRDs.
