@@ -14,6 +14,7 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, gettext, quilt,
  python-support (>= 0.7.1),
  ruby1.8, ruby1.8-dev, ruby1.9, ruby1.9-dev,
  liblua5.1-0-dev, lua5.1
+Build-Conflicts: lua50
 Homepage: http://oss.oetiker.ch/rrdtool/
 Vcs-Browser: http://git.snow-crash.org/?p=pkg-rrdtool.git;a=summary
 Vcs-Git: git://git.snow-crash.org/pkg-rrdtool.git/
