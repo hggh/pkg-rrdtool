@@ -7,6 +7,7 @@ librrd.so.4 librrd4 #MINVER#
  rrd_create_r@Base 1.3.0
  rrd_dontneed@Base 1.3.0
  rrd_dump@Base 1.3.0
+ rrd_dump_cb_r@Base 1.4~rc2+200909281
  rrd_dump_r@Base 1.3.0
  rrd_fetch@Base 1.3.0
  rrd_fetch_r@Base 1.3.0
@@ -33,6 +34,7 @@ librrd.so.4 librrd4 #MINVER#
  rrd_lastupdate@Base 1.3.0
  rrd_lastupdate_r@Base 1.4~rc2
  rrd_lock@Base 1.3.0
+ rrd_mkdir_p@Base 1.4~rc2+200909281
  rrd_new_context@Base 1.3.0
  rrd_open@Base 1.3.0
  rrd_parsetime@Base 1.3.0
@@ -72,6 +74,7 @@ librrd_th.so.4 librrd4 #MINVER#
  rrd_create_r@Base 1.3.0
  rrd_dontneed@Base 1.3.0
  rrd_dump@Base 1.3.0
+ rrd_dump_cb_r@Base 1.4~rc2+200909281
  rrd_dump_r@Base 1.3.0
  rrd_fetch@Base 1.3.0
  rrd_fetch_r@Base 1.3.0
@@ -98,6 +101,7 @@ librrd_th.so.4 librrd4 #MINVER#
  rrd_lastupdate@Base 1.3.0
  rrd_lastupdate_r@Base 1.4~rc2
  rrd_lock@Base 1.3.0
+ rrd_mkdir_p@Base 1.4~rc2+200909281
  rrd_new_context@Base 1.3.0
  rrd_open@Base 1.3.0
  rrd_parsetime@Base 1.3.0
