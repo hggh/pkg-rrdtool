@@ -7,7 +7,7 @@
  * rrd_thread_safe.c   Contains routines used when thread safety is required
  *                     for win32
  *****************************************************************************
- * $Id: rrd_thread_safe_nt.c 1677 2008-11-18 17:19:17Z oetiker $
+ * $Id$
  *************************************************************************** */
 
 #include <windows.h>

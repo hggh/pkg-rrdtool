@@ -1,6 +1,6 @@
 News for RRDtool 1.4
 ====================
-$Id: NEWS 1840 2009-06-07 11:16:07Z oetiker $
+$Id$
 
 RRD Caching Daemon (rrdcached)
 ------------------------------
@@ -60,5 +60,14 @@ Miscellaneous Changes
 
 * various improvements to rrd_open functions and mmap handling
   by Daniel Pocock
+
+* allow the HW smoothing window size to be set to 0 with rrdtool tune
+  by sylvain luiset
+
+* new graph option --border to set the 3d border width 
+  by Bernhard Reutner-Fischer
+
+* draw different color swats depending on the type of line drawn in the
+  graph by Loïc Tortay
 
 for more detail see the CHANGES file.

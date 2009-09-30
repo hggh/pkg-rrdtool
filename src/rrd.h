@@ -3,7 +3,7 @@
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id: rrd.h 1812 2009-05-26 07:13:52Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...
@@ -130,6 +130,10 @@ extern    "C" {
         struct rrd_info_t *next;
     } rrd_info_t;
 
+    typedef size_t (* rrd_output_callback_t)(
+    const void *,
+    size_t,
+    void *);
 
 /* main function blocks */
     int       rrd_create(
@@ -252,6 +256,12 @@ extern    "C" {
     const char *filename,
     int rraindex);
 
+    int rrd_dump_cb_r(
+    const char *filename,
+    int opt_header,
+    rrd_output_callback_t cb,
+    void *user);
+
 /* Transplanted from rrd_parsetime.h */
     typedef enum {
         ABSOLUTE_TIME,
@@ -326,6 +336,8 @@ int       rrd_proc_start_end(
     int rrd_add_ptr(void ***dest, size_t *dest_size, void *src);
     int rrd_add_strdup(char ***dest, size_t *dest_size, char *src);
     void rrd_free_ptrs(void ***src, size_t *cnt);
+
+    int rrd_mkdir_p(const char *pathname, mode_t mode);
 
 /*
  * The following functions are _internal_ functions needed to read the raw RRD

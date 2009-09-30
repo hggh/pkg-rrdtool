@@ -1,4 +1,4 @@
-$Id: COPYRIGHT 1843 2009-06-07 11:34:39Z oetiker $
+$Id$
 RRDTOOL - Round Robin Database Tool
 A tool for fast logging of numerical data graphical display
 of this data.

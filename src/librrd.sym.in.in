@@ -7,6 +7,7 @@ rrd_create_r
 rrd_dontneed
 rrd_dump
 rrd_dump_r
+rrd_dump_cb_r
 rrd_fetch
 rrd_fetch_r
 rrd_flushcached
@@ -32,6 +33,7 @@ rrd_last_r
 rrd_lastupdate
 rrd_lastupdate_r
 rrd_lock
+rrd_mkdir_p
 rrd_new_context
 rrd_open
 rrd_parsetime

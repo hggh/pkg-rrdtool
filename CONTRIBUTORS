@@ -1,4 +1,4 @@
-$Id: CONTRIBUTORS 1841 2009-06-07 11:20:15Z oetiker $
+$Id$
 
 I would like to thank to following people for helping to
 bring RRDtool into existence.
@@ -9,6 +9,7 @@ Alex van den Bogaerdt <alex with ergens.op.het.net> (rrd_resize.c and more)
 Amos Shapira <amos with gezernet.co.il>
 Andreas Kroomaa <andre with ml.ee>
 Andrew Turner <turner with mint.net> (LAST consolidator)
+Benny Baumann <benbe with geshi.org) rrd_dump with callback support
 Bernard Fischer <bfischer with syslog.ch> 64bit stuff, --alt-autoscale-max
 Bernhard Fischer <rep dot dot dot nop with gmail.com> MMAP rewrite
 Bill Fenner <fenner with research.att.com>

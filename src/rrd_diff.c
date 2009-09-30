@@ -5,7 +5,7 @@
  * diff calculate the difference between two very long integers available as
  *      strings
  *****************************************************************************
- * $Id: rrd_diff.c 1677 2008-11-18 17:19:17Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.4  2003/03/10 00:30:34  oetiker
  * handle cases with two negative numbers

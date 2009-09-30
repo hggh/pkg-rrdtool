@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdxport</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -22,7 +26,11 @@
 	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -51,81 +59,69 @@ representation of the data stored in one or several <strong>RRD</strong>s. It
 can also extract numerical reports.</p>
 <p>If no <em>XPORT</em> statements are found, there will be no output.</p>
 <dl>
-<dt><strong><a name="item_seconds"><strong>-s</strong>|<strong>--start</strong> <em>seconds</em> (default end-1day)</a></strong><br />
-</dt>
+<dt><strong><a name="seconds" class="item"><strong>-s</strong>|<strong>--start</strong> <em>seconds</em> (default end-1day)</a></strong></dt>
+
 <dd>
-The time when the exported range should begin. Time in seconds since
+<p>The time when the exported range should begin. Time in seconds since
 epoch (1970-01-01) is required. Negative numbers are relative to the
 current time. By default one day worth of data will be printed.
 See also AT-STYLE TIME SPECIFICATION section in the <em>rrdfetch</em>
-documentation for a detailed explanation on how to specify time.
+documentation for a detailed explanation on how to specify time.</p>
 </dd>
-<p></p>
-<dt><strong><strong>-e</strong>|<strong>--end</strong> <em>seconds</em> (default now)</strong><br />
-</dt>
+<dt><strong><strong>-e</strong>|<strong>--end</strong> <em>seconds</em> (default now)</strong></dt>
+
 <dd>
-The time when the exported range should end. Time in seconds since epoch.
+<p>The time when the exported range should end. Time in seconds since epoch.
 See also AT-STYLE TIME SPECIFICATION section in the <em>rrdfetch</em>
-documentation for a detailed explanation of ways to specify time.
+documentation for a detailed explanation of ways to specify time.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_rows"><strong>-m</strong>|<strong>--maxrows</strong> <em>rows</em> (default 400 rows)</a></strong><br />
-</dt>
+<dt><strong><a name="rows" class="item"><strong>-m</strong>|<strong>--maxrows</strong> <em>rows</em> (default 400 rows)</a></strong></dt>
+
 <dd>
-This works like the <strong>-w</strong>|<strong>--width</strong> parameter of <em>rrdgraph</em>.
+<p>This works like the <strong>-w</strong>|<strong>--width</strong> parameter of <em>rrdgraph</em>.
 In fact it is exactly the same, but the parameter was renamed to
 describe its purpose in this module. See <em>rrdgraph</em> documentation
-for details.
+for details.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_value"><strong>--step</strong> <em>value</em> (default automatic)</a></strong><br />
-</dt>
+<dt><strong><a name="value" class="item"><strong>--step</strong> <em>value</em> (default automatic)</a></strong></dt>
+
 <dd>
-See <a href="././rrdgraph.html">the rrdgraph manpage</a> documentation.
+<p>See <a href="././rrdgraph.html">the rrdgraph manpage</a> documentation.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item__2d_2ddaemon_address"><strong>--daemon</strong> <em>address</em></a></strong><br />
-</dt>
+<dt><strong><a name="daemon_address" class="item"><strong>--daemon</strong> <em>address</em></a></strong></dt>
+
 <dd>
-Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
 to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
 fresh data even if the daemon is configured to cache values for a long time.
-For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.
-</dd>
-<dd>
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
 <pre>
   rrdtool xport --daemon unix:/var/run/rrdcached.sock ...</pre>
 </dd>
-<p></p>
-<dt><strong><a name="item__2d_2denumds"><strong>--enumds</strong></a></strong><br />
-</dt>
+<dt><strong><a name="enumds" class="item"><strong>--enumds</strong></a></strong></dt>
+
 <dd>
-The generated xml should contain the data values in enumerated tags.
-</dd>
-<dd>
+<p>The generated xml should contain the data values in enumerated tags.</p>
 <pre>
  &lt;v0&gt;val&lt;/v0&gt;&lt;v1&gt;val&lt;/v1&gt;</pre>
 </dd>
-<p></p>
-<dt><strong><a name="item_def_3avname_3drrd_3ads_2dname_3acf"><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em></a></strong><br />
-</dt>
+<dt><strong><a name="def_vname_rrd_ds_name_cf" class="item"><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em></a></strong></dt>
+
 <dd>
-See <em>rrdgraph</em> documentation.
+<p>See <em>rrdgraph</em> documentation.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_cdef_3avname_3drpn_2dexpression"><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em></a></strong><br />
-</dt>
+<dt><strong><a name="cdef_vname_rpn_expression" class="item"><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em></a></strong></dt>
+
 <dd>
-See <em>rrdgraph</em> documentation.
+<p>See <em>rrdgraph</em> documentation.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_xport_3avname_3a_3alegend"><strong>XPORT:</strong><em>vname</em><strong>:</strong><strong>:</strong><em>legend</em></a></strong><br />
-</dt>
+<dt><strong><a name="xport_vname_legend" class="item"><strong>XPORT:</strong><em>vname</em><strong>:</strong><strong>:</strong><em>legend</em></a></strong></dt>
+
 <dd>
-At least one <em>XPORT</em> statement should be present. The values
-referenced by <em>vname</em> are printed. Optionally add a legend.
+<p>At least one <em>XPORT</em> statement should be present. The values
+referenced by <em>vname</em> are printed. Optionally add a legend.</p>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />
@@ -202,14 +198,14 @@ RRD characteristics):</p>
 <p>The following environment variables may be used to change the behavior of
 <code>rrdtoolxport</code>:</p>
 <dl>
-<dt><strong><a name="item_rrdcached_address"><strong>RRDCACHED_ADDRESS</strong></a></strong><br />
-</dt>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
 <dd>
-If this environment variable is set it will have the same effect as specifying
+<p>If this environment variable is set it will have the same effect as specifying
 the <code>--daemon</code> option on the command line. If both are present, the command
-line argument takes precedence.
+line argument takes precedence.</p>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />

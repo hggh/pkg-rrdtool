@@ -9,56 +9,54 @@ SSYYNNOOPPSSIISS
        Helping new RRDtool users to understand the basics of RRDtool
 
 DDEESSCCRRIIPPTTIIOONN
-       This manual is an attempt to assist beginners in understanding the con-
-       cepts of RRDtool. It sheds a light on differences between RRDtool and
-       other databases. With help of an example, it explains the structure of
-       RRDtool database. This is followed by an overview of the "graph" fea-
-       ture of RRDtool.  At the end, it has sample scripts that illustrate the
-       usage/wrapping of RRDtool within Shell or Perl scripts.
+       This manual is an attempt to assist beginners in understanding the
+       concepts of RRDtool. It sheds a light on differences between RRDtool
+       and other databases. With help of an example, it explains the structure
+       of RRDtool database. This is followed by an overview of the "graph"
+       feature of RRDtool.  At the end, it has sample scripts that illustrate
+       the usage/wrapping of RRDtool within Shell or Perl scripts.
 
-       WWhhaatt mmaakkeess RRRRDDttooooll ssoo ssppeecciiaall??
-
+   WWhhaatt mmaakkeess RRRRDDttooooll ssoo ssppeecciiaall??
        RRDtool is GNU licensed software developed by Tobias Oetiker, a system
        manager at the Swiss Federal Institute of Technology. Though it is a
        database, there are distinct differences between RRDtool databases and
        other databases as listed below:
 
-       ·   RRDtool stores data; that makes it a back-end tool. The RRDtool
+       Â·   RRDtool stores data; that makes it a back-end tool. The RRDtool
            command set allows the creation of graphs; that makes it a front-
-           end tool as well. Other databases just store data and can not cre-
-           ate graphs.
+           end tool as well. Other databases just store data and can not
+           create graphs.
 
-       ·   In case of linear databases, new data gets appended at the bottom
+       Â·   In case of linear databases, new data gets appended at the bottom
            of the database table. Thus its size keeps on increasing, whereas
            the size of an RRDtool database is determined at creation time.
            Imagine an RRDtool database as the perimeter of a circle. Data is
            added along the perimeter. When new data reaches the starting
-           point, it overwrites existing data. This way, the size of an RRD-
-           tool database always remains constant. The name "Round Robin" stems
-           from this behavior.
+           point, it overwrites existing data. This way, the size of an
+           RRDtool database always remains constant. The name "Round Robin"
+           stems from this behavior.
 
-       ·   Other databases store the values as supplied. RRDtool can be con-
-           figured to calculate the rate of change from the previous to the
+       Â·   Other databases store the values as supplied. RRDtool can be
+           configured to calculate the rate of change from the previous to the
            current value and store this information instead.
 
-       ·   Other databases get updated when values are supplied. The RRDtool
-           database is structured in such a way that it needs data at prede-
-           fined time intervals. If it does not get a new value during the
-           interval, it stores an UNKNOWN value for that interval. So, when
-           using the RRDtool database, it is imperative to use scripts that
-           run at regular intervals to ensure a constant data flow to update
-           the RRDtool database.
+       Â·   Other databases get updated when values are supplied. The RRDtool
+           database is structured in such a way that it needs data at
+           predefined time intervals. If it does not get a new value during
+           the interval, it stores an UNKNOWN value for that interval. So,
+           when using the RRDtool database, it is imperative to use scripts
+           that run at regular intervals to ensure a constant data flow to
+           update the RRDtool database.
 
        RRDtool is designed to store time series of data. With every data
        update, an associated time stamp is stored. Time is always expressed in
        seconds passed since epoch (01-01-1970). RRDtool can be installed on
-       Unix as well as Windows. It comes with a command set to carry out vari-
-       ous operations on RRD databases. This command set can be accessed from
-       the command line, as well as from Shell or Perl scripts. The scripts
-       act as wrappers for accessing data stored in RRDtool databases.
+       Unix as well as Windows. It comes with a command set to carry out
+       various operations on RRD databases. This command set can be accessed
+       from the command line, as well as from Shell or Perl scripts. The
+       scripts act as wrappers for accessing data stored in RRDtool databases.
 
-       UUnnddeerrssttaannddiinngg bbyy aann eexxaammppllee
-
+   UUnnddeerrssttaannddiinngg bbyy aann eexxaammppllee
        The structure of an RRD database is different than other linear
        databases.  Other databases define tables with columns, and many other
        parameters. These definitions sometimes are very complex, especially in
@@ -69,8 +67,9 @@ DDEESSCCRRIIPPTTIIOONN
        also defined. Because of its structure, the definition of an RRDtool
        database also includes a provision to specify specific actions to take
        in the absence of update values. Data Source (DS), heartbeat, Date
-       Source Type (DST), Round Robin Archive (RRA), and Consolidation Func-
-       tion (CF) are some of the terminologies related to RRDtool databases.
+       Source Type (DST), Round Robin Archive (RRA), and Consolidation
+       Function (CF) are some of the terminologies related to RRDtool
+       databases.
 
        The structure of a database and the terminology associated with it can
        be best explained with an example.
@@ -104,9 +103,9 @@ DDEESSCCRRIIPPTTIIOONN
        ((PPDDPP)). In our example mentioned above, a new PDP is generated every 300
        seconds.
 
-       Note, that if you do NOT supply new datapoints exactly every 300 sec-
-       onds, this is not a problem, RRDtool will interpolate the data accord-
-       ingly.
+       Note, that if you do NOT supply new datapoints exactly every 300
+       seconds, this is not a problem, RRDtool will interpolate the data
+       accordingly.
 
        DDSSTT (Data Source Type) defines the type of the DS. It can be COUNTER,
        DERIVE, ABSOLUTE, GAUGE. A DS declared as COUNTER will save the rate of
@@ -122,9 +121,9 @@ DDEESSCCRRIIPPTTIIOONN
        Thus it just stores the current value divided by the step interval (300
        seconds in our example). GAUGE does not save the rate of change. It
        saves the actual value itself. There are no divisions or calculations.
-       Memory consumption in a server is a typical example of gauge. The dif-
-       ference between the different types DSTs can be explained better with
-       the following example:
+       Memory consumption in a server is a typical example of gauge. The
+       difference between the different types DSTs can be explained better
+       with the following example:
 
         Values       = 300, 600, 900, 1200
         Step         = 300 seconds
@@ -133,23 +132,23 @@ DDEESSCCRRIIPPTTIIOONN
         ABSOLUTE DS  =    1,  2,   3,    4
         GAUGE DS     = 300, 600, 900, 1200
 
-       The next parameter is hheeaarrttbbeeaatt. In our example, heartbeat is 600 sec-
-       onds. If the database does not get a new PDP within 300 seconds, it
+       The next parameter is hheeaarrttbbeeaatt. In our example, heartbeat is 600
+       seconds. If the database does not get a new PDP within 300 seconds, it
        will wait for another 300 seconds (total 600 seconds).  If it doesn't
        receive any PDP within 600 seconds, it will save an UNKNOWN value into
        the database. This UNKNOWN value is a special feature of RRDtool - it
        is much better than to assume a missing value was 0 (zero) or any other
-       number which might also be a valid data value.  For example, the traf-
-       fic flow counter on a router keeps increasing. Lets say, a value is
+       number which might also be a valid data value.  For example, the
+       traffic flow counter on a router keeps increasing. Lets say, a value is
        missed for an interval and 0 is stored instead of UNKNOWN. Now when the
        next value becomes available, it will calculate the difference between
        the current value and the previous value (0) which is not correct. So,
        inserting the value UNKNOWN makes much more sense here.
 
-       The next two parameters are the minimum and maximum value, respec-
-       tively. If the variable to be stored has predictable maximum and mini-
-       mum values, this should be specified here. Any update value falling out
-       of this range will be stored as UNKNOWN.
+       The next two parameters are the minimum and maximum value,
+       respectively. If the variable to be stored has predictable maximum and
+       minimum values, this should be specified here. Any update value falling
+       out of this range will be stored as UNKNOWN.
 
        The next line declares a round robin archive (RRA). The syntax for
        declaring an RRA is
@@ -164,58 +163,56 @@ DDEESSCCRRIIPPTTIIOONN
 
        Lets have a look at the example above. For the first RRA, 12 (steps)
        PDPs (DS variables) are AVERAGEed (CF) to form one CDP. 24 (rows) of
-       theses CDPs are archived. Each PDP occurs at 300 seconds. 12 PDPs rep-
-       resent 12 times 300 seconds which is 1 hour. It means 1 CDP (which is
-       equal to 12 PDPs) represents data worth 1 hour. 24 such CDPs represent
-       1 day (1 hour times 24 CDPs). This means, this RRA is an archive for
-       one day. After 24 CDPs, CDP number 25 will replace the 1st CDP. The
-       second RRA saves 31 CDPs; each CPD represents an AVERAGE value for a
-       day (288 PDPs, each covering 300 seconds = 24 hours). Therefore this
-       RRA is an archive for one month. A single database can have many RRAs.
-       If there are multiple DSs, each individual RRA will save data for all
-       the DSs in the database. For example, if a database has 3 DSs and
+       theses CDPs are archived. Each PDP occurs at 300 seconds. 12 PDPs
+       represent 12 times 300 seconds which is 1 hour. It means 1 CDP (which
+       is equal to 12 PDPs) represents data worth 1 hour. 24 such CDPs
+       represent 1 day (1 hour times 24 CDPs). This means, this RRA is an
+       archive for one day. After 24 CDPs, CDP number 25 will replace the 1st
+       CDP. The second RRA saves 31 CDPs; each CPD represents an AVERAGE value
+       for a day (288 PDPs, each covering 300 seconds = 24 hours). Therefore
+       this RRA is an archive for one month. A single database can have many
+       RRAs. If there are multiple DSs, each individual RRA will save data for
+       all the DSs in the database. For example, if a database has 3 DSs and
        daily, weekly, monthly, and yearly RRAs are declared, then each RRA
        will hold data from all 3 data sources.
 
-       GGrraapphhiiccaall MMaaggiicc
-
+   GGrraapphhiiccaall MMaaggiicc
        Another important feature of RRDtool is its ability to create graphs.
        The "graph" command uses the "fetch" command internally to retrieve
        values from the database. With the retrieved values it draws graphs as
        defined by the parameters supplied on the command line. A single graph
-       can show different DS (Data Sources) from a database. It is also possi-
-       ble to show the values from more than one database in a single graph.
-       Often, it is necessary to perform some math on the values retrieved
-       from the database before plotting them. For example, in SNMP replies,
-       memory consumption values are usually specified in KBytes and traffic
-       flow on interfaces is specified in Bytes. Graphs for these values will
-       be more meaningful if values are represented in MBytes and mbps. The
-       RRDtool graph command allows to define such conversions. Apart from
-       mathematical calculations, it is also possible to perform logical oper-
-       ations such as greater than, less than, and if/then/else. If a database
-       contains more than one RRA archive, then a question may arise - how
-       does RRDtool decide which RRA archive to use for retrieving the values?
-       RRDtool looks at several things when making its choice. First it makes
-       sure that the RRA covers as much of the graphing time frame as possi-
-       ble. Second it looks at the resolution of the RRA compared to the reso-
-       lution of the graph. It tries to find one which has the same or higher
-       better resolution. With the "-r" option you can force RRDtool to assume
-       a different resolution than the one calculated from the pixel width of
-       the graph.
+       can show different DS (Data Sources) from a database. It is also
+       possible to show the values from more than one database in a single
+       graph. Often, it is necessary to perform some math on the values
+       retrieved from the database before plotting them. For example, in SNMP
+       replies, memory consumption values are usually specified in KBytes and
+       traffic flow on interfaces is specified in Bytes. Graphs for these
+       values will be more meaningful if values are represented in MBytes and
+       mbps. The RRDtool graph command allows to define such conversions.
+       Apart from mathematical calculations, it is also possible to perform
+       logical operations such as greater than, less than, and if/then/else.
+       If a database contains more than one RRA archive, then a question may
+       arise - how does RRDtool decide which RRA archive to use for retrieving
+       the values? RRDtool looks at several things when making its choice.
+       First it makes sure that the RRA covers as much of the graphing time
+       frame as possible. Second it looks at the resolution of the RRA
+       compared to the resolution of the graph. It tries to find one which has
+       the same or higher better resolution. With the "-r" option you can
+       force RRDtool to assume a different resolution than the one calculated
+       from the pixel width of the graph.
 
        Values of different variables can be presented in 5 different shapes in
        a graph - AREA, LINE1, LINE2, LINE3, and STACK. AREA is represented by
        a solid colored area with values as the boundary of this area.
-       LINE1/2/3 (increasing width) are just plain lines representing the val-
-       ues. STACK is also an area but it is "stack"ed on top AREA or
-       LINE1/2/3. Another important thing to note is that variables are plot-
-       ted in the order they are defined in the graph command. Therefore care
-       must be taken to define STACK only after defining AREA/LINE. It is also
-       possible to put formatted comments within the graph.  Detailed instruc-
-       tions can be found in the graph manual.
+       LINE1/2/3 (increasing width) are just plain lines representing the
+       values. STACK is also an area but it is "stack"ed on top AREA or
+       LINE1/2/3. Another important thing to note is that variables are
+       plotted in the order they are defined in the graph command. Therefore
+       care must be taken to define STACK only after defining AREA/LINE. It is
+       also possible to put formatted comments within the graph.  Detailed
+       instructions can be found in the graph manual.
 
-       WWrraappppiinngg RRRRDDttooooll wwiitthhiinn SShheellll//PPeerrll ssccrriipptt
-
+   WWrraappppiinngg RRRRDDttooooll wwiitthhiinn SShheellll//PPeerrll ssccrriipptt
        After understanding RRDtool it is now a time to actually use RRDtool in
        scripts. Tasks involved in network management are data collection, data
        storage, and data retrieval. In the following example, the previously
@@ -285,26 +282,26 @@ DDEESSCCRRIIPPTTIIOONN
         # calculate the average of the array
         my $tot_mem_ave = $tot_mem_sum/($count);
         # create the graph
-        RRDs::graph ("/images/mem_$count.png",   \
-                    "--title= Memory Usage",    \
-                    "--vertical-label=Memory Consumption (MB)", \
-                    "--start=$start_time",      \
-                    "--end=$end_time",          \
-                    "--color=BACK#CCCCCC",      \
-                    "--color=CANVAS#CCFFFF",    \
-                    "--color=SHADEB#9999CC",    \
-                    "--height=125",             \
-                    "--upper-limit=656",        \
-                    "--lower-limit=0",          \
-                    "--rigid",                  \
-                    "--base=1024",              \
-                    "DEF:tot_mem=target.rrd:mem:AVERAGE", \
-                    "CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/",\
-                    "CDEF:machine_mem=tot_mem,656,+,tot_mem,-",\
-                    "COMMENT:Memory Consumption between $start_time",\
-                    "COMMENT:    and $end_time                     ",\
-                    "HRULE:656#000000:Maximum Available Memory - 656 MB",\
-                    "AREA:machine_mem#CCFFFF:Memory Unused",   \
+        RRDs::graph ("/images/mem_$count.png",
+                    "--title= Memory Usage",
+                    "--vertical-label=Memory Consumption (MB)",
+                    "--start=$start_time",
+                    "--end=$end_time",
+                    "--color=BACK#CCCCCC",
+                    "--color=CANVAS#CCFFFF",
+                    "--color=SHADEB#9999CC",
+                    "--height=125",
+                    "--upper-limit=656",
+                    "--lower-limit=0",
+                    "--rigid",
+                    "--base=1024",
+                    "DEF:tot_mem=target.rrd:mem:AVERAGE",
+                    "CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/",
+                    "CDEF:machine_mem=tot_mem,656,+,tot_mem,-",
+                    "COMMENT:Memory Consumption between $start_time",
+                    "COMMENT:    and $end_time                     ",
+                    "HRULE:656#000000:Maximum Available Memory - 656 MB",
+                    "AREA:machine_mem#CCFFFF:Memory Unused",
                     "AREA:tot_mem_cor#6699CC:Total memory consumed in MB");
         my $err=RRDs::error;
         if ($err) {print "problem generating the graph: $err\n";}
@@ -318,4 +315,4 @@ AAUUTTHHOORR
 
 
 
-1.3.99909060808                   2008-03-15                  RRD-BEGINNERS(1)
+1.3.999                           2009-09-24                  RRD-BEGINNERS(1)

@@ -336,6 +336,12 @@ multiple defaults.
 
 A green arrow is made by: C<--color ARROW#00FF00>
 
+[B<--border> I<width>]]
+
+Width in pixels for the 3d border drawn around the image. Default 2, 0
+disables the border. See C<SHADEA> and C<SHADEB> above for setting the border
+color.
+
 [B<--zoom> I<factor>]
 
 Zoom the graphics by the given amount. The factor must be E<gt> 0
@@ -349,6 +355,10 @@ label, C<LEGEND> for the graph legend, C<WATERMARK> for the watermark on the
 edge of the graph.
 
 Use Times for the title: C<--font TITLE:13:Times>
+
+Note that you need to quote the argument to B<--font> if the font-name
+contains whitespace:
+--font "TITLE:13:Some Font"
 
 If you do not give a font string you can modify just the size of the default font:
 C<--font TITLE:13:>.

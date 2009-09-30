@@ -3,7 +3,7 @@
  *****************************************************************************
  * rrd_error.c   Common Header File
  *****************************************************************************
- * $Id: rrd_error.c 1677 2008-11-18 17:19:17Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.4  2003/02/22 21:57:03  oetiker
  * a patch to avoid a memory leak and a Makefile.am patch to

@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdgraph</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -25,8 +29,8 @@
 		<li><a href="#labels">Labels</a></li>
 		<li><a href="#size">Size</a></li>
 		<li><a href="#limits">Limits</a></li>
-		<li><a href="#xaxis">X-Axis</a></li>
-		<li><a href="#yaxis">Y-Axis</a></li>
+		<li><a href="#x_axis">X-Axis</a></li>
+		<li><a href="#y_axis">Y-Axis</a></li>
 		<li><a href="#right_y_axis">Right Y Axis</a></li>
 		<li><a href="#legend">Legend</a></li>
 		<li><a href="#miscellaneous">Miscellaneous</a></li>
@@ -38,7 +42,11 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -183,7 +191,7 @@ to turn this behaviour off.</p>
 <p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
 <p>
 </p>
-<h2><a name="xaxis">X-Axis</a></h2>
+<h2><a name="x_axis">X-Axis</a></h2>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <strong>none</strong>]</p>
 <p>The x-axis label is quite complex to configure. If you don't have
@@ -213,7 +221,7 @@ each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.</p>
 <p>
 </p>
-<h2><a name="yaxis">Y-Axis</a></h2>
+<h2><a name="y_axis">Y-Axis</a></h2>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <em>grid step</em><strong>:</strong><em>label factor</em>]</p>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <strong>none</strong>]</p>
 <p>Y-axis grid lines appear at each <em>grid step</em> interval.  Labels are
@@ -322,6 +330,10 @@ and blue. Optionally you may add another hexadecimal number specifying the
 transparency (FF is solid). You may set this option several times to alter
 multiple defaults.</p>
 <p>A green arrow is made by: <code>--color ARROW#00FF00</code></p>
+<p>[<strong>--border</strong> <em>width</em>]]</p>
+<p>Width in pixels for the 3d border drawn around the image. Default 2, 0
+disables the border. See <code>SHADEA</code> and <code>SHADEB</code> above for setting the border
+color.</p>
 <p>[<strong>--zoom</strong> <em>factor</em>]</p>
 <p>Zoom the graphics by the given amount. The factor must be &gt; 0</p>
 <p>[<strong>-n</strong>|<strong>--font</strong> <em>FONTTAG</em><strong>:</strong><em>size</em><strong>:</strong>[<em>font</em>]]</p>
@@ -331,6 +343,9 @@ for the title, <code>AXIS</code> for the axis labels, <code>UNIT</code> for the 
 label, <code>LEGEND</code> for the graph legend, <code>WATERMARK</code> for the watermark on the
 edge of the graph.</p>
 <p>Use Times for the title: <code>--font TITLE:13:Times</code></p>
+<p>Note that you need to quote the argument to <strong>--font</strong> if the font-name
+contains whitespace:
+--font &quot;TITLE:13:Some Font&quot;</p>
 <p>If you do not give a font string you can modify just the size of the default font:
 <code>--font TITLE:13:</code>.</p>
 <p>If you specify the size 0 then you can modify just the font without touching
@@ -340,12 +355,12 @@ resetting the default fontsizes: <code>--font DEFAULT:0:Courier</code>.</p>
 variable <code>RRD_DEFAULT_FONT</code> if you want to change this.</p>
 <p>RRDtool uses Pango for its font handling. This means you can to use
 the full Pango syntax when selecting your font:</p>
-<p>The font name has the form ``[<em>FAMILY-LIST</em>] [<em>STYLE-OPTIONS</em>] [<em>SIZE</em>]'',
+<p>The font name has the form &quot;[<em>FAMILY-LIST</em>] [<em>STYLE-OPTIONS</em>] [<em>SIZE</em>]&quot;,
 where <em>FAMILY-LIST</em> is a comma separated list of families optionally
 terminated by a comma, <em>STYLE_OPTIONS</em> is a whitespace separated list of
 words where each WORD describes one of style, variant, weight, stretch, or
 gravity, and <em>SIZE</em> is a decimal number (size in points) or optionally
-followed by the unit modifier ``px'' for absolute size. Any one of the options
+followed by the unit modifier &quot;px&quot; for absolute size. Any one of the options
 may be absent.</p>
 <p>[<strong>-R</strong>|<strong>--font-render-mode</strong> {<strong>normal</strong>,<strong>light</strong>,<strong>mono</strong>}]</p>
 <p>There are 3 font render modes:</p>
@@ -449,14 +464,14 @@ know what is where on the graph.</p>
 <p>The following environment variables may be used to change the behavior of
 <code>rrdtoolgraph</code>:</p>
 <dl>
-<dt><strong><a name="item_rrdcached_address"><strong>RRDCACHED_ADDRESS</strong></a></strong><br />
-</dt>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
 <dd>
-If this environment variable is set it will have the same effect as specifying
+<p>If this environment variable is set it will have the same effect as specifying
 the <code>--daemon</code> option on the command line. If both are present, the command
-line argument takes precedence.
+line argument takes precedence.</p>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />

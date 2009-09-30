@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdflushcached</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -19,7 +23,11 @@
 	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -38,30 +46,27 @@
 <hr />
 <h1><a name="description">DESCRIPTION</a></h1>
 <p>The <strong>flushcached</strong> function connects to <a href="././rrdcached.html">the rrdcached manpage</a>, the RRD caching daemon,
-and issues a ``flush'' command for the given files. The daemon will put the
-files to the head of the update queue so they are written ``soon''. The
+and issues a &quot;flush&quot; command for the given files. The daemon will put the
+files to the head of the update queue so they are written &quot;soon&quot;. The
 status will be returned only after the files' pending updates have been
 written to disk.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong><br />
-</dt>
+<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
+
 <dd>
-The <code>name(s)</code> of the <strong>RRD</strong> <code>file(s)</code> that are to be written to disk.
+<p>The name(s) of the <strong>RRD</strong> file(s) that are to be written to disk.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item__2d_2ddaemon_address"><strong>--daemon</strong> <em>address</em></a></strong><br />
-</dt>
+<dt><strong><a name="daemon_address" class="item"><strong>--daemon</strong> <em>address</em></a></strong></dt>
+
 <dd>
-Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If not specified, the
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If not specified, the
 RRDCACHED_ADDRESS environment variable must be set (see below).  For a
 list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a>
-manual.
-</dd>
-<dd>
+manual.</p>
 <pre>
  rrdtool flush --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd</pre>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />
@@ -69,14 +74,14 @@ manual.
 <p>The following environment variables may be used to change the behavior of
 <code>rrdtoolflushcached</code>:</p>
 <dl>
-<dt><strong><a name="item_rrdcached_address"><strong>RRDCACHED_ADDRESS</strong></a></strong><br />
-</dt>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
 <dd>
-If this environment variable is set it will have the same effect as specifying
+<p>If this environment variable is set it will have the same effect as specifying
 the <code>--daemon</code> option on the command line. If both are present, the command
-line argument takes precedence.
+line argument takes precedence.</p>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />

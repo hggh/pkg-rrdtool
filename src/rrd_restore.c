@@ -2,9 +2,11 @@
  * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2009                    
  *****************************************************************************
  * rrd_restore.c  Contains logic to parse XML input and create an RRD file
- *                initial libxml2 version of rrd_restore (c) by Florian octo Forster
+ * This file:
+ * Copyright (C) 2008  Florian octo Forster  (original libxml2 code)
+ * Copyright (C) 2008,2009 Tobias Oetiker
  *****************************************************************************
- * $Id: rrd_restore.c 1815 2009-05-26 15:20:05Z oetiker $
+ * $Id$
  *************************************************************************** */
 
 #include <stdio.h>
@@ -241,6 +243,33 @@ static int get_xml_ulong(
     return -1;
 } /* get_xml_ulong */
 
+#ifndef TIME_T_IS_LONG
+static int get_xml_llong(
+    xmlTextReaderPtr reader,
+    long long *value)
+{
+    
+    xmlChar *text;
+    long long temp;    
+    if ((text = get_xml_text(reader)) != NULL){
+        errno = 0;        
+        temp = strtoll((char *)text,NULL, 0);        
+        if (errno>0){
+            rrd_set_error("ling %d: get_xml_llong from '%s' %s",
+                          xmlTextReaderGetParserLineNumber(reader),
+                          text,rrd_strerror(errno));
+            xmlFree(text);            
+            return -1;
+        }
+        xmlFree(text);
+        *value = temp;        
+        return 0;
+    }
+    return -1;
+} /* get_xml_llong */
+
+#endif
+
 static int get_xml_double(
     xmlTextReaderPtr reader,
     double *value)
@@ -267,13 +296,14 @@ static int get_xml_double(
         }        
         errno = 0;
         temp = strtod((char *)text,NULL);
-        xmlFree(text);        
         if (errno>0){
             rrd_set_error("ling %d: get_xml_double from '%s' %s",
                           xmlTextReaderGetParserLineNumber(reader),
                           text,rrd_strerror(errno));
+            xmlFree(text);        
             return -1;
         }
+        xmlFree(text);        
         *value = temp;
         return 0;
     }
@@ -986,9 +1016,24 @@ static int parse_tag_rrd(
         else if (xmlStrcasecmp(element, (const xmlChar *) "step") == 0)
             status = get_xml_ulong(reader,
                                         &rrd->stat_head->pdp_step);
-        else if (xmlStrcasecmp(element, (const xmlChar *) "lastupdate") == 0)
-            status = get_xml_long(reader,
-                                        &rrd->live_head->last_up);
+        else if (xmlStrcasecmp(element, (const xmlChar *) "lastupdate") == 0) {
+#ifdef TIME_T_IS_LONG
+                status = get_xml_long(reader, &rrd->live_head->last_up);
+#else
+#ifdef TIME_T_IS_LONG_LONG
+                status = get_xml_llong(reader, &rrd->live_head->last_up); 
+#else
+            if (sizeof(time_t) == sizeof(long)) {
+                status = get_xml_long(reader,
+                                        (long *)&rrd->live_head->last_up);
+            }
+            else if (sizeof(time_t) == sizeof(long long)) {
+                status = get_xml_llong(reader,
+                                        (long long *)&rrd->live_head->last_up); 
+            }
+#endif
+#endif
+        }
         else if (xmlStrcasecmp(element, (const xmlChar *) "ds") == 0){            
             xmlFree(element);
             status = parse_tag_ds(reader, rrd);

@@ -16,10 +16,10 @@ DDEESSCCRRIIPPTTIIOONN
                The name of the RRRRDD that contains the data.
 
        ----ddaaeemmoonn _a_d_d_r_e_s_s
-               Address of the rrdcached daemon. If specified, a "flush" com-
-               mand is sent to the server before reading the RRD files. This
-               allows rrrrddttooooll to return fresh data even if the daemon is con-
-               figured to cache values for a long time.  For a list of
+               Address of the rrdcached daemon. If specified, a "flush"
+               command is sent to the server before reading the RRD files.
+               This allows rrrrddttooooll to return fresh data even if the daemon is
+               configured to cache values for a long time.  For a list of
                accepted formats, see the --ll option in the rrdcached manual.
 
                 rrdtool last --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd
@@ -38,4 +38,4 @@ AAUUTTHHOORR
 
 
 
-1.3.99909060808                   2008-09-25                        RRDLAST(1)
+1.3.999                           2009-06-09                        RRDLAST(1)

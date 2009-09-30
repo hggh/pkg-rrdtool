@@ -12,8 +12,8 @@ SSYYNNOOPPSSIISS
 
 DDEESSCCRRIIPPTTIIOONN
        The ggrraapphh function of RRRRDDttooooll is used to present the data from an RRRRDD
-       to a human viewer.  Its main purpose is to create a nice graphical rep-
-       resentation, but it can also generate a numerical report.
+       to a human viewer.  Its main purpose is to create a nice graphical
+       representation, but it can also generate a numerical report.
 
 OOVVEERRVVIIEEWW
        rrrrddttooooll ggrraapphh needs data to work with, so you must use one or more ddaattaa
@@ -22,9 +22,9 @@ OOVVEERRVVIIEEWW
        databases (one per statement, though).
 
        If you want to display averages, maxima, percentiles, etcetera it is
-       best to collect them now using the vvaarriiaabbllee ddeeffiinniittiioonn statement.  Cur-
-       rently this makes no difference, but in a future version of rrdtool you
-       may want to collect these values before consolidation.
+       best to collect them now using the vvaarriiaabbllee ddeeffiinniittiioonn statement.
+       Currently this makes no difference, but in a future version of rrdtool
+       you may want to collect these values before consolidation.
 
        The data fetched from the RRRRAA is then ccoonnssoolliiddaatteedd so that there is
        exactly one datapoint per pixel in the graph. If you do not take care
@@ -45,54 +45,50 @@ OOVVEERRVVIIEEWW
        more information.
 
 OOPPTTIIOONNSS
-       _f_i_l_e_n_a_m_e
-
+   _f_i_l_e_n_a_m_e
        The name and path of the graph to generate. It is recommended to end
        this in ".png", ".svg" or ".eps", but RRRRDDttooooll does not enforce this.
 
        _f_i_l_e_n_a_m_e can be '"-"' to send the image to "stdout". In this case, no
        other output is generated.
 
-       TTiimmee rraannggee
-
+   TTiimmee rraannggee
        [--ss|----ssttaarrtt _t_i_m_e] [--ee|----eenndd _t_i_m_e] [--SS|----sstteepp _s_e_c_o_n_d_s]
 
        The start and end of the time series you would like to display, and
        which RRRRAA the data should come from.  Defaults are: 1 day ago until
        now, with the best possible resolution. SSttaarrtt and eenndd can be specified
-       in several formats, see AT-STYLE TIME SPECIFICATION and rrdgraph_exam-
-       ples.  By default, rrrrddttooooll ggrraapphh calculates the width of one pixel in
-       the time domain and tries to get data from an RRRRAA with that resolution.
-       With the sstteepp option you can alter this behaviour.  If you want rrrrddttooooll
-       ggrraapphh to get data at a one-hour resolution from the RRRRDD, set sstteepp to
-       3'600. Note: a step smaller than one pixel will silently be ignored.
+       in several formats, see AT-STYLE TIME SPECIFICATION and
+       rrdgraph_examples.  By default, rrrrddttooooll ggrraapphh calculates the width of
+       one pixel in the time domain and tries to get data from an RRRRAA with
+       that resolution.  With the sstteepp option you can alter this behaviour.
+       If you want rrrrddttooooll ggrraapphh to get data at a one-hour resolution from the
+       RRRRDD, set sstteepp to 3'600. Note: a step smaller than one pixel will
+       silently be ignored.
 
-       LLaabbeellss
-
+   LLaabbeellss
        [--tt|----ttiittllee _s_t_r_i_n_g] [--vv|----vveerrttiiccaall--llaabbeell _s_t_r_i_n_g]
 
        A horizontal string at the top of the graph and/or a vertically placed
        string at the left hand side of the graph.
 
-       SSiizzee
-
+   SSiizzee
        [--ww|----wwiiddtthh _p_i_x_e_l_s] [--hh|----hheeiigghhtt _p_i_x_e_l_s] [--jj|----oonnllyy--ggrraapphh]
        [--DD|----ffuullll--ssiizzee--mmooddee]
 
        By default, the width and height of the ccaannvvaass (the part with the
        actual data and such). This defaults to 400 pixels by 100 pixels.
 
-       If you specify the ----ffuullll--ssiizzee--mmooddee option, the width and height spec-
-       ify the final dimensions of the output image and the canvas is automat-
-       ically resized to fit.
+       If you specify the ----ffuullll--ssiizzee--mmooddee option, the width and height
+       specify the final dimensions of the output image and the canvas is
+       automatically resized to fit.
 
        If you specify the ----oonnllyy--ggrraapphh option and set the height < 32 pixels
        you will get a tiny graph image (thumbnail) to use as an icon for use
        in an overview, for example. All labeling will be stripped off the
        graph.
 
-       LLiimmiittss
-
+   LLiimmiittss
        [--uu|----uuppppeerr--lliimmiitt _v_a_l_u_e] [--ll|----lloowweerr--lliimmiitt _v_a_l_u_e] [--rr|----rriiggiidd]
 
        By default the graph will be autoscaling so that it will adjust the
@@ -113,19 +109,21 @@ OOPPTTIIOONNSS
 
        [--JJ|----aalltt--aauuttoossccaallee--mmiinn]
 
-       Where "--alt-autoscale" will modify both the absolute maximum AND mini-
-       mum values, this option will only affect the minimum value. The maximum
-       value, if not defined on the command line, will be 0. This option can
-       be useful when graphing router traffic when the WAN line uses compres-
-       sion, and thus the throughput may be higher than the WAN line speed.
+       Where "--alt-autoscale" will modify both the absolute maximum AND
+       minimum values, this option will only affect the minimum value. The
+       maximum value, if not defined on the command line, will be 0. This
+       option can be useful when graphing router traffic when the WAN line
+       uses compression, and thus the throughput may be higher than the WAN
+       line speed.
 
        [--MM|----aalltt--aauuttoossccaallee--mmaaxx]
 
-       Where "--alt-autoscale" will modify both the absolute maximum AND mini-
-       mum values, this option will only affect the maximum value. The minimum
-       value, if not defined on the command line, will be 0. This option can
-       be useful when graphing router traffic when the WAN line uses compres-
-       sion, and thus the throughput may be higher than the WAN line speed.
+       Where "--alt-autoscale" will modify both the absolute maximum AND
+       minimum values, this option will only affect the maximum value. The
+       minimum value, if not defined on the command line, will be 0. This
+       option can be useful when graphing router traffic when the WAN line
+       uses compression, and thus the throughput may be higher than the WAN
+       line speed.
 
        [--NN|----nnoo--ggrriiddffiitt]
 
@@ -136,8 +134,7 @@ OOPPTTIIOONNSS
 
        Gridfitting is turned off for PDF, EPS, SVG output by default.
 
-       XX--AAxxiiss
-
+   XX--AAxxiiss
        [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
 
        [--xx|----xx--ggrriidd nnoonnee]
@@ -150,13 +147,13 @@ OOPPTTIIOONNSS
        The grid is defined by specifying a certain amount of time in the _?_T_M
        positions. You can choose from "SECOND", "MINUTE", "HOUR", "DAY",
        "WEEK", "MONTH" or "YEAR". Then you define how many of these should
-       pass between each line or label.  This pair (_?_T_M_:_?_S_T) needs to be spec-
-       ified for the base grid (_G_?_?), the major grid (_M_?_?) and the labels
+       pass between each line or label.  This pair (_?_T_M_:_?_S_T) needs to be
+       specified for the base grid (_G_?_?), the major grid (_M_?_?) and the labels
        (_L_?_?). For the labels you also must define a precision in _L_P_R and a
        _s_t_r_f_t_i_m_e format string in _L_F_M.  _L_P_R defines where each label will be
-       placed. If it is zero, the label will be placed right under the corre-
-       sponding line (useful for hours, dates etcetera).  If you specify a
-       number of seconds here the label is centered on this interval (useful
+       placed. If it is zero, the label will be placed right under the
+       corresponding line (useful for hours, dates etcetera).  If you specify
+       a number of seconds here the label is centered on this interval (useful
        for Monday, January etcetera).
 
         --x-grid MINUTE:10:HOUR:1:HOUR:4:0:%X
@@ -171,16 +168,15 @@ OOPPTTIIOONNSS
        day. The labels are placed exactly between two major grid lines as they
        specify the complete day and not just midnight.
 
-       YY--AAxxiiss
-
+   YY--AAxxiiss
        [--yy|----yy--ggrriidd _g_r_i_d _s_t_e_p::_l_a_b_e_l _f_a_c_t_o_r]
 
        [--yy|----yy--ggrriidd nnoonnee]
 
        Y-axis grid lines appear at each _g_r_i_d _s_t_e_p interval.  Labels are placed
        every _l_a_b_e_l _f_a_c_t_o_r lines.  You can specify "-y none" to suppress the
-       grid and labels altogether.  The default for this option is to automat-
-       ically select sensible values.
+       grid and labels altogether.  The default for this option is to
+       automatically select sensible values.
 
        If you have set --y-grid to 'none' not only the labels get suppressed,
        also the space reserved for the labels is removed. You can still add
@@ -189,12 +185,12 @@ OOPPTTIIOONNSS
 
        [--YY|----aalltt--yy--ggrriidd]
 
-       Place the Y grid dynamically based on the graph's Y range. The algo-
-       rithm ensures that you always have a grid, that there are enough but
-       not too many grid lines, and that the grid is metric. That is the grid
-       lines are placed every 1, 2, 5 or 10 units. This parameter will also
-       ensure that you get enough decimals displayed even if your graph goes
-       from 69.998 to 70.001.  (contributed by Sasha Mikheev).
+       Place the Y grid dynamically based on the graph's Y range. The
+       algorithm ensures that you always have a grid, that there are enough
+       but not too many grid lines, and that the grid is metric. That is the
+       grid lines are placed every 1, 2, 5 or 10 units. This parameter will
+       also ensure that you get enough decimals displayed even if your graph
+       goes from 69.998 to 70.001.  (contributed by Sasha Mikheev).
 
        [--oo|----llooggaarriitthhmmiicc]
 
@@ -202,15 +198,15 @@ OOPPTTIIOONNSS
 
        [--XX|----uunniittss--eexxppoonneenntt _v_a_l_u_e]
 
-       This sets the 10**exponent scaling of the y-axis values. Normally, val-
-       ues will be scaled to the appropriate units (k, M, etc.).  However, you
-       may wish to display units always in k (Kilo, 10e3) even if the data is
-       in the M (Mega, 10e6) range, for instance. Value should be an integer
-       which is a multiple of 3 between -18 and 18 inclusively.  It is the
-       exponent on the units you wish to use. For example, use 3 to display
-       the y-axis values in k (Kilo, 10e3, thousands), use -6 to display the
-       y-axis values in u (Micro, 10e-6, millionths).  Use a value of 0 to
-       prevent any scaling of the y-axis values.
+       This sets the 10**exponent scaling of the y-axis values. Normally,
+       values will be scaled to the appropriate units (k, M, etc.).  However,
+       you may wish to display units always in k (Kilo, 10e3) even if the data
+       is in the M (Mega, 10e6) range, for instance. Value should be an
+       integer which is a multiple of 3 between -18 and 18 inclusively.  It is
+       the exponent on the units you wish to use. For example, use 3 to
+       display the y-axis values in k (Kilo, 10e3, thousands), use -6 to
+       display the y-axis values in u (Micro, 10e-6, millionths).  Use a value
+       of 0 to prevent any scaling of the y-axis values.
 
        This option is very effective at confusing the heck out of the default
        rrdtool autoscaler and grid painter. If rrdtool detects that it is not
@@ -226,11 +222,10 @@ OOPPTTIIOONNSS
        [----uunniittss==ssii]
 
        With this option y-axis values on logarithmic graphs will be scaled to
-       the appropriate units (k, M, etc.) instead of using exponential nota-
-       tion.  Note that for linear graphs, SI notation is used by default.
+       the appropriate units (k, M, etc.) instead of using exponential
+       notation.  Note that for linear graphs, SI notation is used by default.
 
-       RRiigghhtt YY AAxxiiss
-
+   RRiigghhtt YY AAxxiiss
        [----rriigghhtt--aaxxiiss _s_c_a_l_e::_s_h_i_f_t] [----rriigghhtt--aaxxiiss--llaabbeell _l_a_b_e_l]
 
        A second axis will be drawn to the right of the graph. It is tied to
@@ -243,8 +238,7 @@ OOPPTTIIOONNSS
        If you want todo this your self, use this option with the same %lf
        arguments you know from the PRING and GPRINT commands.
 
-       LLeeggeenndd
-
+   LLeeggeenndd
        [--gg|----nnoo--lleeggeenndd]
 
        Suppress generation of the legend; only render the graph.
@@ -262,12 +256,11 @@ OOPPTTIIOONNSS
 
        [----lleeggeenndd--ddiirreeccttiioonn=(topdown|bottomup)]
 
-       Place the legend items in the given vertical order. The default is top-
-       down.  Using bottomup the legend items appear in the same vertical
+       Place the legend items in the given vertical order. The default is
+       topdown.  Using bottomup the legend items appear in the same vertical
        order as a stack of lines or areas.
 
-       MMiisscceellllaanneeoouuss
-
+   MMiisscceellllaanneeoouuss
        [--zz|----llaazzyy]
 
        Only generate the graph if the current graph is out of date or not
@@ -307,13 +300,19 @@ OOPPTTIIOONNSS
        the right and bottom border, "GRID", "MGRID" for the major grid, "FONT"
        for the color of the font, "AXIS" for the axis of the graph, "FRAME"
        for the line around the color spots, and finally "ARROW" for the arrow
-       head pointing up and forward. Each color is composed out of three hex-
-       adecimal numbers specifying its rgb color component (00 is off, FF is
-       maximum) of red, green and blue. Optionally you may add another hex-
-       adecimal number specifying the transparency (FF is solid). You may set
-       this option several times to alter multiple defaults.
+       head pointing up and forward. Each color is composed out of three
+       hexadecimal numbers specifying its rgb color component (00 is off, FF
+       is maximum) of red, green and blue. Optionally you may add another
+       hexadecimal number specifying the transparency (FF is solid). You may
+       set this option several times to alter multiple defaults.
 
        A green arrow is made by: "--color ARROW#00FF00"
+
+       [----bboorrddeerr _w_i_d_t_h]]
+
+       Width in pixels for the 3d border drawn around the image. Default 2, 0
+       disables the border. See "SHADEA" and "SHADEB" above for setting the
+       border color.
 
        [----zzoooomm _f_a_c_t_o_r]
 
@@ -323,11 +322,14 @@ OOPPTTIIOONNSS
 
        This lets you customize which font to use for the various text elements
        on the RRD graphs. "DEFAULT" sets the default value for all elements,
-       "TITLE" for the title, "AXIS" for the axis labels, "UNIT" for the ver-
-       tical unit label, "LEGEND" for the graph legend, "WATERMARK" for the
+       "TITLE" for the title, "AXIS" for the axis labels, "UNIT" for the
+       vertical unit label, "LEGEND" for the graph legend, "WATERMARK" for the
        watermark on the edge of the graph.
 
        Use Times for the title: "--font TITLE:13:Times"
+
+       Note that you need to quote the argument to ----ffoonntt if the font-name
+       contains whitespace: --font "TITLE:13:Some Font"
 
        If you do not give a font string you can modify just the size of the
        default font: "--font TITLE:13:".
@@ -344,8 +346,8 @@ OOPPTTIIOONNSS
        full Pango syntax when selecting your font:
 
        The font name has the form "[_F_A_M_I_L_Y_-_L_I_S_T] [_S_T_Y_L_E_-_O_P_T_I_O_N_S] [_S_I_Z_E]",
-       where _F_A_M_I_L_Y_-_L_I_S_T is a comma separated list of families optionally ter-
-       minated by a comma, _S_T_Y_L_E___O_P_T_I_O_N_S is a whitespace separated list of
+       where _F_A_M_I_L_Y_-_L_I_S_T is a comma separated list of families optionally
+       terminated by a comma, _S_T_Y_L_E___O_P_T_I_O_N_S is a whitespace separated list of
        words where each WORD describes one of style, variant, weight, stretch,
        or gravity, and _S_I_Z_E is a decimal number (size in points) or optionally
        followed by the unit modifier "px" for absolute size. Any one of the
@@ -390,8 +392,8 @@ OOPPTTIIOONNSS
         tt    Monospace font
         u     Underline
 
-       More details on <http://developer.gnome.org/doc/API/2.0/pango/Pango-
-       MarkupFormat.html>.
+       More details on
+       <http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html>.
 
        [--GG|----ggrraapphh--rreennddeerr--mmooddee {nnoorrmmaall,mmoonnoo}]
 
@@ -410,10 +412,10 @@ OOPPTTIIOONNSS
        [--aa|----iimmggffoorrmmaatt PPNNGG|SSVVGG|EEPPSS|PPDDFF]
 
        Image format for the generated graph. For the vector formats you can
-       choose among the standard Postscript fonts Courier-Bold,
-       Courier-BoldOblique, Courier-Oblique, Courier, Helvetica-Bold, Hel-
-       vetica-BoldOblique, Helvetica-Oblique, Helvetica, Symbol, Times-Bold,
-       Times-BoldItalic, Times-Italic, Times-Roman, and ZapfDingbats.
+       choose among the standard Postscript fonts Courier-Bold, Courier-
+       BoldOblique, Courier-Oblique, Courier, Helvetica-Bold, Helvetica-
+       BoldOblique, Helvetica-Oblique, Helvetica, Symbol, Times-Bold, Times-
+       BoldItalic, Times-Italic, Times-Roman, and ZapfDingbats.
 
        [--ii|----iinntteerrllaacceedd]
 
@@ -436,8 +438,7 @@ OOPPTTIIOONNSS
        Adds the given string as a watermark, horizontally centered, at the
        bottom of the graph.
 
-       DDaattaa aanndd vvaarriiaabblleess
-
+   DDaattaa aanndd vvaarriiaabblleess
        DDEEFF::_v_n_a_m_e==_r_r_d_f_i_l_e::_d_s_-_n_a_m_e::_C_F[::sstteepp==_s_t_e_p][::ssttaarrtt==_t_i_m_e][::eenndd==_t_i_m_e]
 
        CCDDEEFF::_v_n_a_m_e==_R_P_N _e_x_p_r_e_s_s_i_o_n
@@ -454,16 +455,15 @@ OOPPTTIIOONNSS
        least one print statement to generate a report.  See rrdgraph_graph for
        the exact format.
 
-       ggrraapphhvv
-
+   ggrraapphhvv
        Calling rrdtool with the graphv option will return information in the
        rrdtool info format. On the command line this means that all output
        will be in key=value format. When used from the Perl and Ruby bindings
        a hash pointer will be returned from the call.
 
        When the filename '-' is given, the contents of the graph itself will
-       also be returned through this interface (hash key 'image'). On the com-
-       mand line the output will look like this:
+       also be returned through this interface (hash key 'image'). On the
+       command line the output will look like this:
 
         print[0] = "0.020833"
         print[1] = "0.0440833"
@@ -509,4 +509,4 @@ AAUUTTHHOORR
 
 
 
-1.3.99909060808                   2009-05-21                       RRDGRAPH(1)
+1.3.999                           2009-09-24                       RRDGRAPH(1)
