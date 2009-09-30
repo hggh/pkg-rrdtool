@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1306 $
- * @(#) $Id: fnv.h 1306 2008-03-15 10:39:48Z oetiker $
+ * @(#) $Revision$
+ * @(#) $Id$
  * @(#) $Source$
  *
  ***

@@ -12,8 +12,8 @@ DDEESSCCRRIIPPTTIIOONN
        rrrrddccggii is a sort of very limited script interpreter. Its purpose is to
        run as a cgi-program and parse a web page template containing special
        <RRD:: tags. rrrrddccggii will interpret and act according to these tags.  In
-       the end it will printout a web page including the necessary CGI head-
-       ers.
+       the end it will printout a web page including the necessary CGI
+       headers.
 
        rrrrddccggii parses the contents of the template in 3 steps. In each step it
        looks only for a subset of tags. This allows nesting of tags.
@@ -24,9 +24,7 @@ DDEESSCCRRIIPPTTIIOONN
        ----ffiilltteerr
                Assume that rrdcgi is run as a filter and not as a cgi.
 
-       KKeeyywwoorrddss
-
-
+   KKeeyywwoorrddss
        RRD::CV _n_a_m_e
                Inserts the CGI variable of the given name.
 
@@ -89,13 +87,13 @@ DDEESSCCRRIIPPTTIIOONN
                as an argument to a GRAPH command.
 
        RRD::TIME::STRFTIME _S_T_A_R_T_|_E_N_D _s_t_a_r_t_-_s_p_e_c _e_n_d_-_s_p_e_c _s_t_r_f_t_i_m_e_-_f_o_r_m_a_t
-               This gets replaced by a strftime-formatted time using the for-
-               mat _s_t_r_f_t_i_m_e_-_f_o_r_m_a_t on either _s_t_a_r_t_-_s_p_e_c or _e_n_d_-_s_p_e_c depending
-               on whether _S_T_A_R_T or _E_N_D is specified.  Both _s_t_a_r_t_-_s_p_e_c and _e_n_d_-
-               _s_p_e_c must be supplied as either could be relative to the other.
-               This is intended to allow pretty titles on graphs with times
-               that are easier for non RRDtool folks to figure out than
-               "-2weeks".
+               This gets replaced by a strftime-formatted time using the
+               format _s_t_r_f_t_i_m_e_-_f_o_r_m_a_t on either _s_t_a_r_t_-_s_p_e_c or _e_n_d_-_s_p_e_c
+               depending on whether _S_T_A_R_T or _E_N_D is specified.  Both _s_t_a_r_t_-
+               _s_p_e_c and _e_n_d_-_s_p_e_c must be supplied as either could be relative
+               to the other.  This is intended to allow pretty titles on
+               graphs with times that are easier for non RRDtool folks to
+               figure out than "-2weeks".
 
                Note that again, if you return : (colon) from your strftime
                format, you may have to escape them using \ if the time is to
@@ -106,8 +104,8 @@ DDEESSCCRRIIPPTTIIOONN
                is replaced by an appropriate <IMG ... > tag referring to the
                graph.  The ----llaazzyy option in RRD graph can be used to make sure
                that graphs are only regenerated when they are out of date. The
-               arguments to the RRRRDD::::GGRRAAPPHH tag work as described in the rrrrdd--
-               ggrraapphh manual page.
+               arguments to the RRRRDD::::GGRRAAPPHH tag work as described in the
+               rrrrddggrraapphh manual page.
 
                Use the ----llaazzyy option in your RRD::GRAPH tags, to reduce the
                load on your server. This option makes sure that graphs are
@@ -118,9 +116,9 @@ DDEESSCCRRIIPPTTIIOONN
 
                 <IMG SRC="%s" WIDTH="%lu" HEIGHT="%lu">
 
-               Note that %s stands for the filename part of the graph gener-
-               ated, all directories given in the PNG file argument will get
-               dropped.
+               Note that %s stands for the filename part of the graph
+               generated, all directories given in the PNG file argument will
+               get dropped.
 
        RRD::PRINT _n_u_m_b_e_r
                If the preceding  RRRRDD::::GGRRAAPPHH tag contained and PPRRIINNTT arguments,
@@ -196,12 +194,12 @@ EEXXAAMMPPLLEE 33
 
        Note 1: Replace /.../ with the relevant directories
 
-       Note 2: The SRC=/.../pngs should be paths from the view of the web-
-       server/browser
+       Note 2: The SRC=/.../pngs should be paths from the view of the
+       webserver/browser
 
 AAUUTTHHOORR
        Tobias Oetiker <tobi@oetiker.ch>
 
 
 
-1.3.99909060808                   2008-12-22                         RRDCGI(1)
+1.3.999                           2009-05-10                         RRDCGI(1)

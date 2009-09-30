@@ -3,7 +3,7 @@
  *****************************************************************************
  * rrd_fetch.c  read date from an rrd to use for further processing
  *****************************************************************************
- * $Id: rrd_fetch.c 1849 2009-06-07 14:12:28Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.8  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net

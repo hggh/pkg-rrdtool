@@ -1,7 +1,7 @@
 /**
  * RRDTool - src/rrd_daemon.c
- * Copyright (C) 2008 Florian octo Forster
- * Copyright (C) 2008 Kevin Brintnall
+ * Copyright (C) 2008,2009 Florian octo Forster
+ * Copyright (C) 2008,2009 Kevin Brintnall
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -77,11 +77,13 @@
 #include <stdlib.h>
 
 #ifndef WIN32
-#include <stdint.h>
+#ifdef HAVE_STDINT_H
+#  include <stdint.h>
+#endif
 #include <unistd.h>
 #include <strings.h>
 #include <inttypes.h>
-#	include <sys/socket.h>
+#include <sys/socket.h>
 
 #else
 
@@ -91,6 +93,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/un.h>
@@ -115,12 +118,6 @@
 /*
  * Types
  */
-typedef enum
-{
-  PRIV_LOW,
-  PRIV_HIGH
-} socket_privilege;
-
 typedef enum { RESP_ERR = -1, RESP_OK = 0 } response_code;
 
 struct listen_socket_s
@@ -128,7 +125,6 @@ struct listen_socket_s
   int fd;
   char addr[PATH_MAX + 1];
   int family;
-  socket_privilege privilege;
 
   /* state for BATCH processing */
   time_t batch_start;
@@ -141,23 +137,25 @@ struct listen_socket_s
 
   char *wbuf;
   ssize_t wbuf_len;
+
+  uint32_t permissions;
 };
 typedef struct listen_socket_s listen_socket_t;
 
-struct command;
+struct command_s;
+typedef struct command_s command_t;
 /* note: guard against "unused" warnings in the handlers */
 #define DISPATCH_PROTO	listen_socket_t *sock	__attribute__((unused)),\
 			time_t now		__attribute__((unused)),\
 			char  *buffer		__attribute__((unused)),\
 			size_t buffer_size	__attribute__((unused))
 
-#define HANDLER_PROTO	struct command *cmd	__attribute__((unused)),\
+#define HANDLER_PROTO	command_t *cmd	        __attribute__((unused)),\
 			DISPATCH_PROTO
 
-struct command {
+struct command_s {
   char   *cmd;
   int (*handler)(HANDLER_PROTO);
-  socket_privilege min_priv;
 
   char  context;		/* where we expect to see it */
 #define CMD_CONTEXT_CLIENT	(1<<0)
@@ -202,6 +200,12 @@ enum queue_side_e
 };
 typedef enum queue_side_e queue_side_t;
 
+/* describe a set of journal files */
+typedef struct {
+  char **files;
+  size_t files_num;
+} journal_set;
+
 /* max length of socket command or response */
 #define CMD_MAX 4096
 #define RBUF_SIZE (CMD_MAX*2)
@@ -215,7 +219,11 @@ static uid_t daemon_uid;
 static listen_socket_t *listen_fds = NULL;
 static size_t listen_fds_num = 0;
 
-static int do_shutdown = 0;
+enum {
+  RUNNING,		/* normal operation */
+  FLUSHING,		/* flushing remaining values */
+  SHUTDOWN		/* shutting down */
+} state = RUNNING;
 
 static pthread_t *queue_threads;
 static pthread_cond_t queue_cond = PTHREAD_COND_INITIALIZER;
@@ -256,9 +264,13 @@ static uint64_t stats_journal_rotate = 0;
 static pthread_mutex_t stats_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* Journaled updates */
-static char *journal_cur = NULL;
-static char *journal_old = NULL;
-static FILE *journal_fh = NULL;
+#define JOURNAL_BASE "rrd.journal"
+static journal_set *journal_cur = NULL;
+static journal_set *journal_old = NULL;
+static char *journal_dir = NULL;
+static FILE *journal_fh = NULL;		/* current journal file handle */
+static long  journal_size = 0;		/* current journal size */
+#define JOURNAL_MAX (1 * 1024 * 1024 * 1024)
 static pthread_mutex_t journal_lock = PTHREAD_MUTEX_INITIALIZER;
 static int journal_write(char *cmd, char *args);
 static void journal_done(void);
@@ -273,7 +285,7 @@ static int handle_request_help (HANDLER_PROTO);
 static void sig_common (const char *sig) /* {{{ */
 {
   RRDD_LOG(LOG_NOTICE, "caught SIG%s", sig);
-  do_shutdown++;
+  state = FLUSHING;
   pthread_cond_broadcast(&flush_cond);
   pthread_cond_broadcast(&queue_cond);
 } /* }}} void sig_common */
@@ -464,7 +476,7 @@ static char *next_cmd (listen_socket_t *sock, ssize_t *len) /* {{{ */
 
   /* NOTREACHED */
   assert(1==0);
-}
+} /* }}} char *next_cmd */
 
 /* add the characters directly to the write buffer */
 static int add_to_wbuf(listen_socket_t *sock, char *str, size_t len) /* {{{ */
@@ -656,6 +668,7 @@ static void *free_cache_item(cache_item_t *ci) /* {{{ */
 
   /* in case anyone is waiting */
   pthread_cond_broadcast(&ci->flushed);
+  pthread_cond_destroy(&ci->flushed);
 
   free (ci);
 
@@ -738,13 +751,8 @@ static gboolean tree_callback_flush (gpointer key, gpointer value, /* {{{ */
   if (ci->flags & CI_FLAGS_IN_QUEUE)
     return FALSE;
 
-  if ((ci->last_flush_time <= cfd->abs_timeout)
-      && (ci->values_num > 0))
-  {
-    enqueue_cache_item (ci, TAIL);
-  }
-  else if ((do_shutdown != 0)
-      && (ci->values_num > 0))
+  if (ci->values_num > 0
+      && (ci->last_flush_time <= cfd->abs_timeout || state != RUNNING))
   {
     enqueue_cache_item (ci, TAIL);
   }
@@ -813,20 +821,21 @@ static void *flush_thread_main (void *args __attribute__((unused))) /* {{{ */
 
   pthread_mutex_lock(&cache_lock);
 
-  while (!do_shutdown)
+  while (state == RUNNING)
   {
     gettimeofday (&now, NULL);
     if ((now.tv_sec > next_flush.tv_sec)
         || ((now.tv_sec == next_flush.tv_sec)
           && ((1000 * now.tv_usec) > next_flush.tv_nsec)))
     {
+      RRDD_LOG(LOG_DEBUG, "flushing old values");
+
+      /* Determine the time of the next cache flush. */
+      next_flush.tv_sec = now.tv_sec + config_flush_interval;
+
       /* Flush all values that haven't been written in the last
        * `config_write_interval' seconds. */
       flush_old_values (config_write_interval);
-
-      /* Determine the time of the next cache flush. */
-      next_flush.tv_sec =
-        now.tv_sec + next_flush.tv_sec % config_flush_interval;
 
       /* unlock the cache while we rotate so we don't block incoming
        * updates if the fsync() blocks on disk I/O */
@@ -846,6 +855,8 @@ static void *flush_thread_main (void *args __attribute__((unused))) /* {{{ */
   if (config_flush_at_shutdown)
     flush_old_values (-1); /* flush everything */
 
+  state = SHUTDOWN;
+
   pthread_mutex_unlock(&cache_lock);
 
   return NULL;
@@ -855,7 +866,7 @@ static void *queue_thread_main (void *args __attribute__((unused))) /* {{{ */
 {
   pthread_mutex_lock (&cache_lock);
 
-  while (!do_shutdown
+  while (state != SHUTDOWN
          || (cache_queue_head != NULL && config_flush_at_shutdown))
   {
     cache_item_t *ci;
@@ -865,8 +876,8 @@ static void *queue_thread_main (void *args __attribute__((unused))) /* {{{ */
     int status;
 
     /* Now, check if there's something to store away. If not, wait until
-     * something comes in.  if we are shutting down, do not wait around.  */
-    if (cache_queue_head == NULL && !do_shutdown)
+     * something comes in. */
+    if (cache_queue_head == NULL)
     {
       status = pthread_cond_wait (&queue_cond, &cache_lock);
       if ((status != 0) && (status != ETIMEDOUT))
@@ -912,10 +923,14 @@ static void *queue_thread_main (void *args __attribute__((unused))) /* {{{ */
     }
 
     journal_write("wrote", file);
-    pthread_cond_broadcast(&ci->flushed);
 
-    rrd_free_ptrs((void ***) &values, &values_num);
-    free(file);
+    /* Search again in the tree.  It's possible someone issued a "FORGET"
+     * while we were writing the update values. */
+    pthread_mutex_lock(&cache_lock);
+    ci = (cache_item_t *) g_tree_lookup(cache_tree, file);
+    if (ci)
+      pthread_cond_broadcast(&ci->flushed);
+    pthread_mutex_unlock(&cache_lock);
 
     if (status == 0)
     {
@@ -924,6 +939,9 @@ static void *queue_thread_main (void *args __attribute__((unused))) /* {{{ */
       stats_data_sets_written += values_num;
       pthread_mutex_unlock (&stats_lock);
     }
+
+    rrd_free_ptrs((void ***) &values, &values_num);
+    free(file);
 
     pthread_mutex_lock (&cache_lock);
   }
@@ -1047,20 +1065,6 @@ static void get_abs_path(char **filename, char *tmp)
   *filename = tmp;
 } /* }}} static int get_abs_path */
 
-/* returns 1 if we have the required privilege level,
- * otherwise issue an error to the user on sock */
-static int has_privilege (listen_socket_t *sock, /* {{{ */
-                          socket_privilege priv)
-{
-  if (sock == NULL) /* journal replay */
-    return 1;
-
-  if (sock->privilege >= priv)
-    return 1;
-
-  return send_response(sock, RESP_ERR, "%s\n", rrd_strerror(EACCES));
-} /* }}} static int has_privilege */
-
 static int flush_file (const char *filename) /* {{{ */
 {
   cache_item_t *ci;
@@ -1089,7 +1093,7 @@ static int flush_file (const char *filename) /* {{{ */
   return (0);
 } /* }}} int flush_file */
 
-static int syntax_error(listen_socket_t *sock, struct command *cmd) /* {{{ */
+static int syntax_error(listen_socket_t *sock, command_t *cmd) /* {{{ */
 {
   char *err = "Syntax error.\n";
 
@@ -1306,6 +1310,7 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
   if (ci == NULL) /* {{{ */
   {
     struct stat statbuf;
+    cache_item_t *tmp;
 
     /* don't hold the lock while we setup; stat(2) might block */
     pthread_mutex_unlock(&cache_lock);
@@ -1353,7 +1358,20 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
     pthread_cond_init(&ci->flushed, NULL);
 
     pthread_mutex_lock(&cache_lock);
-    g_tree_replace (cache_tree, (void *) ci->file, (void *) ci);
+
+    /* another UPDATE might have added this entry in the meantime */
+    tmp = g_tree_lookup (cache_tree, file);
+    if (tmp == NULL)
+      g_tree_replace (cache_tree, (void *) ci->file, (void *) ci);
+    else
+    {
+      free_cache_item (ci);
+      ci = tmp;
+    }
+
+    /* state may have changed while we were unlocked */
+    if (state == SHUTDOWN)
+      return -1;
   } /* }}} */
   assert (ci != NULL);
 
@@ -1478,11 +1496,10 @@ static int handle_request_quit (HANDLER_PROTO) /* {{{ */
   return -1;
 } /* }}} static int handle_request_quit */
 
-struct command COMMANDS[] = {
+static command_t list_of_commands[] = { /* {{{ */
   {
     "UPDATE",
     handle_request_update,
-    PRIV_HIGH,
     CMD_CONTEXT_ANY,
     "UPDATE <filename> <values> [<values> ...]\n"
     ,
@@ -1497,7 +1514,6 @@ struct command COMMANDS[] = {
   {
     "WROTE",
     handle_request_wrote,
-    PRIV_HIGH,
     CMD_CONTEXT_JOURNAL,
     NULL,
     NULL
@@ -1505,7 +1521,6 @@ struct command COMMANDS[] = {
   {
     "FLUSH",
     handle_request_flush,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT | CMD_CONTEXT_BATCH,
     "FLUSH <filename>\n"
     ,
@@ -1515,7 +1530,6 @@ struct command COMMANDS[] = {
   {
     "FLUSHALL",
     handle_request_flushall,
-    PRIV_HIGH,
     CMD_CONTEXT_CLIENT,
     "FLUSHALL\n"
     ,
@@ -1524,7 +1538,6 @@ struct command COMMANDS[] = {
   {
     "PENDING",
     handle_request_pending,
-    PRIV_HIGH,
     CMD_CONTEXT_CLIENT,
     "PENDING <filename>\n"
     ,
@@ -1534,7 +1547,6 @@ struct command COMMANDS[] = {
   {
     "FORGET",
     handle_request_forget,
-    PRIV_HIGH,
     CMD_CONTEXT_ANY,
     "FORGET <filename>\n"
     ,
@@ -1544,7 +1556,6 @@ struct command COMMANDS[] = {
   {
     "QUEUE",
     handle_request_queue,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT,
     "QUEUE\n"
     ,
@@ -1557,7 +1568,6 @@ struct command COMMANDS[] = {
   {
     "STATS",
     handle_request_stats,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT,
     "STATS\n"
     ,
@@ -1567,7 +1577,6 @@ struct command COMMANDS[] = {
   {
     "HELP",
     handle_request_help,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT,
     "HELP [<command>]\n",
     NULL, /* special! */
@@ -1575,7 +1584,6 @@ struct command COMMANDS[] = {
   {
     "BATCH",
     batch_start,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT,
     "BATCH\n"
     ,
@@ -1599,7 +1607,6 @@ struct command COMMANDS[] = {
   {
     ".",   /* BATCH terminator */
     batch_done,
-    PRIV_LOW,
     CMD_CONTEXT_BATCH,
     NULL,
     NULL
@@ -1607,34 +1614,79 @@ struct command COMMANDS[] = {
   {
     "QUIT",
     handle_request_quit,
-    PRIV_LOW,
     CMD_CONTEXT_CLIENT | CMD_CONTEXT_BATCH,
     "QUIT\n"
     ,
     "Disconnect from rrdcached.\n"
-  },
-  {NULL,NULL,0,0,NULL,NULL}  /* LAST ENTRY */
-};
-
-static struct command *find_command(char *cmd)
-{
-  struct command *c = COMMANDS;
-
-  while (c->cmd != NULL)
-  {
-    if (strcasecmp(cmd, c->cmd) == 0)
-      break;
-    c++;
   }
+}; /* }}} command_t list_of_commands[] */
+static size_t list_of_commands_len = sizeof (list_of_commands)
+  / sizeof (list_of_commands[0]);
 
-  if (c->cmd == NULL)
-    return NULL;
-  else
-    return c;
+static command_t *find_command(char *cmd)
+{
+  size_t i;
+
+  for (i = 0; i < list_of_commands_len; i++)
+    if (strcasecmp(cmd, list_of_commands[i].cmd) == 0)
+      return (&list_of_commands[i]);
+  return NULL;
 }
 
+/* We currently use the index in the `list_of_commands' array as a bit position
+ * in `listen_socket_t.permissions'. This member schould NEVER be accessed from
+ * outside these functions so that switching to a more elegant storage method
+ * is easily possible. */
+static ssize_t find_command_index (const char *cmd) /* {{{ */
+{
+  size_t i;
+
+  for (i = 0; i < list_of_commands_len; i++)
+    if (strcasecmp(cmd, list_of_commands[i].cmd) == 0)
+      return ((ssize_t) i);
+  return (-1);
+} /* }}} ssize_t find_command_index */
+
+static int socket_permission_check (listen_socket_t *sock, /* {{{ */
+    const char *cmd)
+{
+  ssize_t i;
+
+  if (cmd == NULL)
+    return (-1);
+
+  if ((strcasecmp ("QUIT", cmd) == 0)
+      || (strcasecmp ("HELP", cmd) == 0))
+    return (1);
+  else if (strcmp (".", cmd) == 0)
+    cmd = "BATCH";
+
+  i = find_command_index (cmd);
+  if (i < 0)
+    return (-1);
+  assert (i < 32);
+
+  if ((sock->permissions & (1 << i)) != 0)
+    return (1);
+  return (0);
+} /* }}} int socket_permission_check */
+
+static int socket_permission_add (listen_socket_t *sock, /* {{{ */
+    const char *cmd)
+{
+  ssize_t i;
+
+  i = find_command_index (cmd);
+  if (i < 0)
+    return (-1);
+  assert (i < 32);
+
+  sock->permissions |= (1 << i);
+  return (0);
+} /* }}} int socket_permission_add */
+
 /* check whether commands are received in the expected context */
-static int command_check_context(listen_socket_t *sock, struct command *cmd)
+static int command_check_context(listen_socket_t *sock, command_t *cmd)
 {
   if (sock == NULL)
     return (cmd->context & CMD_CONTEXT_JOURNAL);
@@ -1652,7 +1704,7 @@ static int handle_request_help (HANDLER_PROTO) /* {{{ */
   int status;
   char *cmd_str;
   char *resp_txt;
-  struct command *help = NULL;
+  command_t *help = NULL;
 
   status = buffer_get_field (&buffer, &buffer_size, &cmd_str);
   if (status == 0)
@@ -1673,14 +1725,15 @@ static int handle_request_help (HANDLER_PROTO) /* {{{ */
   }
   else
   {
-    help = COMMANDS;
+    size_t i;
+
     resp_txt = "Command overview\n";
 
-    while (help->cmd)
+    for (i = 0; i < list_of_commands_len; i++)
     {
-      if (help->syntax)
-        add_response_info(sock, "%s", help->syntax);
-      help++;
+      if (list_of_commands[i].syntax == NULL)
+        continue;
+      add_response_info (sock, "%s", list_of_commands[i].syntax);
     }
   }
 
@@ -1692,7 +1745,7 @@ static int handle_request (DISPATCH_PROTO) /* {{{ */
 {
   char *buffer_ptr = buffer;
   char *cmd_str = NULL;
-  struct command *cmd = NULL;
+  command_t *cmd = NULL;
   int status;
 
   assert (buffer[buffer_size - 1] == '\0');
@@ -1711,9 +1764,8 @@ static int handle_request (DISPATCH_PROTO) /* {{{ */
   if (!cmd)
     return send_response(sock, RESP_ERR, "Unknown command: %s\n", cmd_str);
 
-  status = has_privilege(sock, cmd->min_priv);
-  if (status <= 0)
-    return status;
+  if (!socket_permission_check (sock, cmd->cmd))
+    return send_response(sock, RESP_ERR, "Permission denied.\n");
 
   if (!command_check_context(sock, cmd))
     return send_response(sock, RESP_ERR, "Can't use '%s' here.\n", cmd_str);
@@ -1721,74 +1773,136 @@ static int handle_request (DISPATCH_PROTO) /* {{{ */
   return cmd->handler(cmd, sock, now, buffer_ptr, buffer_size);
 } /* }}} int handle_request */
 
+static void journal_set_free (journal_set *js) /* {{{ */
+{
+  if (js == NULL)
+    return;
+
+  rrd_free_ptrs((void ***) &js->files, &js->files_num);
+
+  free(js);
+} /* }}} journal_set_free */
+
+static void journal_set_remove (journal_set *js) /* {{{ */
+{
+  if (js == NULL)
+    return;
+
+  for (uint i=0; i < js->files_num; i++)
+  {
+    RRDD_LOG(LOG_DEBUG, "removing old journal %s", js->files[i]);
+    unlink(js->files[i]);
+  }
+} /* }}} journal_set_remove */
+
+/* close current journal file handle.
+ * MUST hold journal_lock before calling */
+static void journal_close(void) /* {{{ */
+{
+  if (journal_fh != NULL)
+  {
+    if (fclose(journal_fh) != 0)
+      RRDD_LOG(LOG_ERR, "cannot close journal: %s", rrd_strerror(errno));
+  }
+
+  journal_fh = NULL;
+  journal_size = 0;
+} /* }}} journal_close */
+
+/* MUST hold journal_lock before calling */
+static void journal_new_file(void) /* {{{ */
+{
+  struct timeval now;
+  int  new_fd;
+  char new_file[PATH_MAX + 1];
+
+  assert(journal_dir != NULL);
+  assert(journal_cur != NULL);
+
+  journal_close();
+
+  gettimeofday(&now, NULL);
+  /* this format assures that the files sort in strcmp() order */
+  snprintf(new_file, PATH_MAX, "%s/%s.%010d.%06d",
+           journal_dir, JOURNAL_BASE, (int)now.tv_sec, (int)now.tv_usec);
+
+  new_fd = open(new_file, O_WRONLY|O_CREAT|O_APPEND,
+                S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+  if (new_fd < 0)
+    goto error;
+
+  journal_fh = fdopen(new_fd, "a");
+  if (journal_fh == NULL)
+    goto error;
+
+  journal_size = ftell(journal_fh);
+  RRDD_LOG(LOG_DEBUG, "started new journal %s", new_file);
+
+  /* record the file in the journal set */
+  rrd_add_strdup(&journal_cur->files, &journal_cur->files_num, new_file);
+
+  return;
+
+error:
+  RRDD_LOG(LOG_CRIT,
+           "JOURNALING DISABLED: Error while trying to create %s : %s",
+           new_file, rrd_strerror(errno));
+  RRDD_LOG(LOG_CRIT,
+           "JOURNALING DISABLED: All values will be flushed at shutdown");
+
+  close(new_fd);
+  config_flush_at_shutdown = 1;
+
+} /* }}} journal_new_file */
+
 /* MUST NOT hold journal_lock before calling this */
 static void journal_rotate(void) /* {{{ */
 {
-  FILE *old_fh = NULL;
-  int new_fd;
+  journal_set *old_js = NULL;
 
-  if (journal_cur == NULL || journal_old == NULL)
+  if (journal_dir == NULL)
     return;
+
+  RRDD_LOG(LOG_DEBUG, "rotating journals");
+
+  pthread_mutex_lock(&stats_lock);
+  ++stats_journal_rotate;
+  pthread_mutex_unlock(&stats_lock);
 
   pthread_mutex_lock(&journal_lock);
 
-  /* we rotate this way (rename before close) so that the we can release
-   * the journal lock as fast as possible.  Journal writes to the new
-   * journal can proceed immediately after the new file is opened.  The
-   * fclose can then block without affecting new updates.
-   */
-  if (journal_fh != NULL)
-  {
-    old_fh = journal_fh;
-    journal_fh = NULL;
-    rename(journal_cur, journal_old);
-    ++stats_journal_rotate;
-  }
+  journal_close();
 
-  new_fd = open(journal_cur, O_WRONLY|O_CREAT|O_APPEND,
-                S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-  if (new_fd >= 0)
-  {
-    journal_fh = fdopen(new_fd, "a");
-    if (journal_fh == NULL)
-      close(new_fd);
-  }
+  /* rotate the journal sets */
+  old_js = journal_old;
+  journal_old = journal_cur;
+  journal_cur = calloc(1, sizeof(journal_set));
+
+  if (journal_cur != NULL)
+    journal_new_file();
+  else
+    RRDD_LOG(LOG_CRIT, "journal_rotate: malloc(journal_set) failed\n");
 
   pthread_mutex_unlock(&journal_lock);
 
-  if (old_fh != NULL)
-    fclose(old_fh);
-
-  if (journal_fh == NULL)
-  {
-    RRDD_LOG(LOG_CRIT,
-             "JOURNALING DISABLED: Cannot open journal file '%s' : (%s)",
-             journal_cur, rrd_strerror(errno));
-
-    RRDD_LOG(LOG_ERR,
-             "JOURNALING DISABLED: All values will be flushed at shutdown");
-    config_flush_at_shutdown = 1;
-  }
+  journal_set_remove(old_js);
+  journal_set_free  (old_js);
 
 } /* }}} static void journal_rotate */
 
+/* MUST hold journal_lock when calling */
 static void journal_done(void) /* {{{ */
 {
   if (journal_cur == NULL)
     return;
 
-  pthread_mutex_lock(&journal_lock);
-  if (journal_fh != NULL)
-  {
-    fclose(journal_fh);
-    journal_fh = NULL;
-  }
+  journal_close();
 
   if (config_flush_at_shutdown)
   {
     RRDD_LOG(LOG_INFO, "removing journals");
-    unlink(journal_old);
-    unlink(journal_cur);
+    journal_set_remove(journal_old);
+    journal_set_remove(journal_cur);
   }
   else
   {
@@ -1796,7 +1910,9 @@ static void journal_done(void) /* {{{ */
              "journals will be used at next startup");
   }
 
-  pthread_mutex_unlock(&journal_lock);
+  journal_set_free(journal_cur);
+  journal_set_free(journal_old);
+  free(journal_dir);
 
 } /* }}} static void journal_done */
 
@@ -1809,6 +1925,11 @@ static int journal_write(char *cmd, char *args) /* {{{ */
 
   pthread_mutex_lock(&journal_lock);
   chars = fprintf(journal_fh, "%s %s\n", cmd, args);
+  journal_size += chars;
+
+  if (journal_size > JOURNAL_MAX)
+    journal_new_file();
+
   pthread_mutex_unlock(&journal_lock);
 
   if (chars > 0)
@@ -1840,9 +1961,6 @@ static int journal_replay (const char *file) /* {{{ */
     memset(&statbuf, 0, sizeof(statbuf));
     if (stat(file, &statbuf) != 0)
     {
-      if (errno == ENOENT)
-        return 0;
-
       reason = "stat error";
       status = errno;
     }
@@ -1918,25 +2036,79 @@ static int journal_replay (const char *file) /* {{{ */
   return entry_cnt > 0 ? 1 : 0;
 } /* }}} static int journal_replay */
 
+static int journal_sort(const void *v1, const void *v2)
+{
+  char **jn1 = (char **) v1;
+  char **jn2 = (char **) v2;
+
+  return strcmp(*jn1,*jn2);
+}
+
 static void journal_init(void) /* {{{ */
 {
   int had_journal = 0;
+  DIR *dir;
+  struct dirent *dent;
+  char path[PATH_MAX+1];
 
-  if (journal_cur == NULL) return;
+  if (journal_dir == NULL) return;
 
   pthread_mutex_lock(&journal_lock);
 
+  journal_cur = calloc(1, sizeof(journal_set));
+  if (journal_cur == NULL)
+  {
+    RRDD_LOG(LOG_CRIT, "journal_rotate: malloc(journal_set) failed\n");
+    return;
+  }
+
   RRDD_LOG(LOG_INFO, "checking for journal files");
 
-  had_journal += journal_replay(journal_old);
-  had_journal += journal_replay(journal_cur);
+  /* Handle old journal files during transition.  This gives them the
+   * correct sort order.  TODO: remove after first release
+   */
+  {
+    char old_path[PATH_MAX+1];
+    snprintf(old_path, PATH_MAX, "%s/%s", journal_dir, JOURNAL_BASE ".old" );
+    snprintf(path,     PATH_MAX, "%s/%s", journal_dir, JOURNAL_BASE ".0000");
+    rename(old_path, path);
+
+    snprintf(old_path, PATH_MAX, "%s/%s", journal_dir, JOURNAL_BASE        );
+    snprintf(path,     PATH_MAX, "%s/%s", journal_dir, JOURNAL_BASE ".0001");
+    rename(old_path, path);
+  }
+
+  dir = opendir(journal_dir);
+  while ((dent = readdir(dir)) != NULL)
+  {
+    /* looks like a journal file? */
+    if (strncmp(dent->d_name, JOURNAL_BASE, strlen(JOURNAL_BASE)))
+      continue;
+
+    snprintf(path, PATH_MAX, "%s/%s", journal_dir, dent->d_name);
+
+    if (!rrd_add_strdup(&journal_cur->files, &journal_cur->files_num, path))
+    {
+      RRDD_LOG(LOG_CRIT, "journal_init: cannot add journal file %s!",
+               dent->d_name);
+      break;
+    }
+  }
+  closedir(dir);
+
+  qsort(journal_cur->files, journal_cur->files_num,
+        sizeof(journal_cur->files[0]), journal_sort);
+
+  for (uint i=0; i < journal_cur->files_num; i++)
+    had_journal += journal_replay(journal_cur->files[i]);
+
+  journal_new_file();
 
   /* it must have been a crash.  start a flush */
   if (had_journal && config_flush_at_shutdown)
     flush_old_values(-1);
 
   pthread_mutex_unlock(&journal_lock);
-  journal_rotate();
 
   RRDD_LOG(LOG_INFO, "journal processing complete");
 
@@ -1985,7 +2157,7 @@ static void *connection_thread_main (void *args) /* {{{ */
   connection_threads_num++;
   pthread_mutex_unlock (&connection_threads_lock);
 
-  while (do_shutdown == 0)
+  while (state == RUNNING)
   {
     char *cmd;
     ssize_t cmd_len;
@@ -2000,7 +2172,7 @@ static void *connection_thread_main (void *args) /* {{{ */
     pollfd.revents = 0;
 
     status = poll (&pollfd, 1, /* timeout = */ 500);
-    if (do_shutdown)
+    if (state != RUNNING)
       break;
     else if (status == 0) /* timeout */
       continue;
@@ -2305,7 +2477,7 @@ static void *listen_thread_main (void *args __attribute__((unused))) /* {{{ */
 
   RRDD_LOG(LOG_INFO, "listening for connections");
 
-  while (do_shutdown == 0)
+  while (state == RUNNING)
   {
     for (i = 0; i < pollfds_num; i++)
     {
@@ -2315,7 +2487,7 @@ static void *listen_thread_main (void *args __attribute__((unused))) /* {{{ */
     }
 
     status = poll (pollfds, pollfds_num, /* timeout = */ 1000);
-    if (do_shutdown)
+    if (state != RUNNING)
       break;
     else if (status == 0) /* timeout */
       continue;
@@ -2378,7 +2550,7 @@ static void *listen_thread_main (void *args __attribute__((unused))) /* {{{ */
         continue;
       }
     } /* for (pollfds_num) */
-  } /* while (do_shutdown == 0) */
+  } /* while (state == RUNNING) */
 
   RRDD_LOG(LOG_INFO, "starting shutdown");
 
@@ -2490,8 +2662,6 @@ error:
 
 static int cleanup (void) /* {{{ */
 {
-  do_shutdown++;
-
   pthread_cond_broadcast (&flush_cond);
   pthread_join (flush_thread, NULL);
 
@@ -2505,20 +2675,20 @@ static int cleanup (void) /* {{{ */
     RRDD_LOG(LOG_INFO, "clean shutdown; all RRDs flushed");
   }
 
-  journal_done();
-  remove_pidfile ();
-
   free(queue_threads);
   free(config_base_dir);
-  free(config_pid_file);
-  free(journal_cur);
-  free(journal_old);
 
   pthread_mutex_lock(&cache_lock);
   g_tree_destroy(cache_tree);
 
+  pthread_mutex_lock(&journal_lock);
+  journal_done();
+
   RRDD_LOG(LOG_INFO, "goodbye");
   closelog ();
+
+  remove_pidfile ();
+  free(config_pid_file);
 
   return (0);
 } /* }}} int cleanup */
@@ -2528,7 +2698,10 @@ static int read_options (int argc, char **argv) /* {{{ */
   int option;
   int status = 0;
 
-  while ((option = getopt(argc, argv, "gl:L:f:w:z:t:Bb:p:Fj:h?")) != -1)
+  char **permissions = NULL;
+  size_t permissions_len = 0;
+
+  while ((option = getopt(argc, argv, "gl:P:f:w:z:t:Bb:p:Fj:h?")) != -1)
   {
     switch (option)
     {
@@ -2536,7 +2709,6 @@ static int read_options (int argc, char **argv) /* {{{ */
         stay_foreground=1;
         break;
 
-      case 'L':
       case 'l':
       {
         listen_socket_t *new;
@@ -2550,7 +2722,40 @@ static int read_options (int argc, char **argv) /* {{{ */
         memset(new, 0, sizeof(listen_socket_t));
 
         strncpy(new->addr, optarg, sizeof(new->addr)-1);
-        new->privilege = (option == 'l') ? PRIV_HIGH : PRIV_LOW;
+
+        /* Add permissions to the socket {{{ */
+        if (permissions_len != 0)
+        {
+          size_t i;
+          for (i = 0; i < permissions_len; i++)
+          {
+            status = socket_permission_add (new, permissions[i]);
+            if (status != 0)
+            {
+              fprintf (stderr, "read_options: Adding permission \"%s\" to "
+                  "socket failed. Most likely, this permission doesn't "
+                  "exist. Check your command line.\n", permissions[i]);
+              status = 4;
+            }
+          }
+        }
+        else /* if (permissions_len == 0) */
+        {
+          /* Add permission for ALL commands to the socket. */
+          size_t i;
+          for (i = 0; i < list_of_commands_len; i++)
+          {
+            status = socket_permission_add (new, list_of_commands[i].cmd);
+            if (status != 0)
+            {
+              fprintf (stderr, "read_options: Adding permission \"%s\" to "
+                  "socket failed. This should never happen, ever! Sorry.\n",
+                  permissions[i]);
+              status = 4;
+            }
+          }
+        }
+        /* }}} Done adding permissions. */
 
         if (!rrd_add_ptr((void ***)&config_listen_address_list,
                          &config_listen_address_list_len, new))
@@ -2558,6 +2763,28 @@ static int read_options (int argc, char **argv) /* {{{ */
           fprintf(stderr, "read_options: rrd_add_ptr failed.\n");
           return (2);
         }
+      }
+      break;
+
+      case 'P':
+      {
+        char *optcopy;
+        char *saveptr;
+        char *dummy;
+        char *ptr;
+
+        rrd_free_ptrs ((void *) &permissions, &permissions_len);
+
+        optcopy = strdup (optarg);
+        dummy = optcopy;
+        saveptr = NULL;
+        while ((ptr = strtok_r (dummy, ", ", &saveptr)) != NULL)
+        {
+          dummy = NULL;
+          rrd_add_strdup ((void *) &permissions, &permissions_len, ptr);
+        }
+
+        free (optcopy);
       }
       break;
 
@@ -2696,48 +2923,36 @@ static int read_options (int argc, char **argv) /* {{{ */
 
       case 'j':
       {
-        struct stat statbuf;
-        const char *dir = optarg;
+        const char *dir = journal_dir = strdup(optarg);
 
-        status = stat(dir, &statbuf);
+        status = rrd_mkdir_p(dir, 0777);
         if (status != 0)
         {
-          fprintf(stderr, "Cannot stat '%s' : %s\n", dir, rrd_strerror(errno));
+          fprintf(stderr, "Failed to create journal directory '%s': %s\n",
+              dir, rrd_strerror(errno));
           return 6;
         }
 
-        if (!S_ISDIR(statbuf.st_mode)
-            || access(dir, R_OK|W_OK|X_OK) != 0)
+        if (access(dir, R_OK|W_OK|X_OK) != 0)
         {
           fprintf(stderr, "Must specify a writable directory with -j! (%s)\n",
                   errno ? rrd_strerror(errno) : "");
           return 6;
-        }
-
-        journal_cur = malloc(PATH_MAX + 1);
-        journal_old = malloc(PATH_MAX + 1);
-        if (journal_cur == NULL || journal_old == NULL)
-        {
-          fprintf(stderr, "malloc failure for journal files\n");
-          return 6;
-        }
-        else 
-        {
-          snprintf(journal_cur, PATH_MAX, "%s/rrd.journal", dir);
-          snprintf(journal_old, PATH_MAX, "%s/rrd.journal.old", dir);
         }
       }
       break;
 
       case 'h':
       case '?':
-        printf ("RRDCacheD %s  Copyright (C) 2008 Florian octo Forster\n"
+        printf ("RRDCacheD %s\n"
+            "Copyright (C) 2008,2009 Florian octo Forster and Kevin Brintnall\n"
             "\n"
             "Usage: rrdcached [options]\n"
             "\n"
             "Valid options are:\n"
             "  -l <address>  Socket address to listen to.\n"
-            "  -L <address>  Socket address to listen to ('FLUSH' only).\n"
+            "  -P <perms>    Sets the permissions to assign to all following "
+                            "sockets\n"
             "  -w <seconds>  Interval in which to write data.\n"
             "  -z <delay>    Delay writes up to <delay> seconds to spread load\n"
             "  -t <threads>  Number of write threads.\n"
@@ -2770,8 +2985,10 @@ static int read_options (int argc, char **argv) /* {{{ */
     fprintf(stderr, "WARNING: -B does not make sense without -b!\n"
             "  Consult the rrdcached documentation\n");
 
-  if (journal_cur == NULL)
+  if (journal_dir == NULL)
     config_flush_at_shutdown = 1;
+
+  rrd_free_ptrs ((void *) &permissions, &permissions_len);
 
   return (status);
 } /* }}} int read_options */

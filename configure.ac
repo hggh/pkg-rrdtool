@@ -1,6 +1,6 @@
 dnl RRDtool AutoConf script ... 
 dnl ---------------------------
-dnl $Id: configure.ac 1857 2009-06-08 05:12:26Z oetiker $
+dnl $Id$
 dnl
 dnl Created by Jeff Allen, Tobi Oetiker, Blair Zajac
 dnl
@@ -13,14 +13,14 @@ AC_PREREQ(2.59)
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3.99909060808])
+AC_INIT([rrdtool],[1.3.999])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.399909060808
+NUMVERS=1.3999
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -36,9 +36,12 @@ AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
 m4_version_prereq(2.60, [AC_USE_SYSTEM_EXTENSIONS], [#])
-AM_INIT_AUTOMAKE(m4_version_prereq(2.63, [silent-rules], [[]]))
+AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-m4_version_prereq(2.63, [AM_SILENT_RULES([yes])], [#])
+# Enable silent build rules by default, requires at least
+# Automake-1.11. Disable by either passing --disable-silent-rules to
+# configure or passing V=1 to make
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CONFIG_HEADERS([rrd_config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -179,7 +182,7 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
+AC_CHECK_HEADERS(stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -449,6 +452,33 @@ AC_LINK_IFELSE(
       )
     ]  
 )
+
+dnl is time_t long or long long ?
+AC_DEFINE([TIME_T_IS_LONG], [], [time_t is long])
+AC_DEFINE([TIME_T_IS_LONG_LONG], [], [time_t is long long])
+AC_MSG_CHECKING([the type of time_t])
+AC_RUN_IFELSE(
+    AC_LANG_PROGRAM(
+        [[#include <time.h>]],
+        [[if (sizeof(long) != sizeof(time_t)) return 1; ]]
+        ),
+    [ AC_MSG_RESULT([time_t is long])
+      AC_DEFINE([TIME_T_IS_LONG])
+    ],
+    [ AC_RUN_IFELSE(
+        AC_LANG_PROGRAM(
+        [[#include <time.h>]],
+        [[if (sizeof(long long) != sizeof(time_t)) return 1; ]]
+        ),
+        [
+          AC_MSG_RESULT([time_t is long long])
+          AC_DEFINE([TIME_T_IS_LONG_LONG])
+        ],
+        [AC_MSG_ERROR([can not figure type of time_t])]
+      )
+    ]  
+)
+
 AC_LANG_POP(C)
 
 CONFIGURE_PART(Find 3rd-Party Libraries)
@@ -513,10 +543,10 @@ AC_ARG_ENABLE(perl,AS_HELP_STRING([--disable-perl],[do not build the perl module
 [],[enable_perl=yes])
 
 
-AC_ARG_VAR(PERLCC, [[] C compiler for Perl modules])
-AC_ARG_VAR(PERLCCFLAGS, [[] CC flags for Perl modules])
-AC_ARG_VAR(PERLLD, [[same as PERLCC] Linker for Perl modules])
-AC_ARG_VAR(PERLLDFLAGS, [[] LD flags for Perl modules])
+AC_ARG_VAR(PERLCC, [C compiler for Perl modules])
+AC_ARG_VAR(PERLCCFLAGS, [CC flags for Perl modules])
+AC_ARG_VAR(PERLLD, [Linker for Perl modules])
+AC_ARG_VAR(PERLLDFLAGS, [LD flags for Perl modules])
 
 if test "x$PERL" = "xno" -o  x$enable_perl = xno; then
 	COMP_PERL=

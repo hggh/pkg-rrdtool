@@ -1,6 +1,6 @@
 Random Feature Ideas for RRDtool
 --------------------------------
-$Id: TODO 1842 2009-06-07 11:34:22Z oetiker $
+$Id$
 
 make it possible to define order of legend items independant of their order
 on the commandline ...

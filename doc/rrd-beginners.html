@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrd-beginners</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -32,7 +36,11 @@
 
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -51,7 +59,7 @@
 <p>This manual is an attempt to assist beginners in understanding the concepts
 of RRDtool. It sheds a light on differences between RRDtool and other
 databases. With help of an example, it explains the structure of RRDtool
-database. This is followed by an overview of the ``graph'' feature of RRDtool.
+database. This is followed by an overview of the &quot;graph&quot; feature of RRDtool.
 At the end, it has sample scripts that illustrate the
 usage/wrapping of RRDtool within Shell or Perl scripts.</p>
 <p>
@@ -62,33 +70,34 @@ manager at the Swiss Federal Institute of Technology. Though it is a
 database, there are distinct differences between RRDtool databases and other
 databases as listed below:</p>
 <ul>
-<li></li>
-RRDtool stores data; that makes it a back-end tool. The RRDtool command set
+<li>
+<p>RRDtool stores data; that makes it a back-end tool. The RRDtool command set
 allows the creation of graphs; that makes it a front-end tool as well. Other
-databases just store data and can not create graphs.
-<p></p>
-<li></li>
-In case of linear databases, new data gets appended at the bottom of
+databases just store data and can not create graphs.</p>
+</li>
+<li>
+<p>In case of linear databases, new data gets appended at the bottom of
 the database table. Thus its size keeps on increasing, whereas the size of
 an RRDtool database is determined at creation time. Imagine an RRDtool
 database as the perimeter of a circle. Data is added along the
 perimeter. When new data reaches the starting point, it overwrites
 existing data. This way, the size of an RRDtool database always
-remains constant. The name ``Round Robin'' stems from this behavior.
-<p></p>
-<li></li>
-Other databases store the values as supplied. RRDtool can be configured to
+remains constant. The name &quot;Round Robin&quot; stems from this behavior.</p>
+</li>
+<li>
+<p>Other databases store the values as supplied. RRDtool can be configured to
 calculate the rate of change from the previous to the current value and
-store this information instead.
-<p></p>
-<li></li>
-Other databases get updated when values are supplied. The RRDtool database
+store this information instead.</p>
+</li>
+<li>
+<p>Other databases get updated when values are supplied. The RRDtool database
 is structured in such a way that it needs data at predefined time
 intervals. If it does not get a new value during the interval, it stores an
 UNKNOWN value for that interval. So, when using the RRDtool database, it is
 imperative to use scripts that run at regular intervals to ensure a constant
-data flow to update the RRDtool database.
-<p></p></ul>
+data flow to update the RRDtool database.</p>
+</li>
+</ul>
 <p>RRDtool is designed to store time series of data. With every data
 update, an associated time stamp is stored. Time is always expressed
 in seconds passed since epoch (01-01-1970). RRDtool can be installed
@@ -121,7 +130,7 @@ best explained with an example.</p>
          DS:mem:GAUGE:600:0:671744 \
          RRA:AVERAGE:0.5:12:24 \
          RRA:AVERAGE:0.5:288:31</pre>
-<p>This example creates a database named <em>target.rrd</em>. Start time
+<p>This example creates a database named <em class="file">target.rrd</em>. Start time
 (1'023'654'125) is specified in total number of seconds since epoch
 (time in seconds since 01-01-1970). While updating the database, the
 update time is also specified.  This update time MUST be large (later)
@@ -208,7 +217,7 @@ sources.</p>
 </p>
 <h2><a name="graphical_magic">Graphical Magic</a></h2>
 <p>Another important feature of RRDtool is its ability to create
-graphs. The ``graph'' command uses the ``fetch'' command internally to
+graphs. The &quot;graph&quot; command uses the &quot;fetch&quot; command internally to
 retrieve values from the database. With the retrieved values it draws
 graphs as defined by the parameters supplied on the command line. A
 single graph can show different DS (Data Sources) from a database. It
@@ -227,14 +236,14 @@ for retrieving the values? RRDtool looks at several things when making
 its choice. First it makes sure that the RRA covers as much of the
 graphing time frame as possible. Second it looks at the resolution of
 the RRA compared to the resolution of the graph. It tries to find one
-which has the same or higher better resolution. With the ``-r'' option
+which has the same or higher better resolution. With the &quot;-r&quot; option
 you can force RRDtool to assume a different resolution than the one
 calculated from the pixel width of the graph.</p>
 <p>Values of different variables can be presented in 5 different shapes
 in a graph - AREA, LINE1, LINE2, LINE3, and STACK. AREA is represented
 by a solid colored area with values as the boundary of this
 area. LINE1/2/3 (increasing width) are just plain lines representing
-the values. STACK is also an area but it is ``stack''ed on top AREA or
+the values. STACK is also an area but it is &quot;stack&quot;ed on top AREA or
 LINE1/2/3. Another important thing to note is that variables are
 plotted in the order they are defined in the graph command. Therefore
 care must be taken to define STACK only after defining AREA/LINE. It
@@ -313,26 +322,26 @@ generation is done using Perl scripts. These scripts are shown below:</p>
  # calculate the average of the array
  my $tot_mem_ave = $tot_mem_sum/($count);
  # create the graph
- RRDs::graph (&quot;/images/mem_$count.png&quot;,   \
-             &quot;--title= Memory Usage&quot;,    \
-             &quot;--vertical-label=Memory Consumption (MB)&quot;, \
-             &quot;--start=$start_time&quot;,      \
-             &quot;--end=$end_time&quot;,          \
-             &quot;--color=BACK#CCCCCC&quot;,      \
-             &quot;--color=CANVAS#CCFFFF&quot;,    \
-             &quot;--color=SHADEB#9999CC&quot;,    \
-             &quot;--height=125&quot;,             \
-             &quot;--upper-limit=656&quot;,        \
-             &quot;--lower-limit=0&quot;,          \
-             &quot;--rigid&quot;,                  \
-             &quot;--base=1024&quot;,              \
-             &quot;DEF:tot_mem=target.rrd:mem:AVERAGE&quot;, \
-             &quot;CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/&quot;,\
-             &quot;CDEF:machine_mem=tot_mem,656,+,tot_mem,-&quot;,\
-             &quot;COMMENT:Memory Consumption between $start_time&quot;,\
-             &quot;COMMENT:    and $end_time                     &quot;,\
-             &quot;HRULE:656#000000:Maximum Available Memory - 656 MB&quot;,\
-             &quot;AREA:machine_mem#CCFFFF:Memory Unused&quot;,   \
+ RRDs::graph (&quot;/images/mem_$count.png&quot;,   
+             &quot;--title= Memory Usage&quot;,    
+             &quot;--vertical-label=Memory Consumption (MB)&quot;, 
+             &quot;--start=$start_time&quot;,      
+             &quot;--end=$end_time&quot;,          
+             &quot;--color=BACK#CCCCCC&quot;,      
+             &quot;--color=CANVAS#CCFFFF&quot;,    
+             &quot;--color=SHADEB#9999CC&quot;,    
+             &quot;--height=125&quot;,             
+             &quot;--upper-limit=656&quot;,        
+             &quot;--lower-limit=0&quot;,          
+             &quot;--rigid&quot;,                  
+             &quot;--base=1024&quot;,              
+             &quot;DEF:tot_mem=target.rrd:mem:AVERAGE&quot;, 
+             &quot;CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/&quot;,
+             &quot;CDEF:machine_mem=tot_mem,656,+,tot_mem,-&quot;,
+             &quot;COMMENT:Memory Consumption between $start_time&quot;,
+             &quot;COMMENT:    and $end_time                     &quot;,
+             &quot;HRULE:656#000000:Maximum Available Memory - 656 MB&quot;,
+             &quot;AREA:machine_mem#CCFFFF:Memory Unused&quot;,   
              &quot;AREA:tot_mem_cor#6699CC:Total memory consumed in MB&quot;);
  my $err=RRDs::error;
  if ($err) {print &quot;problem generating the graph: $err\n&quot;;}

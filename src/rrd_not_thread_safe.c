@@ -7,7 +7,7 @@
  * rrd_not_thread_safe.c   Contains routines used when thread safety is not
  *                         an issue
  *****************************************************************************
- * $Id: rrd_not_thread_safe.c 1484 2008-09-06 14:24:43Z oetiker $
+ * $Id$
  *************************************************************************** */
 #include "rrd.h"
 #include "rrd_tool.h"

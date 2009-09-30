@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://oss.oetiker.ch/rrdtool-trac/newticket\n"
-"POT-Creation-Date: 2009-06-08 08:34+0200\n"
+"POT-Creation-Date: 2009-09-25 17:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -254,12 +254,14 @@ msgid ""
 "\t\t[-S|--step seconds]\n"
 "\t\t[-f|--imginfo printfstr]\n"
 "\t\t[-a|--imgformat PNG]\n"
-"\t\t[-c|--color COLORTAG#rrggbb[aa]] [-t|--title string]\n"
+"\t\t[-c|--color COLORTAG#rrggbb[aa]]\n"
+"\t\t[--border width\n"
+"\t\t[-t|--title string]\n"
 "\t\t[-W|--watermark string]\n"
 "\t\t[DEF:vname=rrd:ds-name:CF]\n"
 msgstr ""
 
-#: src/rrd_tool.c:168
+#: src/rrd_tool.c:170
 msgid ""
 "\t\t[CDEF:vname=rpn-expression]\n"
 "\t\t[VDEF:vdefname=rpn-expression]\n"
@@ -278,7 +280,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:182
+#: src/rrd_tool.c:184
 msgid ""
 " * tune -  Modify some basic properties of an RRD\n"
 "\n"
@@ -293,7 +295,7 @@ msgid ""
 "\t\t[--alpha adaptation-parameter]\n"
 msgstr ""
 
-#: src/rrd_tool.c:193
+#: src/rrd_tool.c:195
 msgid ""
 " * tune -  Modify some basic properties of an RRD\n"
 "\n"
@@ -304,7 +306,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:200
+#: src/rrd_tool.c:202
 msgid ""
 " * resize - alter the length of one of the RRAs in an RRD\n"
 "\n"
@@ -312,7 +314,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:203
+#: src/rrd_tool.c:205
 msgid ""
 "* xport - generate XML dump from one or several RRD\n"
 "\n"
@@ -326,7 +328,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:210
+#: src/rrd_tool.c:212
 msgid ""
 " * quit - closing a session in remote mode\n"
 "\n"
@@ -334,7 +336,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:213
+#: src/rrd_tool.c:215
 msgid ""
 " * ls - lists all *.rrd files in current directory\n"
 "\n"
@@ -342,7 +344,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:216
+#: src/rrd_tool.c:218
 msgid ""
 " * cd - changes the current directory\n"
 "\n"
@@ -350,7 +352,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:219
+#: src/rrd_tool.c:221
 msgid ""
 " * mkdir - creates a new directory\n"
 "\n"
@@ -358,7 +360,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:222
+#: src/rrd_tool.c:224
 msgid ""
 " * pwd - returns the current working directory\n"
 "\n"
@@ -366,7 +368,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/rrd_tool.c:225
+#: src/rrd_tool.c:227
 msgid ""
 "RRDtool is distributed under the Terms of the GNU General\n"
 "Public License Version 2. (www.gnu.org/copyleft/gpl.html)\n"

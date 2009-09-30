@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>cdeftutorial</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -23,7 +27,7 @@
 
 	<li><a href="#what_are_cdefs">What are CDEFs?</a></li>
 	<li><a href="#syntax">Syntax</a></li>
-	<li><a href="#rpnexpressions">RPN-expressions</a></li>
+	<li><a href="#rpn_expressions">RPN-expressions</a></li>
 	<li><a href="#converting_your_wishes_to_rpn">Converting your wishes to RPN</a></li>
 	<li><a href="#some_special_numbers">Some special numbers</a></li>
 	<ul>
@@ -58,7 +62,11 @@
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -100,7 +108,7 @@ Steve Rader's <a href="././rpntutorial.html">the rpntutorial manpage</a>. It may
 </p>
 <hr />
 <h1><a name="what_are_cdefs">What are CDEFs?</a></h1>
-<p>When retrieving data from an RRD, you are using a ``DEF'' to work with
+<p>When retrieving data from an RRD, you are using a &quot;DEF&quot; to work with
 that data. Think of it as a variable that changes over time (where
 time is the x-axis). The value of this variable is what is found in
 the database at that particular time and you can't do any
@@ -113,16 +121,16 @@ from DEFs and perform calculations on them.</p>
 <pre>
    DEF:var_name_1=some.rrd:ds_name:CF
    CDEF:var_name_2=RPN_expression</pre>
-<p>You first define ``var_name_1'' to be data collected from data source
-``ds_name'' found in RRD ``some.rrd'' with consolidation function ``CF''.</p>
-<p>Assume the ifInOctets SNMP counter is saved in mrtg.rrd as the DS ``in''.
+<p>You first define &quot;var_name_1&quot; to be data collected from data source
+&quot;ds_name&quot; found in RRD &quot;some.rrd&quot; with consolidation function &quot;CF&quot;.</p>
+<p>Assume the ifInOctets SNMP counter is saved in mrtg.rrd as the DS &quot;in&quot;.
 Then the following DEF defines a variable for the average of that
 data source:</p>
 <pre>
    DEF:inbytes=mrtg.rrd:in:AVERAGE</pre>
 <p>Say you want to display bits per second (instead of bytes per second
 as stored in the database.)  You have to define a calculation
-(hence ``CDEF'') on variable ``inbytes'' and use that variable (inbits)
+(hence &quot;CDEF&quot;) on variable &quot;inbytes&quot; and use that variable (inbits)
 instead of the original:</p>
 <pre>
    CDEF:inbits=inbytes,8,*</pre>
@@ -134,7 +142,7 @@ same as the variable named in the DEF (inbytes)!</p>
 <p>
 </p>
 <hr />
-<h1><a name="rpnexpressions">RPN-expressions</a></h1>
+<h1><a name="rpn_expressions">RPN-expressions</a></h1>
 <p>RPN is short-hand for Reverse Polish Notation. It works as follows.
 You put the variables or numbers on a stack. You also put operations
 (things-to-do) on the stack and this stack is then processed. The result
@@ -143,45 +151,47 @@ number left: the outcome of the series of operations. If there is not
 exactly one number left, RRDtool will complain loudly.</p>
 <p>Above multiplication by eight will look like:</p>
 <ol>
-<li></li>
-Start with an empty stack
-<p></p>
-<li></li>
-Put the content of variable inbytes on the stack
-<p></p>
-<li></li>
-Put the number eight on the stack
-<p></p>
-<li></li>
-Put the operation multiply on the stack
-<p></p>
-<li></li>
-Process the stack
-<p></p>
-<li></li>
-Retrieve the value from the stack and put it in variable inbits
-<p></p></ol>
+<li>
+<p>Start with an empty stack</p>
+</li>
+<li>
+<p>Put the content of variable inbytes on the stack</p>
+</li>
+<li>
+<p>Put the number eight on the stack</p>
+</li>
+<li>
+<p>Put the operation multiply on the stack</p>
+</li>
+<li>
+<p>Process the stack</p>
+</li>
+<li>
+<p>Retrieve the value from the stack and put it in variable inbits</p>
+</li>
+</ol>
 <p>We will now do an example with real numbers. Suppose the variable
 inbytes would have value 10, the stack would be:</p>
 <ol>
-<li></li>
-||
-<p></p>
-<li></li>
-|10|
-<p></p>
-<li></li>
-|10|8|
-<p></p>
-<li></li>
-|10|8|*|
-<p></p>
-<li></li>
-|80|
-<p></p>
-<li></li>
-||
-<p></p></ol>
+<li>
+<p>||</p>
+</li>
+<li>
+<p>|10|</p>
+</li>
+<li>
+<p>|10|8|</p>
+</li>
+<li>
+<p>|10|8|*|</p>
+</li>
+<li>
+<p>|80|</p>
+</li>
+<li>
+<p>||</p>
+</li>
+</ol>
 <p>Processing the stack (step 5) will retrieve one value from the stack
 (from the right at step 4). This is the operation multiply and this
 takes two values off the stack as input. The result is put back on the
@@ -191,7 +201,7 @@ Generally speaking you have the following order:</p>
 <pre>
    y = A - B  --&gt;  y=minus(A,B)  --&gt;  CDEF:y=A,B,-</pre>
 <p>This is not very intuitive (at least most people don't think so). For
-the function <code>f(A,B)</code> you reverse the position of ``f'', but you do not
+the function f(A,B) you reverse the position of &quot;f&quot;, but you do not
 reverse the order of the variables.</p>
 <p>
 </p>
@@ -210,7 +220,7 @@ are monitoring.</p>
    router3.rrd with link1in link2in</pre>
 <p>Suppose you would like to add up all these counters, except for link2in
 inside router2.rrd. You need to do:</p>
-<p>(in this example, ``router1.rrd:link1in'' means the DS link1in inside the
+<p>(in this example, &quot;router1.rrd:link1in&quot; means the DS link1in inside the
 RRD router1.rrd)</p>
 <pre>
    router1.rrd:link1in
@@ -273,10 +283,10 @@ choose the order yourself, you have to start with the multiplication
 and then add a to it. You may alter the position of b and c, you must
 not alter the position of a and b.</p>
 <p>You have to take this in consideration when converting this expression
-into RPN. Read it as: ``Add the outcome of b*c to a'' and then it is
+into RPN. Read it as: &quot;Add the outcome of b*c to a&quot; and then it is
 easy to write the RPN expression: <code>result=a,b,c,*,+</code>
 Another expression that would return the same: <code>result=b,c,*,a,+</code></p>
-<p>In normal math, you may encounter something like ``a*(b+c)'' and this
+<p>In normal math, you may encounter something like &quot;a*(b+c)&quot; and this
 can also be converted into RPN. The parenthesis just tell you to first
 add b and c, and then multiply a with the result. Again, now it is
 easy to write it in RPN: <code>result=a,b,c,+,*</code>. Note that this is very
@@ -296,20 +306,21 @@ solve most, if not all, problems you encounter.</p>
 <h2><a name="the_unknown_value">The unknown value</a></h2>
 <p>Sometimes collecting your data will fail. This can be very common,
 especially when querying over busy links. RRDtool can be configured
-to allow for one (or even more) unknown <code>value(s)</code> and calculate the missing
+to allow for one (or even more) unknown value(s) and calculate the missing
 update. You can, for instance, query your device every minute. This is
 creating one so called PDP or primary data point per minute. If you
 defined your RRD to contain an RRA that stores 5-minute values, you need
 five of those PDPs to create one CDP (consolidated data point).
 These PDPs can become unknown in two cases:</p>
 <ol>
-<li></li>
-The updates are too far apart. This is tuned using the ``heartbeat'' setting.
-<p></p>
-<li></li>
-The update was set to unknown on purpose by inserting no value (using the
-template option) or by using ``U'' as the value to insert.
-<p></p></ol>
+<li>
+<p>The updates are too far apart. This is tuned using the &quot;heartbeat&quot; setting.</p>
+</li>
+<li>
+<p>The update was set to unknown on purpose by inserting no value (using the
+template option) or by using &quot;U&quot; as the value to insert.</p>
+</li>
+</ol>
 <p>When a CDP is calculated, another mechanism determines if this CDP is valid
 or not. If there are too many PDPs unknown, the CDP is unknown as well.
 This is determined by the xff factor. Please note that one unknown counter
@@ -341,7 +352,7 @@ set to the unknown value. If you do calculations with this type of
 value, the result has to be unknown too. This means that an expression
 such as <code>result=a,b,+</code> will be unknown if either a or b is unknown.
 It would be wrong to just ignore the unknown value and return the value
-of the other parameter. By doing so, you would assume ``unknown'' means ``zero''
+of the other parameter. By doing so, you would assume &quot;unknown&quot; means &quot;zero&quot;
 and this is not true.</p>
 <p>There has been a case where somebody was collecting data for over a year.
 A new piece of equipment was installed, a new RRD was created and the
@@ -393,37 +404,38 @@ throughput for these two devices.</p>
 will add known data (from router.rrd) to unknown data (from router2.rrd) for
 the bigger part of your stats. You could solve this in a few ways:</p>
 <ul>
-<li></li>
-While creating the new database, fill it with zeros from the start to now.
+<li>
+<p>While creating the new database, fill it with zeros from the start to now.
 You have to make the database start at or before the least recent time in
-the other database.
-<p></p>
-<li></li>
-Alternatively, you could use CDEF and alter unknown data to zero.
-<p></p></ul>
+the other database.</p>
+</li>
+<li>
+<p>Alternatively, you could use CDEF and alter unknown data to zero.</p>
+</li>
+</ul>
 <p>Both methods have their pros and cons. The first method is troublesome and
 if you want to do that you have to figure it out yourself. It is not
 possible to create a database filled with zeros, you have to put them in
 manually. Implementing the second method is described next:</p>
-<p>What we want is: ``if the value is unknown, replace it with zero''. This
+<p>What we want is: &quot;if the value is unknown, replace it with zero&quot;. This
 could be written in pseudo-code as:  if (value is unknown) then (zero)
-else (value). When reading the <a href="././rrdgraph.html">the rrdgraph manpage</a> manual you notice the ``UN''
-function that returns zero or one. You also notice the ``IF'' function
+else (value). When reading the <a href="././rrdgraph.html">the rrdgraph manpage</a> manual you notice the &quot;UN&quot;
+function that returns zero or one. You also notice the &quot;IF&quot; function
 that takes zero or one as input.</p>
-<p>First look at the ``IF'' function. It takes three values from the stack,
+<p>First look at the &quot;IF&quot; function. It takes three values from the stack,
 the first value is the decision point, the second value is returned to
-the stack if the evaluation is ``true'' and if not, the third value is
-returned to the stack. We want the ``UN'' function to decide what happens
+the stack if the evaluation is &quot;true&quot; and if not, the third value is
+returned to the stack. We want the &quot;UN&quot; function to decide what happens
 so we combine those two functions in one CDEF.</p>
-<p>Lets write down the two possible paths for the ``IF'' function:</p>
+<p>Lets write down the two possible paths for the &quot;IF&quot; function:</p>
 <pre>
    if true  return a
    if false return b</pre>
-<p>In RPN:  <code>result=x,a,b,IF</code> where ``x'' is either true or false.</p>
-<p>Now we have to fill in ``x'', this should be the ``(value is unknown)'' part
+<p>In RPN:  <code>result=x,a,b,IF</code> where &quot;x&quot; is either true or false.</p>
+<p>Now we have to fill in &quot;x&quot;, this should be the &quot;(value is unknown)&quot; part
 and this is in RPN:  <code>result=value,UN</code></p>
 <p>We now combine them: <code>result=value,UN,a,b,IF</code> and when we fill in the
-appropriate things for ``a'' and ``b'' we're finished:</p>
+appropriate things for &quot;a&quot; and &quot;b&quot; we're finished:</p>
 <p><code>CDEF:result=value,UN,0,value,IF</code></p>
 <p>You may want to read Steve Rader's RPN guide if you have difficulties
 with the way I explained this last example.</p>
@@ -450,21 +462,22 @@ your database after installing your new equipment, it will also be
 translated into zero and therefore you won't see that there was a
 problem. This is not good and what you really want to do is:</p>
 <ul>
-<li></li>
-If there is unknown data, look at the time that this sample was taken.
-<p></p>
-<li></li>
-If the unknown value is before time xxx, make it zero.
-<p></p>
-<li></li>
-If it is after time xxx, leave it as unknown data.
-<p></p></ul>
+<li>
+<p>If there is unknown data, look at the time that this sample was taken.</p>
+</li>
+<li>
+<p>If the unknown value is before time xxx, make it zero.</p>
+</li>
+<li>
+<p>If it is after time xxx, leave it as unknown data.</p>
+</li>
+</ul>
 <p>This is doable: you can compare the time that the sample was taken
 to some known time. Assuming you started to monitor your device on
 Friday September 17, 1999, 00:35:57 MET DST. Translate this time in seconds
 since 1970-01-01 and it becomes 937'521'357. If you process unknown values
 that were received after this time, you want to leave them unknown and
-if they were ``received'' before this time, you want to translate them
+if they were &quot;received&quot; before this time, you want to translate them
 into zero (so you can effectively ignore them while adding them to your
 other routers counters).</p>
 <p>Translating Friday September 17, 1999, 00:35:57 MET DST into 937'521'357 can
@@ -477,15 +490,16 @@ known. There are several other ways of doing this, just pick one.</p>
 values different depending on the time that the sample was taken.
 This is a three step process:</p>
 <ol>
-<li></li>
-If the timestamp of the value is after 937'521'357, leave it as is.
-<p></p>
-<li></li>
-If the value is a known value, leave it as is.
-<p></p>
-<li></li>
-Change the unknown value into zero.
-<p></p></ol>
+<li>
+<p>If the timestamp of the value is after 937'521'357, leave it as is.</p>
+</li>
+<li>
+<p>If the value is a known value, leave it as is.</p>
+</li>
+<li>
+<p>Change the unknown value into zero.</p>
+</li>
+</ol>
 <p>Lets look at part one:</p>
 <pre>
     if (true) return the original value</pre>
@@ -495,10 +509,10 @@ Change the unknown value into zero.
     if (false) return &quot;b&quot;</pre>
 <p>We need to calculate true or false from step 1. There is a function
 available that returns the timestamp for the current sample. It is
-called, how surprisingly, ``TIME''. This time has to be compared to
-a constant number, we need ``GT''. The output of ``GT'' is true or false
-and this is good input to ``IF''. We want ``if (time &gt; 937521357) then
-(return a) else (return b)''.</p>
+called, how surprisingly, &quot;TIME&quot;. This time has to be compared to
+a constant number, we need &quot;GT&quot;. The output of &quot;GT&quot; is true or false
+and this is good input to &quot;IF&quot;. We want &quot;if (time &gt; 937521357) then
+(return a) else (return b)&quot;.</p>
 <p>This process was already described thoroughly in the previous chapter
 so lets do it quick:</p>
 <pre>
@@ -527,26 +541,27 @@ so you get almost 10mb/s while the rest of your network activity does
 not produce numbers higher than 100kb/s.</p>
 <p>There are two options:</p>
 <ol>
-<li></li>
-If the number exceeds 100kb/s it is wrong and you want it masked out
-by changing it into unknown.
-<p></p>
-<li></li>
-You don't want the graph to show more than 100kb/s.
-<p></p></ol>
+<li>
+<p>If the number exceeds 100kb/s it is wrong and you want it masked out
+by changing it into unknown.</p>
+</li>
+<li>
+<p>You don't want the graph to show more than 100kb/s.</p>
+</li>
+</ol>
 <p>Pseudo code: if (number &gt; 100) then unknown else number
 or
 Pseudo code: if (number &gt; 100) then 100 else number.</p>
-<p>The second ``problem'' may also be solved by using the rigid option of
+<p>The second &quot;problem&quot; may also be solved by using the rigid option of
 RRDtool graph, however this has not the same result. In this example
 you can end up with a graph that does autoscaling. Also, if you use
 the numbers to display maxima they will be set to 100kb/s.</p>
-<p>We use ``IF'' and ``GT'' again. ``if (x) then (y) else (z)'' is written
-down as ``CDEF:result=x,y,z,IF''; now fill in x, y and z.
-For x you fill in ``number greater than 100kb/s'' becoming
-``number,100000,GT'' (kilo is 1'000 and b/s is what we measure!).
-The ``z'' part is ``number'' in both cases and the ``y'' part is either
-``UNKN'' for unknown or ``100000'' for 100kb/s.</p>
+<p>We use &quot;IF&quot; and &quot;GT&quot; again. &quot;if (x) then (y) else (z)&quot; is written
+down as &quot;CDEF:result=x,y,z,IF&quot;; now fill in x, y and z.
+For x you fill in &quot;number greater than 100kb/s&quot; becoming
+&quot;number,100000,GT&quot; (kilo is 1'000 and b/s is what we measure!).
+The &quot;z&quot; part is &quot;number&quot; in both cases and the &quot;y&quot; part is either
+&quot;UNKN&quot; for unknown or &quot;100000&quot; for 100kb/s.</p>
 <p>The two CDEF expressions would be:</p>
 <pre>
     CDEF:result=number,100000,GT,UNKN,number,IF
@@ -555,7 +570,7 @@ The ``z'' part is ``number'' in both cases and the ``y'' part is either
 </p>
 <h2><a name="example__working_on_a_certain_time_span">Example: working on a certain time span</a></h2>
 <p>If you want a graph that spans a few weeks, but would only want to
-see some routers' data for one week, you need to ``hide'' the rest of
+see some routers' data for one week, you need to &quot;hide&quot; the rest of
 the time frame. Don't ask me when this would be useful, it's just
 here for the example :)</p>
 <p>We need to compare the time stamp to a begin date and an end date.
@@ -565,14 +580,14 @@ Comparing isn't difficult:</p>
         TIME,endtime,LE</pre>
 <p>These two parts of the CDEF produce either 0 for false or 1 for true.
 We can now check if they are both 0 (or 1) using a few IF statements
-but, as Wataru Satoh pointed out, we can use the ``*'' or ``+'' functions
+but, as Wataru Satoh pointed out, we can use the &quot;*&quot; or &quot;+&quot; functions
 as logical AND and logical OR.</p>
-<p>For ``*'', the result will be zero (false) if either one of the two
-operators is zero.  For ``+'', the result will only be false (0) when
+<p>For &quot;*&quot;, the result will be zero (false) if either one of the two
+operators is zero.  For &quot;+&quot;, the result will only be false (0) when
 two false (0) operators will be added.  Warning: *any* number not
-equal to 0 will be considered ``true''. This means that, for instance,
-``-1,1,+'' (which should be ``true or true'') will become FALSE ...
-In other words, use ``+'' only if you know for sure that you have positive
+equal to 0 will be considered &quot;true&quot;. This means that, for instance,
+&quot;-1,1,+&quot; (which should be &quot;true or true&quot;) will become FALSE ...
+In other words, use &quot;+&quot; only if you know for sure that you have positive
 numbers (or zero) only.</p>
 <p>Let's compile the complete CDEF:</p>
 <pre>
@@ -588,8 +603,8 @@ could also do it the other way around:</p>
 </p>
 <h2><a name="example__you_suspect_to_have_problems_and_want_to_see_unknown_data_">Example: You suspect to have problems and want to see unknown data.</a></h2>
 <p>Suppose you add up the number of active users on several terminal servers.
-If one of them doesn't give an answer (or an incorrect one) you get ``NaN''
-in the database (``Not a Number'') and NaN is evaluated as Unknown.</p>
+If one of them doesn't give an answer (or an incorrect one) you get &quot;NaN&quot;
+in the database (&quot;Not a Number&quot;) and NaN is evaluated as Unknown.</p>
 <p>In this case, you would like to be alerted to it and the sum of the
 remaining values is of no value to you.</p>
 <p>It would be something like:</p>
@@ -606,12 +621,12 @@ bright red line, not a gap.</p>
 there is an unknown value:</p>
 <pre>
     CDEF:wrongdata=allusers,UN,INF,UNKN,IF</pre>
-<p>``allusers,UN'' will evaluate to either true or false, it is the (x) part
-of the ``IF'' function and it checks if allusers is unknown.
-The (y) part of the ``IF'' function is set to ``INF'' (which means infinity)
-and the (z) part of the function returns ``UNKN''.</p>
+<p>&quot;allusers,UN&quot; will evaluate to either true or false, it is the (x) part
+of the &quot;IF&quot; function and it checks if allusers is unknown.
+The (y) part of the &quot;IF&quot; function is set to &quot;INF&quot; (which means infinity)
+and the (z) part of the function returns &quot;UNKN&quot;.</p>
 <p>The logic is: if (allusers == unknown) then return INF else return UNKN.</p>
-<p>You can now use AREA to display this ``wrongdata'' in bright red. If it
+<p>You can now use AREA to display this &quot;wrongdata&quot; in bright red. If it
 is unknown (because allusers is known) then the red AREA won't show up.
 If the value is INF (because allusers is unknown) then the red AREA will
 be filled in on the graph at that particular time.</p>
@@ -627,7 +642,7 @@ four values and you don't get a single value to test.
 Suppose users3 would be unknown at one point in time: users1 is plotted,
 users2 is stacked on top of users1, users3 is unknown and therefore
 nothing happens, users4 is stacked on top of users2.
-Add the extra CDEFs anyway and use them to overlay the ``normal'' graph:</p>
+Add the extra CDEFs anyway and use them to overlay the &quot;normal&quot; graph:</p>
 <pre>
    DEF:users1=location1.rrd:onlineTS1:LAST
    DEF:users2=location1.rrd:onlineTS2:LAST
@@ -640,19 +655,20 @@ Add the extra CDEFs anyway and use them to overlay the ``normal'' graph:</p>
    STACK:users3#00FFFF:users at ts3
    STACK:users4#FFFF00:users at ts4
    AREA:wrongdata#FF0000:unknown data</pre>
-<p>If there is unknown data in one of users1..users4, the ``wrongdata'' AREA
+<p>If there is unknown data in one of users1..users4, the &quot;wrongdata&quot; AREA
 will be drawn and because it starts at the X-axis and has infinite height
 it will effectively overwrite the STACKed parts.</p>
-<p>You could combine the two CDEF lines into one (we don't use ``allusers'')
+<p>You could combine the two CDEF lines into one (we don't use &quot;allusers&quot;)
 if you like.  But there are good reasons for writing two CDEFS:</p>
 <ul>
-<li></li>
-It improves the readability of the script.
-<p></p>
-<li></li>
-It can be used inside GPRINT to display the total number of users.
-<p></p></ul>
-<p>If you choose to combine them, you can substitute the ``allusers'' in the
+<li>
+<p>It improves the readability of the script.</p>
+</li>
+<li>
+<p>It can be used inside GPRINT to display the total number of users.</p>
+</li>
+</ul>
+<p>If you choose to combine them, you can substitute the &quot;allusers&quot; in the
 second CDEF with the part after the equal sign from the first line:</p>
 <pre>
    CDEF:wrongdata=users1,users2,users3,users4,+,+,+,UN,INF,UNKN,IF</pre>
@@ -678,8 +694,8 @@ F=9/5*C+32</p>
       CDEF:far=9,5,/,cel,*,32,+ \
       LINE2:cel#00a000:&quot;D. Celsius&quot; \
       LINE2:far#ff0000:&quot;D. Fahrenheit\c&quot;</pre>
-<p>This example gets the DS called ``exhaust'' from database ``demo.rrd''
-and puts the values in variable ``cel''. The CDEF used is evaluated
+<p>This example gets the DS called &quot;exhaust&quot; from database &quot;demo.rrd&quot;
+and puts the values in variable &quot;cel&quot;. The CDEF used is evaluated
 as follows:</p>
 <pre>
    CDEF:far=9,5,/,cel,*,32,+
@@ -713,14 +729,14 @@ get:</p>
  0        --&gt; b
  idat1    --&gt; c
  if (a) then (b) else (c)</pre>
-<p>The result is therefore ``0'' if it is true that ``idat1'' equals ``UN''.
-If not, the original value of ``idat1'' is put back on the stack.
-Lets call this answer ``d''. The process is repeated for the next
+<p>The result is therefore &quot;0&quot; if it is true that &quot;idat1&quot; equals &quot;UN&quot;.
+If not, the original value of &quot;idat1&quot; is put back on the stack.
+Lets call this answer &quot;d&quot;. The process is repeated for the next
 five items on the stack, it is done the same and will return answer
-``h''. The resulting stack is therefore ``d,h''.
-The expression has been simplified to ``d,h,+,8,*'' and it will now be
-easy to see that we add ``d'' and ``h'', and multiply the result with eight.</p>
-<p>The end result is that we have added ``idat1'' and ``idat2'' and in the
+&quot;h&quot;. The resulting stack is therefore &quot;d,h&quot;.
+The expression has been simplified to &quot;d,h,+,8,*&quot; and it will now be
+easy to see that we add &quot;d&quot; and &quot;h&quot;, and multiply the result with eight.</p>
+<p>The end result is that we have added &quot;idat1&quot; and &quot;idat2&quot; and in the
 process we effectively ignored unknown values. The result is multiplied
 by eight, most likely to convert bytes/s to bits/s.</p>
 <p>
@@ -741,25 +757,25 @@ by eight, most likely to convert bytes/s to bits/s.</p>
       STACK:val4#FFC000:Value4 \
       AREA:whipeout#FF0000:Unknown</pre>
 <p>This demo demonstrates two ways to use infinity. It is a bit tricky
-to see what happens in the ``background'' CDEF.</p>
+to see what happens in the &quot;background&quot; CDEF.</p>
 <pre>
    &quot;val4,POP,TIME,7200,%,3600,LE,INF,UNKN,IF&quot;</pre>
-<p>This RPN takes the value of ``val4'' as input and then immediately
-removes it from the stack using ``POP''. The stack is now empty but
+<p>This RPN takes the value of &quot;val4&quot; as input and then immediately
+removes it from the stack using &quot;POP&quot;. The stack is now empty but
 as a side effect we now know the time that this sample was taken.
-This time is put on the stack by the ``TIME'' function.</p>
-<p>``TIME,7200,%'' takes the modulo of time and 7'200 (which is two hours).
+This time is put on the stack by the &quot;TIME&quot; function.</p>
+<p>&quot;TIME,7200,%&quot; takes the modulo of time and 7'200 (which is two hours).
 The resulting value on the stack will be a number in the range from
 0 to 7199.</p>
 <p>For people who don't know the modulo function: it is the remainder
 after an integer division. If you divide 16 by 3, the answer would
-be 5 and the remainder would be 1. So, ``16,3,%'' returns 1.</p>
-<p>We have the result of ``TIME,7200,%'' on the stack, lets call this
-``a''. The start of the RPN has become ``a,3600,LE'' and this checks
-if ``a'' is less or equal than ``3600''. It is true half of the time.
+be 5 and the remainder would be 1. So, &quot;16,3,%&quot; returns 1.</p>
+<p>We have the result of &quot;TIME,7200,%&quot; on the stack, lets call this
+&quot;a&quot;. The start of the RPN has become &quot;a,3600,LE&quot; and this checks
+if &quot;a&quot; is less or equal than &quot;3600&quot;. It is true half of the time.
 We now have to process the rest of the RPN and this is only a simple
-``IF'' function that returns either ``INF'' or ``UNKN'' depending on the
-time. This is returned to variable ``background''.</p>
+&quot;IF&quot; function that returns either &quot;INF&quot; or &quot;UNKN&quot; depending on the
+time. This is returned to variable &quot;background&quot;.</p>
 <p>The second CDEF has been discussed earlier in this document so we
 won't do that here.</p>
 <p>Now you can draw the different layers. Start with the background
@@ -773,8 +789,8 @@ four variables are valid. This is why you use the second CDEF, it
 will overlay the data with an AREA so the data cannot be seen anymore.</p>
 <p>If your data can also have negative values you also need to overwrite
 the other half of your graph. This can be done in a relatively simple
-way: what you need is the ``wipeout'' variable and place a negative
-sign before it:  ``CDEF:wipeout2=wipeout,-1,*''</p>
+way: what you need is the &quot;wipeout&quot; variable and place a negative
+sign before it:  &quot;CDEF:wipeout2=wipeout,-1,*&quot;</p>
 <p>
 </p>
 <h2><a name="filtering_data">Filtering data</a></h2>

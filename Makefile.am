@@ -1,4 +1,4 @@
-# $Id: Makefile.am 1846 2009-06-07 13:42:39Z oetiker $
+# $Id$
 
 ## Process this file with automake to produce Makefile.in
 RSYNC = rsync --rsh=ssh

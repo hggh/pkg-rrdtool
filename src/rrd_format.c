@@ -3,7 +3,7 @@
  *****************************************************************************
  * rrd_format.c  RRD Database Format helper functions
  *****************************************************************************
- * $Id: rrd_format.c 1795 2009-04-20 06:46:47Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.5  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net

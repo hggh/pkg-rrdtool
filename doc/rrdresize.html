@@ -1,14 +1,18 @@
+<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>rrdresize</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:root@localhost" />
 </head>
 
 <body style="background-color: white">
 
-<p><a name="__index__"></a></p>
+
 <!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
 <!--
 
 <ul>
@@ -19,7 +23,11 @@
 	<li><a href="#notes">NOTES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
+
 -->
+
+
+</div>
 <!-- INDEX END -->
 
 <p>
@@ -38,38 +46,34 @@
 <p>The <strong>resize</strong> function is used to modify the number of rows in
 an <strong>RRA</strong>.</p>
 <dl>
-<dt><strong><a name="item_filename"><em>filename</em></a></strong><br />
-</dt>
+<dt><strong><a name="filename" class="item"><em>filename</em></a></strong></dt>
+
 <dd>
-the name of the <strong>RRD</strong> you want to alter.
+<p>the name of the <strong>RRD</strong> you want to alter.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_rra_2dnum"><em>rra-num</em></a></strong><br />
-</dt>
+<dt><strong><a name="rra_num" class="item"><em>rra-num</em></a></strong></dt>
+
 <dd>
-the <strong>RRA</strong> you want to alter. You can find the number using <strong>rrdtool info</strong>.
+<p>the <strong>RRA</strong> you want to alter. You can find the number using <strong>rrdtool info</strong>.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_grow"><strong>GROW</strong></a></strong><br />
-</dt>
+<dt><strong><a name="grow" class="item"><strong>GROW</strong></a></strong></dt>
+
 <dd>
-used if you want to add extra rows to an RRA. The extra rows will be inserted
-as the rows that are oldest.
+<p>used if you want to add extra rows to an RRA. The extra rows will be inserted
+as the rows that are oldest.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_shrink"><strong>SHRINK</strong></a></strong><br />
-</dt>
+<dt><strong><a name="shrink" class="item"><strong>SHRINK</strong></a></strong></dt>
+
 <dd>
-used if you want to remove rows from an RRA. The rows that will be removed
-are the oldest rows.
+<p>used if you want to remove rows from an RRA. The rows that will be removed
+are the oldest rows.</p>
 </dd>
-<p></p>
-<dt><strong><a name="item_rows"><em>rows</em></a></strong><br />
-</dt>
+<dt><strong><a name="rows" class="item"><em>rows</em></a></strong></dt>
+
 <dd>
-the number of rows you want to add or remove.
+<p>the number of rows you want to add or remove.</p>
 </dd>
-<p></p></dl>
+</dl>
 <p>
 </p>
 <hr />
