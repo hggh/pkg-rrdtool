@@ -29,6 +29,7 @@ DISABLE=0
 DESC="RRDtool data caching daemon"
 NAME=rrdcached
 DAEMON=/usr/bin/rrdcached
+OPTS="-l unix:/var/run/rrdcached.sock -F"
 
 PIDFILE=/var/run/rrdcached.pid
 

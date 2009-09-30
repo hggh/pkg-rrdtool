@@ -4,6 +4,11 @@
 # default: 0
 DISABLE=0
 
+# options to be passed to rrdcached
+# (do not specify -p <pidfile> - this is handled by the init script)
+# default: -l unix:/var/run/rrdcached.sock -F
+OPTS="-l unix:/var/run/rrdcached.sock -F"
+
 # number of seconds to wait for rrdcached to shut down
 # (writing the data to disk may take some time;
 # tune this according to your setup)
