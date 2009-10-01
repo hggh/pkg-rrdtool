@@ -314,8 +314,8 @@ Files with different copyrights/licenses:
 
  * src/rrd_daemon.c:
 
-    Copyright (C) 2008 Florian octo Forster <octo@verplant.org>
-    Copyright (C) 2008 Kevin Brintnall <kbrint@rufus.net>
+    Copyright (C) 2008-2009 Florian octo Forster <octo@verplant.org>
+    Copyright (C) 2008-2009 Kevin Brintnall <kbrint@rufus.net>
 
  * src/rrd_fetch_libdbi.c:
 
@@ -371,7 +371,8 @@ Files with different copyrights/licenses:
 
  * src/rrd_utils.c:
 
-    Author: Kevin Brintnall <kbrint@rufus.net>
+    Copyright (C) 2009 Kevin Brintnall
+    Copyright (C) 2008 Sebastian Harl
 
  * src/strftime.c:
 
