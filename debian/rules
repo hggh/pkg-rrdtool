@@ -208,7 +208,8 @@ binary-arch: build-arch install-arch
 	dh_strip -a --dbg-package=rrdtool-dbg
 	dh_compress -a
 	dh_fixperms -a
-	dh_makeshlibs -a
+	dh_makeshlibs -a -Nliblua5.1-rrd0 -Nliblua5.1-rrd-dev
+	dh_makeshlibs -pliblua5.1-rrd0 -pliblua5.1-rrd-dev -n
 	dh_installdeb -a
 	dh_shlibdeps -a
 	dh_gencontrol -a
