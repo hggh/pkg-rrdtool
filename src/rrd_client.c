@@ -17,6 +17,7 @@
  *
  * Authors:
  *   Florian octo Forster <octo at verplant.org>
+ *   Sebastian tokkee Harl <sh at tokkee.org>
  **/
 
 #include "rrd.h"
@@ -50,6 +51,45 @@ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static int sd = -1;
 static FILE *sh = NULL;
 static char *sd_path = NULL; /* cache the path for sd */
+
+/* get_path: Return a path name appropriate to be sent to the daemon.
+ *
+ * When talking to a local daemon (thru a UNIX socket), relative path names
+ * are resolved to absolute path names to allow for transparent integration
+ * into existing solutions (as requested by Tobi). Else, absolute path names
+ * are not allowed, since path name translation is done by the server.
+ *
+ * One must hold `lock' when calling this function. */
+static const char *get_path (const char *path, char *resolved_path) /* {{{ */
+{
+  const char *ret = path;
+  int is_unix = 0;
+
+  if ((*sd_path == '/')
+      || (strncmp ("unix:", sd_path, strlen ("unix:")) == 0))
+    is_unix = 1;
+
+  if (*path == '/') /* absolute path */
+  {
+    if (! is_unix)
+    {
+      rrd_set_error ("absolute path names not allowed when talking "
+          "to a remote daemon");
+      return (NULL);
+    }
+    /* else: nothing to do */
+  }
+  else /* relative path */
+  {
+    if (is_unix)
+    {
+      realpath (path, resolved_path);
+      ret = resolved_path;
+    }
+    /* else: nothing to do */
+  }
+  return (ret);
+} /* }}} char *get_path */
 
 /* One must hold `lock' when calling `close_connection'. */
 static void close_connection (void) /* {{{ */
@@ -255,19 +295,13 @@ static int request (const char *buffer, size_t buffer_size, /* {{{ */
   int status;
   rrdc_response_t *res;
 
-  pthread_mutex_lock (&lock);
-
   if (sh == NULL)
-  {
-    pthread_mutex_unlock (&lock);
     return (ENOTCONN);
-  }
 
   status = (int) fwrite (buffer, buffer_size, /* nmemb = */ 1, sh);
   if (status != 1)
   {
     close_connection ();
-    pthread_mutex_unlock (&lock);
     rrd_set_error("request: socket error (%d) while talking to rrdcached",
                   status);
     return (-1);
@@ -276,8 +310,6 @@ static int request (const char *buffer, size_t buffer_size, /* {{{ */
 
   res = NULL;
   status = response_read (&res);
-
-  pthread_mutex_unlock (&lock);
 
   if (status != 0)
   {
@@ -404,8 +436,8 @@ static int rrdc_connect_network (const char *addr_orig) /* {{{ */
       rrd_set_error("garbage after address: %s", port);
       return (-1);
     }
-  } /* if (*addr = ']') */
-  else if (strchr (addr, '.') != NULL) /* Hostname or IPv4 */
+  } /* if (*addr == '[') */
+  else
   {
     port = rindex(addr, ':');
     if (port != NULL)
@@ -420,7 +452,12 @@ static int rrdc_connect_network (const char *addr_orig) /* {{{ */
                         port == NULL ? RRDCACHED_DEFAULT_PORT : port,
                         &ai_hints, &ai_res);
   if (status != 0)
-    return (status);
+  {
+    rrd_set_error ("failed to resolve address `%s' (port %s): %s",
+        addr, port == NULL ? RRDCACHED_DEFAULT_PORT : port,
+        gai_strerror (status));
+    return (-1);
+  }
 
   for (ai_ptr = ai_res; ai_ptr != NULL; ai_ptr = ai_ptr->ai_next)
   {
@@ -478,6 +515,7 @@ int rrdc_connect (const char *addr) /* {{{ */
     close_connection();
   }
 
+  rrd_clear_error ();
   if (strncmp ("unix:", addr, strlen ("unix:")) == 0)
     status = rrdc_connect_unix (addr + strlen ("unix:"));
   else if (addr[0] == '/')
@@ -488,10 +526,18 @@ int rrdc_connect (const char *addr) /* {{{ */
   if (status == 0 && sd >= 0)
     sd_path = strdup(addr);
   else
+  {
+    char *err = rrd_test_error () ? rrd_get_error () : "Internal error";
+    /* err points the string that gets written to by rrd_set_error(), thus we
+     * cannot pass it to that function */
+    err = strdup (err);
     rrd_set_error("Unable to connect to rrdcached: %s",
                   (status < 0)
-                  ? "Internal error"
+                  ? (err ? err : "Internal error")
                   : rrd_strerror (status));
+    if (err != NULL)
+      free (err);
+  }
 
   pthread_mutex_unlock (&lock);
   return (status);
@@ -528,19 +574,29 @@ int rrdc_update (const char *filename, int values_num, /* {{{ */
   if (status != 0)
     return (ENOBUFS);
 
-  /* change to absolute path for rrdcached */
-  if (*filename != '/' && realpath(filename, file_path) != NULL)
-      filename = file_path;
+  pthread_mutex_lock (&lock);
+  filename = get_path (filename, file_path);
+  if (filename == NULL)
+  {
+    pthread_mutex_unlock (&lock);
+    return (-1);
+  }
 
   status = buffer_add_string (filename, &buffer_ptr, &buffer_free);
   if (status != 0)
+  {
+    pthread_mutex_unlock (&lock);
     return (ENOBUFS);
+  }
 
   for (i = 0; i < values_num; i++)
   {
     status = buffer_add_value (values[i], &buffer_ptr, &buffer_free);
     if (status != 0)
+    {
+      pthread_mutex_unlock (&lock);
       return (ENOBUFS);
+    }
   }
 
   assert (buffer_free < sizeof (buffer));
@@ -550,6 +606,8 @@ int rrdc_update (const char *filename, int values_num, /* {{{ */
 
   res = NULL;
   status = request (buffer, buffer_size, &res);
+  pthread_mutex_unlock (&lock);
+
   if (status != 0)
     return (status);
 
@@ -580,13 +638,20 @@ int rrdc_flush (const char *filename) /* {{{ */
   if (status != 0)
     return (ENOBUFS);
 
-  /* change to absolute path for rrdcached */
-  if (*filename != '/' && realpath(filename, file_path) != NULL)
-      filename = file_path;
+  pthread_mutex_lock (&lock);
+  filename = get_path (filename, file_path);
+  if (filename == NULL)
+  {
+    pthread_mutex_unlock (&lock);
+    return (-1);
+  }
 
   status = buffer_add_string (filename, &buffer_ptr, &buffer_free);
   if (status != 0)
+  {
+    pthread_mutex_unlock (&lock);
     return (ENOBUFS);
+  }
 
   assert (buffer_free < sizeof (buffer));
   buffer_size = sizeof (buffer) - buffer_free;
@@ -595,6 +660,8 @@ int rrdc_flush (const char *filename) /* {{{ */
 
   res = NULL;
   status = request (buffer, buffer_size, &res);
+  pthread_mutex_unlock (&lock);
+
   if (status != 0)
     return (status);
 
@@ -659,7 +726,10 @@ int rrdc_stats_get (rrdc_stats_t **ret_stats) /* {{{ */
    * }}} */
 
   res = NULL;
+  pthread_mutex_lock (&lock);
   status = request ("STATS\n", strlen ("STATS\n"), &res);
+  pthread_mutex_unlock (&lock);
+
   if (status != 0)
     return (status);
 

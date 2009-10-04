@@ -105,6 +105,7 @@
 #include <assert.h>
 #include <sys/time.h>
 #include <time.h>
+#include <libgen.h>
 
 #include <glib-2.0/glib.h>
 /* }}} */
@@ -348,11 +349,31 @@ static void install_signal_handlers(void) /* {{{ */
 static int open_pidfile(char *action, int oflag) /* {{{ */
 {
   int fd;
-  char *file;
+  const char *file;
+  char *file_copy, *dir;
 
   file = (config_pid_file != NULL)
     ? config_pid_file
     : LOCALSTATEDIR "/run/rrdcached.pid";
+
+  /* dirname may modify its argument */
+  file_copy = strdup(file);
+  if (file_copy == NULL)
+  {
+    fprintf(stderr, "rrdcached: strdup(): %s\n",
+        rrd_strerror(errno));
+    return -1;
+  }
+
+  dir = dirname(file_copy);
+  if (rrd_mkdir_p(dir, 0777) != 0)
+  {
+    fprintf(stderr, "Failed to create pidfile directory '%s': %s\n",
+        dir, rrd_strerror(errno));
+    return -1;
+  }
+
+  free(file_copy);
 
   fd = open(file, oflag, S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
   if (fd < 0)
@@ -1652,6 +1673,9 @@ static int socket_permission_check (listen_socket_t *sock, /* {{{ */
 {
   ssize_t i;
 
+  if (sock == NULL) /* journal replay */
+    return (1);
+
   if (cmd == NULL)
     return (-1);
 
@@ -2239,10 +2263,30 @@ static int open_listen_socket_unix (const listen_socket_t *sock) /* {{{ */
   listen_socket_t *temp;
   int status;
   const char *path;
+  char *path_copy, *dir;
 
   path = sock->addr;
   if (strncmp(path, "unix:", strlen("unix:")) == 0)
     path += strlen("unix:");
+
+  /* dirname may modify its argument */
+  path_copy = strdup(path);
+  if (path_copy == NULL)
+  {
+    fprintf(stderr, "rrdcached: strdup(): %s\n",
+        rrd_strerror(errno));
+    return (-1);
+  }
+
+  dir = dirname(path_copy);
+  if (rrd_mkdir_p(dir, 0777) != 0)
+  {
+    fprintf(stderr, "Failed to create socket directory '%s': %s\n",
+        dir, rrd_strerror(errno));
+    return (-1);
+  }
+
+  free(path_copy);
 
   temp = (listen_socket_t *) rrd_realloc (listen_fds,
       sizeof (listen_fds[0]) * (listen_fds_num + 1));
@@ -2346,8 +2390,8 @@ static int open_listen_socket_network(const listen_socket_t *sock) /* {{{ */
       fprintf (stderr, "rrdcached: Garbage after address: %s\n", port);
       return (-1);
     }
-  } /* if (*addr = ']') */
-  else if (strchr (addr, '.') != NULL) /* Hostname or IPv4 */
+  } /* if (*addr == '[') */
+  else
   {
     port = rindex(addr, ':');
     if (port != NULL)
@@ -2866,6 +2910,13 @@ static int read_options (int argc, char **argv) /* {{{ */
           return (3);
         }
 
+        if (rrd_mkdir_p (config_base_dir, 0777) != 0)
+        {
+          fprintf (stderr, "Failed to create base directory '%s': %s\n",
+              config_base_dir, rrd_strerror (errno));
+          return (3);
+        }
+
         /* make sure that the base directory is not resolved via
          * symbolic links.  this makes some performance-enhancing
          * assumptions possible (we don't have to resolve paths
@@ -2873,17 +2924,8 @@ static int read_options (int argc, char **argv) /* {{{ */
          */
         if (realpath(config_base_dir, base_realpath) == NULL)
         {
-          fprintf (stderr, "Invalid base directory '%s'.\n", config_base_dir);
-          return 5;
-        }
-        else if (strncmp(config_base_dir,
-                         base_realpath, sizeof(base_realpath)) != 0)
-        {
-          fprintf(stderr,
-                  "Base directory (-b) resolved via file system links!\n"
-                  "Please consult rrdcached '-b' documentation!\n"
-                  "Consider specifying the real directory (%s)\n",
-                  base_realpath);
+          fprintf (stderr, "Failed to canonicalize the base directory '%s': "
+              "%s\n", config_base_dir, rrd_strerror(errno));
           return 5;
         }
 
@@ -2901,6 +2943,24 @@ static int read_options (int argc, char **argv) /* {{{ */
         }
 
         _config_base_dir_len = len;
+
+        len = strlen (base_realpath);
+        while ((len > 0) && (base_realpath[len - 1] == '/'))
+        {
+          base_realpath[len - 1] = '\0';
+          len--;
+        }
+
+        if (strncmp(config_base_dir,
+                         base_realpath, sizeof(base_realpath)) != 0)
+        {
+          fprintf(stderr,
+                  "Base directory (-b) resolved via file system links!\n"
+                  "Please consult rrdcached '-b' documentation!\n"
+                  "Consider specifying the real directory (%s)\n",
+                  base_realpath);
+          return 5;
+        }
       }
       break;
 
