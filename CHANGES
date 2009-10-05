@@ -1,3 +1,82 @@
+2009-10-04 11:37  oetiker
+
+	* src/rrd_client.c, src/rrd_daemon.c: rrd_client, rrd_daemon: Do not
+	  require hostnames to contain a dot. Non-FQDN (e.g. "localhost")
+	  are now supported as well. Anything that does not start with '['
+	  should be (and is now) treated as <name>[:<port>]. -- Sebastian
+	  Harl
+
+2009-10-04 11:36  oetiker
+
+	* src/rrd_client.c: rrd_client: Improved error handling / reporting.
+	  * Report getaddrinfo() errors using gai_strerror(). * Replaced
+	  "Internal error" with a more verbose error message, if available.
+	  -- Sebastian Harl
+
+2009-10-04 11:35  oetiker
+
+	* src/rrd_client.c: rrd_client: Do not rewrite path names when
+	  accessing remote daemons. When talking to a local daemon (thru a
+	  UNIX socket), relative path names are resolved to absolute path
+	  names to allow for transparent integration into existing solutions
+	  (as requested by Tobi). However, when talking to a remote daemon,
+	  absolute path names are not allowed, since path name translation
+	  is done by the server (relative to the base directory). --
+	  Sebastian Harl
+
+2009-10-04 11:34  oetiker
+
+	* src/rrd_flushcached.c: rrdflushcached: Do not free 'opt_daemon'
+	  before checking the connection. -- Sebastian Harl
+
+2009-10-04 11:33  oetiker
+
+	* src/rrd_fetch.c: rrdfetch: Print a usage summary if not enough
+	  parameters have been given. -- Sebastian Harl
+
+2009-10-04 11:32  oetiker
+
+	* src/rrd_daemon.c: rrdcached: Handle journal replay in
+	  socket_permission_check(). -- Sebastian Harl
+
+2009-10-04 11:30  oetiker
+
+	* src/rrd_daemon.c: rrdcached: Create the base directory on startup.
+	  -- Sebastian Harl
+
+2009-10-04 11:29  oetiker
+
+	* src/rrd_daemon.c: rrdcached: Improved the "base-dir symlink
+	  check". The daemon checks if the specified base directory contains
+	  symlinks by comparing the canonicalized path name (by realpath())
+	  with the path name specified on the command line. The GNU libc's
+	  implementation of realpath() removed trailing slashes ('/') from
+	  the pathname. Thus, specifying a base directory with a trailing
+	  slash results in rrdcached aborting, complaining about an invalid
+	  base directory, which is quite annoying imho. Now, trailing
+	  slashes are removed before comparing the two path names. --
+	  Sebastian Harl
+
+2009-10-04 11:28  oetiker
+
+	* src/rrd_daemon.c: rrdcached: Improved an error message. --
+	  Sebastian Harl
+
+2009-10-04 11:27  oetiker
+
+	* src/rrd_daemon.c: rrdcached: Create the pidfile and (UNIX) socket
+	  directories as well. Those files may be located in a subdirectory
+	  of, e.g., /var/run/. To avoid the need to manually create (and
+	  recreate, e.g. in case /var/run/ is on a tmpfs) that subdirectory,
+	  let the daemon handle the creation of those directories. --
+	  Sebastian Harl
+
+2009-10-01 18:54  oetiker
+
+	* src/rrd_fetch_libdbi.c, src/rrd_tool.h: rrd_fetch_libdbi: Fixed
+	  some compiler warnings. While at it, declared some private helper
+	  functions as static. -- Sebastian Harl
+
 2009-09-28 16:21  oetiker
 
 	* doc/librrd.pod: Moved rrd_dump_cb_r() to section "CORE FUNCTIONS"
