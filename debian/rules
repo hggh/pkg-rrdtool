@@ -204,6 +204,7 @@ binary-arch: build-arch install-arch
 	dh_pysupport -prrdtool-dbg
 	dh_perl -a
 	dh_installman -a
+	dh_installinit -prrdcached
 	dh_link -a
 	dh_strip -a --dbg-package=rrdtool-dbg
 	dh_compress -a
