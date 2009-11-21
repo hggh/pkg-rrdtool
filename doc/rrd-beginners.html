@@ -322,26 +322,26 @@ generation is done using Perl scripts. These scripts are shown below:</p>
  # calculate the average of the array
  my $tot_mem_ave = $tot_mem_sum/($count);
  # create the graph
- RRDs::graph (&quot;/images/mem_$count.png&quot;,   \
-             &quot;--title= Memory Usage&quot;,    \
-             &quot;--vertical-label=Memory Consumption (MB)&quot;, \
-             &quot;--start=$start_time&quot;,      \
-             &quot;--end=$end_time&quot;,          \
-             &quot;--color=BACK#CCCCCC&quot;,      \
-             &quot;--color=CANVAS#CCFFFF&quot;,    \
-             &quot;--color=SHADEB#9999CC&quot;,    \
-             &quot;--height=125&quot;,             \
-             &quot;--upper-limit=656&quot;,        \
-             &quot;--lower-limit=0&quot;,          \
-             &quot;--rigid&quot;,                  \
-             &quot;--base=1024&quot;,              \
-             &quot;DEF:tot_mem=target.rrd:mem:AVERAGE&quot;, \
-             &quot;CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/&quot;,\
-             &quot;CDEF:machine_mem=tot_mem,656,+,tot_mem,-&quot;,\
-             &quot;COMMENT:Memory Consumption between $start_time&quot;,\
-             &quot;COMMENT:    and $end_time                     &quot;,\
-             &quot;HRULE:656#000000:Maximum Available Memory - 656 MB&quot;,\
-             &quot;AREA:machine_mem#CCFFFF:Memory Unused&quot;,   \
+ RRDs::graph (&quot;/images/mem_$count.png&quot;,   
+             &quot;--title= Memory Usage&quot;,    
+             &quot;--vertical-label=Memory Consumption (MB)&quot;, 
+             &quot;--start=$start_time&quot;,      
+             &quot;--end=$end_time&quot;,          
+             &quot;--color=BACK#CCCCCC&quot;,      
+             &quot;--color=CANVAS#CCFFFF&quot;,    
+             &quot;--color=SHADEB#9999CC&quot;,    
+             &quot;--height=125&quot;,             
+             &quot;--upper-limit=656&quot;,        
+             &quot;--lower-limit=0&quot;,          
+             &quot;--rigid&quot;,                  
+             &quot;--base=1024&quot;,              
+             &quot;DEF:tot_mem=target.rrd:mem:AVERAGE&quot;, 
+             &quot;CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/&quot;,
+             &quot;CDEF:machine_mem=tot_mem,656,+,tot_mem,-&quot;,
+             &quot;COMMENT:Memory Consumption between $start_time&quot;,
+             &quot;COMMENT:    and $end_time                     &quot;,
+             &quot;HRULE:656#000000:Maximum Available Memory - 656 MB&quot;,
+             &quot;AREA:machine_mem#CCFFFF:Memory Unused&quot;,   
              &quot;AREA:tot_mem_cor#6699CC:Total memory consumed in MB&quot;);
  my $err=RRDs::error;
  if ($err) {print &quot;problem generating the graph: $err\n&quot;;}

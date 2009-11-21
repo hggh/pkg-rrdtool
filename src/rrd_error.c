@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_error.c   Common Header File
  *****************************************************************************
- * $Id: rrd_error.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.4  2003/02/22 21:57:03  oetiker
  * a patch to avoid a memory leak and a Makefile.am patch to
@@ -30,12 +30,10 @@
  *
  *************************************************************************** */
 
-#include "rrd_tool.h"
+#include <stdlib.h>
 #include <stdarg.h>
 
-#ifdef WIN32
-#include <stdlib.h>
-#endif
+#include "rrd_tool.h"
 
 #define MAXLEN 4096
 #define ERRBUFLEN 256

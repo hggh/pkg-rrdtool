@@ -20,6 +20,7 @@
 	<li><a href="#name">NAME</a></li>
 	<li><a href="#synopsis">SYNOPSIS</a></li>
 	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
 
@@ -37,7 +38,8 @@
 </p>
 <hr />
 <h1><a name="synopsis">SYNOPSIS</a></h1>
-<p><strong>rrdtool</strong> <strong>lastupdate</strong> <em>filename</em></p>
+<p><strong>rrdtool</strong> <strong>lastupdate</strong> <em>filename</em>
+[<strong>--daemon</strong>&nbsp;<em>address</em>]</p>
 <p>
 </p>
 <hr />
@@ -49,6 +51,31 @@ value stored for each datum in the most recent update of an RRD.</p>
 
 <dd>
 <p>The name of the <strong>RRD</strong> that contains the data.</p>
+</dd>
+<dt><strong><a name="daemon_address" class="item"><strong>--daemon</strong> <em>address</em></a></strong></dt>
+
+<dd>
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
+<pre>
+ rrdtool lastupdate --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd</pre>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoollastupdate</code>:</p>
+<dl>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
+<dd>
+<p>If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.</p>
 </dd>
 </dl>
 <p>

@@ -1,16 +1,13 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_info  Get Information about the configuration of an RRD
  *****************************************************************************/
 
 #include "rrd_tool.h"
 #include "rrd_rpncalc.h"
+#include "rrd_client.h"
 #include <stdarg.h>
-
-#ifdef WIN32
-#include <stdlib.h>
-#endif
 
 /* proto */
 rrd_info_t *rrd_info(
@@ -24,10 +21,18 @@ char     *sprintf_alloc(
     char *fmt,
     ...)
 {
-    int       maxlen = 1024 + strlen(fmt);
     char     *str = NULL;
     va_list   argp;
-    str = (char*)(malloc(sizeof(char) * (maxlen + 1)));
+#ifdef HAVE_VASPRINTF
+    va_start( argp, fmt );
+    if (vasprintf( &str, fmt, argp ) == -1){
+        va_end(argp);
+        rrd_set_error ("vasprintf failed.");
+        return(NULL);
+    }
+#else
+    int       maxlen = 1024 + strlen(fmt);
+    str = (char*)malloc(sizeof(char) * (maxlen + 1));
     if (str != NULL) {
         va_start(argp, fmt);
 #ifdef HAVE_VSNPRINTF
@@ -36,6 +41,7 @@ char     *sprintf_alloc(
         vsprintf(str, fmt, argp);
 #endif
     }
+#endif /* HAVE_VASPRINTF */
     va_end(argp);
     return str;
 }
@@ -48,7 +54,7 @@ rrd_info_t
 {
     rrd_info_t *next;
 
-    next = (rrd_info_t*)(malloc(sizeof(*next)));
+    next = (rrd_info_t*)malloc(sizeof(*next));
     next->next = (rrd_info_t *) 0;
     if (info)
         info->next = next;
@@ -65,13 +71,13 @@ rrd_info_t
         next->value.u_int = value.u_int;
         break;
     case RD_I_STR:
-        next->value.u_str = (char*)(malloc(sizeof(char) * (strlen(value.u_str) + 1)));
+        next->value.u_str = (char*)malloc(sizeof(char) * (strlen(value.u_str) + 1));
         strcpy(next->value.u_str, value.u_str);
         break;
     case RD_I_BLO:
         next->value.u_blo.size = value.u_blo.size;
         next->value.u_blo.ptr =
-            (unsigned char*)malloc(sizeof(unsigned char) * value.u_blo.size);
+            (unsigned char *)malloc(sizeof(unsigned char) * value.u_blo.size);
         memcpy(next->value.u_blo.ptr, value.u_blo.ptr, value.u_blo.size);
         break;
     }
@@ -84,18 +90,59 @@ rrd_info_t *rrd_info(
     char **argv)
 {
     rrd_info_t *info;
+    char *opt_daemon = NULL;
+    int status;
 
-    if (argc < 2) {
-        rrd_set_error("please specify an rrd");
-        return NULL;
+    optind = 0;
+    opterr = 0;         /* initialize getopt */
+
+    while (42) {
+        int       opt;
+        int       option_index = 0;
+        static struct option long_options[] = {
+            {"daemon", required_argument, 0, 'd'},
+            {0, 0, 0, 0}
+        };
+
+        opt = getopt_long(argc, argv, "d:", long_options, &option_index);
+
+        if (opt == EOF)
+            break;
+
+        switch (opt) {
+        case 'd':
+            if (opt_daemon != NULL)
+                    free (opt_daemon);
+            opt_daemon = strdup (optarg);
+            if (opt_daemon == NULL)
+            {
+                rrd_set_error ("strdup failed.");
+                return (NULL);
+            }
+            break;
+
+        default:
+            rrd_set_error ("Usage: rrdtool %s [--daemon <addr>] <file>",
+                    argv[0]);
+            return (NULL);
+            break;
+        }
+    }                   /* while (42) */
+
+    if ((argc - optind) != 1) {
+        rrd_set_error ("Usage: rrdtool %s [--daemon <addr>] <file>",
+                argv[0]);
+        return (NULL);
     }
 
-    info = rrd_info_r(argv[1]);
+    status = rrdc_flush_if_daemon(opt_daemon, argv[optind]);
+    if (opt_daemon) free (opt_daemon);
+    if (status) return (NULL);
+
+    info = rrd_info_r(argv[optind]);
 
     return (info);
-}
-
-
+} /* rrd_info_t *rrd_info */
 
 rrd_info_t *rrd_info_r(
     char *filename)
@@ -108,6 +155,7 @@ rrd_info_t *rrd_info_r(
     enum cf_en current_cf;
     enum dst_en current_ds;
 
+    rrd_init(&rrd);
     rrd_file = rrd_open(filename, &rrd, RRD_READONLY);
     if (rrd_file == NULL)
         goto err_free;
@@ -125,8 +173,16 @@ rrd_info_t *rrd_info_r(
     info.u_cnt = rrd.live_head->last_up;
     cd = rrd_info_push(cd, sprintf_alloc("last_update"), RD_I_CNT, info);
 
+    info.u_cnt = rrd_get_header_size(&rrd);
+    cd = rrd_info_push(cd, sprintf_alloc("header_size"), RD_I_CNT, info);
+
     for (i = 0; i < rrd.stat_head->ds_cnt; i++) {
 
+        info.u_cnt=i;
+        cd= rrd_info_push(cd,sprintf_alloc("ds[%s].index",
+                                     rrd.ds_def[i].ds_nam),
+                     RD_I_CNT, info);
+    
         info.u_str = rrd.ds_def[i].dst;
         cd = rrd_info_push(cd, sprintf_alloc("ds[%s].type",
                                              rrd.ds_def[i].ds_nam),

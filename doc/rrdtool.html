@@ -29,6 +29,7 @@
 		<li><a href="#rrd_server">RRD Server</a></li>
 	</ul>
 
+	<li><a href="#rrdcached__the_caching_daemon">RRDCACHED, THE CACHING DAEMON</a></li>
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#bugs">BUGS</a></li>
 	<li><a href="#author">AUTHOR</a></li>
@@ -145,7 +146,12 @@ uses fetch to retrieve its data from an RRD. Check <a href="././rrdfetch.html">t
 <dt><strong><a name="xport" class="item"><strong>xport</strong></a></strong></dt>
 
 <dd>
-<p>Export data retrieved from one or several RRDs. Check <a href="././rrdxport.html">the rrdxport manpage</a></p>
+<p>Export data retrieved from one or several RRDs. Check <a href="././rrdxport.html">the rrdxport manpage</a>.</p>
+</dd>
+<dt><strong><a name="flushcached" class="item"><strong>flushcached</strong></a></strong></dt>
+
+<dd>
+<p>Flush the values for a specific RRD file from memory. Check <a href="././rrdflushcached.html">the rrdflushcached manpage</a>.</p>
 </dd>
 <dt><strong><a name="rrdcgi" class="item"><strong>rrdcgi</strong></a></strong></dt>
 
@@ -339,8 +345,17 @@ such a port unless you are sure what you are doing.</p>
 <p>
 </p>
 <hr />
+<h1><a name="rrdcached__the_caching_daemon">RRDCACHED, THE CACHING DAEMON</a></h1>
+<p>For very big setups, updating thousands of RRD files often becomes a serious IO
+problem. If you run into such problems, you might want to take a look at
+<a href="././rrdcached.html">the rrdcached manpage</a>, a caching daemon for RRDTool which may help you lessen the
+stress on your disks.</p>
+<p>
+</p>
+<hr />
 <h1><a name="see_also">SEE ALSO</a></h1>
-<p>rrdcreate, rrdupdate, rrdgraph, rrddump, rrdfetch, rrdtune, rrdlast, rrdxport</p>
+<p>rrdcreate, rrdupdate, rrdgraph, rrddump, rrdfetch, rrdtune, rrdlast, rrdxport,
+rrdflushcached, rrdcached</p>
 <p>
 </p>
 <hr />

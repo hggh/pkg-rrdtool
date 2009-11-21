@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  * This file:     Copyright 2003 Peter Stamfest <peter@stamfest.at> 
  *                             & Tobias Oetiker
  * Distributed under the GPL
@@ -7,7 +7,7 @@
  * rrd_thread_safe.c   Contains routines used when thread safety is required
  *                     for win32
  *****************************************************************************
- * $Id: rrd_thread_safe_nt.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id$
  *************************************************************************** */
 
 #include <windows.h>
@@ -22,7 +22,7 @@ static CRITICAL_SECTION CriticalSection;
 
 
 /* Once-only initialisation of the key */
-static volatile LONG context_key_once = 0;
+static DWORD context_key_once = 0;
 
 
 /* Free the thread-specific rrd_context - we might actually use
@@ -38,7 +38,7 @@ static void context_destroy_context(
 static void context_init_context(
     void)
 {
-    if (!InterlockedExchange(&context_key_once, 1)) {
+    if (!InterlockedExchange((LONG*)(&context_key_once), 1)) {
         context_key = TlsAlloc();
         InitializeCriticalSection(&CriticalSection);
         atexit(context_destroy_context);
@@ -51,7 +51,7 @@ rrd_context_t *rrd_get_context(
 
     context_init_context();
 
-    ctx = (rrd_context_t*)(TlsGetValue(context_key));
+    ctx = (rrd_context_t*)TlsGetValue(context_key);
     if (!ctx) {
         ctx = rrd_new_context();
         TlsSetValue(context_key, ctx);
@@ -59,19 +59,22 @@ rrd_context_t *rrd_get_context(
     return ctx;
 }
 
-#ifdef WIN32
-	rrd_context_t *rrd_force_new_context(void)
-	{
-		rrd_context_t *ctx;
 
-		context_init_context();
+/* this was added by the win32 porters Christof.Wegmann@exitgames.com */
 
-		ctx = rrd_new_context();
-		TlsSetValue(context_key, ctx);
+rrd_context_t *rrd_force_new_context(
+    void)
+{
+    rrd_context_t *ctx;
 
-		return ctx;
-	}
-#endif
+    context_init_context();
+
+    ctx = rrd_new_context();
+    TlsSetValue(context_key, ctx);
+
+    return ctx;
+}
+
 
 #undef strerror
 const char *rrd_strerror(

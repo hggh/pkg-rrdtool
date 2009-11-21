@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_tool.h   Common Header File
  *****************************************************************************/
@@ -83,15 +83,24 @@ extern    "C" {
     int       rrd_create_fn(
     const char *file_name,
     rrd_t *rrd);
-    int       rrd_fetch_fn(
-    const char *filename,
-    enum cf_en cf_idx,
-    time_t *start,
-    time_t *end,
-    unsigned long *step,
-    unsigned long *ds_cnt,
-    char ***ds_namv,
-    rrd_value_t **data);
+    int rrd_fetch_fn (const char *filename,
+            enum cf_en cf_idx,
+            time_t *start,
+            time_t *end,
+            unsigned long *step,
+            unsigned long *ds_cnt,
+            char ***ds_namv,
+            rrd_value_t **data);
+
+
+#ifdef HAVE_LIBDBI
+int rrd_fetch_fn_libdbi(const char *filename, enum cf_en cf_idx,
+ 			time_t *start,time_t *end,
+ 			unsigned long *step,
+ 			unsigned long *ds_cnt,
+ 			char        ***ds_namv,
+ 			rrd_value_t **data);
+#endif
 
 #define RRD_READONLY    (1<<0)
 #define RRD_READWRITE   (1<<1)
@@ -106,11 +115,13 @@ extern    "C" {
     long      ds_match(
     rrd_t *rrd,
     char *ds_nam);
+    off_t rrd_get_header_size(
+    rrd_t *rrd);
     double    rrd_diff(
     char *a,
     char *b);
 
-#endif
+#endif /* _RRD_TOOL_H */
 
 #ifdef  __cplusplus
 }

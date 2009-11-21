@@ -22,12 +22,12 @@ DDEESSCCRRIIPPTTIIOONN
        database, there are distinct differences between RRDtool databases and
        other databases as listed below:
 
-       ·   RRDtool stores data; that makes it a back-end tool. The RRDtool
+       Â·   RRDtool stores data; that makes it a back-end tool. The RRDtool
            command set allows the creation of graphs; that makes it a front-
            end tool as well. Other databases just store data and can not
            create graphs.
 
-       ·   In case of linear databases, new data gets appended at the bottom
+       Â·   In case of linear databases, new data gets appended at the bottom
            of the database table. Thus its size keeps on increasing, whereas
            the size of an RRDtool database is determined at creation time.
            Imagine an RRDtool database as the perimeter of a circle. Data is
@@ -36,11 +36,11 @@ DDEESSCCRRIIPPTTIIOONN
            RRDtool database always remains constant. The name "Round Robin"
            stems from this behavior.
 
-       ·   Other databases store the values as supplied. RRDtool can be
+       Â·   Other databases store the values as supplied. RRDtool can be
            configured to calculate the rate of change from the previous to the
            current value and store this information instead.
 
-       ·   Other databases get updated when values are supplied. The RRDtool
+       Â·   Other databases get updated when values are supplied. The RRDtool
            database is structured in such a way that it needs data at
            predefined time intervals. If it does not get a new value during
            the interval, it stores an UNKNOWN value for that interval. So,
@@ -282,26 +282,26 @@ DDEESSCCRRIIPPTTIIOONN
         # calculate the average of the array
         my $tot_mem_ave = $tot_mem_sum/($count);
         # create the graph
-        RRDs::graph ("/images/mem_$count.png",   \
-                    "--title= Memory Usage",    \
-                    "--vertical-label=Memory Consumption (MB)", \
-                    "--start=$start_time",      \
-                    "--end=$end_time",          \
-                    "--color=BACK#CCCCCC",      \
-                    "--color=CANVAS#CCFFFF",    \
-                    "--color=SHADEB#9999CC",    \
-                    "--height=125",             \
-                    "--upper-limit=656",        \
-                    "--lower-limit=0",          \
-                    "--rigid",                  \
-                    "--base=1024",              \
-                    "DEF:tot_mem=target.rrd:mem:AVERAGE", \
-                    "CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/",\
-                    "CDEF:machine_mem=tot_mem,656,+,tot_mem,-",\
-                    "COMMENT:Memory Consumption between $start_time",\
-                    "COMMENT:    and $end_time                     ",\
-                    "HRULE:656#000000:Maximum Available Memory - 656 MB",\
-                    "AREA:machine_mem#CCFFFF:Memory Unused",   \
+        RRDs::graph ("/images/mem_$count.png",
+                    "--title= Memory Usage",
+                    "--vertical-label=Memory Consumption (MB)",
+                    "--start=$start_time",
+                    "--end=$end_time",
+                    "--color=BACK#CCCCCC",
+                    "--color=CANVAS#CCFFFF",
+                    "--color=SHADEB#9999CC",
+                    "--height=125",
+                    "--upper-limit=656",
+                    "--lower-limit=0",
+                    "--rigid",
+                    "--base=1024",
+                    "DEF:tot_mem=target.rrd:mem:AVERAGE",
+                    "CDEF:tot_mem_cor=tot_mem,0,671744,LIMIT,UN,0,tot_mem,IF,1024,/",
+                    "CDEF:machine_mem=tot_mem,656,+,tot_mem,-",
+                    "COMMENT:Memory Consumption between $start_time",
+                    "COMMENT:    and $end_time                     ",
+                    "HRULE:656#000000:Maximum Available Memory - 656 MB",
+                    "AREA:machine_mem#CCFFFF:Memory Unused",
                     "AREA:tot_mem_cor#6699CC:Total memory consumed in MB");
         my $err=RRDs::error;
         if ($err) {print "problem generating the graph: $err\n";}
@@ -315,4 +315,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2008-03-15                  RRD-BEGINNERS(1)
+1.3.999                           2009-09-24                  RRD-BEGINNERS(1)

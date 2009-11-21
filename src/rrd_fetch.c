@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_fetch.c  read date from an rrd to use for further processing
  *****************************************************************************
- * $Id: rrd_fetch.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.8  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -52,14 +52,11 @@
  *
  *****************************************************************************/
 
-#ifdef WIN32
-#include <stdlib.h>
-#endif
-
 #include "rrd_tool.h"
+#include "rrd_client.h"
 
 #include "rrd_is_thread_safe.h"
-/*#define DEBUG*/
+/* #define DEBUG */
 
 int rrd_fetch(
     int argc,
@@ -76,6 +73,8 @@ int rrd_fetch(
     long      step_tmp = 1;
     time_t    start_tmp = 0, end_tmp = 0;
     const char *cf;
+    char *opt_daemon = NULL;
+    int status;
 
     rrd_time_value_t start_tv, end_tv;
     char     *parsetime_error = NULL;
@@ -83,6 +82,7 @@ int rrd_fetch(
         {"resolution", required_argument, 0, 'r'},
         {"start", required_argument, 0, 's'},
         {"end", required_argument, 0, 'e'},
+        {"daemon", required_argument, 0, 'd'},
         {0, 0, 0, 0}
     };
 
@@ -97,7 +97,7 @@ int rrd_fetch(
         int       option_index = 0;
         int       opt;
 
-        opt = getopt_long(argc, argv, "r:s:e:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "r:s:e:d:", long_options, &option_index);
 
         if (opt == EOF)
             break;
@@ -118,6 +118,18 @@ int rrd_fetch(
         case 'r':
             step_tmp = atol(optarg);
             break;
+
+        case 'd':
+            if (opt_daemon != NULL)
+                    free (opt_daemon);
+            opt_daemon = strdup (optarg);
+            if (opt_daemon == NULL)
+            {
+                rrd_set_error ("strdup failed.");
+                return (-1);
+            }
+            break;
+
         case '?':
             rrd_set_error("unknown option '-%c'", optopt);
             return (-1);
@@ -151,14 +163,19 @@ int rrd_fetch(
     *step = step_tmp;
 
     if (optind + 1 >= argc) {
-        rrd_set_error("not enough arguments");
+        rrd_set_error("Usage: rrdtool %s <file> <CF> [options]", argv[0]);
         return -1;
     }
 
+    status = rrdc_flush_if_daemon(opt_daemon, argv[optind]);
+    if (opt_daemon) free (opt_daemon);
+    if (status) return (-1);
+
     cf = argv[optind + 1];
 
-    if (rrd_fetch_r(argv[optind], cf, start, end, step, ds_cnt, ds_namv, data)
-        != 0)
+    status = rrd_fetch_r(argv[optind], cf, start, end, step,
+            ds_cnt, ds_namv, data);
+    if (status != 0)
         return (-1);
     return (0);
 }
@@ -183,7 +200,7 @@ int rrd_fetch_r(
 
     return (rrd_fetch_fn
             (filename, cf_idx, start, end, step, ds_cnt, ds_namv, data));
-}
+} /* int rrd_fetch_r */
 
 int rrd_fetch_fn(
     const char *filename,   /* name of the rrd */
@@ -204,7 +221,7 @@ int rrd_fetch_fn(
     long      best_full_step_diff = 0, best_part_step_diff =
         0, tmp_step_diff = 0, tmp_match = 0, best_match = 0;
     long      full_match, rra_base;
-    long      start_offset, end_offset;
+    off_t     start_offset, end_offset;
     int       first_full = 1;
     int       first_part = 1;
     rrd_t     rrd;
@@ -218,6 +235,16 @@ int rrd_fetch_fn(
             *start, *end, *step);
 #endif
 
+#ifdef HAVE_LIBDBI
+    /* handle libdbi datasources */
+    if (strncmp("sql",filename,3)==0) {
+      if (filename[3]==filename[4]) {
+	return rrd_fetch_fn_libdbi(filename,cf_idx,start,end,step,ds_cnt,ds_namv,data);
+      }
+    }
+#endif
+
+    rrd_init(&rrd);
     rrd_file = rrd_open(filename, &rrd, RRD_READONLY);
     if (rrd_file == NULL)
         goto err_free;
@@ -331,7 +358,7 @@ int rrd_fetch_fn(
 ** database is the one with time stamp (t+s) which means t to t+s.
 */
     *ds_cnt = rrd.stat_head->ds_cnt;
-    if (((*data) = (rrd_value_t *)malloc(*ds_cnt * rows * sizeof(rrd_value_t))) == NULL) {
+    if (((*data) = (rrd_value_t*)malloc(*ds_cnt * rows * sizeof(rrd_value_t))) == NULL) {
         rrd_set_error("malloc fetch data area");
         goto err_free_all_ds_namv;
     }
@@ -356,11 +383,8 @@ int rrd_fetch_fn(
             "rra_start %lu, rra_end %lu, start_off %li, end_off %li\n",
             rra_start_time, rra_end_time, start_offset, end_offset);
 #endif
-
-    /* fill the gap at the start if needs be */
-
-    if (*start <= rra_end_time && *end >= rra_start_time - *step){
-        
+    /* only seek if the start time is before the end time */
+    if (*start <= rra_end_time && *end >= rra_start_time - (off_t)*step ){
         if (start_offset <= 0)
             rra_pointer = rrd.rra_ptr[chosen_rra].cur_row + 1;
         else
@@ -369,14 +393,14 @@ int rrd_fetch_fn(
         rra_pointer = rra_pointer % (signed) rrd.rra_def[chosen_rra].row_cnt;
          
         if (rrd_seek(rrd_file, (rra_base + (rra_pointer * (*ds_cnt)
-                                            * sizeof(rrd_value_t))),
+                                        * sizeof(rrd_value_t))),
                  SEEK_SET) != 0) {
             rrd_set_error("seek error in RRA");
             goto err_free_data;
-        }        
+        }
 #ifdef DEBUG
         fprintf(stderr, "First Seek: rra_base %lu rra_pointer %lu\n",
-            rra_base, rra_pointer);
+                rra_base, rra_pointer);
 #endif
     }
     
@@ -444,7 +468,6 @@ int rrd_fetch_fn(
 
     rrd_close(rrd_file);
     rrd_free(&rrd);
-
     return (0);
   err_free_data:
     free(*data);

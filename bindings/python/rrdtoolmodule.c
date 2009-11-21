@@ -37,7 +37,9 @@
 # define UNUSED(x) x
 #endif
 
-static const char *__version__ = "$Revision: 1.14 $";
+
+#include "../../rrd_config.h"
+static const char *__version__ = PACKAGE_VERSION;
 
 #include "Python.h"
 #include "../../src/rrd_tool.h"
@@ -58,28 +60,59 @@ static int create_args(
     int *argc,
     char ***argv)
 {
-    PyObject *o;
-    int       size, i;
+    PyObject *o, *lo;
+    int       args_count,
+              argv_count,
+              element_count,
+              i, j;
 
-    size = PyTuple_Size(args);
+    args_count = PyTuple_Size(args);
+    element_count = 0;
+    for (i = 0; i < args_count; i++) {
+        o = PyTuple_GET_ITEM(args, i);
+        if (PyString_Check(o))
+            element_count++;
+        else if (PyList_CheckExact(o))
+                element_count += PyList_Size(o);
+             else {
+                 PyErr_Format(PyExc_TypeError, "argument %d must be string or list of strings", i);
+                 return -1;
+             }
+    }
+   
     *argv = PyMem_New(char *,
-                      size + 1);
+                      element_count + 1);
 
     if (*argv == NULL)
         return -1;
 
-    for (i = 0; i < size; i++) {
+    argv_count = 0;
+    for (i = 0; i < args_count; i++) {
         o = PyTuple_GET_ITEM(args, i);
-        if (PyString_Check(o))
-            (*argv)[i + 1] = PyString_AS_STRING(o);
-        else {
-            PyMem_Del(*argv);
-            PyErr_Format(PyExc_TypeError, "argument %d must be string", i);
-            return -1;
-        }
+        if (PyString_Check(o)) {
+            argv_count++;
+            (*argv)[argv_count] = PyString_AS_STRING(o);
+        } else if (PyList_CheckExact(o))
+                   for (j = 0; j < PyList_Size(o); j++) {
+                       lo = PyList_GetItem(o, j);
+                       if (PyString_Check(lo)) {
+                           argv_count++;
+                           (*argv)[argv_count] = PyString_AS_STRING(lo);
+                       } else {
+                             PyMem_Del(*argv);
+                             PyErr_Format(PyExc_TypeError, "element %d in argument %d must be string", j, i);
+                             return -1;
+                       }
+                   }
+               else {
+                   PyMem_Del(*argv);
+                   PyErr_Format(PyExc_TypeError, "argument %d must be string or list of strings", i);
+                   return -1;
+               }
     }
+
     (*argv)[0] = command;
-    *argc = size + 1;
+    *argc = element_count + 1;
 
     /* reset getopt state */
     opterr = optind = 0;
@@ -526,6 +559,34 @@ static PyObject *PyRRD_updatev(
     return r;
 }
 
+static char PyRRD_flushcached__doc__[] =
+  "flush(args..): flush RRD files from memory\n"
+  "   flush [--daemon address] file [file ...]";
+
+static PyObject *PyRRD_flushcached(
+    PyObject UNUSED(*self),
+    PyObject * args)
+{
+    PyObject *r;
+    int       argc;
+    char    **argv;
+
+    if (create_args("flushcached", args, &argc, &argv) < 0)
+        return NULL;
+
+    if (rrd_flushcached(argc, argv) != 0) {
+        PyErr_SetString(ErrorObject, rrd_get_error());
+        rrd_clear_error();
+        r = NULL;
+    } else {
+        Py_INCREF(Py_None);
+        r = Py_None;
+    }
+
+    destroy_args(&argv);
+    return r;
+}
+
 /* List of methods defined in the module */
 #define meth(name, func, doc) {name, (PyCFunction)func, METH_VARARGS, doc}
 
@@ -541,6 +602,7 @@ static PyMethodDef _rrdtool_methods[] = {
     meth("info", PyRRD_info, PyRRD_info__doc__),
     meth("graphv", PyRRD_graphv, PyRRD_graphv__doc__),
     meth("updatev", PyRRD_updatev, PyRRD_updatev__doc__),
+    meth("flushcached", PyRRD_flushcached, PyRRD_flushcached__doc__),
     {NULL, NULL, 0, NULL}
 };
 

@@ -7,7 +7,7 @@ use vars qw(@ISA $VERSION);
 
 require DynaLoader;
 
-$VERSION=1.3008;
+$VERSION=1.3002;
 
 bootstrap RRDs $VERSION;
 
@@ -33,6 +33,7 @@ RRDs - Access RRDtool as a shared module
   RRDs::times(start, end)
   RRDs::dump ...
   RRDs::restore ...
+  RRDs::flushcached ...
 
 =head1 DESCRIPTION
 

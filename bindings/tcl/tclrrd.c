@@ -8,7 +8,7 @@
  * See the file "COPYING" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * $Id: tclrrd.c 1405 2008-06-08 15:55:09Z oetiker $
+ * $Id$
  */
 
 
@@ -97,7 +97,7 @@ static void getopt_squieeze(
 
 /* Thread-safe version */
 static int Rrd_Create(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -186,7 +186,8 @@ static int Rrd_Create(
         return TCL_ERROR;
     }
 
-    rrd_create_r(argv2[1], pdp_step, last_up, argc - 2, argv2 + 2);
+    rrd_create_r(argv2[1], pdp_step, last_up, argc - 2,
+                 (const char **)argv2 + 2);
 
     getopt_cleanup(argc, argv2);
 
@@ -204,7 +205,7 @@ static int Rrd_Create(
 
 /* Thread-safe version */
 static int Rrd_Dump(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -229,11 +230,35 @@ static int Rrd_Dump(
     return TCL_OK;
 }
 
+/* Thread-safe version */
+static int Rrd_Flushcached(
+    ClientData __attribute__((unused)) clientData,
+    Tcl_Interp *interp,
+    int argc,
+    CONST84 char *argv[])
+{
+    if (argc < 2) {
+        Tcl_AppendResult(interp, "RRD Error: needs rrd filename",
+                         (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    rrd_flushcached(argc, (char**)argv);
+
+    if (rrd_test_error()) {
+        Tcl_AppendResult(interp, "RRD Error: ",
+                         rrd_get_error(), (char *) NULL);
+        rrd_clear_error();
+        return TCL_ERROR;
+    }
+
+    return TCL_OK;
+}
 
 
 /* Thread-safe version */
 static int Rrd_Last(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -264,7 +289,7 @@ static int Rrd_Last(
 
 /* Thread-safe version */
 static int Rrd_Update(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -319,7 +344,7 @@ static int Rrd_Update(
         return TCL_ERROR;
     }
 
-    rrd_update_r(argv2[1], template, argc - 2, argv2 + 2);
+    rrd_update_r(argv2[1], template, argc - 2, (const char **)argv2 + 2);
 
     if (template != NULL) {
         free(template);
@@ -337,7 +362,7 @@ static int Rrd_Update(
 }
 
 static int Rrd_Lastupdate(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -350,8 +375,15 @@ static int Rrd_Lastupdate(
     Tcl_Obj  *listPtr;
     unsigned long ds_cnt, i;
 
+    /* TODO: support for rrdcached */
+    if (argc != 2) {
+        Tcl_AppendResult(interp, "RRD Error: needs a single rrd filename",
+                         (char *) NULL);
+        return TCL_ERROR;
+    }
+
     argv2 = getopt_init(argc, argv);
-    if (rrd_lastupdate(argc - 1, argv2, &last_update,
+    if (rrd_lastupdate_r(argv2[1], &last_update,
                        &ds_cnt, &ds_namv, &last_ds) == 0) {
         listPtr = Tcl_GetObjResult(interp);
         for (i = 0; i < ds_cnt; i++) {
@@ -379,7 +411,7 @@ static int Rrd_Lastupdate(
 }
 
 static int Rrd_Fetch(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -424,7 +456,7 @@ static int Rrd_Fetch(
 
 
 static int Rrd_Graph(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -472,7 +504,7 @@ static int Rrd_Graph(
          * Must dup() file descriptor so we can fclose(stream), otherwise the fclose()
          * would close Tcl's file descriptor
          */
-        if ((fd2 = dup((int) fd1)) == -1) {
+        if ((fd2 = dup((int)fd1)) == -1) {
             Tcl_AppendResult(interp,
                              "dup() failed for file descriptor associated with \"",
                              argv[1], "\": ", strerror(errno), (char *) NULL);
@@ -534,7 +566,7 @@ static int Rrd_Graph(
 
 
 static int Rrd_Tune(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -558,7 +590,7 @@ static int Rrd_Tune(
 
 
 static int Rrd_Resize(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -582,7 +614,7 @@ static int Rrd_Resize(
 
 
 static int Rrd_Restore(
-    ClientData clientData,
+    ClientData __attribute__((unused)) clientData,
     Tcl_Interp *interp,
     int argc,
     CONST84 char *argv[])
@@ -618,6 +650,7 @@ typedef struct {
 static CmdInfo rrdCmds[] = {
     {"Rrd::create", Rrd_Create, 1}, /* Thread-safe version */
     {"Rrd::dump", Rrd_Dump, 0}, /* Thread-safe version */
+    {"Rrd::flushcached", Rrd_Flushcached, 0},
     {"Rrd::last", Rrd_Last, 0}, /* Thread-safe version */
     {"Rrd::lastupdate", Rrd_Lastupdate, 0}, /* Thread-safe version */
     {"Rrd::update", Rrd_Update, 1}, /* Thread-safe version */

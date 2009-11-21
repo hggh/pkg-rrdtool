@@ -1,5 +1,6 @@
 dnl RRDtool AutoConf script ... 
 dnl ---------------------------
+dnl $Id$
 dnl
 dnl Created by Jeff Allen, Tobi Oetiker, Blair Zajac
 dnl
@@ -7,16 +8,19 @@ dnl Inspiration from http://autoconf-archive.cryp.to
  
 dnl tell automake the this script is for rrdtool
 
+dnl Minimum Autoconf version required.
+AC_PREREQ(2.59)
+
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3.8])
+AC_INIT([rrdtool],[1.3.999])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.3008
+NUMVERS=1.3999
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -27,15 +31,19 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=4:7:0
+LIBVERS=5:0:1
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
+m4_version_prereq(2.60, [AC_USE_SYSTEM_EXTENSIONS], [#])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-
-AC_CONFIG_MACRO_DIR([m4])
+# Enable silent build rules by default, requires at least
+# Automake-1.11. Disable by either passing --disable-silent-rules to
+# configure or passing V=1 to make
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CONFIG_HEADERS([rrd_config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl all our local stuff like install scripts and include files
 dnl is in there
@@ -46,9 +54,6 @@ dnl determine the type of system we are running on
 AC_SUBST(VERSION)
 
 AC_PREFIX_DEFAULT( /usr/local/rrdtool-$PACKAGE_VERSION )
-
-dnl Minimum Autoconf version required.
-AC_PREREQ(2.59)
 
 dnl At the TOP of the HEADER
 
@@ -94,7 +99,7 @@ AC_ARG_VAR(RRDGRAPH_YLEGEND_ANGLE,
 AC_DEFINE_UNQUOTED(RRDGRAPH_YLEGEND_ANGLE,${RRDGRAPH_YLEGEND_ANGLE:-90.0},
  [Vertical label angle: -90.0 (default) or 90.0])
 
-AC_ARG_ENABLE(rrdcgi,[  --disable-rrdcgi        disable building of rrdcgi],
+AC_ARG_ENABLE(rrdcgi,AS_HELP_STRING([--disable-rrdcgi],[disable building of rrdcgi]),
 [],[enable_rrdcgi=yes])
 
 dnl Check if we run on a system that has fonts
@@ -110,15 +115,15 @@ AC_ARG_WITH(rrd-default-font,
 
 dnl Use mmap in rrd_update instead of seek+write
 AC_ARG_ENABLE([mmap],
-[  --disable-mmap          disable mmap in rrd_update, use seek+write instead],
+AS_HELP_STRING([--disable-mmap],[disable mmap in rrd_update, use seek+write instead]),
 [],
 [enable_mmap=yes])
 
-AC_ARG_ENABLE(pthread,[  --disable-pthread       disable multithread support],
+AC_ARG_ENABLE(pthread,AS_HELP_STRING([--disable-pthread],[disable multithread support]),
 [],[enable_pthread=yes])
 
 AC_ARG_ENABLE(static-programs,
-     [  --enable-static-programs  Build static programs],
+     AS_HELP_STRING([--enable-static-programs],[Build static programs]),
      [case "${enableval}" in
        yes) staticprogs=yes ;;
        no)  staticprogs=no ;;
@@ -131,12 +136,28 @@ CONFIGURE_PART(Audit Compilation Environment)
 
 
 dnl Check for the compiler and static/shared library creation.
-AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 
 dnl Try to detect/use GNU features
 CFLAGS="$CFLAGS -D_GNU_SOURCE"
+
+dnl check for -Werror separatly
+dnl (quite a few autotool checks do not work with -Werror; also, the
+dnl check for -Werror fails after checking and adding the other flags)
+AC_CACHE_CHECK([if gcc likes the -Werror flag], rd_cv_gcc_flag__Werror,
+  [AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([[]], [[return 0 ]])],
+    [rd_cv_gcc_flag__Werror="yes"],
+    [rd_cv_gcc_flag__Werror="no"])])
+if test "x$rd_cv_gcc_flag__Werror" = "xyes"; then
+  WERROR="-Werror"
+else
+  WERROR=""
+fi
+AC_SUBST(WERROR)
 
 dnl which flags does the compiler support?
 if test "x$GCC" = "xyes"; then
@@ -161,7 +182,7 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
+AC_CHECK_HEADERS(stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -188,7 +209,7 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror snprintf vsnprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
 
 AC_FUNC_STRERROR_R
 
@@ -246,45 +267,8 @@ AC_CHECK_FUNCS(posix_fadvise)
 
 CONFIGURE_PART(Libintl Processing)
 
-
-dnl gettext
-GETTEXT_PACKAGE=rrdtool
-AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package])
-
-AM_GLIB_GNU_GETTEXT()
-
-AC_ARG_ENABLE(libintl,[  --disable-libintl        i18n support (libintl)],
-[],[enable_libintl=yes])
-
-if test x$enable_libintl = xyes; then
-  IT_PROG_INTLTOOL([0.35.0],[no-xml])
-fi
-
-if test x$enable_libintl = xyes -a x$MSGFMT = xno; then
-  AC_MSG_WARN(I could not find msgfmt. Diabeling libintl build.)
-  enable_libintl=no
-fi
-
-if test x$enable_libintl = xyes; then
-  AC_CHECK_HEADERS(libintl.h,[],[AC_MSG_RESULT(disabeling libintl build); enable_libintl=no])
-fi
-
-if test x$enable_libintl = xyes ; then
-  dnl it seems bsd synstems need to link against libintl
-  dnl when compiling rrdupdate. lets check        
-  AC_CHECK_LIB(intl, libintl_gettext,[LIB_LIBINTL="-lintl"])
-fi
-
-dnl use for linking rrdupdate
-AC_SUBST(LIB_LIBINTL)
-
-dnl do not touch the po stuff if we are not going to build intl
-AM_CONDITIONAL(BUILD_LIBINTL,[test x$enable_libintl = xyes])
-
-if test x$enable_libintl = xyes; then
-   AC_DEFINE([BUILD_LIBINTL], [], [Use this in code sections to mark them for libintl build])
-fi
+AM_GNU_GETTEXT_VERSION(0.14.4)
+AM_GNU_GETTEXT()
 
 CONFIGURE_PART(IEEE Math Checks)
  
@@ -331,7 +315,7 @@ case "${target}" in
 esac])
 ])
 
-dnl the test does not seem to work on solaris 2.8/9
+dnl the test does not seem to work on solaris 2.8
 dnl so lets fix this by hand
 case "${target}" in
   *-solaris2.8) ac_cv_have_broken_isfinite=yes ;;
@@ -468,10 +452,55 @@ AC_LINK_IFELSE(
       )
     ]  
 )
+
+dnl is time_t long or long long ?
+AC_DEFINE([TIME_T_IS_LONG], [], [time_t is long])
+AC_DEFINE([TIME_T_IS_LONG_LONG], [], [time_t is long long])
+AC_MSG_CHECKING([the type of time_t])
+AC_RUN_IFELSE(
+    AC_LANG_PROGRAM(
+        [[#include <time.h>]],
+        [[if (sizeof(long) != sizeof(time_t)) return 1; ]]
+        ),
+    [ AC_MSG_RESULT([time_t is long])
+      AC_DEFINE([TIME_T_IS_LONG])
+    ],
+    [ AC_RUN_IFELSE(
+        AC_LANG_PROGRAM(
+        [[#include <time.h>]],
+        [[if (sizeof(long long) != sizeof(time_t)) return 1; ]]
+        ),
+        [
+          AC_MSG_RESULT([time_t is long long])
+          AC_DEFINE([TIME_T_IS_LONG_LONG])
+        ],
+        [AC_MSG_ERROR([can not figure type of time_t])]
+      )
+    ]  
+)
+
 AC_LANG_POP(C)
 
 CONFIGURE_PART(Find 3rd-Party Libraries)
 
+AC_ARG_ENABLE(libdbi,AS_HELP_STRING([--disable-libdbi],[do not build in support for libdbi]),[have_libdbi=no],[
+  XXX=$LIBS
+  LIBS="$LIBS -ldbi -ldl"
+  AC_MSG_CHECKING(for libdbi)
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[#include <dbi/dbi.h>]], 
+                     [[dbi_initialize(NULL)]]
+                    )
+    ],[AC_DEFINE(HAVE_LIBDBI,[1],[have got libdbi installed])
+       AC_MSG_RESULT([yes])
+       have_libdbi=yes
+    ],[LIBS=$XXX
+       AC_MSG_RESULT([no])
+       have_libdbi=no
+    ]
+  )
+])
+AM_CONDITIONAL(BUILD_LIBDBI,[test $have_libdbi != no])
 
 AM_CONDITIONAL(BUILD_RRDCGI,[test $enable_rrdcgi != no])
 
@@ -486,7 +515,7 @@ EX_CHECK_ALL(cairo,      cairo_font_options_create,     cairo.h,                
 EX_CHECK_ALL(cairo,      cairo_svg_surface_create,      cairo-svg.h,            cairo-svg,   1.4.6,  http://cairographics.org/releases/, "")
 EX_CHECK_ALL(cairo,      cairo_pdf_surface_create,      cairo-pdf.h,            cairo-pdf,   1.4.6,  http://cairographics.org/releases/, "")
 EX_CHECK_ALL(cairo,      cairo_ps_surface_create,       cairo-ps.h,             cairo-ps,    1.4.6,  http://cairographics.org/releases/, "")
-dnl EX_CHECK_ALL(glib-2.0,   glib_check_version,        glib.h,                 glib-2.0,    2.12.12, ftp://ftp.gtk.org/pub/glib/2.12/, "")
+EX_CHECK_ALL(glib-2.0,   glib_check_version,            glib.h,                 glib-2.0,    2.12.12, ftp://ftp.gtk.org/pub/glib/2.12/, "")
 EX_CHECK_ALL(pango-1.0,  pango_cairo_context_set_font_options,  pango/pango.h,  pangocairo,  1.17,    http://ftp.gnome.org/pub/GNOME/sources/pango/1.17, "")
 EX_CHECK_ALL(xml2,       xmlParseFile,                  libxml/parser.h,        libxml-2.0,        2.6.31,  http://xmlsoft.org/downloads.html, /usr/include/libxml2)
 
@@ -510,14 +539,14 @@ AC_PATH_PROG(POD2MAN, pod2man, no)
 AC_PATH_PROG(POD2HTML, pod2html, no)
 
 
-AC_ARG_ENABLE(perl,[  --disable-perl          do not build the perl modules],
+AC_ARG_ENABLE(perl,AS_HELP_STRING([--disable-perl],[do not build the perl modules]),
 [],[enable_perl=yes])
 
 
-AC_ARG_VAR(PERLCC, [[] C compiler for Perl modules])
-AC_ARG_VAR(PERLCCFLAGS, [[] CC flags for Perl modules])
-AC_ARG_VAR(PERLLD, [[same as PERLCC] Linker for Perl modules])
-AC_ARG_VAR(PERLLDFLAGS, [[] LD flags for Perl modules])
+AC_ARG_VAR(PERLCC, [C compiler for Perl modules])
+AC_ARG_VAR(PERLCCFLAGS, [CC flags for Perl modules])
+AC_ARG_VAR(PERLLD, [Linker for Perl modules])
+AC_ARG_VAR(PERLLDFLAGS, [LD flags for Perl modules])
 
 if test "x$PERL" = "xno" -o  x$enable_perl = xno; then
 	COMP_PERL=
@@ -551,19 +580,15 @@ AC_MSG_CHECKING(Perl Modules to build)
 AC_MSG_RESULT(${COMP_PERL:-No Perl Modules will be built})
 
 # Options to pass when configuring perl module
-ppref=$prefix
-test "$ppref" = 'NONE' && ppref=$ac_default_prefix
+langpref=$prefix
+test "$langpref" = '$(DESTDIR)NONE' && langpref='$(DESTDIR)'$ac_default_prefix
+test "$langpref" = "NONE" && langpref=$ac_default_prefix
 
-PERL_MAKE_OPTIONS="PREFIX="'$(DESTDIR)'"$ppref LIB="'$(DESTDIR)'"$ppref/lib/perl/$PERL_VERSION"
+PERL_MAKE_OPTIONS="PREFIX=$langpref LIB=$langpref/lib/perl/$PERL_VERSION"
 
 dnl pass additional perl options when generating Makefile from Makefile.PL
 AC_ARG_ENABLE(perl-site-install,
-[  --enable-perl-site-install   by default the rrdtool perl modules are installed
-		  	  together with rrdtool in $prefix/lib/perl. You have to
-                          put a 'use lib qw($prefix/lib/perl)' into your scripts
-                          when you want to use them. When you set this option
-                          the perl modules will get installed wherever
-                          your perl setup thinks it is best.],
+AS_HELP_STRING([--enable-perl-site-install],[by default the rrdtool perl modules are installed together with rrdtool in $prefix/lib/perl. You have to put a 'use lib qw($prefix/lib/perl)' into your scripts when you want to use them. When you set this option the perl modules will get installed wherever your perl setup thinks it is best.]),
 [PERL_MAKE_OPTIONS=],[])
 
 if test ! -z "$PERLCC"; then
@@ -598,7 +623,7 @@ AC_SUBST(PERL_VERSION)
 dnl Check for Ruby.
 AC_PATH_PROG(RUBY, ruby, no)
 
-AC_ARG_ENABLE(ruby,[  --disable-ruby          do not build the ruby modules],
+AC_ARG_ENABLE(ruby,AS_HELP_STRING([--disable-ruby],[do not build the ruby modules]),
 [],[enable_ruby=yes])
 
 AC_MSG_CHECKING(if ruby modules can be built)
@@ -616,16 +641,10 @@ else
 	fi				
 fi
 
-rpref=$prefix
-test "$rpref" = 'NONE' && rpref=$ac_default_prefix
-
 dnl pass additional ruby options when generating Makefile from Makefile.PL
 AC_ARG_ENABLE(ruby-site-install,
-[  --enable-ruby-site-install   by default the rrdtool ruby modules are installed
-		  	  together with rrdtool in $prefix/lib/ruby. You have to
-                          add $prefix/lib/ruby/$ruby_version/$sitearch to you $: variable
-                          for ruby to find the RRD.so file.],
-[RUBY_MAKE_OPTIONS=],[RUBY_MAKE_OPTIONS="sitedir="'$(DESTDIR)'"$rpref/lib/ruby"])
+AS_HELP_STRING([--enable-ruby-site-install],[by default the rrdtool ruby modules are installed together with rrdtool in $prefix/lib/ruby. You have to add $prefix/lib/ruby/$ruby_version/$sitearch to your $: variable for ruby to find the RRD.so file.]),
+[RUBY_MAKE_OPTIONS=],[RUBY_MAKE_OPTIONS="sitedir=$langpref/lib/ruby"])
 
     
 AC_ARG_WITH(ruby-options,
@@ -639,10 +658,150 @@ AC_SUBST(RUBY_MAKE_OPTIONS)
 AC_SUBST(RUBY)
 AC_SUBST(COMP_RUBY)
 
+dnl Check for Lua.
+AC_PATH_PROG(LUA, lua, no)
+
+AC_ARG_ENABLE(lua,AS_HELP_STRING([--disable-lua],[do not build the lua modules]),
+[],[enable_lua=yes])
+
+COMP_LUA=
+if test "$LUA" = "no" -o "$enable_lua" = "no"; then
+  enable_lua=no
+else
+  AC_MSG_CHECKING(for lua >= 5.0)
+  read LUA_MAJOR LUA_MINOR LUA_POINT <<LUA_EOF
+    $($LUA -v 2>&1 | cut -f2 -d' ' | sed -e 's/\./ /g')
+LUA_EOF
+  if test 0$LUA_MAJOR -lt 5; then
+    AC_MSG_RESULT([no, version found is $LUA_MAJOR.$LUA_MINOR])
+  else
+    AC_MSG_RESULT([$LUA_MAJOR.$LUA_MINOR found])
+    lua_vdot=$LUA_MAJOR.$LUA_MINOR
+    lua_vndot=$LUA_MAJOR$LUA_MINOR
+    lua_version=$LUA_MAJOR.$LUA_MINOR.$LUA_POINT
+    AC_CHECK_HEADERS(lua$lua_vndot/lua.h,
+      [AC_CHECK_HEADERS(lua$lua_vndot/lualib.h,
+        [AC_CHECK_HEADER(lua$lua_vndot/lauxlib.h,
+          [lua_headerdir=lua$lua_vndot],
+          [])],
+        [])],
+      [AC_CHECK_HEADERS(lua$lua_vdot/lua.h,
+        [AC_CHECK_HEADERS(lua$lua_vdot/lualib.h,
+          [AC_CHECK_HEADER(lua$lua_vdot/lauxlib.h,
+            [lua_headerdir=lua$lua_vdot],
+            [])],
+          [])],
+        [AC_CHECK_HEADERS(lua.h,
+          [AC_CHECK_HEADERS(lualib.h,
+            [AC_CHECK_HEADER(lauxlib.h,
+              [lua_headerdir=""],
+              [lua_headerdir="no"])],
+            [])],
+          [])])])
+
+    if test "$lua_headerdir" = "no"; then
+      enable_lua=no
+    else
+      COMP_LUA=lua
+    fi
+
+    if test "$COMP_LUA" != "lua"; then
+      enable_lua=no
+      AC_MSG_WARN([Lua $lua_vdot found but not lua.h, lualib.h and lauxlib.h! Please install the -dev packages for Lua $lua_vdot])
+    else
+      # OK, headers found, let's check the libraries (LIBS is not used)
+      LIBS=
+      lua_havelib=no
+      LUA_HAVE_COMPAT51=DONT_HAVE_COMPAT51
+      AC_SEARCH_LIBS(lua_call, lua$lua_vdot lua$lua_vndot lua,
+        [AC_SEARCH_LIBS(luaL_register, lua$lua_vdot lua$lua_vndot lua,
+          [lua_havelib=LUA$lua_vndot],
+          [AC_SEARCH_LIBS(luaL_module, lualib$lua_vndot lualib$lua_vdot lualib,
+            [lua_havelib=$lua_vndot; $LUA -l compat-5.1 2>/dev/null;
+             test "$?" = "0" && LUA_HAVE_COMPAT51=HAVE_COMPAT51],
+            [AC_SEARCH_LIBS(luaL_openlib, lualib$lua_vdot lualib$lua_vndot lualib,
+              [lua_havelib=$lua_vndot],
+              [COMP_LUA=], [-lm])], [-lm])], [-lm])],
+        [COMP_LUA=], [-lm])
+      lua_libs=$LIBS
+      LIBS=
+
+      # Options to pass when configuring Lua module
+      if test  "$lua_havelib" != "no"; then
+        # OK, headers and libs found. Try to set lua flags
+        # and modules installation dirs with pkg-config
+        if test "$PKGCONFIG" != "no"; then
+          if test "$lua_vndot" = "50"; then
+            lua_pkg_prefix=lualib
+          else
+            lua_pkg_prefix=lua
+          fi
+          # try with dot, without dot and finally without version
+          for f in $lua_pkg_prefix$lua_vdot $lua_pkg_prefix$lua_vndot $lua_pkg_prefix; do
+            lua_exec_prefix=`$PKGCONFIG --variable=prefix $f 2>/dev/null`
+            # same binaries?
+            if test "$lua_exec_prefix/bin/lua" = "$LUA"; then 
+                # OK, found CFLAGS. Get Lua LFLAGS and modules install dir
+                LUA_CFLAGS=`$PKGCONFIG --cflags $f 2>/dev/null`
+                LUA_LFLAGS=`$PKGCONFIG --libs $f 2>/dev/null`
+                LUA_INSTALL_CMOD=`$PKGCONFIG --variable=INSTALL_CMOD $f 2>/dev/null`
+                LUA_INSTALL_LMOD=`$PKGCONFIG --variable=INSTALL_LMOD $f 2>/dev/null`
+                break
+            fi
+          done
+        fi
+
+        LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot"
+        # if lua 5.0 can't find compat-5.1, force installation of
+        # compat-5.1.lua together with RRDtool.
+        if test "$lua_vdot" = "5.0" -a "$LUA_HAVE_COMPAT51" != "HAVE_COMPAT51"; then
+          lua_need_compat51=1 
+          LUA_INSTALL_LMOD="$LUA_RRD_LIBDIR"
+        fi
+
+        # if not set with pkg-config, use default values in src packages compat-5.1, lua 5.1
+        if test "$LUA_CFLAGS" = ""; then
+          AC_MSG_WARN(Setting Lua include and lib flags to defaults in compat-5.1 and lua 5.1 sources)
+          LUA_CFLAGS="-I/usr/local/include -I/usr/local/include/lua -I/usr/local/include/lua/$lua_vdot"
+          LUA_LFLAGS="-L/usr/local/lib -L/usr/local/lib/lua -L/usr/local/lib/lua/$lua_vdot $lua_libs"
+          LUA_INSTALL_CMOD="/usr/local/lib/lua/$lua_vdot"
+        fi
+
+        dnl pass additional lua options
+        dnl if lua-site-install is not set, overwrite LUA_INSTALL_CMOD already
+        dnl found and install together with RRDtool, under $langpref.
+        AC_ARG_ENABLE(lua-site-install,
+        AS_HELP_STRING([--enable-lua-site-install],[by default the lua module is installed together with rrdtool in $prefix/lib/lua/$lua_version. You have to add $prefix/lib/lua/$lua_version/?.so to package.cpath for lua to find 'rrd.so'. For lua 5.0 you may also need to change LUA_PATH to the same dir, to require 'compat-5.1'. When you set this option the lua modules will get installed wherever your Lua setup thinks it is best. WARNING: if you set this option, system lua modules compat-5.1.lua and rrd.so, if any, may be overwritten.]),
+        [],
+        [LUA_INSTALL_CMOD="$LUA_RRD_LIBDIR"; LUA_INSTALL_LMOD="$LUA_RRD_LIBDIR"])
+
+        LUA_DEFINES="-DLUA$lua_vndot -D$LUA_HAVE_COMPAT51"
+        AC_SUBST(LUA)
+        AC_SUBST(COMP_LUA)
+        AC_SUBST(LUA_INSTALL_CMOD)
+        AC_SUBST(LUA_INSTALL_LMOD)
+        AC_SUBST(LUA_CFLAGS)
+        AC_SUBST(LUA_LFLAGS)
+	AC_SUBST(LUA_DEFINES)
+      else
+        enable_lua=no
+        AC_MSG_RESULT([Lua headers found but not the libraries! Please reinstall the dev packages for Lua $LUA_MAJOR.$LUA_MINOR])
+      fi
+    fi
+  fi
+fi
+dnl If Lua 5.0, we need compat-5.1. Add ours unless already
+dnl integrated as in Debian/Ubuntu 5.0 -dev packages.
+AM_CONDITIONAL(LUA_NEED_OUR_COMPAT51,
+      [test "$lua_vdot" = "5.0" -a "$LUA_HAVE_COMPAT51" != "HAVE_COMPAT51"])
+AM_CONDITIONAL(LUA_SITE_CINSTALL, [test "$LUA_INSTALL_CMOD" != "$LUA_RRD_LIBDIR"])
+AM_CONDITIONAL(LUA_SITE_LINSTALL, [test "$LUA_INSTALL_LMOD" != "$LUA_RRD_LIBDIR"])
+AM_CONDITIONAL(LUA50, [test "$lua_vndot" = "50"])
+AM_CONDITIONAL(BUILD_LUA, [test "$enable_lua" = "yes"])
 
 enable_tcl_site=no
 
-AC_ARG_ENABLE(tcl,[  --disable-tcl           do not build the tcl modules],
+AC_ARG_ENABLE(tcl,AS_HELP_STRING([--disable-tcl],[do not build the tcl modules]),
 [],[enable_tcl=yes])
 
 if test  "$enable_tcl" = "yes"; then
@@ -671,7 +830,7 @@ if test  "$enable_tcl" = "yes"; then
 	  TCL_INCLUDE_SPEC="$TCL_INCLUDE_SPEC -I$TCL_INC_DIR"
 	fi
   fi
-  AC_ARG_ENABLE(tcl,[  --enable-tcl-site        install the tcl extension in the tcl tree],
+  AC_ARG_ENABLE(tcl,AS_HELP_STRING([--enable-tcl-site],[install the tcl extension in the tcl tree]),
   [],[enable_tcl_site=yes])
 
 fi
@@ -691,7 +850,7 @@ AC_SUBST(TCL_VERSION)
 AC_SUBST(TCL_PACKAGE_DIR)
 AC_SUBST(TCL_INCLUDE_SPEC)
 
-AC_ARG_ENABLE(python,[  --disable-python        do not build the python modules],
+AC_ARG_ENABLE(python,AS_HELP_STRING([--disable-python],[do not build the python modules]),
 [],[enable_python=yes])
 
 if test  "$enable_python" = "yes"; then
@@ -727,17 +886,24 @@ AC_CONFIG_FILES([examples/minmax.pl])
 AC_CONFIG_FILES([examples/4charts.pl])
 AC_CONFIG_FILES([examples/perftest.pl])
 AC_CONFIG_FILES([examples/Makefile])
+AC_CONFIG_FILES([examples/rrdcached/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
-AC_CONFIG_FILES([po/Makefile.in])
+AC_CONFIG_FILES([po/Makefile.in]) 
+AC_CONFIG_FILES([intl/Makefile]) 
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/librrd.sym.in])
-AC_CONFIG_FILES([src/librrd.pc])          
+AC_CONFIG_FILES([src/librrd.pc])
 AC_CONFIG_FILES([bindings/Makefile])
 AC_CONFIG_FILES([bindings/tcl/Makefile])
 AC_CONFIG_FILES([bindings/tcl/ifOctets.tcl])
 AC_CONFIG_FILES([Makefile])          
+AC_CONFIG_FILES([bindings/lua/Makefile])
 
 AC_CONFIG_COMMANDS([default],[[ chmod +x examples/*.pl]],[[]])
+
+dnl intl requires our config to be called config.h. indulge it.
+AC_CONFIG_COMMANDS_POST([ test -f config.h || ln -s rrd_config.h config.h ])
+
 AC_OUTPUT
 
 AC_MSG_CHECKING(in)
@@ -768,11 +934,21 @@ echo "          Perl Options: $PERL_MAKE_OPTIONS"
 echo "          Ruby Modules: $COMP_RUBY"
 echo "           Ruby Binary: $RUBY"
 echo "          Ruby Options: $RUBY_MAKE_OPTIONS"
+echo "    Build Lua Bindings: $enable_lua"
+if test "$enable_lua" = "yes"; then
+echo "            Lua Binary: $LUA"
+echo "           Lua Version: $lua_version"
+echo "     Lua C-modules dir: $LUA_INSTALL_CMOD"
+if test "$lua_need_compat51" = "1"; then
+echo "   Lua Lua-modules dir: $LUA_INSTALL_LMOD"
+fi
+fi
 echo "    Build Tcl Bindings: $enable_tcl"
 echo " Build Python Bindings: $enable_python"
 echo "          Build rrdcgi: $enable_rrdcgi"
 echo "       Build librrd MT: $enable_pthread"
-echo "     Link with libintl: $enable_libintl"
+echo "           Use gettext: $USE_NLS"
+echo "           With libDBI: $have_libdbi"
 echo
 echo "             Libraries: $ALL_LIBS"
 echo

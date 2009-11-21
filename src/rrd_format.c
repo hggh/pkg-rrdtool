@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_format.c  RRD Database Format helper functions
  *****************************************************************************
- * $Id: rrd_format.c 1801 2009-05-19 13:45:05Z oetiker $
+ * $Id$
  * $Log$
  * Revision 1.5  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -97,4 +97,17 @@ long ds_match(
             return i;
     rrd_set_error("unknown data source name '%s'", ds_nam);
     return -1;
+}
+
+off_t rrd_get_header_size(
+    rrd_t *rrd)
+{
+    return sizeof(stat_head_t) + \
+        sizeof(ds_def_t) * rrd->stat_head->ds_cnt + \
+        sizeof(rra_def_t) * rrd->stat_head->rra_cnt + \
+        sizeof(time_t) + \
+        sizeof(live_head_t) + \
+        sizeof(pdp_prep_t) * rrd->stat_head->ds_cnt + \
+        sizeof(cdp_prep_t) * rrd->stat_head->ds_cnt * rrd->stat_head->rra_cnt + \
+        sizeof(rra_ptr_t) * rrd->stat_head->rra_cnt;
 }

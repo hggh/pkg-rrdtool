@@ -1,16 +1,14 @@
 /*****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  *****************************************************************************
  * rrd_first Return
  *****************************************************************************
  * Initial version by Burton Strauss, ntopSupport.com - 3/2005
  *****************************************************************************/
 
+#include <stdlib.h>
 #include "rrd_tool.h"
 
-#ifdef WIN32
-#include <stdlib.h>
-#endif
 
 time_t rrd_first(
     int argc,
@@ -68,6 +66,7 @@ time_t rrd_first_r(
     rrd_t     rrd;
     rrd_file_t *rrd_file;
 
+    rrd_init(&rrd);
     rrd_file = rrd_open(filename, &rrd, RRD_READONLY);
     if (rrd_file == NULL) {
         goto err_free;

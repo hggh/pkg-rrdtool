@@ -23,6 +23,7 @@
 	<li><a href="#output_format">Output format</a></li>
 	<li><a href="#example_1">EXAMPLE 1</a></li>
 	<li><a href="#example_2">EXAMPLE 2</a></li>
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
 
@@ -45,6 +46,7 @@
 [<strong>-e</strong>|<strong>--end</strong>&nbsp;<em>seconds</em>]
 [<strong>-m</strong>|<strong>--maxrows</strong>&nbsp;<em>rows</em>]
 [<strong>--step</strong>&nbsp;<em>value</em>]
+[<strong>--daemon</strong>&nbsp;<em>address</em>]
 [<strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em>]
 [<strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em>]
 [<strong>XPORT</strong><strong>:</strong><em>vname</em>[<strong>:</strong><em>legend</em>]]</p>
@@ -85,6 +87,16 @@ for details.</p>
 
 <dd>
 <p>See <a href="././rrdgraph.html">the rrdgraph manpage</a> documentation.</p>
+</dd>
+<dt><strong><a name="daemon_address" class="item"><strong>--daemon</strong> <em>address</em></a></strong></dt>
+
+<dd>
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
+<pre>
+  rrdtool xport --daemon unix:/var/run/rrdcached.sock ...</pre>
 </dd>
 <dt><strong><a name="enumds" class="item"><strong>--enumds</strong></a></strong></dt>
 
@@ -179,6 +191,21 @@ RRD characteristics):</p>
           XPORT:out1:&quot;if1 out bytes&quot; \
           XPORT:out2:&quot;if2 out bytes&quot; \
           XPORT:sum:&quot;output sum&quot;</pre>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoolxport</code>:</p>
+<dl>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
+<dd>
+<p>If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.</p>
+</dd>
+</dl>
 <p>
 </p>
 <hr />

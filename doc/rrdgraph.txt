@@ -40,14 +40,11 @@ OOVVEERRVVIIEEWW
        When you are done fetching and processing the data, it is time to graph
        it (or print it).  This ends the rrrrddttooooll ggrraapphh sequence.
 
-OOPPTTIIOONNSS
-   ggrraapphhvv
-       This alternate version of ggrraapphh takes the same arguments and performs
-       the same function. The _v stands for _v_e_r_b_o_s_e, which describes the output
-       returned. ggrraapphhvv will return a lot of information about the graph using
-       the same format as rrdtool info (key = value). See the bottom of the
-       document for more information.
+       Use ggrraapphhvv instead of ggrraapphh to get detailed information about the graph
+       geometry and data once it is drawn. See the bottom of the document for
+       more information.
 
+OOPPTTIIOONNSS
    _f_i_l_e_n_a_m_e
        The name and path of the graph to generate. It is recommended to end
        this in ".png", ".svg" or ".eps", but RRRRDDttooooll does not enforce this.
@@ -74,19 +71,6 @@ OOPPTTIIOONNSS
 
        A horizontal string at the top of the graph and/or a vertically placed
        string at the left hand side of the graph.
-
-   RRiigghhtt AAxxiiss
-       [----rriigghhtt--aaxxiiss _s_c_a_l_e::_s_h_i_f_t] [----rriigghhtt--aaxxiiss--llaabbeell _l_a_b_e_l]
-
-       A second axis will be drawn to the right of the graph. It is tied to
-       the left axis via the scale and shift parameters. You can also define a
-       label for the right axis.
-
-       [----rriigghhtt--aaxxiiss--ffoorrmmaatt _f_o_r_m_a_t_-_s_t_r_i_n_g]
-
-       By default the format of the axis lables gets determined automatically.
-       If you want todo this your self, use this option with the same %lf
-       arguments you know from the PRING and GPRINT commands.
 
    SSiizzee
        [--ww|----wwiiddtthh _p_i_x_e_l_s] [--hh|----hheeiigghhtt _p_i_x_e_l_s] [--jj|----oonnllyy--ggrraapphh]
@@ -150,100 +134,131 @@ OOPPTTIIOONNSS
 
        Gridfitting is turned off for PDF, EPS, SVG output by default.
 
-   GGrriidd
-       X-Axis
-           [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
+   XX--AAxxiiss
+       [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
 
-           [--xx|----xx--ggrriidd nnoonnee]
+       [--xx|----xx--ggrriidd nnoonnee]
 
-           The x-axis label is quite complex to configure. If you don't have
-           very special needs it is probably best to rely on the
-           autoconfiguration to get this right. You can specify the string
-           "none" to suppress the grid and labels altogether.
+       The x-axis label is quite complex to configure. If you don't have very
+       special needs it is probably best to rely on the autoconfiguration to
+       get this right. You can specify the string "none" to suppress the grid
+       and labels altogether.
 
-           The grid is defined by specifying a certain amount of time in the
-           _?_T_M positions. You can choose from "SECOND", "MINUTE", "HOUR",
-           "DAY", "WEEK", "MONTH" or "YEAR". Then you define how many of these
-           should pass between each line or label.  This pair (_?_T_M_:_?_S_T) needs
-           to be specified for the base grid (_G_?_?), the major grid (_M_?_?) and
-           the labels (_L_?_?). For the labels you also must define a precision
-           in _L_P_R and a _s_t_r_f_t_i_m_e format string in _L_F_M.  _L_P_R defines where each
-           label will be placed. If it is zero, the label will be placed right
-           under the corresponding line (useful for hours, dates etcetera).
-           If you specify a number of seconds here the label is centered on
-           this interval (useful for Monday, January etcetera).
+       The grid is defined by specifying a certain amount of time in the _?_T_M
+       positions. You can choose from "SECOND", "MINUTE", "HOUR", "DAY",
+       "WEEK", "MONTH" or "YEAR". Then you define how many of these should
+       pass between each line or label.  This pair (_?_T_M_:_?_S_T) needs to be
+       specified for the base grid (_G_?_?), the major grid (_M_?_?) and the labels
+       (_L_?_?). For the labels you also must define a precision in _L_P_R and a
+       _s_t_r_f_t_i_m_e format string in _L_F_M.  _L_P_R defines where each label will be
+       placed. If it is zero, the label will be placed right under the
+       corresponding line (useful for hours, dates etcetera).  If you specify
+       a number of seconds here the label is centered on this interval (useful
+       for Monday, January etcetera).
 
-            --x-grid MINUTE:10:HOUR:1:HOUR:4:0:%X
+        --x-grid MINUTE:10:HOUR:1:HOUR:4:0:%X
 
-           This places grid lines every 10 minutes, major grid lines every
-           hour, and labels every 4 hours. The labels are placed under the
-           major grid lines as they specify exactly that time.
+       This places grid lines every 10 minutes, major grid lines every hour,
+       and labels every 4 hours. The labels are placed under the major grid
+       lines as they specify exactly that time.
 
-            --x-grid HOUR:8:DAY:1:DAY:1:86400:%A
+        --x-grid HOUR:8:DAY:1:DAY:1:86400:%A
 
-           This places grid lines every 8 hours, major grid lines and labels
-           each day. The labels are placed exactly between two major grid
-           lines as they specify the complete day and not just midnight.
+       This places grid lines every 8 hours, major grid lines and labels each
+       day. The labels are placed exactly between two major grid lines as they
+       specify the complete day and not just midnight.
 
-       Y-Axis
-           [--yy|----yy--ggrriidd _g_r_i_d _s_t_e_p::_l_a_b_e_l _f_a_c_t_o_r]
+   YY--AAxxiiss
+       [--yy|----yy--ggrriidd _g_r_i_d _s_t_e_p::_l_a_b_e_l _f_a_c_t_o_r]
 
-           [--yy|----yy--ggrriidd nnoonnee]
+       [--yy|----yy--ggrriidd nnoonnee]
 
-           Y-axis grid lines appear at each _g_r_i_d _s_t_e_p interval.  Labels are
-           placed every _l_a_b_e_l _f_a_c_t_o_r lines.  You can specify "-y none" to
-           suppress the grid and labels altogether.  The default for this
-           option is to automatically select sensible values.
+       Y-axis grid lines appear at each _g_r_i_d _s_t_e_p interval.  Labels are placed
+       every _l_a_b_e_l _f_a_c_t_o_r lines.  You can specify "-y none" to suppress the
+       grid and labels altogether.  The default for this option is to
+       automatically select sensible values.
 
-           If you have set --y-grid to 'none' not only the labels get
-           suppressed, also the space reserved for the labels is removed. You
-           can still add space manually if you use the --units-length command
-           to explicitly reserve space.
+       If you have set --y-grid to 'none' not only the labels get suppressed,
+       also the space reserved for the labels is removed. You can still add
+       space manually if you use the --units-length command to explicitly
+       reserve space.
 
-           [--YY|----aalltt--yy--ggrriidd]
+       [--YY|----aalltt--yy--ggrriidd]
 
-           Place the Y grid dynamically based on the graph's Y range. The
-           algorithm ensures that you always have a grid, that there are
-           enough but not too many grid lines, and that the grid is metric.
-           That is the grid lines are placed every 1, 2, 5 or 10 units. This
-           parameter will also ensure that you get enough decimals displayed
-           even if your graph goes from 69.998 to 70.001.  (contributed by
-           Sasha Mikheev).
+       Place the Y grid dynamically based on the graph's Y range. The
+       algorithm ensures that you always have a grid, that there are enough
+       but not too many grid lines, and that the grid is metric. That is the
+       grid lines are placed every 1, 2, 5 or 10 units. This parameter will
+       also ensure that you get enough decimals displayed even if your graph
+       goes from 69.998 to 70.001.  (contributed by Sasha Mikheev).
 
-           [--oo|----llooggaarriitthhmmiicc]
+       [--oo|----llooggaarriitthhmmiicc]
 
-           Logarithmic y-axis scaling.
+       Logarithmic y-axis scaling.
 
-           [--XX|----uunniittss--eexxppoonneenntt _v_a_l_u_e]
+       [--XX|----uunniittss--eexxppoonneenntt _v_a_l_u_e]
 
-           This sets the 10**exponent scaling of the y-axis values. Normally,
-           values will be scaled to the appropriate units (k, M, etc.).
-           However, you may wish to display units always in k (Kilo, 10e3)
-           even if the data is in the M (Mega, 10e6) range, for instance.
-           Value should be an integer which is a multiple of 3 between -18 and
-           18 inclusively.  It is the exponent on the units you wish to use.
-           For example, use 3 to display the y-axis values in k (Kilo, 10e3,
-           thousands), use -6 to display the y-axis values in u (Micro, 10e-6,
-           millionths).  Use a value of 0 to prevent any scaling of the y-axis
-           values.
+       This sets the 10**exponent scaling of the y-axis values. Normally,
+       values will be scaled to the appropriate units (k, M, etc.).  However,
+       you may wish to display units always in k (Kilo, 10e3) even if the data
+       is in the M (Mega, 10e6) range, for instance. Value should be an
+       integer which is a multiple of 3 between -18 and 18 inclusively.  It is
+       the exponent on the units you wish to use. For example, use 3 to
+       display the y-axis values in k (Kilo, 10e3, thousands), use -6 to
+       display the y-axis values in u (Micro, 10e-6, millionths).  Use a value
+       of 0 to prevent any scaling of the y-axis values.
 
-           This option is very effective at confusing the heck out of the
-           default rrdtool autoscaler and grid painter. If rrdtool detects
-           that it is not successful in labeling the graph under the given
-           circumstances, it will switch to the more robust ----aalltt--yy--ggrriidd mode.
+       This option is very effective at confusing the heck out of the default
+       rrdtool autoscaler and grid painter. If rrdtool detects that it is not
+       successful in labeling the graph under the given circumstances, it will
+       switch to the more robust ----aalltt--yy--ggrriidd mode.
 
-           [--LL|----uunniittss--lleennggtthh _v_a_l_u_e]
+       [--LL|----uunniittss--lleennggtthh _v_a_l_u_e]
 
-           How many digits should rrdtool assume the y-axis labels to be? You
-           may have to use this option to make enough space once you start
-           fideling with the y-axis labeling.
+       How many digits should rrdtool assume the y-axis labels to be? You may
+       have to use this option to make enough space once you start fiddling
+       with the y-axis labeling.
 
-           [----uunniittss==ssii]
+       [----uunniittss==ssii]
 
-           With this option y-axis values on logarithmic graphs will be scaled
-           to the appropriate units (k, M, etc.) instead of using exponential
-           notation.  Note that for linear graphs, SI notation is used by
-           default.
+       With this option y-axis values on logarithmic graphs will be scaled to
+       the appropriate units (k, M, etc.) instead of using exponential
+       notation.  Note that for linear graphs, SI notation is used by default.
+
+   RRiigghhtt YY AAxxiiss
+       [----rriigghhtt--aaxxiiss _s_c_a_l_e::_s_h_i_f_t] [----rriigghhtt--aaxxiiss--llaabbeell _l_a_b_e_l]
+
+       A second axis will be drawn to the right of the graph. It is tied to
+       the left axis via the scale and shift parameters. You can also define a
+       label for the right axis.
+
+       [----rriigghhtt--aaxxiiss--ffoorrmmaatt _f_o_r_m_a_t_-_s_t_r_i_n_g]
+
+       By default the format of the axis lables gets determined automatically.
+       If you want todo this your self, use this option with the same %lf
+       arguments you know from the PRING and GPRINT commands.
+
+   LLeeggeenndd
+       [--gg|----nnoo--lleeggeenndd]
+
+       Suppress generation of the legend; only render the graph.
+
+       [--FF|----ffoorrccee--rruulleess--lleeggeenndd]
+
+       Force the generation of HRULE and VRULE legends even if those HRULE or
+       VRULE will not be drawn because out of graph boundaries (mimics
+       behaviour of pre 1.0.42 versions).
+
+       [----lleeggeenndd--ppoossiittiioonn=(north|south|west|east)]
+
+       Place the legend at the given side of the graph. The default is south.
+       In west or east position it is necessary to add line breaks manually.
+
+       [----lleeggeenndd--ddiirreeccttiioonn=(topdown|bottomup)]
+
+       Place the legend items in the given vertical order. The default is
+       topdown.  Using bottomup the legend items appear in the same vertical
+       order as a stack of lines or areas.
 
    MMiisscceellllaanneeoouuss
        [--zz|----llaazzyy]
@@ -255,6 +270,16 @@ OOPPTTIIOONNSS
        time. The only thing you can realy rely on before rrdtool 1.3.7 is that
        lazy will not generate the graph when it is already there and up to
        date, and also that it will output the size of the graph.
+
+       [----ddaaeemmoonn _a_d_d_r_e_s_s]
+
+       Address of the rrdcached daemon. If specified, a "flush" command is
+       sent to the server before reading the RRD files. This allows the graph
+       to contain fresh data even if the daemon is configured to cache values
+       for a long time.  For a list of accepted formats, see the --ll option in
+       the rrdcached manual.
+
+        rrdtool graph [...] --daemon unix:/var/run/rrdcached.sock [...]
 
        [--ff|----iimmggiinnffoo _p_r_i_n_t_f_s_t_r]
 
@@ -283,6 +308,12 @@ OOPPTTIIOONNSS
 
        A green arrow is made by: "--color ARROW#00FF00"
 
+       [----bboorrddeerr _w_i_d_t_h]]
+
+       Width in pixels for the 3d border drawn around the image. Default 2, 0
+       disables the border. See "SHADEA" and "SHADEB" above for setting the
+       border color.
+
        [----zzoooomm _f_a_c_t_o_r]
 
        Zoom the graphics by the given amount. The factor must be > 0
@@ -296,6 +327,9 @@ OOPPTTIIOONNSS
        watermark on the edge of the graph.
 
        Use Times for the title: "--font TITLE:13:Times"
+
+       Note that you need to quote the argument to ----ffoonntt if the font-name
+       contains whitespace: --font "TITLE:13:Some Font"
 
        If you do not give a font string you can modify just the size of the
        default font: "--font TITLE:13:".
@@ -389,16 +423,6 @@ OOPPTTIIOONNSS
 
        If images are interlaced they become visible on browsers more quickly.
 
-       [--gg|----nnoo--lleeggeenndd]
-
-       Suppress generation of the legend; only render the graph.
-
-       [--FF|----ffoorrccee--rruulleess--lleeggeenndd]
-
-       Force the generation of HRULE and VRULE legends even if those HRULE or
-       VRULE will not be drawn because out of graph boundaries (mimics
-       behaviour of pre 1.0.42 versions).
-
        [--TT|----ttaabbwwiiddtthh _v_a_l_u_e]
 
        By default the tab-width is 40 pixels, use this option to change it.
@@ -460,6 +484,15 @@ OOPPTTIIOONNSS
        Especially the 'graph_*' keys are new. They help applications that want
        to know what is where on the graph.
 
+EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
+       The following environment variables may be used to change the behavior
+       of "rrdtool graph":
+
+       RRRRDDCCAACCHHEEDD__AADDDDRREESSSS
+           If this environment variable is set it will have the same effect as
+           specifying the "--daemon" option on the command line. If both are
+           present, the command line argument takes precedence.
+
 SSEEEE AALLSSOO
        rrdgraph gives an overview of how rrrrddttooooll ggrraapphh works.  rrdgraph_data
        describes DDEEFF,CCDDEEFF and VVDDEEFF in detail.  rrdgraph_rpn describes the RRPPNN
@@ -476,4 +509,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2009-04-07                       RRDGRAPH(1)
+1.3.999                           2009-09-24                       RRDGRAPH(1)

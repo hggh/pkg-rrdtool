@@ -24,19 +24,21 @@
 	<li><a href="#options">OPTIONS</a></li>
 	<ul>
 
-		<li><a href="#graphv"><strong>graphv</strong></a></li>
 		<li><a href="#filename"><em>filename</em></a></li>
 		<li><a href="#time_range">Time range</a></li>
 		<li><a href="#labels">Labels</a></li>
-		<li><a href="#right_axis">Right Axis</a></li>
 		<li><a href="#size">Size</a></li>
 		<li><a href="#limits">Limits</a></li>
-		<li><a href="#grid">Grid</a></li>
+		<li><a href="#x_axis">X-Axis</a></li>
+		<li><a href="#y_axis">Y-Axis</a></li>
+		<li><a href="#right_y_axis">Right Y Axis</a></li>
+		<li><a href="#legend">Legend</a></li>
 		<li><a href="#miscellaneous">Miscellaneous</a></li>
 		<li><a href="#data_and_variables">Data and variables</a></li>
 		<li><a href="#graphv">graphv</a></li>
 	</ul>
 
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
@@ -95,17 +97,13 @@ want to display <strong>bits</strong> per second. This is what the <strong><a hr
 using a rather powerful <strong><a href="././rrdgraph_rpn.html">RPN</a></strong> command set.</p>
 <p>When you are done fetching and processing the data, it is time to
 graph it (or print it).  This ends the <strong>rrdtool graph</strong> sequence.</p>
+<p>Use <strong>graphv</strong> instead of <strong>graph</strong> to get detailed information about the
+graph geometry and data once it is drawn. See the bottom of the document for
+more information.</p>
 <p>
 </p>
 <hr />
 <h1><a name="options">OPTIONS</a></h1>
-<p>
-</p>
-<h2><a name="graphv"><strong>graphv</strong></a></h2>
-<p>This alternate version of <strong>graph</strong> takes the same arguments and performs the
-same function. The <em>v</em> stands for <em>verbose</em>, which describes the output
-returned. <strong>graphv</strong> will return a lot of information about the graph using
-the same format as rrdtool info (key = value). See the bottom of the document for more information.</p>
 <p>
 </p>
 <h2><a name="filename"><em>filename</em></a></h2>
@@ -137,18 +135,6 @@ one pixel will silently be ignored.</p>
 [<strong>-v</strong>|<strong>--vertical-label</strong> <em>string</em>]</p>
 <p>A horizontal string at the top of the graph and/or a vertically
 placed string at the left hand side of the graph.</p>
-<p>
-</p>
-<h2><a name="right_axis">Right Axis</a></h2>
-<p>[<strong>--right-axis</strong> <em>scale</em><strong>:</strong><em>shift</em>]
-[<strong>--right-axis-label</strong> <em>label</em>]</p>
-<p>A second axis will be drawn to the right of the graph. It is tied to the
-left axis via the scale and shift parameters. You can also define a label
-for the right axis.</p>
-<p>[<strong>--right-axis-format</strong> <em>format-string</em>]</p>
-<p>By default the format of the axis lables gets determined automatically. If
-you want todo this your self, use this option with the same %lf arguments
-you know from the PRING and GPRINT commands.</p>
 <p>
 </p>
 <h2><a name="size">Size</a></h2>
@@ -205,11 +191,7 @@ to turn this behaviour off.</p>
 <p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
 <p>
 </p>
-<h2><a name="grid">Grid</a></h2>
-<dl>
-<dt><strong><a name="x_axis" class="item">X-Axis</a></strong></dt>
-
-<dd>
+<h2><a name="x_axis">X-Axis</a></h2>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <strong>none</strong>]</p>
 <p>The x-axis label is quite complex to configure. If you don't have
@@ -237,10 +219,9 @@ lines as they specify exactly that time.</p>
 <p>This places grid lines every 8 hours, major grid lines and labels
 each day. The labels are placed exactly between two major grid lines
 as they specify the complete day and not just midnight.</p>
-</dd>
-<dt><strong><a name="y_axis" class="item">Y-Axis</a></strong></dt>
-
-<dd>
+<p>
+</p>
+<h2><a name="y_axis">Y-Axis</a></h2>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <em>grid step</em><strong>:</strong><em>label factor</em>]</p>
 <p>[<strong>-y</strong>|<strong>--y-grid</strong> <strong>none</strong>]</p>
 <p>Y-axis grid lines appear at each <em>grid step</em> interval.  Labels are
@@ -276,13 +257,39 @@ to the more robust <strong>--alt-y-grid</strong> mode.</p>
 <p>[<strong>-L</strong>|<strong>--units-length</strong> <em>value</em>]</p>
 <p>How many digits should rrdtool assume the y-axis labels to be? You
 may have to use this option to make enough space once you start
-fideling with the y-axis labeling.</p>
+fiddling with the y-axis labeling.</p>
 <p>[<strong>--units=si</strong>]</p>
 <p>With this option y-axis values on logarithmic graphs will be scaled to 
 the appropriate units (k, M, etc.) instead of using exponential notation.
 Note that for linear graphs, SI notation is used by default.</p>
-</dd>
-</dl>
+<p>
+</p>
+<h2><a name="right_y_axis">Right Y Axis</a></h2>
+<p>[<strong>--right-axis</strong> <em>scale</em><strong>:</strong><em>shift</em>]
+[<strong>--right-axis-label</strong> <em>label</em>]</p>
+<p>A second axis will be drawn to the right of the graph. It is tied to the
+left axis via the scale and shift parameters. You can also define a label
+for the right axis.</p>
+<p>[<strong>--right-axis-format</strong> <em>format-string</em>]</p>
+<p>By default the format of the axis lables gets determined automatically. If
+you want todo this your self, use this option with the same %lf arguments
+you know from the PRING and GPRINT commands.</p>
+<p>
+</p>
+<h2><a name="legend">Legend</a></h2>
+<p>[<strong>-g</strong>|<strong>--no-legend</strong>]</p>
+<p>Suppress generation of the legend; only render the graph.</p>
+<p>[<strong>-F</strong>|<strong>--force-rules-legend</strong>]</p>
+<p>Force the generation of HRULE and VRULE legends even if those HRULE or
+VRULE will not be drawn because out of graph boundaries (mimics
+behaviour of pre 1.0.42 versions).</p>
+<p>[<strong>--legend-position</strong>=(north|south|west|east)]</p>
+<p>Place the legend at the given side of the graph. The default is south.
+In west or east position it is necessary to add line breaks manually.</p>
+<p>[<strong>--legend-direction</strong>=(topdown|bottomup)]</p>
+<p>Place the legend items in the given vertical order. The default is topdown.
+Using bottomup the legend items appear in the same vertical order as a
+stack of lines or areas.</p>
 <p>
 </p>
 <h2><a name="miscellaneous">Miscellaneous</a></h2>
@@ -294,6 +301,13 @@ lazy in this regard has seen several changes over time. The only thing you
 can realy rely on before rrdtool 1.3.7 is that lazy will not generate the
 graph when it is already there and up to date, and also that it will output
 the size of the graph.</p>
+<p>[<strong>--daemon</strong> <em>address</em>]</p>
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows the graph to contain
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
+<pre>
+ rrdtool graph [...] --daemon unix:/var/run/rrdcached.sock [...]</pre>
 <p>[<strong>-f</strong>|<strong>--imginfo</strong> <em>printfstr</em>]</p>
 <p>After the image has been created, the graph function uses printf
 together with this format string to create output similar to the PRINT
@@ -316,6 +330,10 @@ and blue. Optionally you may add another hexadecimal number specifying the
 transparency (FF is solid). You may set this option several times to alter
 multiple defaults.</p>
 <p>A green arrow is made by: <code>--color ARROW#00FF00</code></p>
+<p>[<strong>--border</strong> <em>width</em>]]</p>
+<p>Width in pixels for the 3d border drawn around the image. Default 2, 0
+disables the border. See <code>SHADEA</code> and <code>SHADEB</code> above for setting the border
+color.</p>
 <p>[<strong>--zoom</strong> <em>factor</em>]</p>
 <p>Zoom the graphics by the given amount. The factor must be &gt; 0</p>
 <p>[<strong>-n</strong>|<strong>--font</strong> <em>FONTTAG</em><strong>:</strong><em>size</em><strong>:</strong>[<em>font</em>]]</p>
@@ -325,6 +343,9 @@ for the title, <code>AXIS</code> for the axis labels, <code>UNIT</code> for the 
 label, <code>LEGEND</code> for the graph legend, <code>WATERMARK</code> for the watermark on the
 edge of the graph.</p>
 <p>Use Times for the title: <code>--font TITLE:13:Times</code></p>
+<p>Note that you need to quote the argument to <strong>--font</strong> if the font-name
+contains whitespace:
+--font &quot;TITLE:13:Some Font&quot;</p>
 <p>If you do not give a font string you can modify just the size of the default font:
 <code>--font TITLE:13:</code>.</p>
 <p>If you specify the size 0 then you can modify just the font without touching
@@ -386,12 +407,6 @@ Times-Bold, Times-BoldItalic, Times-Italic, Times-Roman, and ZapfDingbats.</p>
 <p>[<strong>-i</strong>|<strong>--interlaced</strong>]</p>
 <p>(this gets ignored in 1.3 for now!)</p>
 <p>If images are interlaced they become visible on browsers more quickly.</p>
-<p>[<strong>-g</strong>|<strong>--no-legend</strong>]</p>
-<p>Suppress generation of the legend; only render the graph.</p>
-<p>[<strong>-F</strong>|<strong>--force-rules-legend</strong>]</p>
-<p>Force the generation of HRULE and VRULE legends even if those HRULE or
-VRULE will not be drawn because out of graph boundaries (mimics
-behaviour of pre 1.0.42 versions).</p>
 <p>[<strong>-T</strong>|<strong>--tabwidth</strong> <em>value</em>]</p>
 <p>By default the tab-width is 40 pixels, use this option to change it.</p>
 <p>[<strong>-b</strong>|<strong>--base</strong> <em>value</em>]</p>
@@ -442,6 +457,21 @@ the output will look like this:</p>
 <p>There is more information returned than in the standard interface.
 Especially the 'graph_*' keys are new. They help applications that want to
 know what is where on the graph.</p>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoolgraph</code>:</p>
+<dl>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
+<dd>
+<p>If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.</p>
+</dd>
+</dl>
 <p>
 </p>
 <hr />

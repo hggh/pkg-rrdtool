@@ -29,6 +29,7 @@
 		<li><a href="#time_specification_examples">TIME SPECIFICATION EXAMPLES</a></li>
 	</ul>
 
+	<li><a href="#environment_variables">ENVIRONMENT VARIABLES</a></li>
 	<li><a href="#author">AUTHOR</a></li>
 </ul>
 
@@ -49,7 +50,8 @@
 <p><strong>rrdtool</strong> <strong>fetch</strong> <em>filename</em> <em>CF</em>
 [<strong>--resolution</strong>|<strong>-r</strong>&nbsp;<em>resolution</em>]
 [<strong>--start</strong>|<strong>-s</strong>&nbsp;<em>start</em>]
-[<strong>--end</strong>|<strong>-e</strong>&nbsp;<em>end</em>]</p>
+[<strong>--end</strong>|<strong>-e</strong>&nbsp;<em>end</em>]
+[<strong>--daemon</strong>&nbsp;<em>address</em>]</p>
 <p>
 </p>
 <hr />
@@ -93,6 +95,16 @@ section for a detailed explanation on  ways to specify the start time.</p>
 <p>the end of the time series in seconds since epoch. See also AT-STYLE
 TIME SPECIFICATION section for a detailed explanation of how to
 specify the end time.</p>
+</dd>
+<dt><strong><a name="daemon_address" class="item"><strong>--daemon</strong> <em>address</em></a></strong></dt>
+
+<dd>
+<p>Address of the <a href="././rrdcached.html">the rrdcached manpage</a> daemon. If specified, a <code>flush</code> command is sent
+to the server before reading the RRD files. This allows <strong>rrdtool</strong> to return
+fresh data even if the daemon is configured to cache values for a long time.
+For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
+<pre>
+ rrdtool fetch --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd AVERAGE</pre>
 </dd>
 </dl>
 <p>
@@ -266,6 +278,21 @@ as <em>9am-1day</em>.</p>
 (yes, seconds since 1970 are valid as well).</p>
 <p><em>19970703 12:45</em> -- 12:45  July 3th, 1997
 (my favorite, and its even got an ISO number (8601)).</p>
+<p>
+</p>
+<hr />
+<h1><a name="environment_variables">ENVIRONMENT VARIABLES</a></h1>
+<p>The following environment variables may be used to change the behavior of
+<code>rrdtoolfetch</code>:</p>
+<dl>
+<dt><strong><a name="rrdcached_address" class="item"><strong>RRDCACHED_ADDRESS</strong></a></strong></dt>
+
+<dd>
+<p>If this environment variable is set it will have the same effect as specifying
+the <code>--daemon</code> option on the command line. If both are present, the command
+line argument takes precedence.</p>
+</dd>
+</dl>
 <p>
 </p>
 <hr />

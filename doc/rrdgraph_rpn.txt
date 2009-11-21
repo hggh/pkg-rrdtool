@@ -178,6 +178,84 @@ OOPPEERRAATTOORRSS
            The TRENDNAN operation ignores all NAN-values in a sliding window
            and computes the average of the remaining values.
 
+           PPRREEDDIICCTT,, PPRREEDDIICCTTSSIIGGMMAA
+
+           Create a "sliding window" average/sigma of another data series,
+           that also shifts the data series by given amounts of of time as
+           well
+
+           Usage - explicit stating shifts: CDEF:predict=<shift n>,...,<shift
+           1>,n,<window>,x,PREDICT CDEF:sigma=<shift n>,...,<shift
+           1>,n,<window>,x,PREDICTSIGMA
+
+           Usage - shifts defined as a base shift and a number of time this is
+           applied CDEF:predict=<shift multiplier>,-n,<window>,x,PREDICT
+           CDEF:sigma=<shift multiplier>,-n,<window>,x,PREDICTSIGMA
+
+           Example: CDEF:predict=172800,86400,2,1800,x,PREDICT
+
+           This will create a half-hour (1800 second) sliding window
+           average/sigma of x, that average is essentially computed as shown
+           here:
+
+            +---!---!---!---!---!---!---!---!---!---!---!---!---!---!---!---!---!--->
+                                                                                now
+                                                             shift 1        t0
+                                                    <----------------------->
+                                          window
+                                    <--------------->
+                                                  shift 2
+                            <----------------------------------------------->
+                  window
+            <--------------->
+                                                                 shift 1        t1
+                                                        <----------------------->
+                                              window
+                                        <--------------->
+                                                       shift 2
+                                <----------------------------------------------->
+                      window
+                <--------------->
+
+            Value at sample (t0) will be the average between (t0-shift1-window) and (t0-shift1)
+                                                 and between (t0-shift2-window) and (t0-shift2)
+            Value at sample (t1) will be the average between (t1-shift1-window) and (t1-shift1)
+                                                 and between (t1-shift2-window) and (t1-shift2)
+
+           The function is by design NAN-safe.  This also allows for
+           extrapolation into the future (say a few days) - you may need to
+           define the data series whit the optional start= parameter, so that
+           the source data series has enough data to provide prediction also
+           at the beginning of a graph...
+
+           Here an example, that will create a 10 day graph that also shows
+           the prediction 3 days into the future with its uncertainty value
+           (as defined by avg+-4*sigma) This also shows if the prediction is
+           exceeded at a certain point.
+
+           rrdtool graph image.png --imgformat=PNG \
+            --start=-7days --end=+3days --width=1000 --height=200
+           --alt-autoscale-max \
+            DEF:value=value.rrd:value:AVERAGE:start=-14days \
+            LINE1:value#ff0000:value \
+            CDEF:predict=86400,-7,1800,value,PREDICT \
+            CDEF:sigma=86400,-7,1800,value,PREDICTSIGMA \
+            CDEF:upper=predict,sigma,3,*,+ \
+            CDEF:lower=predict,sigma,3,*,- \
+            LINE1:predict#00ff00:prediction \
+            LINE1:upper#0000ff:upper\ certainty\ limit \
+            LINE1:lower#0000ff:lower\ certainty\ limit \
+            CDEF:exceeds=value,UN,0,value,lower,upper,LIMIT,UN,IF \
+            TICK:exceeds#aa000080:1
+
+           Note: Experience has shown that a factor between 3 and 5 to scale
+           sigma is a good discriminator to detect abnormal behaviour. This
+           obviously depends also on the type of data and how "noisy" the data
+           series is.
+
+           This prediction can only be used for short term extrapolations -
+           say a few days into the future-
+
        Special values
            UUNNKKNN
 
@@ -268,18 +346,20 @@ VVAARRIIAABBLLEESS
 
            Example: "VDEF:total=mydata,TOTAL"
 
-       PERCENT
+       PERCENT, PERCENTNAN
            This should follow a DDEEFF or CCDDEEFF _v_n_a_m_e. The _v_n_a_m_e is popped,
            another number is popped which is a certain percentage (0..100).
            The data set is then sorted and the value returned is chosen such
            that _p_e_r_c_e_n_t_a_g_e percent of the values is lower or equal than the
-           result.  _U_n_k_n_o_w_n values are considered lower than any finite number
-           for this purpose so if this operator returns an _u_n_k_n_o_w_n you have
-           quite a lot of them in your data.  IInnffinite numbers are lesser, or
-           more, than the finite numbers and are always more than the _U_n_k_n_o_w_n
-           numbers.  (NaN < -INF < finite values < INF)
+           result.  For PERCENTNAN _U_n_k_n_o_w_n values are ignored, but for PERCENT
+           _U_n_k_n_o_w_n values are considered lower than any finite number for this
+           purpose so if this operator returns an _u_n_k_n_o_w_n you have quite a lot
+           of them in your data.  IInnffinite numbers are lesser, or more, than
+           the finite numbers and are always more than the _U_n_k_n_o_w_n numbers.
+           (NaN < -INF < finite values < INF)
 
            Example: "VDEF:perc95=mydata,95,PERCENT"
+                    "VDEF:percnan95=mydata,95,PERCENTNAN"
 
        LSLSLOPE, LSLINT, LSLCORREL
            Return the parameters for a LLeast SSquares LLine _(_y _= _m_x _+_b_) which
@@ -309,4 +389,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2009-02-21                   RRDGRAPH_RPN(1)
+1.3.999                           2009-06-09                   RRDGRAPH_RPN(1)

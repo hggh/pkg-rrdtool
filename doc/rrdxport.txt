@@ -8,8 +8,9 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll xxppoorrtt [--ss|----ssttaarrtt _s_e_c_o_n_d_s] [--ee|----eenndd _s_e_c_o_n_d_s]
-       [--mm|----mmaaxxrroowwss _r_o_w_s] [----sstteepp _v_a_l_u_e] [DDEEFF::_v_n_a_m_e==_r_r_d::_d_s_-_n_a_m_e::_C_F]
-       [CCDDEEFF::_v_n_a_m_e==_r_p_n_-_e_x_p_r_e_s_s_i_o_n] [XXPPOORRTT::_v_n_a_m_e[::_l_e_g_e_n_d]]
+       [--mm|----mmaaxxrroowwss _r_o_w_s] [----sstteepp _v_a_l_u_e] [----ddaaeemmoonn _a_d_d_r_e_s_s]
+       [DDEEFF::_v_n_a_m_e==_r_r_d::_d_s_-_n_a_m_e::_C_F] [CCDDEEFF::_v_n_a_m_e==_r_p_n_-_e_x_p_r_e_s_s_i_o_n]
+       [XXPPOORRTT::_v_n_a_m_e[::_l_e_g_e_n_d]]
 
 DDEESSCCRRIIPPTTIIOONN
        The xxppoorrtt function's main purpose is to write an XML formatted
@@ -39,6 +40,15 @@ DDEESSCCRRIIPPTTIIOONN
 
        ----sstteepp _v_a_l_u_e (default automatic)
            See rrdgraph documentation.
+
+       ----ddaaeemmoonn _a_d_d_r_e_s_s
+           Address of the rrdcached daemon. If specified, a "flush" command is
+           sent to the server before reading the RRD files. This allows
+           rrrrddttooooll to return fresh data even if the daemon is configured to
+           cache values for a long time.  For a list of accepted formats, see
+           the --ll option in the rrdcached manual.
+
+             rrdtool xport --daemon unix:/var/run/rrdcached.sock ...
 
        ----eennuummddss
            The generated xml should contain the data values in enumerated
@@ -120,9 +130,18 @@ EEXXAAMMPPLLEE 22
                  XPORT:out2:"if2 out bytes" \
                  XPORT:sum:"output sum"
 
+EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
+       The following environment variables may be used to change the behavior
+       of "rrdtool xport":
+
+       RRRRDDCCAACCHHEEDD__AADDDDRREESSSS
+           If this environment variable is set it will have the same effect as
+           specifying the "--daemon" option on the command line. If both are
+           present, the command line argument takes precedence.
+
 AAUUTTHHOORR
        Tobias Oetiker <tobi@oetiker.ch>
 
 
 
-1.3.8                             2008-03-15                       RRDXPORT(1)
+1.3.999                           2009-06-09                       RRDXPORT(1)

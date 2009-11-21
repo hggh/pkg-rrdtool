@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.3.8  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
  ****************************************************************************
  * rrd_xport.c  export RRD data 
  ****************************************************************************/
@@ -10,6 +10,7 @@
 #include "rrd_graph.h"
 #include "rrd_xport.h"
 #include "unused.h"
+#include "rrd_client.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
 #include <io.h>
@@ -53,17 +54,19 @@ int rrd_xport(
     char ***legend_v,   /* legend entries */
     rrd_value_t **data)
 {                       /* two dimensional array containing the data */
-
     image_desc_t im;
     time_t    start_tmp = 0, end_tmp = 0;
     rrd_time_value_t start_tv, end_tv;
     char     *parsetime_error = NULL;
+    char     *opt_daemon = NULL;
+
     struct option long_options[] = {
         {"start", required_argument, 0, 's'},
         {"end", required_argument, 0, 'e'},
         {"maxrows", required_argument, 0, 'm'},
         {"step", required_argument, 0, 261},
         {"enumds", no_argument, 0, 262},    /* these are handled in the frontend ... */
+        {"daemon", required_argument, 0, 'd'},
         {0, 0, 0, 0}
     };
 
@@ -79,7 +82,7 @@ int rrd_xport(
         int       option_index = 0;
         int       opt;
 
-        opt = getopt_long(argc, argv, "s:e:m:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "s:e:m:d:", long_options, &option_index);
 
         if (opt == EOF)
             break;
@@ -109,6 +112,24 @@ int rrd_xport(
                 return -1;
             }
             break;
+        case 'd':
+        {
+            if (opt_daemon != NULL)
+            {
+                rrd_set_error ("You cannot specify --daemon "
+                        "more than once.");
+                return (-1);
+            }
+
+            opt_daemon = strdup(optarg);
+            if (opt_daemon == NULL)
+            {
+                rrd_set_error("strdup error");
+                return -1;
+            }
+            break;
+        }
+
         case '?':
             rrd_set_error("unknown option '%s'", argv[optind - 1]);
             return -1;
@@ -145,6 +166,12 @@ int rrd_xport(
         rrd_set_error("can't make an xport without contents");
         im_free(&im);
         return (-1);
+    }
+
+    {   /* try to connect to rrdcached */
+        int status = rrdc_connect(opt_daemon);
+        if (opt_daemon) free(opt_daemon);
+        if (status != 0) return status;
     }
 
     if (rrd_xport_fn(&im, start, end, step, col_cnt, legend_v, data) == -1) {
@@ -228,7 +255,7 @@ int rrd_xport_fn(
             ref_list[xport_counter++] = i;
             *step_list_ptr = im->gdes[im->gdes[i].vidx].step;
             /* printf("%s:%lu\n",im->gdes[i].legend,*step_list_ptr); */
-            *step_list_ptr++;
+            step_list_ptr++;
             /* reserve room for one legend entry */
             /* is FMT_LEG_LEN + 5 the correct size? */
             if ((legend_list[j] =

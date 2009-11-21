@@ -68,7 +68,11 @@ DDEESSCCRRIIPPTTIIOONN
                Change the size of individual RRAs. This is dangerous! Check
                rrdresize.
 
-       xxppoorrtt   Export data retrieved from one or several RRDs. Check rrdxport
+       xxppoorrtt   Export data retrieved from one or several RRDs. Check rrdxport.
+
+       fflluusshhccaacchheedd
+               Flush the values for a specific RRD file from memory. Check
+               rrdflushcached.
 
        rrrrddccggii  This is a standalone tool for producing RRD graphs on the fly.
                Check rrdcgi.
@@ -160,13 +164,13 @@ DDEESSCCRRIIPPTTIIOONN
                RRRRDDttooooll provides the building blocks for near real-time
                aberrant behavior detection. These components include:
 
-               ·   An algorithm for predicting the value of a time series one
+               Â·   An algorithm for predicting the value of a time series one
                    time step into the future.
 
-               ·   A measure of deviation between predicted and observed
+               Â·   A measure of deviation between predicted and observed
                    values.
 
-               ·   A mechanism to decide if and when an observed value or
+               Â·   A mechanism to decide if and when an observed value or
                    sequence of observed values is _t_o_o _d_e_v_i_a_n_t from the
                    predicted value(s).
 
@@ -256,9 +260,15 @@ DDEESSCCRRIIPPTTIIOONN
        NNOOTTEE:: that there is no authentication with this feature! Do not setup
        such a port unless you are sure what you are doing.
 
+RRRRDDCCAACCHHEEDD,, TTHHEE CCAACCHHIINNGG DDAAEEMMOONN
+       For very big setups, updating thousands of RRD files often becomes a
+       serious IO problem. If you run into such problems, you might want to
+       take a look at rrdcached, a caching daemon for RRDTool which may help
+       you lessen the stress on your disks.
+
 SSEEEE AALLSSOO
        rrdcreate, rrdupdate, rrdgraph, rrddump, rrdfetch, rrdtune, rrdlast,
-       rrdxport
+       rrdxport, rrdflushcached, rrdcached
 
 BBUUGGSS
        Bugs? Features!
@@ -268,4 +278,4 @@ AAUUTTHHOORR
 
 
 
-1.3.8                             2008-12-22                        RRDTOOL(1)
+1.3.999                           2009-06-09                        RRDTOOL(1)

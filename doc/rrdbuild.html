@@ -96,7 +96,7 @@ tar</strong> and <strong>GNU make</strong> respectively. It could be that they a
 <p>Once you have decided. Save the two locations into environment variables.</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/usr/local/rrdtool-1.3.8</pre>
+ INSTALL_DIR=/usr/local/rrdtool-1.3.2</pre>
 <p>If your <em class="file">/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -106,9 +106,9 @@ a different directory!</p>
 <p>Lets first assume you already have all the necessary libraries
 pre-installed.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.8.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.8.tar.gz</a>
- gunzip -c rrdtool-1.3.8.tar.gz | tar xf -
- cd rrdtool-1.3.8
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.2.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.3.2.tar.gz</a>
+ gunzip -c rrdtool-1.3.2.tar.gz | tar xf -
+ cd rrdtool-1.3.2
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
 <strong>configure</strong> complaining about several missing libraries.</p>
@@ -216,14 +216,13 @@ the syntax again differs from system to system:</p>
  export LDFLAGS=-R${INSTALL_DIR}/lib</pre>
 <p>if you are using the Sun Studio/Forte compiler, you may also want to set</p>
 <pre>
- export CFLAGS=&quot;-xO3 -xcode=pic13&quot;   (SPARC)
- export CFLAGS=&quot;-xO3 -Kpic&quot;          (x86)</pre>
+ CFLAGS=&quot;-xO3 -xcode=pic13&quot;   (SPARC)
+ CFLAGS=&quot;-xO3 -Kpic&quot;          (x86)</pre>
 </dd>
 <dt><strong><a name="linux" class="item">Linux</a></strong></dt>
 
 <dd>
 <pre>
- export CFLAGS=&quot;-O3 -fPIC&quot;
  export LDFLAGS=&quot;-Wl,--rpath -Wl,${INSTALL_DIR}/lib&quot;</pre>
 </dd>
 <dt><strong><a name="hpux" class="item">HPUX</a></strong></dt>
@@ -257,7 +256,7 @@ not available natively, here is how to compile it.</p>
  wget <a href="http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz">http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz</a>
  gunzip -c pkg-config-0.23.tar.gz | tar xf -
  cd pkg-config-0.23
- ./configure --prefix=$INSTALL_DIR
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
 <p>After installing pkgconfig in a custom directory, setting up the corresponding
@@ -273,7 +272,7 @@ environment variable will be helpful.</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/zlib-1.2.3.tar.gz</a>
  gunzip -c zlib-1.2.3.tar.gz | tar xf -
  cd zlib-1.2.3
- ./configure --prefix=$INSTALL_DIR --shared
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot; --shared
  $MAKE
  $MAKE install</pre>
 <p>
@@ -287,8 +286,8 @@ the end of line 4 means that line 4 and line 5 are on one line.</p>
  cd $BUILD_DIR
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libpng-1.2.18.tar.gz</a>
  gunzip -c libpng-1.2.18.tar.gz | tar xf -
- cd libpng-1.2.18
- ./configure --prefix=$INSTALL_DIR
+ cd libpng-1.2.10
+ env CFLAGS=&quot;-O3 -fPIC&quot; ./configure --prefix=$INSTALL_DIR
  $MAKE
  $MAKE install</pre>
 <p>
@@ -314,7 +313,7 @@ add the following at the start the configure line:</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-2.6.32.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/libxml2-2.6.32.tar.gz</a>
  gunzip -c libxml2-2.6.32.tar.gz | tar xf -
  cd libxml2-2.6.32
- ./configure --prefix=$INSTALL_DIR
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
 <p>
@@ -329,7 +328,7 @@ config file.</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/fontconfig-2.4.2.tar.gz</a>
  gunzip -c fontconfig-2.4.2.tar.gz   | tar xf -
  cd fontconfig-2.4.2
- ./configure --prefix=$INSTALL_DIR --with-freetype-config=$INSTALL_DIR/bin/freetype-config
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot; --with-freetype-config=$INSTALL_DIR/bin/freetype-config
  $MAKE
  $MAKE install</pre>
 <p>
@@ -340,7 +339,7 @@ config file.</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/pixman-0.10.0.tar.gz</a>
  gunzip -c pixman-0.10.0.tar.gz  | tar xf -
  cd pixman-0.10.0
- ./configure --prefix=$INSTALL_DIR
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
 <p>
@@ -350,11 +349,12 @@ config file.</p>
  cd $BUILD_DIR
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/cairo-1.6.4.tar.gz</a>
  gunzip -c cairo-1.6.4.tar.gz   | tar xf -
- cd cairo-1.6.4
+ cd cairo-1.4.10
  ./configure --prefix=$INSTALL_DIR \
     --enable-xlib=no \
     --enable-xlib-render=no \
-    --enable-win32=no
+    --enable-win32=no \
+    CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
 <p>
@@ -365,7 +365,7 @@ config file.</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz">http://oss.oetiker.ch/rrdtool/pub/libs/glib-2.15.4.tar.gz</a>
  gunzip -c glib-2.15.4.tar.gz  | tar xf -
  cd glib-2.15.4
- ./configure --prefix=$INSTALL_DIR
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
 <p>
@@ -376,7 +376,7 @@ config file.</p>
  wget <a href="http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.bz2">http://oss.oetiker.ch/rrdtool/pub/libs/pango-1.21.1.tar.bz2</a>
  bunzip2 -c pango-1.21.1.tar.bz2 | tar xf -
  cd pango-1.21.1
- ./configure --prefix=$INSTALL_DIR --without-x
+ ./configure --prefix=$INSTALL_DIR CFLAGS=&quot;-O3 -fPIC&quot; --without-x
  $MAKE
  $MAKE install</pre>
 <p>
@@ -391,7 +391,7 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent rrdtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.3.8
+ cd $BUILD_DIR/rrdtool-1.3.2
  ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
  $MAKE clean
  $MAKE
