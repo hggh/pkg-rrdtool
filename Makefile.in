@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# $Id$
+# $Id: Makefile.am 1955 2009-10-27 17:49:29Z oetiker $
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -222,7 +222,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
@@ -338,7 +337,7 @@ top_srcdir = @top_srcdir@
 RSYNC = rsync --rsh=ssh
 
 # build the following subdirectories
-SUBDIRS = po src examples doc bindings intl
+SUBDIRS = po src examples doc bindings
 EXTRA_DIST = COPYRIGHT CHANGES WIN32-BUILD-TIPS.txt TODO CONTRIBUTORS THREADS \
 	     rrdtool.spec favicon.ico  win32/Makefile win32/config.h autogen.sh \
              win32/rrd.dsp win32/rrd.sln win32/rrd.vcproj libtool \

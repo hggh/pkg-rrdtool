@@ -1,7 +1,7 @@
 /*
 ** Compat-5.1
 ** Copyright Kepler Project 2004-2006 (http://www.keplerproject.org/compat)
-** $Id$
+** $Id: compat-5.1.c 1860 2009-06-10 19:05:56Z oetiker $
 
 Copyright © 2004-2006 The Kepler Project.
 

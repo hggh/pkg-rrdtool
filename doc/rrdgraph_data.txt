@@ -25,7 +25,7 @@ DDEESSCCRRIIPPTTIIOONN
 
        When picking variable names, make sure you do not choose a name that is
        already taken by an RPN operator. A safe bet it to use lowercase or
-       mixedcase names for variables since operators will always be in
+       mixed case names for variables since operators will always be in
        uppercase.
 
 DDEEFF
@@ -50,7 +50,7 @@ DDEEFF
        end-8days8hours").
 
        If consolidation needs to be done, the CCFF of the RRRRAA specified in the
-       DDEEFF itself will be used to reduce the data density. This behaviour can
+       DDEEFF itself will be used to reduce the data density. This behavior can
        be changed using ":reduce=_<CCFF_>_".  This optional parameter specifies the
        CCFF to use during the data reduction phase.
 
@@ -110,7 +110,7 @@ AAbboouutt CCDDEEFF vveerrssuuss VVDDEEFF
 
        If you want to apply 'complex' operations to the result of a VDEF you
        have to use a CDEF again since VDEFs only look like RPN expressions,
-       they aren't realy.
+       they aren't really.
 
 SSEEEE AALLSSOO
        rrdgraph gives an overview of how rrrrddttooooll ggrraapphh works.  rrdgraph_data
@@ -128,4 +128,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-06-01                  RRDGRAPH_DATA(1)
+1.4.2                             2009-10-14                  RRDGRAPH_DATA(1)

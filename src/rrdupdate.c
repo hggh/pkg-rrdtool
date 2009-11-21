@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrdupdate.c  Main program for the (standalone) rrdupdate utility
  *****************************************************************************
- * $Id$
+ * $Id: rrdupdate.c 1970 2009-11-15 11:54:23Z oetiker $
  *****************************************************************************/
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__) && !defined(HAVE_CONFIG_H)
