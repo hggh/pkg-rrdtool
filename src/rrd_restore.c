@@ -1,20 +1,23 @@
 /*****************************************************************************
- * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2009                    
+ * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009                    
  *****************************************************************************
  * rrd_restore.c  Contains logic to parse XML input and create an RRD file
  * This file:
  * Copyright (C) 2008  Florian octo Forster  (original libxml2 code)
  * Copyright (C) 2008,2009 Tobias Oetiker
  *****************************************************************************
- * $Id$
+ * $Id: rrd_restore.c 1970 2009-11-15 11:54:23Z oetiker $
  *************************************************************************** */
+
+#include "rrd_tool.h"
+#include "rrd_rpncalc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
-
+#include <locale.h>
 
 #ifndef WIN32
 #	include <unistd.h>     /* for off_t */
@@ -30,8 +33,6 @@
 # define close _close
 #endif
 
-#include "rrd_tool.h"
-#include "rrd_rpncalc.h"
 
 #define ARRAY_LENGTH(a) (sizeof (a) / sizeof ((a)[0]))
 
@@ -275,21 +276,21 @@ static int get_xml_double(
     double *value)
 {
     
-    char *text;
+    xmlChar *text;
     double temp;    
-    if ((text = (char *)get_xml_text(reader))!= NULL){
-        if (strcasestr(text,"nan")){
+    if ((text = get_xml_text(reader))!= NULL){
+        if (xmlStrcasestr(text,(xmlChar *)"nan")){
             *value = DNAN;
             xmlFree(text);
             return 0;            
         }
-        else if (strcasestr(text,"-inf")){
+        else if (xmlStrcasestr(text,(xmlChar *)"-inf")){
             *value = -DINF;
             xmlFree(text);
             return 0;            
         }
-        else if (strcasestr(text,"+inf")
-                 || strcasestr(text,"inf")){
+        else if (xmlStrcasestr(text,(xmlChar *)"+inf")
+                 || xmlStrcasestr(text,(xmlChar *)"inf")){
             *value = DINF;
             xmlFree(text);
             return 0;            
@@ -1214,7 +1215,7 @@ int rrd_restore(
     char **argv)
 {
     rrd_t    *rrd;
-
+    char     *old_locale;
     /* init rrd clean */
     optind = 0;
     opterr = 0;         /* initialize getopt */
@@ -1256,7 +1257,12 @@ int rrd_restore(
         return (-1);
     }
 
+    old_locale = setlocale(LC_NUMERIC, "C");
+
     rrd = parse_file(argv[optind]);
+
+    setlocale(LC_NUMERIC, old_locale);
+
     if (rrd == NULL)
         return (-1);
     

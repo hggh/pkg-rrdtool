@@ -142,7 +142,7 @@ will all use the same magnitude unit except for zero values.</p>
 </dd>
 </dl>
 <p>If you PRINT a VDEF value, you can also print the time associated with it by appending the string
-<strong>:strftime</strong> to the format. Note that rrdtool uses the strftime function of your OSs C library. This means that
+<strong>:strftime</strong> to the format. Note that RRDtool uses the strftime function of your OSs C library. This means that
 the conversion specifier may vary. Check the manual page if you are uncertain. The following is a list of
 conversion specifiers usually supported across the board.</p>
 <dl>
@@ -217,7 +217,7 @@ such cases %p will return an empty string.</p>
 <dt><strong><strong>%S</strong></strong></dt>
 
 <dd>
-<p>The seconds since the epoch (1.1.1970) (libc dependant non standard!)</p>
+<p>The seconds since the epoch (1.1.1970) (libc dependent non standard!)</p>
 </dd>
 <dt><strong><a name="_u" class="item"><strong>%U</strong></a></strong></dt>
 
@@ -402,7 +402,7 @@ specified.</p>
 right aligned, and <strong>\c</strong> for centered. In the next section there is an
 example showing how to use centered formatting.</p>
 <p><strong>\n</strong> is a valid alias for <strong>\l</strong> since incomplete parsing in earlier
-versions of rrdtool lead to this behavior and a number of people has been using it.</p>
+versions of RRDtool lead to this behavior and a number of people has been using it.</p>
 <p>Normally there are two space characters inserted between every two items
 printed into the graph. The space following a string can be suppressed by
 putting a <strong>\g</strong> at the end of the string. The <strong>\g</strong> also ignores any space
@@ -496,7 +496,7 @@ Pango uses the xml <strong>span</strong> tags for inline formatting instructions
 <dt><strong><a name="strikethrough_color" class="item"><strong>strikethrough_color</strong></a></strong></dt>
 
 <dd>
-<p>The color of strikethrough lines; an RGB color specification such as '#00FF00' or a color name such as 'red'</p>
+<p>The color of crossed out lines; an RGB color specification such as '#00FF00' or a color name such as 'red'</p>
 </dd>
 <dt><strong><a name="fallback" class="item"><strong>fallback</strong></a></strong></dt>
 
@@ -544,7 +544,7 @@ Pango uses the xml <strong>span</strong> tags for inline formatting instructions
 <dt><strong><a name="s" class="item"><strong>s</strong></a></strong></dt>
 
 <dd>
-<p>Strikethrough</p>
+<p>Strike through</p>
 </dd>
 <dt><strong><a name="sub" class="item"><strong>sub</strong></a></strong></dt>
 

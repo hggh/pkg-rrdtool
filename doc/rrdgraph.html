@@ -52,7 +52,7 @@
 <p>
 </p>
 <h1><a name="name">NAME</a></h1>
-<p>rrdgraph - Round Robin Database tool grapher functions</p>
+<p>rrdgraph - Round Robin Database tool graphing functions</p>
 <p>
 </p>
 <hr />
@@ -84,9 +84,9 @@ collect data from two or more databases (one per statement, though).</p>
 it is best to collect them now using the
 <strong><a href="././rrdgraph_data.html#vdef">variable definition</a></strong> statement.
 Currently this makes no difference, but in a future version
-of rrdtool you may want to collect these values before consolidation.</p>
+of RRDtool you may want to collect these values before consolidation.</p>
 <p>The data fetched from the <strong>RRA</strong> is then <strong>consolidated</strong> so that
-there is exactly one datapoint per pixel in the graph. If you do
+there is exactly one data point per pixel in the graph. If you do
 not take care yourself, <strong>RRDtool</strong> will expand the range slightly
 if necessary. Note, in that case the first and/or last pixel may very
 well become unknown!</p>
@@ -124,7 +124,7 @@ be specified in several formats, see
 <a href="././rrdfetch.html">AT-STYLE TIME SPECIFICATION</a> and <a href="././rrdgraph_examples.html">the rrdgraph_examples manpage</a>.
 By default, <strong>rrdtool graph</strong> calculates the width of one pixel in
 the time domain and tries to get data from an <strong>RRA</strong> with that
-resolution.  With the <strong>step</strong> option you can alter this behaviour.
+resolution.  With the <strong>step</strong> option you can alter this behavior.
 If you want <strong>rrdtool graph</strong> to get data at a one-hour resolution
 from the <strong>RRD</strong>, set <strong>step</strong> to 3'600. Note: a step smaller than
 one pixel will silently be ignored.</p>
@@ -158,7 +158,7 @@ the graph.</p>
 [<strong>-l</strong>|<strong>--lower-limit</strong> <em>value</em>]
 [<strong>-r</strong>|<strong>--rigid</strong>]</p>
 <p>By default the graph will be autoscaling so that it will adjust the
-y-axis to the range of the data. You can change this behaviour by
+y-axis to the range of the data. You can change this behavior by
 explicitly setting the limits. The displayed y-axis will then range at
 least from <strong>lower-limit</strong> to <strong>upper-limit</strong>. Autoscaling will still
 permit those boundaries to be stretched unless the <strong>rigid</strong> option is
@@ -184,18 +184,18 @@ value, if not defined on the command line, will be 0. This option can
 be useful when graphing router traffic when the WAN line uses compression,
 and thus the throughput may be higher than the WAN line speed.</p>
 <p>[<strong>-N</strong>|<strong>--no-gridfit</strong>]</p>
-<p>In order to avoid anti-aliasing blurring effects rrdtool snaps
+<p>In order to avoid anti-aliasing blurring effects RRDtool snaps
 points to device resolution pixels, this results in a crisper
 appearance. If this is not to your liking, you can use this switch
-to turn this behaviour off.</p>
-<p>Gridfitting is turned off for PDF, EPS, SVG output by default.</p>
+to turn this behavior off.</p>
+<p>Grid-fitting is turned off for PDF, EPS, SVG output by default.</p>
 <p>
 </p>
 <h2><a name="x_axis">X-Axis</a></h2>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <em>GTM</em><strong>:</strong><em>GST</em><strong>:</strong><em>MTM</em><strong>:</strong><em>MST</em><strong>:</strong><em>LTM</em><strong>:</strong><em>LST</em><strong>:</strong><em>LPR</em><strong>:</strong><em>LFM</em>]</p>
 <p>[<strong>-x</strong>|<strong>--x-grid</strong> <strong>none</strong>]</p>
 <p>The x-axis label is quite complex to configure. If you don't have
-very special needs it is probably best to rely on the autoconfiguration
+very special needs it is probably best to rely on the auto configuration
 to get this right. You can specify the string <code>none</code> to suppress the grid
 and labels altogether.</p>
 <p>The grid is defined by specifying a certain amount of time in the <em>?TM</em>
@@ -251,11 +251,11 @@ display the y-axis values in k (Kilo, 10e3, thousands), use -6 to
 display the y-axis values in u (Micro, 10e-6, millionths).  Use a value
 of 0 to prevent any scaling of the y-axis values.</p>
 <p>This option is very effective at confusing the heck out of the default
-rrdtool autoscaler and grid painter. If rrdtool detects that it is not
+RRDtool autoscaling function and grid painter. If RRDtool detects that it is not
 successful in labeling the graph under the given circumstances, it will switch
 to the more robust <strong>--alt-y-grid</strong> mode.</p>
 <p>[<strong>-L</strong>|<strong>--units-length</strong> <em>value</em>]</p>
-<p>How many digits should rrdtool assume the y-axis labels to be? You
+<p>How many digits should RRDtool assume the y-axis labels to be? You
 may have to use this option to make enough space once you start
 fiddling with the y-axis labeling.</p>
 <p>[<strong>--units=si</strong>]</p>
@@ -271,8 +271,8 @@ Note that for linear graphs, SI notation is used by default.</p>
 left axis via the scale and shift parameters. You can also define a label
 for the right axis.</p>
 <p>[<strong>--right-axis-format</strong> <em>format-string</em>]</p>
-<p>By default the format of the axis lables gets determined automatically. If
-you want todo this your self, use this option with the same %lf arguments
+<p>By default the format of the axis labels gets determined automatically. If
+you want to do this your self, use this option with the same %lf arguments
 you know from the PRING and GPRINT commands.</p>
 <p>
 </p>
@@ -282,7 +282,7 @@ you know from the PRING and GPRINT commands.</p>
 <p>[<strong>-F</strong>|<strong>--force-rules-legend</strong>]</p>
 <p>Force the generation of HRULE and VRULE legends even if those HRULE or
 VRULE will not be drawn because out of graph boundaries (mimics
-behaviour of pre 1.0.42 versions).</p>
+behavior of pre 1.0.42 versions).</p>
 <p>[<strong>--legend-position</strong>=(north|south|west|east)]</p>
 <p>Place the legend at the given side of the graph. The default is south.
 In west or east position it is necessary to add line breaks manually.</p>
@@ -296,9 +296,9 @@ stack of lines or areas.</p>
 <p>[<strong>-z</strong>|<strong>--lazy</strong>]</p>
 <p>Only generate the graph if the current graph is out of date or not existent.
 Note, that all the calculations will happen regardless so that the output of
-PRINT and graphv will be complete regardless. Note that the behaviour of
+PRINT and graphv will be complete regardless. Note that the behavior of
 lazy in this regard has seen several changes over time. The only thing you
-can realy rely on before rrdtool 1.3.7 is that lazy will not generate the
+can really rely on before RRDtool 1.3.7 is that lazy will not generate the
 graph when it is already there and up to date, and also that it will output
 the size of the graph.</p>
 <p>[<strong>--daemon</strong> <em>address</em>]</p>
@@ -330,6 +330,12 @@ and blue. Optionally you may add another hexadecimal number specifying the
 transparency (FF is solid). You may set this option several times to alter
 multiple defaults.</p>
 <p>A green arrow is made by: <code>--color ARROW#00FF00</code></p>
+<p>[<strong>--grid-dash</strong> <em>on</em><strong>:</strong><em>off</em>]</p>
+<p>by default the grid is drawn in a 1 on, 1 off pattern. With this option you can set this yourself</p>
+<pre>
+ --grid-dash 1:3    for a dot grid
+ 
+ --grid-dash 1:0    for uninterrupted grid lines</pre>
 <p>[<strong>--border</strong> <em>width</em>]]</p>
 <p>Width in pixels for the 3d border drawn around the image. Default 2, 0
 disables the border. See <code>SHADEA</code> and <code>SHADEB</code> above for setting the border
@@ -364,16 +370,16 @@ followed by the unit modifier &quot;px&quot; for absolute size. Any one of the o
 may be absent.</p>
 <p>[<strong>-R</strong>|<strong>--font-render-mode</strong> {<strong>normal</strong>,<strong>light</strong>,<strong>mono</strong>}]</p>
 <p>There are 3 font render modes:</p>
-<p><strong>normal</strong>: Full Hinting and Antialiasing (default)</p>
-<p><strong>light</strong>: Slight Hinting and Antialiasing</p>
-<p><strong>mono</strong>: Full Hinting and NO Antialiasing</p>
+<p><strong>normal</strong>: Full Hinting and Anti-aliasing (default)</p>
+<p><strong>light</strong>: Slight Hinting and Anti-aliasing</p>
+<p><strong>mono</strong>: Full Hinting and NO Anti-aliasing</p>
 <p>[<strong>-B</strong>|<strong>--font-smoothing-threshold</strong> <em>size</em>]</p>
 <p>(this gets ignored in 1.3 for now!)</p>
 <p>This specifies the largest font size which will be rendered
 bitmapped, that is, without any font smoothing. By default,
 no text is rendered bitmapped.</p>
 <p>[<strong>-P</strong>|<strong>--pango-markup</strong>]</p>
-<p>All text in rrdtool is rendered using Pango. With the <strong>--pango-markup</strong> option, all
+<p>All text in RRDtool is rendered using Pango. With the <strong>--pango-markup</strong> option, all
 text will be processed by pango markup. This allows to embed some simple html
 like markup tags using</p>
 <pre>
@@ -392,8 +398,8 @@ like markup tags using</p>
 <p>More details on <a href="http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html">http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html</a>.</p>
 <p>[<strong>-G</strong>|<strong>--graph-render-mode</strong> {<strong>normal</strong>,<strong>mono</strong>}]</p>
 <p>There are 2 render modes:</p>
-<p><strong>normal</strong>: Graphs are fully Antialiased (default)</p>
-<p><strong>mono</strong>: No Antialiasing</p>
+<p><strong>normal</strong>: Graphs are fully Anti-aliased (default)</p>
+<p><strong>mono</strong>: No Anti-aliasing</p>
 <p>[<strong>-E</strong>|<strong>--slope-mode</strong>]</p>
 <p>RRDtool graphs are composed of stair case curves by default. This is in line with
 the way RRDtool calculates its data. Some people favor a more 'organic' look
@@ -432,8 +438,8 @@ See <a href="././rrdgraph_graph.html">the rrdgraph_graph manpage</a> for the exa
 <p>
 </p>
 <h2><a name="graphv">graphv</a></h2>
-<p>Calling rrdtool with the graphv option will return information in the
-rrdtool info format. On the command line this means that all output will be
+<p>Calling RRDtool with the graphv option will return information in the
+RRDtool info format. On the command line this means that all output will be
 in key=value format. When used from the Perl and Ruby bindings a hash
 pointer will be returned from the call.</p>
 <p>When the filename '-' is given, the contents of the graph itself will also

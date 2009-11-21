@@ -116,6 +116,9 @@ UUTTIILLIITTYY FFUUNNCCTTIIOONNSS
            In contrast to _m_k_d_i_r(2), the function does nnoott fail if "pathname"
            already exists and is a directory.
 
+AAUUTTHHOORR
+       RRD Contributors <rrd-developers@lists.oetiker.ch>
 
 
-1.3.999                           2009-09-30                         librrd(3)
+
+1.4.2                             2009-11-15                         librrd(3)

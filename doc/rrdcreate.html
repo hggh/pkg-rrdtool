@@ -406,7 +406,7 @@ an average rate for that PDP. If the total &quot;unknown&quot; time accounts for
 more than <strong>half</strong> the &quot;step&quot;, the entire PDP is marked
 as &quot;unknown&quot;. This means that a mixture of known and &quot;unknown&quot; sample
 times in a single PDP &quot;step&quot; may or may not add up to enough &quot;known&quot;
-time to warrent for a known PDP.</p>
+time to warrant a known PDP.</p>
 <p>The &quot;heartbeat&quot; can be short (unusual) or long (typical) relative to
 the &quot;step&quot; interval between PDPs. A short &quot;heartbeat&quot; means you
 require multiple samples per PDP, and if you don't get them mark the
@@ -472,7 +472,7 @@ together with the time.</p>
 
 <dd>
 <p>Assume you have a method to count the number of messages transported by
-your mailserver in a certain amount of time, giving you data like '5
+your mail server in a certain amount of time, giving you data like '5
 messages in the last 65 seconds'. If you look at the count of 5 like an
 <strong>ABSOLUTE</strong> data type you can simply update the RRD with the number 5 and the
 end time of your monitoring period. RRDtool will then record the number of

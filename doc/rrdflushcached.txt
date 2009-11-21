@@ -3,7 +3,7 @@ RRDFLUSHCACHED(1)                   rrdtool                  RRDFLUSHCACHED(1)
 
 
 NNAAMMEE
-       rrdflush - Flush the values for a spcific RRD file from memory.
+       rrdflushcached - Flush the values for a spcific RRD file from memory.
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll fflluusshhccaacchheedd [----ddaaeemmoonn _a_d_d_r_e_s_s] _f_i_l_e_n_a_m_e [_f_i_l_e_n_a_m_e ...]
@@ -40,4 +40,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-06-09                 RRDFLUSHCACHED(1)
+1.4.2                             2009-10-14                 RRDFLUSHCACHED(1)

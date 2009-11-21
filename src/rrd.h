@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id$
+ * $Id: rrd.h 1970 2009-11-15 11:54:23Z oetiker $
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...

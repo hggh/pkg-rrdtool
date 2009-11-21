@@ -322,7 +322,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
@@ -456,7 +455,7 @@ noinst_HEADERS = unused.h gettext.h rrd_getopt.h rrd_parsetime.h \
 noinst_LTLIBRARIES = librrdupd.la
 lib_LTLIBRARIES = librrd.la $(am__append_4)
 librrdupd_la_SOURCES = $(UPD_C_FILES) rrd_not_thread_safe.c
-librrdupd_la_LIBADD = $(CORE_LIBS) @LIB_LIBINTL@
+librrdupd_la_LIBADD = $(CORE_LIBS)
 librrd_la_SOURCES = $(RRD_C_FILES)
 librrd_la_DEPENDENCIES = librrdupd.la librrd.sym
 librrd_la_LIBADD = librrdupd.la $(ALL_LIBS)
@@ -500,9 +499,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/Makefile
+	  $(AUTOMAKE) --gnu src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

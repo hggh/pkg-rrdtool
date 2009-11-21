@@ -1,6 +1,6 @@
 dnl RRDtool AutoConf script ... 
 dnl ---------------------------
-dnl $Id$
+dnl $Id: configure.ac 1970 2009-11-15 11:54:23Z oetiker $
 dnl
 dnl Created by Jeff Allen, Tobi Oetiker, Blair Zajac
 dnl
@@ -13,14 +13,14 @@ AC_PREREQ(2.59)
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.3.999])
+AC_INIT([rrdtool],[1.4.2])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.3999
+NUMVERS=1.4002
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -31,7 +31,7 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=5:0:1
+LIBVERS=5:2:1
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
@@ -53,7 +53,7 @@ dnl determine the type of system we are running on
 
 AC_SUBST(VERSION)
 
-AC_PREFIX_DEFAULT( /usr/local/rrdtool-$PACKAGE_VERSION )
+AC_PREFIX_DEFAULT( /opt/rrdtool-$PACKAGE_VERSION )
 
 dnl At the TOP of the HEADER
 
@@ -85,7 +85,7 @@ AH_BOTTOM([
 #  include <malloc/malloc.h>
 #endif
 
-#include <rrd_config_bottom.h>
+#include "src/rrd_config_bottom.h"
 
 #endif
 ])
@@ -182,7 +182,7 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h locale.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
+AC_CHECK_HEADERS(stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -209,7 +209,7 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid setlocale strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
 
 AC_FUNC_STRERROR_R
 
@@ -223,6 +223,12 @@ dnl check for fdatasync. Solaris has fdatasync in the librt
 AC_CHECK_FUNCS(fdatasync, [],  AC_CHECK_LIB(rt, fdatasync, [LIBS="${LIBS} -lrt"; AC_DEFINE(HAVE_FDATASYNC)],[]))
 dnl if there is no fdatasync we may get lucky with fsync
 AC_CHECK_FUNCS(fsync)
+
+dnl check for socket and nsl solaris again ... we need this for the new rrd_daemon stuff
+
+AC_CHECK_FUNCS(socket, [],  AC_CHECK_LIB(socket, socket, [LIBS="${LIBS} -lsocket"; AC_DEFINE(HAVE_SOCKET)],[]))
+AC_CHECK_FUNCS(getaddrinfo, [],  AC_CHECK_LIB(nsl, getaddrinfo, [LIBS="${LIBS} -lnsl"; AC_DEFINE(HAVE_GETADDRINFO)],[]))
+
 
 
 dnl XXX: dunno about windows.. add AC_CHECK_FUNCS(munmap) there too?

@@ -82,11 +82,11 @@ TTUUTTOORRIIAALL
 
        Most likely you will start to use RRDtool to store and process data
        collected via SNMP. The data will most likely be bytes (or bits)
-       transfered from and to a network or a computer.  But it can also be
+       transferred from and to a network or a computer.  But it can also be
        used to display tidal waves, solar radiation, power consumption, number
        of visitors at an exhibition, noise levels near an airport, temperature
        on your favorite holiday location, temperature in the fridge and
-       whatever you imagination can come up with.
+       whatever your imagination can come up with.
 
        You only need a sensor to measure the data and be able to feed the
        numbers into RRDtool. RRDtool then lets you create a database, store
@@ -144,7 +144,7 @@ TTUUTTOORRIIAALL
 
        Assume we have a device that transfers bytes to and from the Internet.
        This device keeps a counter that starts at zero when it is turned on,
-       increasing with every byte that is transfered. This counter will
+       increasing with every byte that is transferred. This counter will
        probably have a maximum value. If this value is reached and an extra
        byte is counted, the counter starts over at zero. This is the same as
        many counters in the world such as the mileage counter in a car.
@@ -156,7 +156,7 @@ TTUUTTOORRIIAALL
        counting from 0 to 4294967295. We will use these values in the
        examples.  The device, when asked, returns the current value of the
        counter. We know the time that has passes since we last asked so we now
-       know how many bytes have been transfered ***on average*** per second.
+       know how many bytes have been transferred ***on average*** per second.
        This is not very hard to calculate. First in words, then in
        calculations:
 
@@ -533,8 +533,8 @@ TTUUTTOORRIIAALL
        types of values like temperature.
 
        Many people interested in RRDtool will use the counter that keeps track
-       of octets (bytes) transfered by a network device. So let's do just that
-       next. We will start with a description of how to collect data.
+       of octets (bytes) transferred by a network device. So let's do just
+       that next. We will start with a description of how to collect data.
 
        Some people will make a remark that there are tools which can do this
        data collection for you. They are right! However, I feel it is
@@ -884,18 +884,18 @@ TTUUTTOORRIIAALL
                    DEF:lined=all.rrd:d:AVERAGE LINE3:lined#000000:"Line D"
 
    RRRRDDttooooll uunnddeerr tthhee MMiiccrroossccooppee
-       Â· Line A is a COUNTER type, so it should continuously increment and
+       · Line A is a COUNTER type, so it should continuously increment and
          RRDtool must calculate the differences. Also, RRDtool needs to divide
          the difference by the amount of time lapsed. This should end up as a
          straight line at 1 (the deltas are 300, the time is 300).
 
-       Â· Line B is of type GAUGE. These are "real" values so they should match
+       · Line B is of type GAUGE. These are "real" values so they should match
          what we put in: a sort of a wave.
 
-       Â· Line C is of type DERIVE. It should be a counter that can decrease.
+       · Line C is of type DERIVE. It should be a counter that can decrease.
          It does so between 2400 and 0, with 1800 in-between.
 
-       Â· Line D is of type ABSOLUTE. This is like counter but it works on
+       · Line D is of type ABSOLUTE. This is like counter but it works on
          values without calculating the difference. The numbers are the same
          and as you can see (hopefully) this has a different result.
 
@@ -916,7 +916,7 @@ TTUUTTOORRIIAALL
 
        Let's go over the data again:
 
-       Â· Line A: 300,600,900 and so on. The counter delta is a constant 300
+       · Line A: 300,600,900 and so on. The counter delta is a constant 300
          and so is the time delta. A number divided by itself is always 1
          (except when dividing by zero which is undefined/illegal).
 
@@ -925,16 +925,16 @@ TTUUTTOORRIIAALL
          calculate the delta from, so we don't know where we started. It would
          be wrong to assume we started at zero so we don't!
 
-       Â· Line B: There is nothing to calculate. The numbers are as they are.
+       · Line B: There is nothing to calculate. The numbers are as they are.
 
-       Â· Line C: Again, the start-out value is unknown. The same story is
+       · Line C: Again, the start-out value is unknown. The same story is
          holds as for line A. In this case the deltas are not constant,
          therefore the line is not either. If we would put the same numbers in
          the database as we did for line A, we would have gotten the same
          line. Unlike type counter, this type can decrease and I hope to show
          you later on why this makes a difference.
 
-       Â· Line D: Here the device calculates the deltas. Therefore we DO know
+       · Line D: Here the device calculates the deltas. Therefore we DO know
          the first delta and it is plotted. We had the same input as with line
          A, but the meaning of this input is different and thus the line is
          different.  In this case the deltas increase each time with 300. The
@@ -1154,4 +1154,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-06-01                    RRDTUTORIAL(1)
+1.4.2                             2009-10-15                    RRDTUTORIAL(1)

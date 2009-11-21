@@ -3,7 +3,7 @@ RRDGRAPH(1)                         rrdtool                        RRDGRAPH(1)
 
 
 NNAAMMEE
-       rrdgraph - Round Robin Database tool grapher functions
+       rrdgraph - Round Robin Database tool graphing functions
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll ggrraapphh||ggrraapphhvv _f_i_l_e_n_a_m_e [_o_p_t_i_o_n ...]  [_d_a_t_a _d_e_f_i_n_i_t_i_o_n ...]
@@ -23,11 +23,11 @@ OOVVEERRVVIIEEWW
 
        If you want to display averages, maxima, percentiles, etcetera it is
        best to collect them now using the vvaarriiaabbllee ddeeffiinniittiioonn statement.
-       Currently this makes no difference, but in a future version of rrdtool
+       Currently this makes no difference, but in a future version of RRDtool
        you may want to collect these values before consolidation.
 
        The data fetched from the RRRRAA is then ccoonnssoolliiddaatteedd so that there is
-       exactly one datapoint per pixel in the graph. If you do not take care
+       exactly one data point per pixel in the graph. If you do not take care
        yourself, RRRRDDttooooll will expand the range slightly if necessary. Note, in
        that case the first and/or last pixel may very well become unknown!
 
@@ -61,8 +61,8 @@ OOPPTTIIOONNSS
        in several formats, see AT-STYLE TIME SPECIFICATION and
        rrdgraph_examples.  By default, rrrrddttooooll ggrraapphh calculates the width of
        one pixel in the time domain and tries to get data from an RRRRAA with
-       that resolution.  With the sstteepp option you can alter this behaviour.
-       If you want rrrrddttooooll ggrraapphh to get data at a one-hour resolution from the
+       that resolution.  With the sstteepp option you can alter this behavior.  If
+       you want rrrrddttooooll ggrraapphh to get data at a one-hour resolution from the
        RRRRDD, set sstteepp to 3'600. Note: a step smaller than one pixel will
        silently be ignored.
 
@@ -92,7 +92,7 @@ OOPPTTIIOONNSS
        [--uu|----uuppppeerr--lliimmiitt _v_a_l_u_e] [--ll|----lloowweerr--lliimmiitt _v_a_l_u_e] [--rr|----rriiggiidd]
 
        By default the graph will be autoscaling so that it will adjust the
-       y-axis to the range of the data. You can change this behaviour by
+       y-axis to the range of the data. You can change this behavior by
        explicitly setting the limits. The displayed y-axis will then range at
        least from lloowweerr--lliimmiitt to uuppppeerr--lliimmiitt. Autoscaling will still permit
        those boundaries to be stretched unless the rriiggiidd option is set.
@@ -127,12 +127,12 @@ OOPPTTIIOONNSS
 
        [--NN|----nnoo--ggrriiddffiitt]
 
-       In order to avoid anti-aliasing blurring effects rrdtool snaps points
+       In order to avoid anti-aliasing blurring effects RRDtool snaps points
        to device resolution pixels, this results in a crisper appearance. If
        this is not to your liking, you can use this switch to turn this
-       behaviour off.
+       behavior off.
 
-       Gridfitting is turned off for PDF, EPS, SVG output by default.
+       Grid-fitting is turned off for PDF, EPS, SVG output by default.
 
    XX--AAxxiiss
        [--xx|----xx--ggrriidd _G_T_M::_G_S_T::_M_T_M::_M_S_T::_L_T_M::_L_S_T::_L_P_R::_L_F_M]
@@ -140,7 +140,7 @@ OOPPTTIIOONNSS
        [--xx|----xx--ggrriidd nnoonnee]
 
        The x-axis label is quite complex to configure. If you don't have very
-       special needs it is probably best to rely on the autoconfiguration to
+       special needs it is probably best to rely on the auto configuration to
        get this right. You can specify the string "none" to suppress the grid
        and labels altogether.
 
@@ -209,13 +209,13 @@ OOPPTTIIOONNSS
        of 0 to prevent any scaling of the y-axis values.
 
        This option is very effective at confusing the heck out of the default
-       rrdtool autoscaler and grid painter. If rrdtool detects that it is not
-       successful in labeling the graph under the given circumstances, it will
-       switch to the more robust ----aalltt--yy--ggrriidd mode.
+       RRDtool autoscaling function and grid painter. If RRDtool detects that
+       it is not successful in labeling the graph under the given
+       circumstances, it will switch to the more robust ----aalltt--yy--ggrriidd mode.
 
        [--LL|----uunniittss--lleennggtthh _v_a_l_u_e]
 
-       How many digits should rrdtool assume the y-axis labels to be? You may
+       How many digits should RRDtool assume the y-axis labels to be? You may
        have to use this option to make enough space once you start fiddling
        with the y-axis labeling.
 
@@ -234,8 +234,8 @@ OOPPTTIIOONNSS
 
        [----rriigghhtt--aaxxiiss--ffoorrmmaatt _f_o_r_m_a_t_-_s_t_r_i_n_g]
 
-       By default the format of the axis lables gets determined automatically.
-       If you want todo this your self, use this option with the same %lf
+       By default the format of the axis labels gets determined automatically.
+       If you want to do this your self, use this option with the same %lf
        arguments you know from the PRING and GPRINT commands.
 
    LLeeggeenndd
@@ -247,7 +247,7 @@ OOPPTTIIOONNSS
 
        Force the generation of HRULE and VRULE legends even if those HRULE or
        VRULE will not be drawn because out of graph boundaries (mimics
-       behaviour of pre 1.0.42 versions).
+       behavior of pre 1.0.42 versions).
 
        [----lleeggeenndd--ppoossiittiioonn=(north|south|west|east)]
 
@@ -266,10 +266,10 @@ OOPPTTIIOONNSS
        Only generate the graph if the current graph is out of date or not
        existent.  Note, that all the calculations will happen regardless so
        that the output of PRINT and graphv will be complete regardless. Note
-       that the behaviour of lazy in this regard has seen several changes over
-       time. The only thing you can realy rely on before rrdtool 1.3.7 is that
-       lazy will not generate the graph when it is already there and up to
-       date, and also that it will output the size of the graph.
+       that the behavior of lazy in this regard has seen several changes over
+       time. The only thing you can really rely on before RRDtool 1.3.7 is
+       that lazy will not generate the graph when it is already there and up
+       to date, and also that it will output the size of the graph.
 
        [----ddaaeemmoonn _a_d_d_r_e_s_s]
 
@@ -307,6 +307,15 @@ OOPPTTIIOONNSS
        set this option several times to alter multiple defaults.
 
        A green arrow is made by: "--color ARROW#00FF00"
+
+       [----ggrriidd--ddaasshh _o_n::_o_f_f]
+
+       by default the grid is drawn in a 1 on, 1 off pattern. With this option
+       you can set this yourself
+
+        --grid-dash 1:3    for a dot grid
+
+        --grid-dash 1:0    for uninterrupted grid lines
 
        [----bboorrddeerr _w_i_d_t_h]]
 
@@ -357,11 +366,11 @@ OOPPTTIIOONNSS
 
        There are 3 font render modes:
 
-       nnoorrmmaall: Full Hinting and Antialiasing (default)
+       nnoorrmmaall: Full Hinting and Anti-aliasing (default)
 
-       lliigghhtt: Slight Hinting and Antialiasing
+       lliigghhtt: Slight Hinting and Anti-aliasing
 
-       mmoonnoo: Full Hinting and NO Antialiasing
+       mmoonnoo: Full Hinting and NO Anti-aliasing
 
        [--BB|----ffoonntt--ssmmooootthhiinngg--tthhrreesshhoolldd _s_i_z_e]
 
@@ -373,7 +382,7 @@ OOPPTTIIOONNSS
 
        [--PP|----ppaannggoo--mmaarrkkuupp]
 
-       All text in rrdtool is rendered using Pango. With the ----ppaannggoo--mmaarrkkuupp
+       All text in RRDtool is rendered using Pango. With the ----ppaannggoo--mmaarrkkuupp
        option, all text will be processed by pango markup. This allows to
        embed some simple html like markup tags using
 
@@ -399,9 +408,9 @@ OOPPTTIIOONNSS
 
        There are 2 render modes:
 
-       nnoorrmmaall: Graphs are fully Antialiased (default)
+       nnoorrmmaall: Graphs are fully Anti-aliased (default)
 
-       mmoonnoo: No Antialiasing
+       mmoonnoo: No Anti-aliasing
 
        [--EE|----ssllooppee--mmooddee]
 
@@ -456,8 +465,8 @@ OOPPTTIIOONNSS
        the exact format.
 
    ggrraapphhvv
-       Calling rrdtool with the graphv option will return information in the
-       rrdtool info format. On the command line this means that all output
+       Calling RRDtool with the graphv option will return information in the
+       RRDtool info format. On the command line this means that all output
        will be in key=value format. When used from the Perl and Ruby bindings
        a hash pointer will be returned from the call.
 
@@ -509,4 +518,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-09-24                       RRDGRAPH(1)
+1.4.2                             2009-10-27                       RRDGRAPH(1)

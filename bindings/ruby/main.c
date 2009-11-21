@@ -1,4 +1,4 @@
-/* $Id$
+/* $Id: main.c 1855 2009-06-07 20:48:39Z oetiker $
  * Substantial penalty for early withdrawal.
  */
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.3.2  Copyright by Tobi Oetiker, 1997-2008
+ * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
  *****************************************************************************
  * rrd_tool.c  Startup wrapper
  *****************************************************************************/
@@ -18,9 +18,8 @@
 #include "rrd_xport.h"
 #include "rrd_i18n.h"
 
-#ifdef HAVE_LOCALE_H
 #include <locale.h>
-#endif
+
 
 void      PrintUsage(
     char *cmd);
@@ -29,7 +28,6 @@ int       CountArgs(
 int       CreateArgs(
     char *,
     char *,
-    int,
     char **);
 int       HandleInputLine(
     int,
@@ -49,7 +47,7 @@ void PrintUsage(
 
     const char *help_main =
         N_("RRDtool %s"
-           "  Copyright 1997-2008 by Tobias Oetiker <tobi@oetiker.ch>\n"
+           "  Copyright 1997-2009 by Tobias Oetiker <tobi@oetiker.ch>\n"
            "               Compiled %s %s\n\n"
            "Usage: rrdtool [options] command command_options\n\n");
 
@@ -409,13 +407,13 @@ int main(
 #ifdef MUST_DISABLE_FPMASK
     fpsetmask(0);
 #endif
-#ifdef HAVE_LOCALE_H
+
+    /* initialize locale settings
+       according to localeconv(3) */       
     setlocale(LC_ALL, "");
-#endif
 
 #if defined(HAVE_LIBINTL_H) && defined(BUILD_LIBINTL)
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
     textdomain(GETTEXT_PACKAGE);
 #endif
     if (argc == 1) {
@@ -467,24 +465,21 @@ int main(
         }
 
         while (fgetslong(&aLine, stdin)) {
+            char *aLineOrig = aLine;
             if ((argc = CountArgs(aLine)) == 0) {
                 free(aLine);
                 printf("ERROR: not enough arguments\n");
+                continue;                
             }
             if ((myargv = (char **) malloc((argc + 1) *
                                            sizeof(char *))) == NULL) {
                 perror("malloc");
                 exit(1);
             }
-            if ((argc = CreateArgs(argv[0], aLine, argc, myargv)) < 0) {
-                free(aLine);
-                free(myargv);
+            if ((argc = CreateArgs(argv[0], aLine, myargv)) < 0) {
                 printf("ERROR: creating arguments\n");
             } else {
-                int       ret = HandleInputLine(argc, myargv, stdout);
-
-                free(myargv);
-                if (ret == 0) {
+                if ( HandleInputLine(argc, myargv, stdout) == 0 ){
 #if HAVE_GETRUSAGE
                     getrusage(RUSAGE_SELF, &myusage);
                     gettimeofday(&currenttime, NULL);
@@ -503,7 +498,8 @@ int main(
                 }
             }
             fflush(stdout); /* this is important for pipes to work */
-            free(aLine);
+            free(myargv);
+            free(aLineOrig);
         }
     } else if (argc == 2) {
         PrintUsage(argv[1]);
@@ -716,6 +712,7 @@ int HandleInputLine(
         if (rrd_xport
             (argc - 1, &argv[1], &xxsize, &start, &end, &step, &col_cnt,
              &legend_v, &data) != -1) {
+            char *old_locale = setlocale(LC_NUMERIC, "C");
             row_cnt = (end - start) / step;
             ptr = data;
             printf("<?xml version=\"1.0\" encoding=\"%s\"?>\n\n",
@@ -768,6 +765,7 @@ int HandleInputLine(
             free(data);
             printf("  </%s>\n", DATA_TAG);
             printf("</%s>\n", ROOT_TAG);
+            setlocale(LC_NUMERIC, old_locale);
         }
         free(vtag);
     } else if (strcmp("graph", argv[1]) == 0) {
@@ -856,7 +854,6 @@ int CountArgs(
 int CreateArgs(
     char *pName,
     char *aLine,
-    int argc,
     char **argv)
 {
     char     *getP, *putP;
@@ -864,6 +861,7 @@ int CreateArgs(
     char      Quote = 0;
     int       inArg = 0;
     int       len;
+    int       argc = 1;
 
     len = strlen(aLine);
     /* remove trailing space and newlines */

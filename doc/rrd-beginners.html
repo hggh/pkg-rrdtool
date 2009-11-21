@@ -147,7 +147,7 @@ saved in the database. There can be as many DSs in a database as needed. After
 every step interval, a new value of DS is supplied to update the database.
 This value is also called Primary Data Point <strong>(PDP)</strong>. In our example
 mentioned above, a new PDP is generated every 300 seconds.</p>
-<p>Note, that if you do NOT supply new datapoints exactly every 300 seconds,
+<p>Note, that if you do NOT supply new data points exactly every 300 seconds,
 this is not a problem, RRDtool will interpolate the data accordingly.</p>
 <p><strong>DST</strong> (Data Source Type) defines the type of the DS. It can be
 COUNTER, DERIVE, ABSOLUTE, GAUGE. A DS declared as COUNTER will save
@@ -156,7 +156,7 @@ the value is always increasing (the difference between the current and
 the previous value is greater than 0). Traffic counters on a router
 are an ideal candidate for using COUNTER as DST. DERIVE is the same as
 COUNTER, but it allows negative values as well. If you want to see the
-rate of <em>change</em> in free diskspace on your server, then you might
+rate of <em>change</em> in free disk space on your server, then you might
 want to use the DERIVE data type. ABSOLUTE also saves the rate of
 change, but it assumes that the previous value is set to 0. The
 difference between the current and the previous value is always equal

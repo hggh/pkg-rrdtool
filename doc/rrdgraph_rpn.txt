@@ -249,7 +249,7 @@ OOPPEERRAATTOORRSS
             TICK:exceeds#aa000080:1
 
            Note: Experience has shown that a factor between 3 and 5 to scale
-           sigma is a good discriminator to detect abnormal behaviour. This
+           sigma is a good discriminator to detect abnormal behavior. This
            obviously depends also on the type of data and how "noisy" the data
            series is.
 
@@ -340,7 +340,7 @@ VVAARRIIAABBLLEESS
 
        TOTAL
            Returns the rate from each defined time slot multiplied with the
-           step size.  This can, for instance, return total bytes transfered
+           step size.  This can, for instance, return total bytes transferred
            when you have logged bytes per second. The time component returns
            the number of seconds.
 
@@ -389,4 +389,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-06-09                   RRDGRAPH_RPN(1)
+1.4.2                             2009-10-14                   RRDGRAPH_RPN(1)

@@ -71,7 +71,7 @@ DDEESSCCRRIIPPTTIIOONN
            values.
 
        If you PRINT a VDEF value, you can also print the time associated with
-       it by appending the string ::ssttrrffttiimmee to the format. Note that rrdtool
+       it by appending the string ::ssttrrffttiimmee to the format. Note that RRDtool
        uses the strftime function of your OSs C library. This means that the
        conversion specifier may vary. Check the manual page if you are
        uncertain. The following is a list of conversion specifiers usually
@@ -109,7 +109,7 @@ DDEESSCCRRIIPPTTIIOONN
 
        %%ss  The second as a decimal number (range 00 to 61).
 
-       %%SS  The seconds since the epoch (1.1.1970) (libc dependant non
+       %%SS  The seconds since the epoch (1.1.1970) (libc dependent non
            standard!)
 
        %%UU  The  week  number  of  the current year as a decimal number, range
@@ -270,7 +270,7 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
        showing how to use centered formatting.
 
        \\nn is a valid alias for \\ll since incomplete parsing in earlier versions
-       of rrdtool lead to this behavior and a number of people has been using
+       of RRDtool lead to this behavior and a number of people has been using
        it.
 
        Normally there are two space characters inserted between every two
@@ -359,8 +359,8 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
            'true' or 'false' whether to strike through the text
 
        ssttrriikkeetthhrroouugghh__ccoolloorr
-           The color of strikethrough lines; an RGB color specification such
-           as '#00FF00' or a color name such as 'red'
+           The color of crossed out lines; an RGB color specification such as
+           '#00FF00' or a color name such as 'red'
 
        ffaallllbbaacckk
            'true' or 'false' whether to enable fallback. If disabled, then
@@ -389,7 +389,7 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
 
        ii   Italic
 
-       ss   Strikethrough
+       ss   Strike through
 
        ssuubb Subscript
 
@@ -418,4 +418,4 @@ AAUUTTHHOORR
 
 
 
-1.3.999                           2009-05-10                 RRDGRAPH_GRAPH(1)
+1.4.2                             2009-10-14                 RRDGRAPH_GRAPH(1)

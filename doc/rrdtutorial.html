@@ -141,11 +141,11 @@ graphing other data sources including temperature, speed, voltage,
 number of printouts and the like.</p>
 <p>Most likely you will start to use RRDtool to store and process data
 collected via SNMP. The data will most likely be bytes (or bits)
-transfered from and to a network or a computer.  But it can also be
+transferred from and to a network or a computer.  But it can also be
 used to display tidal waves, solar radiation, power consumption,
 number of visitors at an exhibition, noise levels near an airport,
 temperature on your favorite holiday location, temperature in the
-fridge and whatever you imagination can come up with.</p>
+fridge and whatever your imagination can come up with.</p>
 <p>You only need a sensor to measure the data and be able to feed the
 numbers into RRDtool. RRDtool then lets you create a database, store
 data in it, retrieve that data and create graphs in PNG format for
@@ -197,7 +197,7 @@ or compare kilometers (miles if you wish) with bits and bytes. It's
 all the same: some number over some time.</p>
 <p>Assume we have a device that transfers bytes to and from the Internet.
 This device keeps a counter that starts at zero when it is turned on,
-increasing with every byte that is transfered. This counter will probably have
+increasing with every byte that is transferred. This counter will probably have
 a maximum value. If this value is reached and an extra byte is counted,
 the counter starts over at zero. This is the same as many counters
 in the world such as the mileage counter in a car.</p>
@@ -208,7 +208,7 @@ In the SNMP world most of the counters are 32 bits. That means they are
 counting from 0 to 4294967295. We will use these values in the examples.
 The device, when asked, returns the current value of the counter. We
 know the time that has passes since we last asked so we now know how
-many bytes have been transfered ***on average*** per second. This is
+many bytes have been transferred ***on average*** per second. This is
 not very hard to calculate. First in words, then in calculations:</p>
 <ol>
 <li>
@@ -542,7 +542,7 @@ whatever. Any incrementing counter can be monitored and graphed using
 the stuff you learned so far. Later on we will also be able to monitor
 other types of values like temperature.</p>
 <p>Many people interested in RRDtool will use the counter that keeps track
-of octets (bytes) transfered by a network device. So let's do just
+of octets (bytes) transferred by a network device. So let's do just
 that next. We will start with a description of how to collect data.</p>
 <p>Some people will make a remark that there are tools which can do this data
 collection for you. They are right! However, I feel it is important that

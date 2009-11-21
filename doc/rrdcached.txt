@@ -19,7 +19,7 @@ DDEESSCCRRIIPPTTIIOONN
 
        The daemon was written with big setups in mind. Those setups usually
        run into IO related problems sooner or later for reasons that are
-       beyond the scope of this document. Check the wiki at the RRDTool
+       beyond the scope of this document. Check the wiki at the RRDtool
        homepage for details. Also check "SECURITY CONSIDERATIONS" below before
        using this daemon! A detailed description of how the daemon operates
        can be found in the "HOW IT WORKS" section below.
@@ -73,9 +73,9 @@ OOPPTTIIOONNSS
            A complete list of available commands can be found in the section
            "Valid Commands" below. There are two minor special exceptions:
 
-           Â·   The "HELP" and "QUIT" commands are always allowed.
+           ·   The "HELP" and "QUIT" commands are always allowed.
 
-           Â·   If the "BATCH" command is accepted, the .. command will
+           ·   If the "BATCH" command is accepted, the .. command will
                automatically be accepted, too.
 
            Please also read "SECURITY CONSIDERATIONS" below.
@@ -173,16 +173,25 @@ AAFFFFEECCTTEEDD RRRRDDTTOOOOLL CCOOMMMMAANNDDSS
        command line argument ----ddaaeemmoonn or the environment variable
        RRRRDDCCAACCHHEEDD__AADDDDRREESSSS:
 
-       dduummpp
-       ffeettcchh
-       fflluusshh
-       ggrraapphh
-       ggrraapphhvv
-       iinnffoo
-       llaasstt
-       llaassttuuppddaattee
-       uuppddaattee
-       xxppoorrtt
+       ·   dump
+
+       ·   fetch
+
+       ·   flush
+
+       ·   graph
+
+       ·   graphv
+
+       ·   info
+
+       ·   last
+
+       ·   lastupdate
+
+       ·   update
+
+       ·   xport
 
        The uuppddaattee command can send values to the daemon instead of writing
        them to the disk itself. All other commands can send a FFLLUUSSHH command
@@ -209,7 +218,7 @@ HHOOWW IITT WWOORRKKSS
        When appending a value to a tree node, it is checked whether it's time
        to write the values to disk. Values are written to disk if
        "now() - First >= timeout", where "timeout" is the timeout specified
-       using the --ww option, see OPTIONS. If the values are "old enough" they
+       using the --ww option, see "OPTIONS". If the values are "old enough" they
        will be enqueued in the "update queue", i. e. they will be appended to
        the linked list shown below.  Because the tree nodes and the elements
        of the linked list are the same data structures in memory, any update
@@ -264,19 +273,19 @@ HHOOWW IITT WWOORRKKSS
 
        The above diagram demonstrates:
 
-       Â·   Files/values are stored in a (balanced) tree.
+       ·   Files/values are stored in a (balanced) tree.
 
-       Â·   Tree nodes and entries in the update queue are the same data
+       ·   Tree nodes and entries in the update queue are the same data
            structure.
 
-       Â·   The local time ("First") and the time specified in updates ("Time")
+       ·   The local time ("First") and the time specified in updates ("Time")
            may differ.
 
-       Â·   Timed out values are inserted at the "tail".
+       ·   Timed out values are inserted at the "tail".
 
-       Â·   Explicitly flushed values are inserted at the "head".
+       ·   Explicitly flushed values are inserted at the "head".
 
-       Â·   ASCII art rocks.
+       ·   ASCII art rocks.
 
 SSEECCUURRIITTYY CCOONNSSIIDDEERRAATTIIOONNSS
    AAuutthheennttiiccaattiioonn
@@ -322,11 +331,11 @@ SSEECCUURRIITTYY CCOONNSSIIDDEERRAATTIIOONNSS
        the future, your files will be messed up good!
 
    CCoonncclluussiioonn
-       Â·   Security is the job of the administrator.
+       ·   Security is the job of the administrator.
 
-       Â·   We recommend to allow write access via UNIX domain sockets only.
+       ·   We recommend to allow write access via UNIX domain sockets only.
 
-       Â·   You have been warned.
+       ·   You have been warned.
 
 PPRROOTTOOCCOOLL
        The daemon communicates with clients using a line based ASCII protocol
@@ -525,12 +534,13 @@ SSEEEE AALLSSOO
        rrdtool, rrdgraph
 
 AAUUTTHHOORR
-       rrrrddccaacchheedd and this manual page have been written by Florian Forster
-       <octo at verplant.org>.
+       Florian Forster <octo at verplant.org>
+
+       Both rrrrddccaacchheedd and this manual page have been written by Florian.
 
 CCOONNTTRRIIBBUUTTOORRSS
        kevin brintnall <kbrint@rufus.net>
 
 
 
-1.3.999                           2009-09-24                      RRDCACHED(1)
+1.4.2                             2009-11-15                      RRDCACHED(1)
