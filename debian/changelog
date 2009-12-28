@@ -5,14 +5,15 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
     - Prepare to build with Python 2.6.
 
   [ Sebastian Harl ]
-  * New upstream release:
+  * New upstream release; thanks to Antoine Beaupre for reporting this
+    (Closes: #559370):
     - Fixed some typos in the manpages; thanks to Justin T. Pryzby for
       reporting this (Closes: #550919).
   * debian/README.Debian:
     - Added a note about <http://oss.oetiker.ch/rrdtool/pub/contrib/> as
       requested in #323969 and lost in 1.2.26-1.
 
- -- Sebastian Harl <tokkee@debian.org>  Sat, 21 Nov 2009 19:21:06 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Tue, 29 Dec 2009 00:06:02 +0100
 
 rrdtool (1.4~rc2+20091004-1) experimental; urgency=low
 
