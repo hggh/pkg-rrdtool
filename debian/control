@@ -168,7 +168,7 @@ Description: time-series data storage and display system (Python interface)
 Package: librrd-ruby
 Architecture: all
 Section: ruby
-Depends: ${rubydefault:Depends}
+Depends: ${rubydefault:Depends}, ${misc:Depends}
 Description: time-series data storage and display system (Ruby interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
