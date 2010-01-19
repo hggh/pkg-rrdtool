@@ -17,8 +17,10 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
       rrdtool-dbg packages) (Closes: #565833, #565835).
   * debian/control:
     - Let librrd-ruby depend on ${misc:Depends} (to shut up lintian, mostly).
+  * Added debian/rrdtool.doc-base:
+    - … pointing to /u/s/d/rrdtool/html/.
 
- -- Sebastian Harl <tokkee@debian.org>  Tue, 19 Jan 2010 23:34:51 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Wed, 20 Jan 2010 00:00:10 +0100
 
 rrdtool (1.4~rc2+20091004-1) experimental; urgency=low
 
