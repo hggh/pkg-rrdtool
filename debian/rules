@@ -20,7 +20,7 @@ endif
 
 
 #Ruby versions to build for
-RUBY_VERS := 1.8 1.9
+RUBY_VERS := 1.8 1.9.1
 RUBY_DEFAULT_VERS := 1.8
 
 PY_VERS := $(shell pyversions -vr)

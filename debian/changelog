@@ -12,8 +12,11 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
   * debian/README.Debian:
     - Added a note about <http://oss.oetiker.ch/rrdtool/pub/contrib/> as
       requested in #323969 and lost in 1.2.26-1.
+  * debian/control, debian/rules:
+    - Switched from Ruby 1.9 to Ruby 1.9.1 (affecting the librrd-ruby1.9 and
+      rrdtool-dbg packages) (Closes: #565833, #565835).
 
- -- Sebastian Harl <tokkee@debian.org>  Tue, 29 Dec 2009 00:06:02 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Tue, 19 Jan 2010 23:30:55 +0100
 
 rrdtool (1.4~rc2+20091004-1) experimental; urgency=low
 
