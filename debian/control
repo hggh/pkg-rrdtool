@@ -226,7 +226,7 @@ Package: liblua5.1-rrd-dev
 Architecture: any
 Section: libdevel
 Depends: ${shlibs:Depends}, ${misc:Depends}, liblua5.1-rrd0 (= ${binary:Version})
-Description: time-series data storage and display system (Lua 5.1 interface)
+Description: time-series data storage and display system (Lua 5.1 development)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
  server load average). It stores the data in Round Robin Databases (RRDs),
