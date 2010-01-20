@@ -14,7 +14,8 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
       requested in #323969 and lost in 1.2.26-1.
   * debian/control, debian/rules:
     - Switched from Ruby 1.9 to Ruby 1.9.1 (affecting the librrd-ruby1.9 and
-      rrdtool-dbg packages) (Closes: #565833, #565835).
+      rrdtool-dbg packages); thanks to Lucas Nussbaum for reporting this
+      (Closes: #565833, #565835).
   * debian/control:
     - Let librrd-ruby depend on ${misc:Depends} (to shut up lintian, mostly).
   * Added debian/rrdtool.doc-base:
@@ -22,7 +23,7 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
   * Added debian/rrdcached.doc-base:
     - … pointing to /u/s/d/rrdcached/html/.
 
- -- Sebastian Harl <tokkee@debian.org>  Wed, 20 Jan 2010 00:35:04 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Wed, 20 Jan 2010 08:35:15 +0100
 
 rrdtool (1.4~rc2+20091004-1) experimental; urgency=low
 
