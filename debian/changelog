@@ -1,4 +1,4 @@
-rrdtool (1.4.2-1) UNRELEASED; urgency=low
+rrdtool (1.4.2-1) unstable; urgency=low
 
   [ Bernd Zeimetz ]
   * debian/rules:
@@ -9,6 +9,7 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
     (Closes: #559370):
     - Fixed some typos in the manpages; thanks to Justin T. Pryzby for
       reporting this (Closes: #550919).
+  * Uploading to unstable as this is not an SVN snapshot any more.
   * debian/README.Debian:
     - Added a note about <http://oss.oetiker.ch/rrdtool/pub/contrib/> as
       requested in #323969 and lost in 1.2.26-1.
@@ -23,7 +24,7 @@ rrdtool (1.4.2-1) UNRELEASED; urgency=low
   * Added debian/rrdcached.doc-base:
     - … pointing to /u/s/d/rrdcached/html/.
 
- -- Sebastian Harl <tokkee@debian.org>  Wed, 20 Jan 2010 08:35:15 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Thu, 21 Jan 2010 22:56:17 +0100
 
 rrdtool (1.4~rc2+20091004-1) experimental; urgency=low
 
