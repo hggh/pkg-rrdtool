@@ -4,8 +4,11 @@ rrdtool (1.4.2-2) unstable; urgency=low
     - Added bts573638-rrdcgi-segfault: upstream patch fixing a segfault in
       rrdcgi's printlasttime() (and possibly others); thanks to Robert Luberda
       for reporting this (Closes: #573638).
+    - Added bts573299-rrdgraph-M: fix short option parsing in rrd_graph() --
+      added support for '-M' as documented in the manpage; thanks to Ralf
+      Hildebrandt for reporting this (Closes: #573299).
 
- -- Sebastian Harl <tokkee@debian.org>  Sun, 21 Mar 2010 21:28:05 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Sun, 21 Mar 2010 21:33:46 +0100
 
 rrdtool (1.4.2-1) unstable; urgency=low
 

@@ -5,3 +5,4 @@ no-rpath-for-perl
 implicit-decl-fix
 bts530814-hurd
 bts573638-rrdcgi-segfault
+bts573299-rrdgraph-M
