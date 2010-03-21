@@ -7,8 +7,10 @@ rrdtool (1.4.2-2) unstable; urgency=low
     - Added bts573299-rrdgraph-M: fix short option parsing in rrd_graph() --
       added support for '-M' as documented in the manpage; thanks to Ralf
       Hildebrandt for reporting this (Closes: #573299).
+  * debian/control:
+    - Updated Standards-Version to 3.8.4 -- no changes.
 
- -- Sebastian Harl <tokkee@debian.org>  Sun, 21 Mar 2010 21:33:46 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Sun, 21 Mar 2010 21:37:37 +0100
 
 rrdtool (1.4.2-1) unstable; urgency=low
 
