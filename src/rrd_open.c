@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 1970 2009-11-15 11:54:23Z oetiker $
+ * $Id: rrd_open.c 2042 2010-03-22 16:05:55Z oetiker $
  *****************************************************************************/
 
 #ifdef WIN32
@@ -171,6 +171,9 @@ rrd_file_t *rrd_open(
         }
         if (rdwr & RRD_CREAT) {
             flags |= (O_CREAT | O_TRUNC);
+        }
+        if (rdwr & RRD_EXCL) {
+            flags |= O_EXCL;
         }
     }
     if (rdwr & RRD_READAHEAD) {

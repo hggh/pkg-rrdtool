@@ -1,6 +1,6 @@
 dnl RRDtool AutoConf script ... 
 dnl ---------------------------
-dnl $Id: configure.ac 1970 2009-11-15 11:54:23Z oetiker $
+dnl $Id: configure.ac 2044 2010-03-22 17:02:55Z oetiker $
 dnl
 dnl Created by Jeff Allen, Tobi Oetiker, Blair Zajac
 dnl
@@ -13,14 +13,14 @@ AC_PREREQ(2.59)
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.4.2])
+AC_INIT([rrdtool],[1.4.3])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.4002
+NUMVERS=1.4003
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -31,7 +31,7 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=5:2:1
+LIBVERS=5:3:1
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
@@ -182,7 +182,7 @@ CONFIGURE_PART(Checking for Header Files)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
+AC_CHECK_HEADERS(langinfo.h stdint.h inttypes.h libgen.h features.h sys/stat.h sys/types.h fcntl.h fp_class.h malloc.h unistd.h ieeefp.h math.h sys/times.h sys/param.h sys/resource.h signal.h float.h stdio.h stdlib.h errno.h string.h ctype.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -209,7 +209,7 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(tzset fsync mbstowcs opendir readdir chdir chroot getuid strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+AC_CHECK_FUNCS(nl_langinfo tzset fsync mbstowcs opendir readdir chdir chroot getuid strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
 
 AC_FUNC_STRERROR_R
 
@@ -273,7 +273,7 @@ AC_CHECK_FUNCS(posix_fadvise)
 
 CONFIGURE_PART(Libintl Processing)
 
-AM_GNU_GETTEXT_VERSION(0.14.4)
+AM_GNU_GETTEXT_VERSION(0.17)
 AM_GNU_GETTEXT()
 
 CONFIGURE_PART(IEEE Math Checks)
@@ -344,6 +344,12 @@ AC_FULL_IEEE
 CONFIGURE_PART(Resolve Portability Issues)
 
 CHECK_FOR_WORKING_MS_ASYNC
+
+dnl do we have nl_langinfo(_NL_TIME_WEEK_1STDAY)
+AC_CHECK_FUNCS(_NL_TIME_WEEK_1STDAY, ,
+  [AC_MSG_CHECKING([for nl_langinfo(_NL_TIME_WEEK_1STDAY) with langinfo.h])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <langinfo.h>]], [[nl_langinfo(_NL_TIME_WEEK_1STDAY)]])],[AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE__NL_TIME_WEEK_1STDAY)],[AC_MSG_RESULT(no)])])
 
 dnl Do we need getopt_long
 
@@ -459,26 +465,26 @@ AC_LINK_IFELSE(
     ]  
 )
 
-dnl is time_t long or long long ?
-AC_DEFINE([TIME_T_IS_LONG], [], [time_t is long])
-AC_DEFINE([TIME_T_IS_LONG_LONG], [], [time_t is long long])
+dnl is time_t 32 of 64 bit ?
+AC_DEFINE([TIME_T_IS_32BIT], [], [time_t is 32bit])
+AC_DEFINE([TIME_T_IS_64BIT], [], [time_t is 64bit])
 AC_MSG_CHECKING([the type of time_t])
 AC_RUN_IFELSE(
     AC_LANG_PROGRAM(
         [[#include <time.h>]],
-        [[if (sizeof(long) != sizeof(time_t)) return 1; ]]
+        [[if (sizeof(time_t) != 4) return 1; ]]
         ),
-    [ AC_MSG_RESULT([time_t is long])
-      AC_DEFINE([TIME_T_IS_LONG])
+    [ AC_MSG_RESULT([time_t is 32 bit])
+      AC_DEFINE([TIME_T_IS_32BIT])
     ],
     [ AC_RUN_IFELSE(
         AC_LANG_PROGRAM(
         [[#include <time.h>]],
-        [[if (sizeof(long long) != sizeof(time_t)) return 1; ]]
+        [[if (sizeof(time_t) != 8) return 1; ]]
         ),
         [
-          AC_MSG_RESULT([time_t is long long])
-          AC_DEFINE([TIME_T_IS_LONG_LONG])
+          AC_MSG_RESULT([time_t is 64 bit])
+          AC_DEFINE([TIME_T_IS_64BIT])
         ],
         [AC_MSG_ERROR([can not figure type of time_t])]
       )

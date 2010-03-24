@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCREATE 1"
-.TH RRDCREATE 1 "2009-10-14" "1.4.2" "rrdtool"
+.TH RRDCREATE 1 "2010-03-08" "1.4.3" "rrdtool"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -136,6 +136,7 @@ rrdcreate \- Set up a new Round Robin Database
 \&\fBrrdtool\fR \fBcreate\fR \fIfilename\fR
 [\fB\-\-start\fR|\fB\-b\fR\ \fIstart\ time\fR]
 [\fB\-\-step\fR|\fB\-s\fR\ \fIstep\fR]
+[\fB\-\-no\-overwrite\fR]
 [\fB\s-1DS:\s0\fR\fIds-name\fR\fB:\fR\fI\s-1DST\s0\fR\fB:\fR\fIdst\ arguments\fR]
 [\fB\s-1RRA:\s0\fR\fI\s-1CF\s0\fR\fB:\fR\fIcf\ arguments\fR]
 .SH "DESCRIPTION"
@@ -160,6 +161,9 @@ See also AT-STYLE \s-1TIME\s0 \s-1SPECIFICATION\s0 section in the
 .IX Subsection "--step|-s step (default: 300 seconds)"
 Specifies the base interval in seconds with which data will be fed
 into the \fB\s-1RRD\s0\fR.
+.SS "\fB\-\-no\-overwrite\fP"
+.IX Subsection "--no-overwrite"
+Do not clobber an existing file of the same name.
 .SS "\fB\s-1DS:\s0\fP\fIds-name\fP\fB:\fP\fI\s-1DST\s0\fP\fB:\fP\fIdst arguments\fP"
 .IX Subsection "DS:ds-name:DST:dst arguments"
 A single \fB\s-1RRD\s0\fR can accept input from several data sources (\fB\s-1DS\s0\fR),

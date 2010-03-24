@@ -7,7 +7,7 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll ccrreeaattee _f_i_l_e_n_a_m_e [----ssttaarrtt|--bb _s_t_a_r_t _t_i_m_e] [----sstteepp|--ss _s_t_e_p]
-       [DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s] [RRRRAA::_C_F::_c_f _a_r_g_u_m_e_n_t_s]
+       [----nnoo--oovveerrwwrriittee] [DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s] [RRRRAA::_C_F::_c_f _a_r_g_u_m_e_n_t_s]
 
 DDEESSCCRRIIPPTTIIOONN
        The create function of RRDtool lets you set up new Round Robin Database
@@ -29,6 +29,9 @@ DDEESSCCRRIIPPTTIIOONN
    ----sstteepp||--ss _s_t_e_p ((ddeeffaauulltt:: 330000 sseeccoonnddss))
        Specifies the base interval in seconds with which data will be fed into
        the RRRRDD.
+
+   ----nnoo--oovveerrwwrriittee
+       Do not clobber an existing file of the same name.
 
    DDSS::_d_s_-_n_a_m_e::_D_S_T::_d_s_t _a_r_g_u_m_e_n_t_s
        A single RRRRDD can accept input from several data sources (DDSS), for
@@ -528,4 +531,4 @@ AAUUTTHHOORR
 
 
 
-1.4.2                             2009-10-14                      RRDCREATE(1)
+1.4.3                             2010-03-08                      RRDCREATE(1)

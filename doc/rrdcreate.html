@@ -25,6 +25,7 @@
 		<li><a href="#filename"><em>filename</em></a></li>
 		<li><a href="#__start__b_start_time__default__now___10s_"><strong>-start</strong>|<strong>-b</strong> <em>start time</em> (default: now - 10s)</a></li>
 		<li><a href="#__step__s_step__default__300_seconds_"><strong>-step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></li>
+		<li><a href="#__no_overwrite"><strong>-no-overwrite</strong></a></li>
 		<li><a href="#ds_ds_name_dst_dst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></li>
 		<li><a href="#rra_cf_cf_arguments"><strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf arguments</em></a></li>
 	</ul>
@@ -55,6 +56,7 @@
 <p><strong>rrdtool</strong> <strong>create</strong> <em>filename</em>
 [<strong>--start</strong>|<strong>-b</strong>&nbsp;<em>start&nbsp;time</em>]
 [<strong>--step</strong>|<strong>-s</strong>&nbsp;<em>step</em>]
+[<strong>--no-overwrite</strong>]
 [<strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst&nbsp;arguments</em>]
 [<strong>RRA:</strong><em>CF</em><strong>:</strong><em>cf&nbsp;arguments</em>]</p>
 <p>
@@ -83,6 +85,10 @@ any data timed before or at the time specified.</p>
 <h2><a name="__step__s_step__default__300_seconds_"><strong>--step</strong>|<strong>-s</strong> <em>step</em> (default: 300 seconds)</a></h2>
 <p>Specifies the base interval in seconds with which data will be fed
 into the <strong>RRD</strong>.</p>
+<p>
+</p>
+<h2><a name="__no_overwrite"><strong>--no-overwrite</strong></a></h2>
+<p>Do not clobber an existing file of the same name.</p>
 <p>
 </p>
 <h2><a name="ds_ds_name_dst_dst_arguments"><strong>DS:</strong><em>ds-name</em><strong>:</strong><em>DST</em><strong>:</strong><em>dst arguments</em></a></h2>

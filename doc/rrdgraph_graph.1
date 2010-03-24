@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDGRAPH_GRAPH 1"
-.TH RRDGRAPH_GRAPH 1 "2009-10-14" "1.4.2" "rrdtool"
+.TH RRDGRAPH_GRAPH 1 "2010-01-25" "1.4.3" "rrdtool"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -467,8 +467,17 @@ in connection with \fB\f(CB%s\fB\fR to suppress empty unit strings.
 A special case is \s-1COMMENT:\s0\fB\es\fR which inserts some additional vertical space
 before placing the next row of legends.
 .PP
-If you are using the proportional font in your graph, you can use tab
-characters or the sequence \fB\et\fR to line-up legend elements. Note that
+If you want to have left and right aligned legends on the same line use \s-1COMMENT:\s0\fB\eu\fR
+to go one line back like this:
+.PP
+.Vb 3
+\& COMMENT:left\el
+\& COMMENT:\eu
+\& COMMENT:right\er
+.Ve
+.PP
+When using a proportional font in your graph, the tab
+characters or the sequence \fB\et\fR will line-up legend elements. Note that
 the tabs inserted are relative to the start of the current legend
 element!
 .PP

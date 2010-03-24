@@ -412,8 +412,14 @@ in connection with <strong>%s</strong> to suppress empty unit strings.</p>
  GPRINT:a:MAX:%lf%s\g</pre>
 <p>A special case is COMMENT:<strong>\s</strong> which inserts some additional vertical space
 before placing the next row of legends.</p>
-<p>If you are using the proportional font in your graph, you can use tab
-characters or the sequence <strong>\t</strong> to line-up legend elements. Note that
+<p>If you want to have left and right aligned legends on the same line use COMMENT:<strong>\u</strong>
+to go one line back like this:</p>
+<pre>
+ COMMENT:left\l
+ COMMENT:\u
+ COMMENT:right\r</pre>
+<p>When using a proportional font in your graph, the tab
+characters or the sequence <strong>\t</strong> will line-up legend elements. Note that
 the tabs inserted are relative to the start of the current legend
 element!</p>
 <p>Since RRDtool 1.3 is using Pango for rending text, you can use Pango markup.

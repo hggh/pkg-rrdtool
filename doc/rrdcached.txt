@@ -6,9 +6,9 @@ NNAAMMEE
        rrdcached - Data caching daemon for rrdtool
 
 SSYYNNOOPPSSIISS
-       rrrrddccaacchheedd [--PP _p_e_r_m_i_s_s_i_o_n_s] [--ll _a_d_d_r_e_s_s] [--ww _t_i_m_e_o_u_t] [--zz _d_e_l_a_y]
-       [--ff _t_i_m_e_o_u_t] [--pp _p_i_d___f_i_l_e] [--tt _w_r_i_t_e___t_h_r_e_a_d_s] [--jj _j_o_u_r_n_a_l___d_i_r] [-F]
-       [-g] [--bb _b_a_s_e___d_i_r [--BB]]
+       rrrrddccaacchheedd [--PP _p_e_r_m_i_s_s_i_o_n_s] [--ll _a_d_d_r_e_s_s] [--ss _g_r_o_u_p] [--ww _t_i_m_e_o_u_t]
+       [--zz _d_e_l_a_y] [--ff _t_i_m_e_o_u_t] [--pp _p_i_d___f_i_l_e] [--tt _w_r_i_t_e___t_h_r_e_a_d_s]
+       [--jj _j_o_u_r_n_a_l___d_i_r] [-F] [-g] [--bb _b_a_s_e___d_i_r [--BB]]
 
 DDEESSCCRRIIPPTTIIOONN
        rrrrddccaacchheedd is a daemon that receives updates to existing RRD files,
@@ -30,7 +30,7 @@ OOPPTTIIOONNSS
            on that socket. If _a_d_d_r_e_s_s begins with "unix:", everything
            following that prefix is interpreted as the path to a UNIX domain
            socket. Otherwise the address or node name are resolved using
-           getaddrinfo.
+           "getaddrinfo()".
 
            For network sockets, a port may be specified by using the form
            "[[_a_d_d_r_e_s_s]]::_p_o_r_t_". If the address is an IPv4 address or a fully
@@ -52,6 +52,40 @@ OOPPTTIIOONNSS
            If the --ll option is not specified the default address,
            "unix:/tmp/rrdcached.sock", will be used.
 
+       --ss _g_r_o_u_p___n_a_m_e|_g_i_d
+           Set the group permissions of a UNIX domain socket. The option
+           accepts either a numeric group id or group name. That group will
+           then have both read and write permissions (the socket will have
+           file permissions 0750) for the socket and, therefore, is able to
+           send commands to the daemon. This may be useful in cases where you
+           cannot easily run all RRD processes with the same user privileges
+           (e.g. graph generating CGI scripts that typically run in the
+           permission context of the web server).
+
+           This option affects the _f_o_l_l_o_w_i_n_g UNIX socket addresses (the
+           following --ll options), i.e., you may specify different settings for
+           different sockets.
+
+           The default is not to change ownership or permissions of the socket
+           and, thus, use the system default.
+
+       --mm _m_o_d_e
+           Set the file permissions of a UNIX domain socket. The option
+           accepts an octal number representing the bit pattern for the mode
+           (see _c_h_m_o_d(1) for details).
+
+           Please note that not all systems honor this setting. On Linux,
+           read/write permissions are required to connect to a UNIX socket.
+           However, many BSD-derived systems ignore permissions for UNIX
+           sockets. See _u_n_i_x(7) for details.
+
+           This option affects the _f_o_l_l_o_w_i_n_g UNIX socket addresses (the
+           following --ll options), i.e., you may specify different settings for
+           different sockets.
+
+           The default is not to change ownership or permissions of the socket
+           and, thus, use the system default.
+
        --PP _c_o_m_m_a_n_d[,_c_o_m_m_a_n_d[,...]]
            Specifies the commands accepted via a network socket. This allows
            administrators of _R_R_D_C_a_c_h_e_D to control the actions accepted from
@@ -63,7 +97,7 @@ OOPPTTIIOONNSS
 
              rrdcached -P FLUSH,PENDING $MORE_ARGUMENTS
 
-           The --PP option effects the _f_o_l_l_o_w_i_n_g socket addresses (the following
+           The --PP option affects the _f_o_l_l_o_w_i_n_g socket addresses (the following
            --ll options). In the following example, only the IPv4 network socket
            (address 10.0.0.1) will be restricted to the "FLUSH" and "PENDING"
            commands:
@@ -543,4 +577,4 @@ CCOONNTTRRIIBBUUTTOORRSS
 
 
 
-1.4.2                             2009-11-15                      RRDCACHED(1)
+1.4.3                             2010-03-22                      RRDCACHED(1)

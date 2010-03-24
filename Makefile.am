@@ -1,4 +1,4 @@
-# $Id: Makefile.am 1955 2009-10-27 17:49:29Z oetiker $
+# $Id: Makefile.am 2039 2010-03-22 15:05:43Z oetiker $
 
 ## Process this file with automake to produce Makefile.in
 RSYNC = rsync --rsh=ssh
@@ -28,16 +28,6 @@ ACLOCAL_M4= $(top_srcdir)/aclocal.m4
 #AUTOHEADER = @AUTOHEADER@ --localdir=$(top_srcdir)/config
 #AUTOCONF = @AUTOCONF@ --localdir=$(top_srcdir)/config
 
-to-docs: to-versync
-	(cd doc && $(MAKE) clean && $(MAKE) && $(MAKE) pdf)
-
-to-dist: to-docs dist
-	mv $(PACKAGE)-$(VERSION).tar.gz archive
-
-to-scp: to-dist
-	cp CHANGES  archive/$(PACKAGE)-$(VERSION).tar.gz /home/oetiker/public_html/webtools/rrdtool/pub/
-	(cd /home/oetiker/public_html/webtools/rrdtool/pub; rm $(PACKAGE).tar.gz; ln -s $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE).tar.gz)
-
 #	$(RSYNC) CHANGES archive/$(PACKAGE)-$(VERSION).tar.gz tobi@ipn.caida.org:/ipn/web/Tools/RRDtool/pub/
 
 site-perl-inst: site-perl-install
@@ -50,7 +40,7 @@ site-tcl-install: all
 	cd bindings/tcl && $(MAKE) tcl-install
 
 site-python-install: all
-	cd bindings/python && $(PYTHON) setup.py install
+	cd bindings/python && $(PYTHON) setup.py install $(if $(DESTDIR),--root=$(DESTDIR))
 
 # find . -name "*.c" -or -name "*.h" | xargs perl -0777 -n -e 'while (s/typedef\s+(?:unsigned\s+|signed\s+|unival\s+)?\S+\s+\*?([^{}\s;(]+)//){print "-T$1\n"}'
 indent:
