@@ -17,7 +17,7 @@ Copyright:
  A tool for fast logging of numerical data graphical display
  of this data.
 
- Copyright (c) 1998-2009 Tobias Oetiker
+ Copyright (c) 1998-2010 Tobias Oetiker
  All rights reserved.
 
  GNU GPL License
@@ -224,6 +224,14 @@ Files with different copyrights/licenses:
 
     Author: Ketan Patel <k2pattu@yahoo.com>
 
+ * m4/* (except m4/acinclude.m4):
+
+   Copyright (C) 1995-2007 Free Software Foundation, Inc.
+
+   This file is free software; the Free Software Foundation
+   gives unlimited permission to copy and/or distribute it,
+   with or without modifications, as long as this notice is preserved.
+
  * src/{fnv.h,hash_32.c}:
 
      Please do not copyright this code.  This code is in the public domain.
@@ -327,7 +335,7 @@ Files with different copyrights/licenses:
 
  * src/rrd_hw.c:
 
-    Copyright (C) 1997-2009 Tobias Oetiker
+    Copyright (C) 1997-2010 Tobias Oetiker
     Initial version by Jake Brutlag, WebTV Networks, 5/1/00
 
  * src/rrd_i18n.h
@@ -337,17 +345,17 @@ Files with different copyrights/licenses:
  * src/rrd_is_thread_safe.h, src/rrd_not_thread_safe.c, src/rrd_thread_safe.c,
    src/rrd_thread_safe_nt.c:
 
-    Copyright 1997-2009 Tobias Oetiker
+    Copyright 1997-2010 Tobias Oetiker
     Copyright 2003 Peter Stamfest <peter@stamfest.at>
 
  * src/rrd_last.c:
 
-    Copyright (C) 1997-2009 Tobias Oetiker
+    Copyright (C) 1997-2010 Tobias Oetiker
     Initial version by Russ Wright, @Home Network, 9/28/98
 
  * src/rrd_lastupdate.c, src/rrd_restore.c, src/rrd_update.c:
 
-    Copyright (C) 1997-2009 Tobias Oetiker
+    Copyright (C) 1997-2010 Tobias Oetiker
     Copyright (C) 2008 Florian Forster
 
  * src/rrd_utils.c:
