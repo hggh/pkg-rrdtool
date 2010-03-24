@@ -1,3 +1,9 @@
+rrdtool (1.4.3-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Sebastian Harl <tokkee@debian.org>  Wed, 24 Mar 2010 08:14:58 +0100
+
 rrdtool (1.4.2-2) unstable; urgency=low
 
   * debian/patches:
