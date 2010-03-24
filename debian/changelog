@@ -1,8 +1,11 @@
 rrdtool (1.4.3-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/patches:
+    - Removed bts573638-rrdcgi-segfault and bts573299-rrdgraph-M -- included
+      upstream.
 
- -- Sebastian Harl <tokkee@debian.org>  Wed, 24 Mar 2010 08:14:58 +0100
+ -- Sebastian Harl <tokkee@debian.org>  Wed, 24 Mar 2010 08:46:16 +0100
 
 rrdtool (1.4.2-2) unstable; urgency=low
 
