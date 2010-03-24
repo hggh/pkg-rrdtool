@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: rrdtool 1.4.3\n"
 "Report-Msgid-Bugs-To: http://oss.oetiker.ch/rrdtool-trac/newticket\n"
-"POT-Creation-Date: 2009-11-15 12:55+0100\n"
+"POT-Creation-Date: 2010-03-22 18:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,7 +78,6 @@ msgid ""
 "               Compiled %s %s\n"
 "\n"
 "Usage: rrdtool [options] command command_options\n"
-"\n"
 msgstr ""
 
 #: src/rrd_tool.c:56
@@ -86,13 +85,10 @@ msgid ""
 "Valid commands: create, update, updatev, graph, graphv,  dump, restore,\n"
 "\t\tlast, lastupdate, first, info, fetch, tune,\n"
 "\t\tresize, xport, flushcached\n"
-"\n"
 msgstr ""
 
 #: src/rrd_tool.c:61
-msgid ""
-"Valid remote commands: quit, ls, cd, mkdir, pwd\n"
-"\n"
+msgid "Valid remote commands: quit, ls, cd, mkdir, pwd\n"
 msgstr ""
 
 #: src/rrd_tool.c:65
@@ -101,62 +97,56 @@ msgid ""
 "\n"
 "\trrdtool create filename [--start|-b start time]\n"
 "\t\t[--step|-s step]\n"
+"\t\t[--no-overwrite|-O]\n"
 "\t\t[DS:ds-name:DST:dst arguments]\n"
 "\t\t[RRA:CF:cf arguments]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:72
+#: src/rrd_tool.c:73
 msgid ""
 "* dump - dump an RRD to XML\n"
 "\n"
 "\trrdtool dump filename.rrd >filename.xml\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:76
+#: src/rrd_tool.c:77
 msgid ""
 "* info - returns the configuration and status of the RRD\n"
 "\n"
 "\trrdtool info filename.rrd\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:80
+#: src/rrd_tool.c:81
 msgid ""
 "* restore - restore an RRD file from its XML form\n"
 "\n"
 "\trrdtool restore [--range-check|-r] [--force-overwrite|-f] filename.xml "
 "filename.rrd\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:84
+#: src/rrd_tool.c:85
 msgid ""
 "* last - show last update time for RRD\n"
 "\n"
 "\trrdtool last filename.rrd\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:88
+#: src/rrd_tool.c:89
 msgid ""
 "* lastupdate - returns the most recent datum stored for\n"
 "  each DS in an RRD\n"
 "\n"
 "\trrdtool lastupdate filename.rrd\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:92
+#: src/rrd_tool.c:93
 msgid ""
 "* first - show first update time for RRA within an RRD\n"
 "\n"
 "\trrdtool first filename.rrd [--rraindex number]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:96
+#: src/rrd_tool.c:97
 msgid ""
 "* update - update an RRD\n"
 "\n"
@@ -168,10 +158,9 @@ msgid ""
 "\t\tat-time@value[:value...]\n"
 "\n"
 "\t\t[ time:value[:value...] ..]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:105
+#: src/rrd_tool.c:106
 msgid ""
 "* updatev - a verbose version of update\n"
 "\treturns information about values, RRAs, and datasources updated\n"
@@ -183,10 +172,9 @@ msgid ""
 "\t\tat-time@value[:value...]\n"
 "\n"
 "\t\t[ time:value[:value...] ..]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:114
+#: src/rrd_tool.c:115
 msgid ""
 "* fetch - fetch data out of an RRD\n"
 "\n"
@@ -194,26 +182,24 @@ msgid ""
 "\t\t[-r|--resolution resolution]\n"
 "\t\t[-s|--start start] [-e|--end end]\n"
 "\t\t[--daemon <address>]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:121
+#: src/rrd_tool.c:122
 msgid ""
 "* flushcached - flush cached data out to an RRD file\n"
 "\n"
 "\trrdtool flushcached filename.rrd\n"
 "\t\t[--daemon <address>]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:128
+#: src/rrd_tool.c:129
 msgid ""
 "* graph - generate a graph from one or several RRD\n"
 "\n"
 "\trrdtool graph filename [-s|--start seconds] [-e|--end seconds]\n"
 msgstr ""
 
-#: src/rrd_tool.c:131
+#: src/rrd_tool.c:132
 msgid ""
 "* graphv - generate a graph from one or several RRD\n"
 "           with meta data printed before the graph\n"
@@ -221,7 +207,7 @@ msgid ""
 "\trrdtool graphv filename [-s|--start seconds] [-e|--end seconds]\n"
 msgstr ""
 
-#: src/rrd_tool.c:135
+#: src/rrd_tool.c:136
 msgid ""
 "\t\t[-x|--x-grid x-axis grid and label]\n"
 "\t\t[-Y|--alt-y-grid] [--full-size-mode]\n"
@@ -237,7 +223,7 @@ msgid ""
 "\t\t[-j|--only-graph]\n"
 msgstr ""
 
-#: src/rrd_tool.c:147
+#: src/rrd_tool.c:148
 msgid ""
 "\t\t[-n|--font FONTTAG:size:font]\n"
 "\t\t[-m|--zoom factor]\n"
@@ -248,6 +234,7 @@ msgid ""
 "\t\t[-B|--font-smoothing-threshold size]\n"
 "\t\t[-T|--tabwidth width]\n"
 "\t\t[-E|--slope-mode]\n"
+"\t\t[-P|--pango-markup]\n"
 "\t\t[-N|--no-gridfit]\n"
 "\t\t[-X|--units-exponent value]\n"
 "\t\t[-L|--units-length value]\n"
@@ -261,7 +248,7 @@ msgid ""
 "\t\t[DEF:vname=rrd:ds-name:CF]\n"
 msgstr ""
 
-#: src/rrd_tool.c:168
+#: src/rrd_tool.c:170
 msgid ""
 "\t\t[CDEF:vname=rpn-expression]\n"
 "\t\t[VDEF:vdefname=rpn-expression]\n"
@@ -269,6 +256,7 @@ msgid ""
 "\t\t[GPRINT:vdefname:format]\n"
 "\t\t[COMMENT:text]\n"
 "\t\t[SHIFT:vname:offset]\n"
+"\t\t[TEXTALIGN:{left|right|justified|center}]\n"
 "\t\t[TICK:vname#rrggbb[aa][:[fraction][:legend]]]\n"
 "\t\t[HRULE:value#rrggbb[aa][:legend]]\n"
 "\t\t[VRULE:value#rrggbb[aa][:legend]]\n"
@@ -277,10 +265,9 @@ msgid ""
 "\t\t[PRINT:vname:CF:format] (deprecated)\n"
 "\t\t[GPRINT:vname:CF:format] (deprecated)\n"
 "\t\t[STACK:vname[#rrggbb[aa][:legend]]] (deprecated)\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:182
+#: src/rrd_tool.c:185
 msgid ""
 " * tune -  Modify some basic properties of an RRD\n"
 "\n"
@@ -295,26 +282,22 @@ msgid ""
 "\t\t[--alpha adaptation-parameter]\n"
 msgstr ""
 
-#: src/rrd_tool.c:193
+#: src/rrd_tool.c:196
 msgid ""
-" * tune -  Modify some basic properties of an RRD\n"
-"\n"
 "\t\t[--beta adaptation-parameter]\n"
 "\t\t[--gamma adaptation-parameter]\n"
 "\t\t[--gamma-deviation adaptation-parameter]\n"
 "\t\t[--aberrant-reset ds-name]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:200
+#: src/rrd_tool.c:202
 msgid ""
 " * resize - alter the length of one of the RRAs in an RRD\n"
 "\n"
 "\trrdtool resize filename rranum GROW|SHRINK rows\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:203
+#: src/rrd_tool.c:205
 msgid ""
 "* xport - generate XML dump from one or several RRD\n"
 "\n"
@@ -325,54 +308,47 @@ msgid ""
 "\t\t[DEF:vname=rrd:ds-name:CF]\n"
 "\t\t[CDEF:vname=rpn-expression]\n"
 "\t\t[XPORT:vname:legend]\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:210
+#: src/rrd_tool.c:212
 msgid ""
 " * quit - closing a session in remote mode\n"
 "\n"
 "\trrdtool quit\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:213
+#: src/rrd_tool.c:215
 msgid ""
 " * ls - lists all *.rrd files in current directory\n"
 "\n"
 "\trrdtool ls\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:216
+#: src/rrd_tool.c:218
 msgid ""
 " * cd - changes the current directory\n"
 "\n"
 "\trrdtool cd new directory\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:219
+#: src/rrd_tool.c:221
 msgid ""
 " * mkdir - creates a new directory\n"
 "\n"
 "\trrdtool mkdir newdirectoryname\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:222
+#: src/rrd_tool.c:224
 msgid ""
 " * pwd - returns the current working directory\n"
 "\n"
 "\trrdtool pwd\n"
-"\n"
 msgstr ""
 
-#: src/rrd_tool.c:225
+#: src/rrd_tool.c:227
 msgid ""
 "RRDtool is distributed under the Terms of the GNU General\n"
 "Public License Version 2. (www.gnu.org/copyleft/gpl.html)\n"
 "\n"
 "For more information read the RRD manpages\n"
-"\n"
 msgstr ""

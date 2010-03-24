@@ -66,6 +66,7 @@
 <p><strong>rrdcached</strong>
 [<strong>-P</strong>&nbsp;<em>permissions</em>]
 [<strong>-l</strong>&nbsp;<em>address</em>]
+[<strong>-s</strong>&nbsp;<em>group</em>]
 [<strong>-w</strong>&nbsp;<em>timeout</em>]
 [<strong>-z</strong>&nbsp;<em>delay</em>]
 [<strong>-f</strong>&nbsp;<em>timeout</em>]
@@ -101,7 +102,7 @@ section below.</p>
 <p>Tells the daemon to bind to <em>address</em> and accept incoming connections on that
 socket. If <em>address</em> begins with <code>unix:</code>, everything following that prefix is
 interpreted as the path to a UNIX domain socket. Otherwise the address or node
-name are resolved using getaddrinfo.</p>
+name are resolved using <code>getaddrinfo()</code>.</p>
 <p>For network sockets, a port may be specified by using the form
 <code>[address]:port</code>. If the address is an IPv4 address or a fully
 qualified domain name (i.&nbsp;e. the address contains at least one dot
@@ -120,6 +121,38 @@ domain socket <strong>must</strong> start with a slash in the second case!</p>
 <p>If the <strong>-l</strong> option is not specified the default address,
 <code>unix:/tmp/rrdcached.sock</code>, will be used.</p>
 </dd>
+<dt><strong><a name="s_group_name_gid" class="item"><strong>-s</strong> <em>group_name</em>|<em>gid</em></a></strong></dt>
+
+<dd>
+<p>Set the group permissions of a UNIX domain socket. The option accepts either
+a numeric group id or group name. That group will then have both read and write
+permissions (the socket will have file permissions 0750) for the socket and,
+therefore, is able to send commands to the daemon. This
+may be useful in cases where you cannot easily run all RRD processes with the same
+user privileges (e.g. graph generating CGI scripts that typically run in the
+permission context of the web server).</p>
+<p>This option affects the <em>following</em> UNIX socket addresses (the following
+<strong>-l</strong> options), i.e., you may specify different settings for different
+sockets.</p>
+<p>The default is not to change ownership or permissions of the socket and, thus,
+use the system default.</p>
+</dd>
+<dt><strong><a name="m_mode" class="item"><strong>-m</strong> <em>mode</em></a></strong></dt>
+
+<dd>
+<p>Set the file permissions of a UNIX domain socket. The option accepts an octal
+number representing the bit pattern for the mode (see <em>chmod(1)</em> for
+details).</p>
+<p>Please note that not all systems honor this setting. On Linux, read/write
+permissions are required to connect to a UNIX socket. However, many
+BSD-derived systems ignore permissions for UNIX sockets. See <em>unix(7)</em> for
+details.</p>
+<p>This option affects the <em>following</em> UNIX socket addresses (the following
+<strong>-l</strong> options), i.e., you may specify different settings for different
+sockets.</p>
+<p>The default is not to change ownership or permissions of the socket and, thus,
+use the system default.</p>
+</dd>
 <dt><strong><a name="p_command_command" class="item"><strong>-P</strong> <em>command</em>[,<em>command</em>[,...]]</a></strong></dt>
 
 <dd>
@@ -130,7 +163,7 @@ sources.</p>
 For example, to allow the <code>FLUSH</code> and <code>PENDING</code> commands one could specify:</p>
 <pre>
   rrdcached -P FLUSH,PENDING $MORE_ARGUMENTS</pre>
-<p>The <strong>-P</strong> option effects the <em>following</em> socket addresses (the following <strong>-l</strong>
+<p>The <strong>-P</strong> option affects the <em>following</em> socket addresses (the following <strong>-l</strong>
 options). In the following example, only the IPv4 network socket (address
 <code>10.0.0.1</code>) will be restricted to the <code>FLUSH</code> and <code>PENDING</code> commands:</p>
 <pre>

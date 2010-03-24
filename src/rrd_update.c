@@ -1,10 +1,10 @@
 /*****************************************************************************
- * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
  *                Copyright by Florian Forster, 2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 1970 2009-11-15 11:54:23Z oetiker $
+ * $Id: rrd_update.c 2042 2010-03-22 16:05:55Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -212,7 +212,6 @@ static void initialize_cdp_val(
     unival *scratch,
     int current_cf,
     rrd_value_t pdp_temp_val,
-    unsigned long elapsed_pdp_st,
     unsigned long start_pdp_offset,
     unsigned long pdp_cnt);
 
@@ -227,8 +226,9 @@ static void reset_cdp(
     int cdp_idx,
     enum cf_en current_cf);
 
-static rrd_value_t initialize_average_carry_over(
+static rrd_value_t initialize_carry_over(
     rrd_value_t pdp_temp_val,
+    int         current_cf,
     unsigned long elapsed_pdp_st,
     unsigned long start_pdp_offset,
     unsigned long pdp_cnt);
@@ -905,12 +905,16 @@ static int parse_ds(
             if (i < tmpl_cnt) {
                 updvals[tmpl_idx[i++]] = p + 1;
             }
+            else {
+                rrd_set_error("found extra data on update argument: %s",p+1);
+                return -1;
+            }                
         }
     }
 
     if (i != tmpl_cnt) {
         rrd_set_error("expected %lu data source readings (got %lu) from %s",
-                      tmpl_cnt - 1, i, input);
+                      tmpl_cnt - 1, i - 1, input);
         return -1;
     }
 
@@ -1039,15 +1043,22 @@ static int update_pdp_prep(
             switch (dst_idx) {
             case DST_COUNTER:
             case DST_DERIVE:
-                for (ii = 0; updvals[ds_idx + 1][ii] != '\0'; ii++) {
-                    if ((updvals[ds_idx + 1][ii] < '0'
-                         || updvals[ds_idx + 1][ii] > '9')
-                        && (ii != 0 && updvals[ds_idx + 1][ii] != '-')) {
-                        rrd_set_error("not a simple integer: '%s'",
-                                      updvals[ds_idx + 1]);
+                /* Check if this is a valid integer. `U' is already handled in
+                 * another branch. */
+                for (ii = 0; updvals[ds_idx + 1][ii] != 0; ii++) {
+                    if ((ii == 0) && (dst_idx == DST_DERIVE)
+                            && (updvals[ds_idx + 1][ii] == '-'))
+                        continue;
+
+                    if ((updvals[ds_idx + 1][ii] < '0')
+                            || (updvals[ds_idx + 1][ii] > '9')) {
+                        rrd_set_error("not a simple %s integer: '%s'",
+                                (dst_idx == DST_DERIVE) ? "signed" : "unsigned",
+                                updvals[ds_idx + 1]);
                         return -1;
                     }
-                }
+                } /* for (ii = 0; updvals[ds_idx + 1][ii] != 0; ii++) */
+
                 if (rrd->pdp_prep[ds_idx].last_ds[0] != 'U') {
                     pdp_new[ds_idx] =
                         rrd_diff(updvals[ds_idx + 1],
@@ -1582,18 +1593,15 @@ static void update_cdp(
 
         if (*cdp_unkn_pdp_cnt > pdp_cnt * xff) {
             *cdp_primary_val = DNAN;
-            if (current_cf == CF_AVERAGE) {
-                *cdp_val =
-                    initialize_average_carry_over(pdp_temp_val,
-                                                  elapsed_pdp_st,
-                                                  start_pdp_offset, pdp_cnt);
-            } else {
-                *cdp_val = pdp_temp_val;
-            }
         } else {
             initialize_cdp_val(scratch, current_cf, pdp_temp_val,
-                               elapsed_pdp_st, start_pdp_offset, pdp_cnt);
-        }               /* endif meets xff value requirement for a valid value */
+                               start_pdp_offset, pdp_cnt);
+        }
+        *cdp_val =
+            initialize_carry_over(pdp_temp_val,current_cf,
+                                  elapsed_pdp_st,
+                                  start_pdp_offset, pdp_cnt);
+               /* endif meets xff value requirement for a valid value */
         /* initialize carry over CDP_unkn_pdp_cnt, this must after CDP_primary_val
          * is set because CDP_unkn_pdp_cnt is required to compute that value. */
         if (isnan(pdp_temp_val))
@@ -1629,7 +1637,6 @@ static void initialize_cdp_val(
     unival *scratch,
     int current_cf,
     rrd_value_t pdp_temp_val,
-    unsigned long elapsed_pdp_st,
     unsigned long start_pdp_offset,
     unsigned long pdp_cnt)
 {
@@ -1642,13 +1649,11 @@ static void initialize_cdp_val(
         scratch[CDP_primary_val].u_val =
             (cum_val + cur_val * start_pdp_offset) /
             (pdp_cnt - scratch[CDP_unkn_pdp_cnt].u_cnt);
-        scratch[CDP_val].u_val =
-            initialize_average_carry_over(pdp_temp_val, elapsed_pdp_st,
-                                          start_pdp_offset, pdp_cnt);
         break;
-    case CF_MAXIMUM:
+    case CF_MAXIMUM: 
         cum_val = IFDNAN(scratch[CDP_val].u_val, -DINF);
         cur_val = IFDNAN(pdp_temp_val, -DINF);
+
 #if 0
 #ifdef DEBUG
         if (isnan(scratch[CDP_val].u_val) && isnan(pdp_temp)) {
@@ -1663,8 +1668,6 @@ static void initialize_cdp_val(
             scratch[CDP_primary_val].u_val = cur_val;
         else
             scratch[CDP_primary_val].u_val = cum_val;
-        /* initialize carry over value */
-        scratch[CDP_val].u_val = pdp_temp_val;
         break;
     case CF_MINIMUM:
         cum_val = IFDNAN(scratch[CDP_val].u_val, DINF);
@@ -1683,14 +1686,10 @@ static void initialize_cdp_val(
             scratch[CDP_primary_val].u_val = cur_val;
         else
             scratch[CDP_primary_val].u_val = cum_val;
-        /* initialize carry over value */
-        scratch[CDP_val].u_val = pdp_temp_val;
         break;
     case CF_LAST:
     default:
         scratch[CDP_primary_val].u_val = pdp_temp_val;
-        /* initialize carry over value */
-        scratch[CDP_val].u_val = pdp_temp_val;
         break;
     }
 }
@@ -1752,17 +1751,34 @@ static void reset_cdp(
     }
 }
 
-static rrd_value_t initialize_average_carry_over(
+static rrd_value_t initialize_carry_over(
     rrd_value_t pdp_temp_val,
+    int current_cf,
     unsigned long elapsed_pdp_st,
     unsigned long start_pdp_offset,
     unsigned long pdp_cnt)
 {
-    /* initialize carry over value */
-    if (isnan(pdp_temp_val)) {
-        return DNAN;
-    }
-    return pdp_temp_val * ((elapsed_pdp_st - start_pdp_offset) % pdp_cnt);
+    unsigned long pdp_into_cdp_cnt = ((elapsed_pdp_st - start_pdp_offset) % pdp_cnt);
+    if ( pdp_into_cdp_cnt == 0 || isnan(pdp_temp_val)){
+        switch (current_cf) {
+        case CF_MAXIMUM:
+            return -DINF;
+        case CF_MINIMUM:
+            return DINF;
+        case CF_AVERAGE:
+            return 0;
+        default:
+            return DNAN;
+        }        
+    } 
+    else {
+        switch (current_cf) {
+        case CF_AVERAGE:
+            return pdp_temp_val *  pdp_into_cdp_cnt ;
+        default:
+            return pdp_temp_val;
+        }        
+    }        
 }
 
 /*

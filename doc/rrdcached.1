@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "RRDCACHED 1"
-.TH RRDCACHED 1 "2009-11-15" "1.4.2" "rrdtool"
+.TH RRDCACHED 1 "2010-03-22" "1.4.3" "rrdtool"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -136,6 +136,7 @@ rrdcached \- Data caching daemon for rrdtool
 \&\fBrrdcached\fR
 [\fB\-P\fR\ \fIpermissions\fR]
 [\fB\-l\fR\ \fIaddress\fR]
+[\fB\-s\fR\ \fIgroup\fR]
 [\fB\-w\fR\ \fItimeout\fR]
 [\fB\-z\fR\ \fIdelay\fR]
 [\fB\-f\fR\ \fItimeout\fR]
@@ -166,7 +167,7 @@ section below.
 Tells the daemon to bind to \fIaddress\fR and accept incoming connections on that
 socket. If \fIaddress\fR begins with \f(CW\*(C`unix:\*(C'\fR, everything following that prefix is
 interpreted as the path to a \s-1UNIX\s0 domain socket. Otherwise the address or node
-name are resolved using getaddrinfo.
+name are resolved using \f(CW\*(C`getaddrinfo()\*(C'\fR.
 .Sp
 For network sockets, a port may be specified by using the form
 \&\f(CW\*(C`\f(CB[\f(CW\f(CIaddress\f(CW\f(CB]:\f(CW\f(CIport\f(CW\*(C'\fR. If the address is an IPv4 address or a fully
@@ -189,6 +190,39 @@ domain socket \fBmust\fR start with a slash in the second case!
 .Sp
 If the \fB\-l\fR option is not specified the default address,
 \&\f(CW\*(C`unix:/tmp/rrdcached.sock\*(C'\fR, will be used.
+.IP "\fB\-s\fR \fIgroup_name\fR|\fIgid\fR" 4
+.IX Item "-s group_name|gid"
+Set the group permissions of a \s-1UNIX\s0 domain socket. The option accepts either
+a numeric group id or group name. That group will then have both read and write
+permissions (the socket will have file permissions 0750) for the socket and,
+therefore, is able to send commands to the daemon. This
+may be useful in cases where you cannot easily run all \s-1RRD\s0 processes with the same
+user privileges (e.g. graph generating \s-1CGI\s0 scripts that typically run in the
+permission context of the web server).
+.Sp
+This option affects the \fIfollowing\fR \s-1UNIX\s0 socket addresses (the following
+\&\fB\-l\fR options), i.e., you may specify different settings for different
+sockets.
+.Sp
+The default is not to change ownership or permissions of the socket and, thus,
+use the system default.
+.IP "\fB\-m\fR \fImode\fR" 4
+.IX Item "-m mode"
+Set the file permissions of a \s-1UNIX\s0 domain socket. The option accepts an octal
+number representing the bit pattern for the mode (see \fIchmod\fR\|(1) for
+details).
+.Sp
+Please note that not all systems honor this setting. On Linux, read/write
+permissions are required to connect to a \s-1UNIX\s0 socket. However, many
+BSD-derived systems ignore permissions for \s-1UNIX\s0 sockets. See \fIunix\fR\|(7) for
+details.
+.Sp
+This option affects the \fIfollowing\fR \s-1UNIX\s0 socket addresses (the following
+\&\fB\-l\fR options), i.e., you may specify different settings for different
+sockets.
+.Sp
+The default is not to change ownership or permissions of the socket and, thus,
+use the system default.
 .IP "\fB\-P\fR \fIcommand\fR[,\fIcommand\fR[,...]]" 4
 .IX Item "-P command[,command[,...]]"
 Specifies the commands accepted via a network socket. This allows
@@ -202,7 +236,7 @@ For example, to allow the \f(CW\*(C`FLUSH\*(C'\fR and \f(CW\*(C`PENDING\*(C'\fR 
 \&  rrdcached \-P FLUSH,PENDING $MORE_ARGUMENTS
 .Ve
 .Sp
-The \fB\-P\fR option effects the \fIfollowing\fR socket addresses (the following \fB\-l\fR
+The \fB\-P\fR option affects the \fIfollowing\fR socket addresses (the following \fB\-l\fR
 options). In the following example, only the IPv4 network socket (address
 \&\f(CW10.0.0.1\fR) will be restricted to the \f(CW\*(C`FLUSH\*(C'\fR and \f(CW\*(C`PENDING\*(C'\fR commands:
 .Sp

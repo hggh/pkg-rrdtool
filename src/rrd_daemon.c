@@ -106,11 +106,17 @@
 #include <sys/time.h>
 #include <time.h>
 #include <libgen.h>
+#include <grp.h>
 
 #include <glib-2.0/glib.h>
 /* }}} */
 
-#define RRDD_LOG(severity, ...) syslog ((severity), __VA_ARGS__)
+#define RRDD_LOG(severity, ...) \
+  do { \
+    if (stay_foreground) \
+      fprintf(stderr, __VA_ARGS__); \
+    syslog ((severity), __VA_ARGS__); \
+  } while (0)
 
 #ifndef __GNUC__
 # define __attribute__(x) /**/
@@ -140,6 +146,9 @@ struct listen_socket_s
   ssize_t wbuf_len;
 
   uint32_t permissions;
+
+  gid_t  socket_group;
+  mode_t socket_permissions;
 };
 typedef struct listen_socket_s listen_socket_t;
 
@@ -817,9 +826,10 @@ static int flush_old_values (int max_age)
 
   for (k = 0; k < cfd.keys_num; k++)
   {
+    gboolean status = g_tree_remove(cache_tree, cfd.keys[k]);
     /* should never fail, since we have held the cache_lock
      * the entire time */
-    assert( g_tree_remove(cache_tree, cfd.keys[k]) == TRUE );
+    assert(status == TRUE);
   }
 
   if (cfd.keys != NULL)
@@ -2326,6 +2336,23 @@ static int open_listen_socket_unix (const listen_socket_t *sock) /* {{{ */
     return (-1);
   }
 
+  /* tweak the sockets group ownership */
+  if (sock->socket_group != (gid_t)-1)
+  {
+    if ( (chown(path, getuid(), sock->socket_group) != 0) ||
+	 (chmod(path, (S_IRUSR|S_IWUSR|S_IXUSR | S_IRGRP|S_IWGRP)) != 0) )
+    {
+      fprintf(stderr, "rrdcached: failed to set socket group permissions (%s)\n", strerror(errno));
+    }
+  }
+
+  if (sock->socket_permissions != (mode_t)-1)
+  {
+    if (chmod(path, sock->socket_permissions) != 0)
+      fprintf(stderr, "rrdcached: failed to set socket file permissions (%o): %s\n",
+          (unsigned int)sock->socket_permissions, strerror(errno));
+  }
+
   status = listen (fd, /* backlog = */ 10);
   if (status != 0)
   {
@@ -2746,7 +2773,10 @@ static int read_options (int argc, char **argv) /* {{{ */
   char **permissions = NULL;
   size_t permissions_len = 0;
 
-  while ((option = getopt(argc, argv, "gl:P:f:w:z:t:Bb:p:Fj:h?")) != -1)
+  gid_t  socket_group = (gid_t)-1;
+  mode_t socket_permissions = (mode_t)-1;
+
+  while ((option = getopt(argc, argv, "gl:s:m:P:f:w:z:t:Bb:p:Fj:h?")) != -1)
   {
     switch (option)
     {
@@ -2802,12 +2832,63 @@ static int read_options (int argc, char **argv) /* {{{ */
         }
         /* }}} Done adding permissions. */
 
+        new->socket_group = socket_group;
+        new->socket_permissions = socket_permissions;
+
         if (!rrd_add_ptr((void ***)&config_listen_address_list,
                          &config_listen_address_list_len, new))
         {
           fprintf(stderr, "read_options: rrd_add_ptr failed.\n");
           return (2);
         }
+      }
+      break;
+
+      /* set socket group permissions */
+      case 's':
+      {
+	gid_t group_gid;
+	struct group *grp;
+
+	group_gid = strtoul(optarg, NULL, 10);
+	if (errno != EINVAL && group_gid>0)
+	{
+	  /* we were passed a number */
+	  grp = getgrgid(group_gid);
+	}
+	else
+	{
+	  grp = getgrnam(optarg);
+	}
+
+	if (grp)
+	{
+	  socket_group = grp->gr_gid;
+	}
+	else
+	{
+	  /* no idea what the user wanted... */
+	  fprintf (stderr, "read_options: couldn't map \"%s\" to a group, Sorry\n", optarg);
+	  return (5);
+	}
+      }
+      break;
+
+      /* set socket file permissions */
+      case 'm':
+      {
+        long  tmp;
+        char *endptr = NULL;
+
+        tmp = strtol (optarg, &endptr, 8);
+        if ((endptr == optarg) || (! endptr) || (*endptr != '\0')
+            || (tmp > 07777) || (tmp < 0)) {
+          fprintf (stderr, "read_options: Invalid file mode \"%s\".\n",
+              optarg);
+          return (5);
+        }
+
+        socket_permissions = (mode_t)tmp;
       }
       break;
 
@@ -3024,6 +3105,7 @@ static int read_options (int argc, char **argv) /* {{{ */
             "  -g            Do not fork and run in the foreground.\n"
             "  -j <dir>      Directory in which to create the journal files.\n"
             "  -F            Always flush all updates at shutdown\n"
+            "  -s <id|name>  Make socket g+rw to named group\n"
             "\n"
             "For more information and a detailed description of all options "
             "please refer\n"

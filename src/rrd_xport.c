@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
  ****************************************************************************
  * rrd_xport.c  export RRD data 
  ****************************************************************************/
@@ -286,7 +286,7 @@ int rrd_xport_fn(
     free(step_list);
     
     *start =  im->start - im->start % (*step);
-    *end = im->end - im->end % (*step);
+    *end = im->end - im->end % (*step) + (*step);
     
 
     /* room for rearranged data */

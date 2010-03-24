@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # libtool - Provide generalized library-building support services.
-# Generated automatically by config.status (rrdtool) 1.4.2
+# Generated automatically by config.status (rrdtool) 1.4.3
 # Libtool was configured on host froburg:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #

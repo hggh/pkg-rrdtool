@@ -1,12 +1,12 @@
 /*****************************************************************************
- * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009                    
+ * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010                    
  *****************************************************************************
  * rrd_restore.c  Contains logic to parse XML input and create an RRD file
  * This file:
  * Copyright (C) 2008  Florian octo Forster  (original libxml2 code)
  * Copyright (C) 2008,2009 Tobias Oetiker
  *****************************************************************************
- * $Id: rrd_restore.c 1970 2009-11-15 11:54:23Z oetiker $
+ * $Id: rrd_restore.c 2042 2010-03-22 16:05:55Z oetiker $
  *************************************************************************** */
 
 #include "rrd_tool.h"
@@ -119,7 +119,19 @@ static int expect_element_end (
     char *exp_name)
 {
     xmlChar *name;
-    name = get_xml_element(reader);
+    /* maybe we are already on the end element ... lets see */
+    if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT){
+         xmlChar *temp;
+         xmlChar *temp2;            
+         temp = xmlTextReaderName(reader);
+         temp2 = (xmlChar*)sprintf_alloc("/%s", temp);
+         name = xmlStrdup(temp2);
+         xmlFree(temp);
+         free(temp2);            
+    } else {     
+         name = get_xml_element(reader);
+    }
+
     if (name == NULL)
         return -1;    
     if (xmlStrcasecmp(name+1,(xmlChar *)exp_name) != 0 || name[0] != '/'){
@@ -147,14 +159,24 @@ static xmlChar* get_xml_text (
         if (type == XML_READER_TYPE_ELEMENT){
             xmlChar *name;
             name = xmlTextReaderName(reader);
-            rrd_set_error("line %d: expected a value but found an <%s> element",
+            rrd_set_error("line %d: expected a value but found a <%s> element",
                           xmlTextReaderGetParserLineNumber(reader),
                           name);
             xmlFree(name);            
             return NULL;            
         }
+
+        /* trying to read text from <a></a> we end up here
+           lets return an empty string insead. This is a tad optimistic
+           since we do not check if it is actually </a> and not </b>
+           we got, but first we do not know if we expect </a> and second
+           we the whole implementation is on the optimistic side. */
+        if (type == XML_READER_TYPE_END_ELEMENT){
+            return  xmlStrdup(BAD_CAST "");
+        }        
+
         /* skip all other non-text */
-        if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_TEXT)
+        if (type != XML_READER_TYPE_TEXT)
             continue;
         
         text = xmlTextReaderValue(reader);
@@ -197,17 +219,29 @@ static int get_xml_string(
 }
 
  
-static int get_xml_long(
+static int get_xml_time_t(
     xmlTextReaderPtr reader,
-    long *value)
+    time_t *value)
 {    
     xmlChar *text;
-    long temp;    
+    time_t temp;    
     if ((text = get_xml_text(reader)) != NULL){
         errno = 0;        
+#ifdef TIME_T_IS_32BIT
         temp = strtol((char *)text,NULL, 0);
+#else
+#ifdef TIME_T_IS_64BIT
+        temp = strtoll((char *)text,NULL, 0);        
+#else
+        if (sizeof(time_t) == 4){
+            temp = strtol((char *)text,NULL, 0);
+        } else {
+            temp = strtoll((char *)text,NULL, 0);
+        }
+#endif
+#endif    
         if (errno>0){
-            rrd_set_error("ling %d: get_xml_long from '%s' %s",
+            rrd_set_error("ling %d: get_xml_time_t from '%s' %s",
                           xmlTextReaderGetParserLineNumber(reader),
                           text,rrd_strerror(errno));
             xmlFree(text);            
@@ -218,7 +252,7 @@ static int get_xml_long(
         return 0;
     }
     return -1;
-} /* get_xml_long */
+} /* get_xml_time_t */
 
 static int get_xml_ulong(
     xmlTextReaderPtr reader,
@@ -243,33 +277,6 @@ static int get_xml_ulong(
     }
     return -1;
 } /* get_xml_ulong */
-
-#ifndef TIME_T_IS_LONG
-static int get_xml_llong(
-    xmlTextReaderPtr reader,
-    long long *value)
-{
-    
-    xmlChar *text;
-    long long temp;    
-    if ((text = get_xml_text(reader)) != NULL){
-        errno = 0;        
-        temp = strtoll((char *)text,NULL, 0);        
-        if (errno>0){
-            rrd_set_error("ling %d: get_xml_llong from '%s' %s",
-                          xmlTextReaderGetParserLineNumber(reader),
-                          text,rrd_strerror(errno));
-            xmlFree(text);            
-            return -1;
-        }
-        xmlFree(text);
-        *value = temp;        
-        return 0;
-    }
-    return -1;
-} /* get_xml_llong */
-
-#endif
 
 static int get_xml_double(
     xmlTextReaderPtr reader,
@@ -1018,22 +1025,7 @@ static int parse_tag_rrd(
             status = get_xml_ulong(reader,
                                         &rrd->stat_head->pdp_step);
         else if (xmlStrcasecmp(element, (const xmlChar *) "lastupdate") == 0) {
-#ifdef TIME_T_IS_LONG
-                status = get_xml_long(reader, &rrd->live_head->last_up);
-#else
-#ifdef TIME_T_IS_LONG_LONG
-                status = get_xml_llong(reader, &rrd->live_head->last_up); 
-#else
-            if (sizeof(time_t) == sizeof(long)) {
-                status = get_xml_long(reader,
-                                        (long *)&rrd->live_head->last_up);
-            }
-            else if (sizeof(time_t) == sizeof(long long)) {
-                status = get_xml_llong(reader,
-                                        (long long *)&rrd->live_head->last_up); 
-            }
-#endif
-#endif
+                status = get_xml_time_t(reader, &rrd->live_head->last_up);
         }
         else if (xmlStrcasecmp(element, (const xmlChar *) "ds") == 0){            
             xmlFree(element);

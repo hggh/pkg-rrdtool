@@ -323,7 +323,12 @@ OOPPTTIIOONNSS
        disables the border. See "SHADEA" and "SHADEB" above for setting the
        border color.
 
-       [----zzoooomm _f_a_c_t_o_r]
+       [----ddyynnaammiicc--llaabbeellss]
+
+       Pick the shape of the color marker next to the label according to the
+       element drawn on the graph.
+
+       [--mm|----zzoooomm _f_a_c_t_o_r]
 
        Zoom the graphics by the given amount. The factor must be > 0
 
@@ -518,4 +523,4 @@ AAUUTTHHOORR
 
 
 
-1.4.2                             2009-10-27                       RRDGRAPH(1)
+1.4.3                             2010-03-22                       RRDGRAPH(1)

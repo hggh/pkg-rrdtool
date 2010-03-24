@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.4.2  Copyright by Tobi Oetiker, 1997-2009
+ * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
  ****************************************************************************
  * rrd__graph.c  produce graphs from data in rrdfiles
  ****************************************************************************/
@@ -28,6 +28,10 @@
 #include <time.h>
 
 #include <locale.h>
+
+#ifdef HAVE_LANGINFO_H
+#include <langinfo.h>
+#endif
 
 #include "rrd_graph.h"
 #include "rrd_client.h"
@@ -1248,7 +1252,7 @@ int data_proc(
                     } else
                         if (((long int) gr_time >=
                              (long int) im->gdes[vidx].start)
-                            && ((long int) gr_time <=
+                            && ((long int) gr_time <
                                 (long int) im->gdes[vidx].end)) {
                         value = im->gdes[vidx].data[(unsigned long)
                                                     floor((double)
@@ -1355,7 +1359,21 @@ int data_proc(
     return 0;
 }
 
-
+static int find_first_weekday(void){
+    static int first_weekday = -1;
+    if (first_weekday == -1){
+#ifdef HAVE__NL_TIME_WEEK_1STDAY
+        /* according to http://sourceware.org/ml/libc-locales/2009-q1/msg00011.html */
+        long week_1stday_l = (long) nl_langinfo (_NL_TIME_WEEK_1STDAY);
+        if (week_1stday_l == 19971130) first_weekday = 0; /* Sun */
+        else if (week_1stday_l == 19971201) first_weekday = 1; /* Mon */
+        else first_weekday = 1; /* we go for a monday default */
+#else
+        first_weekday = 1;
+#endif
+    }
+    return first_weekday;
+}
 
 /* identify the point where the first gridline, label ... gets placed */
 
@@ -1397,10 +1415,10 @@ time_t find_first_time(
         tm.       tm_sec = 0;
         tm.       tm_min = 0;
         tm.       tm_hour = 0;
-        tm.       tm_mday -= tm.tm_wday - 1;    /* -1 because we want the monday */
+        tm.       tm_mday -= tm.tm_wday - find_first_weekday();
 
-        if (tm.tm_wday == 0)
-            tm.       tm_mday -= 7; /* we want the *previous* monday */
+        if (tm.tm_wday == 0 && find_first_weekday() > 0)
+            tm.       tm_mday -= 7; /* we want the *previous* week */
 
         break;
     case TMT_MONTH:
@@ -1730,6 +1748,7 @@ int leg_place(
                 prt_fctn != 'r' &&
                 prt_fctn != 'j' &&
                 prt_fctn != 'c' &&
+                prt_fctn != 'u' &&
                 prt_fctn != 's' && prt_fctn != '\0' && prt_fctn != 'g') {
                 free(legspace);
                 rrd_set_error
@@ -1818,7 +1837,7 @@ int leg_place(
                 if (prt_fctn == 'c')
                     leg_x = (double)(legendwidth - fill) / 2.0;
                 if (prt_fctn == 'r')
-                    leg_x = legendwidth - fill - border;
+                    leg_x = legendwidth - fill + border;
                 for (ii = mark; ii <= i; ii++) {
                     if (im->gdes[ii].legend[0] == '\0')
                         continue;   /* skip empty legends */
@@ -1839,6 +1858,8 @@ int leg_place(
                     leg_y += im->text_prop[TEXT_PROP_LEGEND].size * 1.8;
                 if (prt_fctn == 's')
                     leg_y -= im->text_prop[TEXT_PROP_LEGEND].size;
+                if (prt_fctn == 'u')
+                    leg_y -= im->text_prop[TEXT_PROP_LEGEND].size *1.8;
 
                 if(calc_width && (fill > legendwidth)){
                     legendwidth = fill;
@@ -2733,7 +2754,8 @@ void grid_paint(
                 boxV = boxH;
                 /* shift the box up a bit */
                 Y0 -= boxV * 0.4;
-		if (im->gdes[i].gf == GF_HRULE) { /* [-] */ 
+
+        if (im->dynamic_labels && im->gdes[i].gf == GF_HRULE) { /* [-] */ 
 			cairo_save(im->cr);
 			cairo_new_path(im->cr);
 			cairo_set_line_width(im->cr, 1.0);
@@ -2742,7 +2764,7 @@ void grid_paint(
 				X0 + boxH, Y0 - boxV / 2,
 				1.0, im->gdes[i].col);
             		gfx_close_path(im);
-		} else if (im->gdes[i].gf == GF_VRULE) { /* [|] */
+		} else if (im->dynamic_labels && im->gdes[i].gf == GF_VRULE) { /* [|] */
 			cairo_save(im->cr);
 			cairo_new_path(im->cr);
 			cairo_set_line_width(im->cr, 1.0);
@@ -2751,7 +2773,7 @@ void grid_paint(
 				X0 + boxH / 2, Y0 - boxV,
 				1.0, im->gdes[i].col);
             		gfx_close_path(im);
-		} else if (im->gdes[i].gf == GF_LINE) { /* [/] */
+		} else if (im->dynamic_labels && im->gdes[i].gf == GF_LINE) { /* [/] */
 			cairo_save(im->cr);
 			cairo_new_path(im->cr);
 			cairo_set_line_width(im->cr, im->gdes[i].linewidth);
@@ -4009,6 +4031,7 @@ void rrd_graph_init(
     im->draw_x_grid = 1;
     im->draw_y_grid = 1;
     im->draw_3d_border = 2;
+    im->dynamic_labels = 0;
     im->extra_flags = 0;
     im->font_options = cairo_font_options_create();
     im->forceleftspace = 0;
@@ -4177,6 +4200,7 @@ void rrd_graph_options(
         { "legend-direction",   required_argument, 0, 1006},
         { "border",             required_argument, 0, 1007},
         { "grid-dash",          required_argument, 0, 1008},
+        { "dynamic-labels",     no_argument,       0, 1009},
         {  0, 0, 0, 0}
 };
 /* *INDENT-ON* */
@@ -4191,7 +4215,7 @@ void rrd_graph_options(
         int       col_start, col_end;
 
         opt = getopt_long(argc, argv,
-                          "Aa:B:b:c:Dd:Ee:Ff:G:gh:IiJjL:l:Nn:Bb:oPR:rS:s:T:t:u:v:W:w:X:x:Yy:z",
+                          "Aa:B:b:c:Dd:Ee:Ff:G:gh:IiJjL:l:Mm:Nn:oPR:rS:s:T:t:u:v:W:w:X:x:Yy:z",
                           long_options, &option_index);
         if (opt == EOF)
             break;
@@ -4358,7 +4382,10 @@ void rrd_graph_options(
                 rrd_set_error("expected grid-dash format float:float");
                 return;
             }
-            break;            
+            break;   
+        case 1009: /* enable dynamic labels */
+            im->dynamic_labels = 1;
+            break;         
         case 1002: /* right y axis */
 
             if(sscanf(optarg,
