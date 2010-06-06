@@ -3,8 +3,13 @@ rrdtool (1.4.3-2) experimental; urgency=low
   * debian/control: Rebuild against Tcl 8.5 (Closes: #582211).
     - Build-depend on tcl-dev (>= 8.5) and tcl (>= 8.5).
   * Uploading to experimental, which hosts Tcl 8.5 for now.
+  * debian/patches:
+    - Added tcl-8.5, fixing an issue identified by Tcl 8.5 in the Tcl
+      bindings: So far, a strict version of the "Tcl" package was requested,
+      which seems to have been ignored by Tcl < 8.5. This requirement has been
+      removed.
 
- -- Sebastian Harl <tokkee@debian.org>  Tue, 25 May 2010 20:11:31 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Sun, 06 Jun 2010 15:22:39 +0200
 
 rrdtool (1.4.3-1) unstable; urgency=low
 
