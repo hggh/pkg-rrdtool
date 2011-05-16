@@ -1,8 +1,12 @@
 rrdtool (1.4.3-3) unstable; urgency=low
 
   * Reupload to unstable, which has Tcl 8.5 by now.
+  * debian/patches:
+    - Added bts625631-gcc4.5, fixing an compiler issue when using GCC 4.5;
+      thanks to Maxime Petazzoni for reporting this and Sven Hartge for
+      pointing out the upstream fix by anicka@suse.cz (Closes: #625631).
 
- -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 09:39:40 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 09:55:27 +0200
 
 rrdtool (1.4.3-2) experimental; urgency=low
 

@@ -5,3 +5,4 @@ no-rpath-for-perl
 implicit-decl-fix
 bts530814-hurd
 tcl-8.5
+bts625631-gcc4.5
