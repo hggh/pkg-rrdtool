@@ -10,10 +10,11 @@ rrdtool (1.4.3-3) unstable; urgency=high
   * debian/control:
     - Removed prehistoric 'Conflicts' introduced for an incompatibility with
       Woody.
+    - Updated standards-version to 3.9.2.
   * debian/rrdtool.doc-base:
     - Fixed a spelling error detected by lintian.
 
- -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 10:27:08 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 10:28:46 +0200
 
 rrdtool (1.4.3-2) experimental; urgency=low
 
