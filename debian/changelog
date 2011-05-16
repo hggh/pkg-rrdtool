@@ -7,8 +7,11 @@ rrdtool (1.4.3-3) unstable; urgency=high
       pointing out the upstream fix by anicka@suse.cz (Closes: #625631).
   * Set urgency to high because of the fix for #625631.
   * debian/source/format: Explicitly state version 1.0 for now.
+  * debian/control:
+    - Removed prehistoric 'Conflicts' introduced for an incompatibility with
+      Woody.
 
- -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 10:07:17 +0200
+ -- Sebastian Harl <tokkee@debian.org>  Mon, 16 May 2011 10:19:25 +0200
 
 rrdtool (1.4.3-2) experimental; urgency=low
 
