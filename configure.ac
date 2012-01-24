@@ -1,6 +1,6 @@
 dnl RRDtool AutoConf script ... 
 dnl ---------------------------
-dnl $Id: configure.ac 2044 2010-03-22 17:02:55Z oetiker $
+dnl $Id: configure.ac 2267 2012-01-24 10:08:48Z oetiker $
 dnl
 dnl Created by Jeff Allen, Tobi Oetiker, Blair Zajac
 dnl
@@ -13,14 +13,14 @@ AC_PREREQ(2.59)
 
 dnl the official version number is
 dnl a.b.c
-AC_INIT([rrdtool],[1.4.3])
+AC_INIT([rrdtool],[1.4.7])
 
 dnl for testing a numberical version number comes handy
 dnl the released version are
 dnl a.bccc
 dnl the devel versions will be something like
 dnl a.b999yymmddhh 
-NUMVERS=1.4003
+NUMVERS=1.4007
 AC_SUBST(NUMVERS)
 
 dnl for the linker to understand which versions the library are compatible with
@@ -31,7 +31,7 @@ dnl - if any functionality was removed do c++,r=0,a=0.
 dnl
 dnl see http://sourceware.org/autobook/autobook/autobook_91.html
 dnl 
-LIBVERS=5:3:1
+LIBVERS=6:0:2
 AC_SUBST(LIBVERS)
 
 AC_CANONICAL_TARGET
@@ -102,6 +102,15 @@ AC_DEFINE_UNQUOTED(RRDGRAPH_YLEGEND_ANGLE,${RRDGRAPH_YLEGEND_ANGLE:-90.0},
 AC_ARG_ENABLE(rrdcgi,AS_HELP_STRING([--disable-rrdcgi],[disable building of rrdcgi]),
 [],[enable_rrdcgi=yes])
 
+AM_CONDITIONAL(BUILD_RRDCGI,[test $enable_rrdcgi != no])
+
+AC_ARG_ENABLE(rrd_graph,AS_HELP_STRING([--disable-rrd_graph],[disable all rrd_graph functions]),
+[enable_rrdcgi=no],[enable_rrd_graph=yes])
+
+if test $enable_rrd_graph != no; then
+ AC_DEFINE([HAVE_RRD_GRAPH], [], [is rrd_graph supported by this install])
+fi
+
 dnl Check if we run on a system that has fonts
 AC_ARG_WITH(rrd-default-font,
 [  --with-rrd-default-font=[OPTIONS]  set the full path to your default font.],
@@ -161,7 +170,7 @@ AC_SUBST(WERROR)
 
 dnl which flags does the compiler support?
 if test "x$GCC" = "xyes"; then
-  for flag in -fno-strict-aliasing -Wall -std=c99 -pedantic -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wold-style-definition -W; do
+  for flag in -fno-strict-aliasing -Wall -std=gnu99 -pedantic -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wold-style-definition -W; do
     oCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $flag"
     cachename=rd_cv_gcc_flag_`echo $flag|sed 's/[[^A-Za-z]]/_/g'`
@@ -196,7 +205,7 @@ AC_CHECK_FUNC(acos, , AC_CHECK_LIB(m, acos))
 
 
 dnl add pic flag in any case this makes sure all our code is relocatable
-eval `./libtool --config | grep pic_flag`
+eval `./libtool --config | grep pic_flag=` 
 CFLAGS="$CFLAGS $pic_flag"
 
 
@@ -209,7 +218,7 @@ AC_C_BIGENDIAN
 dnl for each function found we get a definition in config.h 
 dnl of the form HAVE_FUNCTION
 
-AC_CHECK_FUNCS(nl_langinfo tzset fsync mbstowcs opendir readdir chdir chroot getuid strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
+AC_CHECK_FUNCS(nl_langinfo tzset round rint fsync mbstowcs opendir readdir chdir chroot getuid strerror snprintf vsnprintf vasprintf fpclass class fp_class isnan memmove strchr mktime getrusage gettimeofday)
 
 AC_FUNC_STRERROR_R
 
@@ -274,7 +283,7 @@ AC_CHECK_FUNCS(posix_fadvise)
 CONFIGURE_PART(Libintl Processing)
 
 AM_GNU_GETTEXT_VERSION(0.17)
-AM_GNU_GETTEXT()
+AM_GNU_GETTEXT(external)
 
 CONFIGURE_PART(IEEE Math Checks)
  
@@ -342,6 +351,8 @@ fi
 AC_FULL_IEEE
 
 CONFIGURE_PART(Resolve Portability Issues)
+
+GC_TIMEZONE()
 
 CHECK_FOR_WORKING_MS_ASYNC
 
@@ -469,67 +480,75 @@ dnl is time_t 32 of 64 bit ?
 AC_DEFINE([TIME_T_IS_32BIT], [], [time_t is 32bit])
 AC_DEFINE([TIME_T_IS_64BIT], [], [time_t is 64bit])
 AC_MSG_CHECKING([the type of time_t])
-AC_RUN_IFELSE(
-    AC_LANG_PROGRAM(
-        [[#include <time.h>]],
-        [[if (sizeof(time_t) != 4) return 1; ]]
-        ),
-    [ AC_MSG_RESULT([time_t is 32 bit])
-      AC_DEFINE([TIME_T_IS_32BIT])
-    ],
-    [ AC_RUN_IFELSE(
-        AC_LANG_PROGRAM(
-        [[#include <time.h>]],
-        [[if (sizeof(time_t) != 8) return 1; ]]
-        ),
-        [
-          AC_MSG_RESULT([time_t is 64 bit])
-          AC_DEFINE([TIME_T_IS_64BIT])
-        ],
-        [AC_MSG_ERROR([can not figure type of time_t])]
-      )
-    ]  
-)
+AC_CHECK_SIZEOF([time_t])
+if test "x$ac_cv_sizeof_time_t" = "x4"; then
+  AC_MSG_RESULT([time_t is 32 bit])
+  AC_DEFINE([TIME_T_IS_32BIT])
+elif test "x$ac_cv_sizeof_time_t" = "x8"; then
+  AC_MSG_RESULT([time_t is 64 bit])
+  AC_DEFINE([TIME_T_IS_64BIT])
+else
+  AC_MSG_ERROR([can not figure type of time_t])
+fi
 
 AC_LANG_POP(C)
 
 CONFIGURE_PART(Find 3rd-Party Libraries)
 
-AC_ARG_ENABLE(libdbi,AS_HELP_STRING([--disable-libdbi],[do not build in support for libdbi]),[have_libdbi=no],[
-  XXX=$LIBS
-  LIBS="$LIBS -ldbi -ldl"
-  AC_MSG_CHECKING(for libdbi)
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([[#include <dbi/dbi.h>]], 
-                     [[dbi_initialize(NULL)]]
-                    )
-    ],[AC_DEFINE(HAVE_LIBDBI,[1],[have got libdbi installed])
-       AC_MSG_RESULT([yes])
-       have_libdbi=yes
-    ],[LIBS=$XXX
-       AC_MSG_RESULT([no])
-       have_libdbi=no
-    ]
-  )
+have_libdbi=no
+
+AC_ARG_ENABLE(libdbi,AS_HELP_STRING([--disable-libdbi],[do not build in support for libdbi]),[],[
+    AC_CHECK_HEADER(dbi/dbi.h, [ 
+       AC_CHECK_LIB(dbi, dbi_initialize, [
+           AC_DEFINE(HAVE_LIBDBI,[1],[have got libdbi installed])
+           LIBS="${LIBS} -ldbi -ldl"
+           have_libdbi=yes
+       ])
+    ])
 ])
+
 AM_CONDITIONAL(BUILD_LIBDBI,[test $have_libdbi != no])
 
-AM_CONDITIONAL(BUILD_RRDCGI,[test $enable_rrdcgi != no])
+have_libwrap=no
+
+AC_ARG_ENABLE(libwrap, AS_HELP_STRING([--disable-libwrap], [do not build in support for libwrap (tcp wrapper)]),[],[ 
+    AC_CHECK_HEADER(tcpd.h,[       
+        AC_CHECK_FUNCS(hosts_access, [
+            AC_DEFINE(HAVE_LIBWRAP,[1],[have got libwrap installed])
+            have_libwrap=yes 
+        ],  
+        [
+            AC_CHECK_LIB(wrap, hosts_access, [
+               AC_DEFINE(HAVE_LIBWRAP,[1],[have got libwrap installed])
+               LIBS="${LIBS} -lwrap"
+               have_libwrap=yes
+            ])
+        ])
+    ])
+])
+
+
+AM_CONDITIONAL(BUILD_LIBWRAP,[test $have_libwrap != no])
+
+AM_CONDITIONAL(BUILD_RRDGRAPH,[test $enable_rrd_graph != no])
 
 
 CORE_LIBS="$LIBS"
 
-dnl EX_CHECK_ALL(z,          zlibVersion,               zlib.h,                 zlib,        1.2.3,  http://www.gzip.org/zlib/, "")
-dnl EX_CHECK_ALL(png,        png_access_version_number, png.h,                  libpng,      1.2.10,  http://prdownloads.sourceforge.net/libpng/, "")
-dnl EX_CHECK_ALL(freetype,   FT_Init_FreeType,          ft2build.h,		freetype2,   2.1.10,  http://prdownloads.sourceforge.net/freetype/, /usr/include/freetype2)
-dnl EX_CHECK_ALL(fontconfig, FcInit,                    fontconfig.h,		fontconfig,  2.3.1,  http://fontconfig.org/release/, /usr/include)
-EX_CHECK_ALL(cairo,      cairo_font_options_create,     cairo.h,                cairo-png,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_svg_surface_create,      cairo-svg.h,            cairo-svg,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_pdf_surface_create,      cairo-pdf.h,            cairo-pdf,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_ps_surface_create,       cairo-ps.h,             cairo-ps,    1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(glib-2.0,   glib_check_version,            glib.h,                 glib-2.0,    2.12.12, ftp://ftp.gtk.org/pub/glib/2.12/, "")
-EX_CHECK_ALL(pango-1.0,  pango_cairo_context_set_font_options,  pango/pango.h,  pangocairo,  1.17,    http://ftp.gnome.org/pub/GNOME/sources/pango/1.17, "")
-EX_CHECK_ALL(xml2,       xmlParseFile,                  libxml/parser.h,        libxml-2.0,        2.6.31,  http://xmlsoft.org/downloads.html, /usr/include/libxml2)
+if test $enable_rrd_graph != no; then
+dnl EX_CHECK_ALL(z,          zlibVersion,               zlib.h,                 zlib,        1.2.5,  http://zlib.net/, "")
+dnl EX_CHECK_ALL(png,        png_access_version_number, png.h,                  libpng,      1.4.8,  ftp://ftp.simplesystems.org/pub/libpng/png/src/, "")
+dnl EX_CHECK_ALL(freetype,   FT_Init_FreeType,          ft2build.h,		freetype2,   2.4.6,  http://download.savannah.gnu.org/releases/freetype/, /usr/include/freetype2)
+dnl EX_CHECK_ALL(fontconfig, FcInit,                    fontconfig.h,		fontconfig,  2.8.0,  http://www.freedesktop.org/software/fontconfig/release/, /usr/include)
+EX_CHECK_ALL(cairo,      cairo_font_options_create,     cairo.h,                cairo-png,   1.10.2,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_svg_surface_create,      cairo-svg.h,            cairo-svg,   1.10.2,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_pdf_surface_create,      cairo-pdf.h,            cairo-pdf,   1.10.2,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(cairo,      cairo_ps_surface_create,       cairo-ps.h,             cairo-ps,    1.10.2,  http://cairographics.org/releases/, "")
+EX_CHECK_ALL(pangocairo-1.0,  pango_cairo_context_set_font_options,  pango/pango.h,  pangocairo,  1.28.4,    http://ftp.gnome.org/pub/GNOME/sources/pango/1.28, "")
+
+fi
+EX_CHECK_ALL(glib-2.0,   glib_check_version,            glib.h,                 glib-2.0,    2.28.7, ftp://ftp.gtk.org/pub/glib/2.28/, "")
+EX_CHECK_ALL(xml2,       xmlParseFile,                  libxml/parser.h,        libxml-2.0,        2.7.8,  http://xmlsoft.org/downloads.html, /usr/include/libxml2)
 
 if test "$EX_CHECK_ALL_ERR" = "YES"; then
   AC_MSG_ERROR([Please fix the library issues listed above and try again.])
@@ -821,7 +840,7 @@ if test  "$enable_tcl" = "yes"; then
   withval=""
   AC_ARG_WITH(tcllib,[  --with-tcllib=DIR       location of the tclConfig.sh])
   enable_tcl=no
-  for dir in $withval /usr/lib /usr/local/lib /usr/lib/tcl8.4 /usr/lib/tcl8.3 ; do
+  for dir in $withval /usr/lib /usr/lib64 /usr/local/lib /usr/lib/tcl8.4 /usr/lib/tcl8.3 ; do
     AC_MSG_CHECKING(for tclConfig.sh in $dir)
     if test -f "$dir/tclConfig.sh" ; then
     	tcl_config=$dir/tclConfig.sh
@@ -842,7 +861,7 @@ if test  "$enable_tcl" = "yes"; then
 	  TCL_INCLUDE_SPEC="$TCL_INCLUDE_SPEC -I$TCL_INC_DIR"
 	fi
   fi
-  AC_ARG_ENABLE(tcl,AS_HELP_STRING([--enable-tcl-site],[install the tcl extension in the tcl tree]),
+  AC_ARG_ENABLE(tcl-site,AS_HELP_STRING([--enable-tcl-site],[install the tcl extension in the tcl tree]),
   [],[enable_tcl_site=yes])
 
 fi
@@ -880,8 +899,16 @@ fi
 AC_SUBST(COMP_PYTHON)
 
 dnl Check for nroff
-AC_PATH_PROGS(NROFF, gnroff nroff)
-AC_PATH_PROGS(TROFF, groff troff)
+AC_ARG_VAR(NROFF, [path to the local nroff version])
+AC_PATH_PROGS(NROFF, [gnroff nroff])
+if test x$NROFF = x; then
+  AC_MSG_ERROR([I need a copy of *nroff to format the documentation])
+fi
+AC_ARG_VAR(TROFF, [path to the local troff version])
+AC_PATH_PROGS(TROFF, [groff troff])
+if test x$TROFF = x; then
+  AC_MSG_ERROR([I need a copy of *troff to format the documentation])
+fi
 
 AC_ARG_VAR(RRDDOCDIR, [[DATADIR/doc/PACKAGE-VERSION] Documentation directory])
 if test -z "$RRDDOCDIR"; then
@@ -901,7 +928,6 @@ AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_FILES([examples/rrdcached/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([po/Makefile.in]) 
-AC_CONFIG_FILES([intl/Makefile]) 
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/librrd.sym.in])
 AC_CONFIG_FILES([src/librrd.pc])
@@ -938,6 +964,7 @@ echo "Config is DONE!"
 echo
 echo "          With MMAP IO: $enable_mmap"
 echo "      Build rrd_getopt: $build_getopt"
+echo "       Build rrd_graph: $enable_rrd_graph"
 echo "       Static programs: $staticprogs"
 echo "          Perl Modules: $COMP_PERL"
 echo "           Perl Binary: $PERL"
@@ -961,6 +988,7 @@ echo "          Build rrdcgi: $enable_rrdcgi"
 echo "       Build librrd MT: $enable_pthread"
 echo "           Use gettext: $USE_NLS"
 echo "           With libDBI: $have_libdbi"
+echo "          With libwrap: $have_libwrap"
 echo
 echo "             Libraries: $ALL_LIBS"
 echo

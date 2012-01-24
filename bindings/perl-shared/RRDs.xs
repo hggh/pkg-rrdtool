@@ -24,17 +24,13 @@ extern "C" {
  */
 #define VERSION_SAVED VERSION
 #undef VERSION
+#ifndef WIN32
 #include "../../rrd_config.h"
+#endif
 #include "../../src/rrd_tool.h"
 #undef VERSION
 #define VERSION VERSION_SAVED
 #undef VERSION_SAVED
-
-/* perl 5.004 compatibility */
-#if PERLPATCHLEVEL < 5 
-#define PL_sv_undef sv_undef
-#endif
-
 
 #define rrdcode(name) \
 		argv = (char **) malloc((items+1)*sizeof(char *));\
@@ -126,7 +122,6 @@ BOOT:
 #ifdef MUST_DISABLE_FPMASK
 	fpsetmask(0);
 #endif 
-	
 
 SV*
 rrd_error()
@@ -136,7 +131,6 @@ rrd_error()
 	OUTPUT:
 		RETVAL
 
-	
 int
 rrd_last(...)
       PROTOTYPE: @
@@ -159,7 +153,6 @@ rrd_first(...)
       OUTPUT:
             RETVAL
 
-
 int
 rrd_create(...)
 	PROTOTYPE: @	
@@ -171,7 +164,6 @@ rrd_create(...)
 	        RETVAL = 1;
         OUTPUT:
 		RETVAL
-
 
 int
 rrd_update(...)
@@ -185,7 +177,6 @@ rrd_update(...)
 	OUTPUT:
 		RETVAL
 
-
 int
 rrd_tune(...)
 	PROTOTYPE: @	
@@ -197,7 +188,6 @@ rrd_tune(...)
        	        RETVAL = 1;
 	OUTPUT:
 		RETVAL
-
 
 SV *
 rrd_graph(...)
@@ -444,6 +434,7 @@ rrd_restore(...)
        OUTPUT:
                RETVAL
 
+#ifndef WIN32
 int
 rrd_flushcached(...)
 	PROTOTYPE: @
@@ -454,3 +445,5 @@ rrd_flushcached(...)
 		rrdcode(rrd_flushcached);
 	OUTPUT:
 		RETVAL
+
+#endif

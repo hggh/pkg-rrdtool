@@ -36,7 +36,7 @@ OOPPTTIIOONNSS
            "[[_a_d_d_r_e_s_s]]::_p_o_r_t_". If the address is an IPv4 address or a fully
            qualified domain name (i. e. the address contains at least one dot
            (".")), the square brackets can be omitted, resulting in the
-           (simpler) "_a_d_d_r_e_s_s::_p_o_r_t_" pattern. The default port is 4422221177//uuddpp. If
+           (simpler) "_a_d_d_r_e_s_s::_p_o_r_t_" pattern. The default port is 4422221177//ttccpp. If
            you specify a network socket, it is mandatory to read the "SECURITY
            CONSIDERATIONS" section.
 
@@ -63,7 +63,8 @@ OOPPTTIIOONNSS
            permission context of the web server).
 
            This option affects the _f_o_l_l_o_w_i_n_g UNIX socket addresses (the
-           following --ll options), i.e., you may specify different settings for
+           following --ll options) or the default socket (if no --ll options have
+           been specified), i.e., you may specify different settings for
            different sockets.
 
            The default is not to change ownership or permissions of the socket
@@ -80,7 +81,8 @@ OOPPTTIIOONNSS
            sockets. See _u_n_i_x(7) for details.
 
            This option affects the _f_o_l_l_o_w_i_n_g UNIX socket addresses (the
-           following --ll options), i.e., you may specify different settings for
+           following --ll options) or the default socket (if no --ll options have
+           been specified), i.e., you may specify different settings for
            different sockets.
 
            The default is not to change ownership or permissions of the socket
@@ -98,7 +100,8 @@ OOPPTTIIOONNSS
              rrdcached -P FLUSH,PENDING $MORE_ARGUMENTS
 
            The --PP option affects the _f_o_l_l_o_w_i_n_g socket addresses (the following
-           --ll options). In the following example, only the IPv4 network socket
+           --ll options) or the default socket (if no --ll options have been
+           specified). In the following example, only the IPv4 network socket
            (address 10.0.0.1) will be restricted to the "FLUSH" and "PENDING"
            commands:
 
@@ -323,15 +326,16 @@ HHOOWW IITT WWOORRKKSS
 
 SSEECCUURRIITTYY CCOONNSSIIDDEERRAATTIIOONNSS
    AAuutthheennttiiccaattiioonn
-       There is no authentication.
+       If your rrdtool installation was built without libwrap there is no form
+       of authentication for clients connecting to the rrdcache daemon!
 
-       The client/server protocol does not yet have any authentication
-       mechanism. It is likely that authentication and encryption will be
-       added in a future version, but for the time being it is the
-       administrator's responsibility to secure the traffic from/to the
-       daemon!
+       If your rrdtool installation was built with libwrap then you can use
+       hosts_access to restrict client access to the rrdcache daemon
+       (rrdcached).  For more information on how to use hosts_access to
+       restrict access to the rrdcache daemon you should read the
+       _h_o_s_t_s___a_c_c_e_s_s(5) man pages.
 
-       It is highly recommended to install a packet filter or similar
+       It is still highly recommended to install a packet filter or similar
        mechanism to prevent unauthorized connections. Unless you have a
        dedicated VLAN or VPN for this, using network sockets is probably a bad
        idea!
@@ -577,4 +581,4 @@ CCOONNTTRRIIBBUUTTOORRSS
 
 
 
-1.4.3                             2010-03-22                      RRDCACHED(1)
+1.4.7                             2011-03-15                      RRDCACHED(1)

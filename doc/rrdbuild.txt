@@ -35,7 +35,7 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
        variables.
 
         BUILD_DIR=/tmp/rrdbuild
-        INSTALL_DIR=/opt/rrdtool-1.4.3
+        INSTALL_DIR=/opt/rrdtool-1.4.7
 
        If your _/_t_m_p is mounted with the option noexec (RHEL seems todo that)
        you have to choose a different directory!
@@ -48,9 +48,9 @@ OOPPTTIIMMIISSTTIICC BBUUIILLDD
        Lets first assume you already have all the necessary libraries pre-
        installed.
 
-        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.3.tar.gz
-        gunzip -c rrdtool-1.4.3.tar.gz | tar xf -
-        cd rrdtool-1.4.3
+        wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz
+        gunzip -c rrdtool-1.4.7.tar.gz | tar xf -
+        cd rrdtool-1.4.7
         ./configure --prefix=$INSTALL_DIR && make && make install
 
        Ok, this was very optimistic. This try will probably have ended with
@@ -83,13 +83,6 @@ IINNSSTTAALLLLIINNGG DDEEPPEENNDDEENNCCIIEESS
        Make sure the RRDtool build system finds your new compiler
 
         export PATH=/opt/SunStudioExpress/bin
-
-       Since there does not seem to be a viable msgfmt tool on OpenSolaris
-       (short of installing it yourself). You have to call configure with the
-
-        --disable-libintl
-
-       option.
 
    DDeebbiiaann // UUbbuunnttuu
        Use apt-get to make sure you have all that is required. A number of
@@ -293,6 +286,14 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
         $MAKE
         $MAKE install
 
+       When building on Solaris you may want todo
+
+        ./configure --prefix=$INSTALL_DIR \
+           --enable-xlib=no \
+           --enable-xlib-render=no \
+           --enable-win32=no \
+           CFLAGS="-O3 -fPIC -D_POSIX_PTHREAD_SEMANTICS"
+
        _B_u_i_l_d_i_n_g _G_l_i_b
 
         cd $BUILD_DIR
@@ -325,7 +326,7 @@ BBUUIILLDDIINNGG DDEEPPEENNDDEENNCCIIEESS
        python and tcl setups that would prevent RRDtool from building if they
        are included in their current state.
 
-        cd $BUILD_DIR/rrdtool-1.4.3
+        cd $BUILD_DIR/rrdtool-1.4.7
         ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
         $MAKE clean
         $MAKE
@@ -344,4 +345,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2010-03-22                       RRDBUILD(1)
+1.4.7                             2012-01-24                       RRDBUILD(1)

@@ -236,7 +236,7 @@ OOPPTTIIOONNSS
 
        By default the format of the axis labels gets determined automatically.
        If you want to do this your self, use this option with the same %lf
-       arguments you know from the PRING and GPRINT commands.
+       arguments you know from the PRINT and GPRINT commands.
 
    LLeeggeenndd
        [--gg|----nnoo--lleeggeenndd]
@@ -459,9 +459,10 @@ OOPPTTIIOONNSS
 
        VVDDEEFF::_v_n_a_m_e==_R_P_N _e_x_p_r_e_s_s_i_o_n
 
-       You need at least one DDEEFF statement to generate anything. The other
-       statements are useful but optional.  See rrdgraph_data and rrdgraph_rpn
-       for the exact format.
+       You need at least one DDEEFF and one LLIINNEE, AARREEAA, GGPPRRIINNTT, PPRRIINNTT statement
+       to generate anything useful.
+
+       See rrdgraph_data and rrdgraph_rpn for the exact format.
 
        NOTE: GGrraapphh aanndd pprriinntt eelleemmeennttss
 
@@ -523,4 +524,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2010-03-22                       RRDGRAPH(1)
+1.4.7                             2010-12-07                       RRDGRAPH(1)

@@ -1,10 +1,13 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_open.c  Open an RRD File
  *****************************************************************************
- * $Id: rrd_open.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_open.c 2267 2012-01-24 10:08:48Z oetiker $
  *****************************************************************************/
+
+#include "rrd_tool.h"
+#include "unused.h"
 
 #ifdef WIN32
 #include <stdlib.h>
@@ -17,8 +20,6 @@
 #include <utime.h>
 #endif
 
-#include "rrd_tool.h"
-#include "unused.h"
 #define MEMBLK 8192
 
 #ifdef WIN32
@@ -156,7 +157,9 @@ rrd_file_t *rrd_open(
     if (rdwr & RRD_READONLY) {
         flags |= O_RDONLY;
 #ifdef HAVE_MMAP
+# if !defined(AIX)
         rrd_simple_file->mm_flags = MAP_PRIVATE;
+# endif
 # ifdef MAP_NORESERVE
         rrd_simple_file->mm_flags |= MAP_NORESERVE;  /* readonly, so no swap backing needed */
 # endif
@@ -244,6 +247,38 @@ rrd_file_t *rrd_open(
 */
 
 #ifdef HAVE_MMAP
+	/* force allocating the file on the underlaying filesystem to prevent any
+	 * future bus error when the filesystem is full and attempting to write
+	 * trough the file mapping. Filling the file using memset on the file
+	 * mapping can also lead some bus error, so we use the old fashioned
+	 * write().
+	 */
+    if (rdwr & RRD_CREAT) {
+		char     buf[4096];
+		unsigned i;
+
+		memset(buf, DNAN, sizeof buf);
+		lseek(rrd_simple_file->fd, offset, SEEK_SET);
+        
+		for (i = 0; i < (newfile_size - 1) / sizeof buf; ++i)
+		{
+			if (write(rrd_simple_file->fd, buf, sizeof buf) == -1)
+			{
+				rrd_set_error("write '%s': %s", file_name, rrd_strerror(errno));
+				goto out_close;
+			}
+		}
+		
+		if (write(rrd_simple_file->fd, buf,
+					(newfile_size - 1) % sizeof buf) == -1)
+		{
+			rrd_set_error("write '%s': %s", file_name, rrd_strerror(errno));
+			goto out_close;
+		}
+
+		lseek(rrd_simple_file->fd, 0, SEEK_SET);
+    }
+
     data = mmap(0, rrd_file->file_len, 
         rrd_simple_file->mm_prot, rrd_simple_file->mm_flags,
         rrd_simple_file->fd, offset);
@@ -256,7 +291,6 @@ rrd_file_t *rrd_open(
     }
     rrd_simple_file->file_start = data;
     if (rdwr & RRD_CREAT) {
-        memset(data, DNAN, newfile_size - 1);
         goto out_done;
     }
 #endif
@@ -686,7 +720,7 @@ ssize_t rrd_write(
 /* this is a leftover from the old days, it serves no purpose
    and is therefore turned into a no-op */
 void rrd_flush(
-    rrd_file_t *rrd_file  __attribute__((unused)))
+    rrd_file_t UNUSED(*rrd_file))
 {
 }
 
@@ -748,10 +782,10 @@ void rrd_freemem(
  * aligning RRAs within stripes, or other performance enhancements
  */
 void rrd_notify_row(
-    rrd_file_t *rrd_file  __attribute__((unused)),
-    int rra_idx  __attribute__((unused)),
-    unsigned long rra_row  __attribute__((unused)),
-    time_t rra_time  __attribute__((unused)))
+    rrd_file_t UNUSED(*rrd_file),
+    int UNUSED(rra_idx),
+    unsigned long UNUSED(rra_row),
+    time_t UNUSED(rra_time))
 {
 }
 
@@ -763,8 +797,8 @@ void rrd_notify_row(
  * don't change to a new disk block at the same time
  */
 unsigned long rrd_select_initial_row(
-    rrd_file_t *rrd_file  __attribute__((unused)),
-    int rra_idx  __attribute__((unused)),
+    rrd_file_t UNUSED(*rrd_file),
+    int UNUSED(rra_idx),
     rra_def_t *rra
     )
 {

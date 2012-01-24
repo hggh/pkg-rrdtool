@@ -1,12 +1,12 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010                    
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012                    
  *****************************************************************************
  * rrd_restore.c  Contains logic to parse XML input and create an RRD file
  * This file:
  * Copyright (C) 2008  Florian octo Forster  (original libxml2 code)
  * Copyright (C) 2008,2009 Tobias Oetiker
  *****************************************************************************
- * $Id: rrd_restore.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_restore.c 2267 2012-01-24 10:08:48Z oetiker $
  *************************************************************************** */
 
 #include "rrd_tool.h"
@@ -788,7 +788,7 @@ static int parse_tag_rra(
 
     /* All space successfully allocated, increment number of RRAs. */
     rrd->stat_head->rra_cnt++;
-
+    
     status = 0;
     while ((element = get_xml_element(reader)) != NULL){
         if (xmlStrcasecmp(element, (const xmlChar *) "cf") == 0)
@@ -827,7 +827,7 @@ static int parse_tag_rra(
                 return status;
         }
         else if (xmlStrcasecmp(element,(const xmlChar *) "/rra") == 0){
-            xmlFree(element);            
+            xmlFree(element);
             return status;
         }  /* }}} */        
        else {
@@ -1180,15 +1180,16 @@ static int write_file(
         unsigned long num_rows = rrd->rra_def[i].row_cnt;
         unsigned long cur_row = rrd->rra_ptr[i].cur_row;
         unsigned long ds_cnt = rrd->stat_head->ds_cnt;
+        if (num_rows > 0){
+            fwrite(rrd->rrd_value +
+                (rra_offset + num_rows - 1 - cur_row) * ds_cnt,
+                sizeof(rrd_value_t), (cur_row + 1) * ds_cnt, fh);
 
-        fwrite(rrd->rrd_value +
-               (rra_offset + num_rows - 1 - cur_row) * ds_cnt,
-               sizeof(rrd_value_t), (cur_row + 1) * ds_cnt, fh);
+            fwrite(rrd->rrd_value + rra_offset * ds_cnt,
+                sizeof(rrd_value_t), (num_rows - 1 - cur_row) * ds_cnt, fh);
 
-        fwrite(rrd->rrd_value + rra_offset * ds_cnt,
-               sizeof(rrd_value_t), (num_rows - 1 - cur_row) * ds_cnt, fh);
-
-        rra_offset += num_rows;
+            rra_offset += num_rows;
+        }
     }
 
     /* lets see if we had an error */

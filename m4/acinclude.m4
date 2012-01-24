@@ -339,61 +339,7 @@ AC_DEFUN([AC_IEEE], [
 AC_MSG_CHECKING([if IEEE math works $1])
 AC_CACHE_VAL([rd_cv_ieee_$2],
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[$3
-
-#if HAVE_MATH_H
-#  include <math.h>
-#endif
-
-#if HAVE_FLOAT_H
-#  include <float.h>  
-#endif
-
-#if HAVE_IEEEFP_H
-#  include <ieeefp.h>
-#endif
-
-#if HAVE_FP_CLASS_H
-#  include <fp_class.h>
-#endif
-
-/* Solaris */
-#if (! defined(HAVE_ISINF) && defined(HAVE_FPCLASS))
-#  define HAVE_ISINF 1
-#  define isinf(a) (fpclass(a) == FP_NINF || fpclass(a) == FP_PINF)
-#endif
-
-/* solaris 10 it defines isnan such that only forte can compile it ... bad bad  */
-#if (defined(HAVE_ISNAN) && defined(isnan) && defined(HAVE_FPCLASS) && defined(FP_SNAN) && defined(FP_QNAN))
-#  undef isnan
-#  define isnan(a) (fpclass(a) == FP_SNAN || fpclass(a) == FP_QNAN)
-#endif
-
-/* Digital UNIX */
-#if (! defined(HAVE_ISINF) && defined(HAVE_FP_CLASS) && defined(HAVE_FP_CLASS_H) && defined(FP_NEG_INF) && defined( FP_POS_INF) )
-#  define HAVE_ISINF 1
-#  define isinf(a) (fp_class(a) == FP_NEG_INF || fp_class(a) == FP_POS_INF)
-#endif 
-
-/* AIX */
-#if (! defined(HAVE_ISINF) && defined(HAVE_CLASS))
-#  define HAVE_ISINF 1
-#  define isinf(a) (class(a) == FP_MINUS_INF || class(a) == FP_PLUS_INF)
-#endif
-
-#if (! defined(HAVE_ISINF) && defined(HAVE_FPCLASSIFY) && defined(FP_PLUS_INF) && defined(FP_MINUS_INF))
-#  define HAVE_ISINF 1
-#  define isinf(a) (fpclassify(a) == FP_MINUS_INF || fpclassify(a) == FP_PLUS_INF)
-#endif
-
-#if (! defined(HAVE_ISINF) && defined(HAVE_FPCLASSIFY) && defined(FP_INFINITE))
-#  define HAVE_ISINF 1
-#  define isinf(a) (fpclassify(a) == FP_INFINITE)
-#endif
-
-#if HAVE_MATH_H
-#include <math.h>
-#endif
-
+#include "src/rrd_config_bottom.h"
 #include <stdio.h>
 int main(void){
     double rrdnan,rrdinf,rrdc,rrdzero;
@@ -599,3 +545,68 @@ fi
 
 ])
 
+dnl idea taken from the autoconf mailing list, posted by
+dnl Timur I. Bakeyev  timur@gnu.org, 
+dnl http://mail.gnu.org/pipermail/autoconf/1999-October/008311.html
+dnl partly rewritten by Peter Stamfest <peter@stamfest.at>
+
+dnl This determines, if struct tm containes tm_gmtoff field
+dnl or we should use extern long int timezone.
+
+dnl Add the following to your acconfig.h:
+
+dnl /* Define if your struct tm has tm_gmtoff.  */
+dnl #undef HAVE_TM_GMTOFF
+dnl #undef TM_GMTOFF
+dnl
+dnl /* Define if you don't have tm_gmtoff but do have the external timezone. */
+dnl #undef HAVE_TIMEZONE
+
+AC_DEFUN([GC_TIMEZONE], [
+        AC_REQUIRE([AC_STRUCT_TM])
+        AC_CACHE_CHECK([tm_gmtoff in struct tm], gq_cv_have_tm_gmtoff,
+                gq_cv_have_tm_gmtoff=no
+                AC_TRY_COMPILE([#include <time.h>
+                                #include <$ac_cv_struct_tm>
+                                ],
+                               [struct tm t;
+                                t.tm_gmtoff = 0;
+                                exit(0);
+                                ],
+                               gq_cv_have_tm_gmtoff=yes
+                        )
+        )
+
+        AC_CACHE_CHECK([__tm_gmtoff in struct tm], gq_cv_have___tm_gmtoff,
+                gq_cv_have___tm_gmtoff=no
+                AC_TRY_COMPILE([#include <time.h>
+                                #include <$ac_cv_struct_tm>
+                                ],
+                               [struct tm t;
+                                t.__tm_gmtoff = 0;
+                                exit(0);
+                                ],
+                               gq_cv_have___tm_gmtoff=yes
+                        )
+        )
+
+        if test "$gq_cv_have_tm_gmtoff" = yes ; then
+                AC_DEFINE(HAVE_TM_GMTOFF,1,[does tm have a tm_gmtoff member])
+                AC_DEFINE(TM_GMTOFF, tm_gmtoff,[the real name of tm_gmtoff])
+        elif test "$gq_cv_have___tm_gmtoff" = yes ; then
+                AC_DEFINE(HAVE_TM_GMTOFF)
+                AC_DEFINE(TM_GMTOFF, __tm_gmtoff)
+        else
+                AC_CACHE_CHECK(for timezone, ac_cv_var_timezone,
+                               [AC_TRY_LINK([
+                                             #include <time.h>
+                                             extern long int timezone;
+                                ],
+                               [long int l = timezone;], 
+                                ac_cv_var_timezone=yes, 
+                                ac_cv_var_timezone=no)])
+                if test $ac_cv_var_timezone = yes; then
+                        AC_DEFINE(HAVE_TIMEZONE,1,[is there an external timezone variable instead ?])
+                fi
+        fi
+])

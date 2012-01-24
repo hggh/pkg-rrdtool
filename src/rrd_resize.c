@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_resize.c Alters size of an RRA
  *****************************************************************************
@@ -118,7 +118,6 @@ int rrd_resize(
         rrd_free(&rrdnew);
         rrd_free(&rrdold);
         rrd_close(rrd_file);
-        rrd_close(rrd_out_file);
         return (-1);
     }
     if (rrd_lock(rrd_out_file) != 0) {
@@ -162,6 +161,12 @@ int rrd_resize(
     default:
         rrd_set_error("Do not know how to handle RRD version %s",
                       rrdold.stat_head->version);
+
+        rrdnew.ds_def = NULL;
+        rrdnew.live_head = NULL;
+        rrdnew.pdp_prep = NULL;
+        rrdnew.cdp_prep = NULL;
+
         rrd_free(&rrdnew);
         rrd_free(&rrdold);
         rrd_close(rrd_file);
@@ -262,9 +267,14 @@ int rrd_resize(
     /* Move the rest of the CDPs
      */
     while (1) {
-        if (rrd_read(rrd_file, &buffer, sizeof(rrd_value_t) * 1) <= 0)
+        ssize_t b_read;
+        if ((b_read=rrd_read(rrd_file, &buffer, sizeof(rrd_value_t) * 1)) <= 0)
             break;
-        rrd_write(rrd_out_file, &buffer, sizeof(rrd_value_t) * 1);
+        if(rrd_out_file->pos+b_read > rrd_out_file->file_len) {
+            fprintf(stderr,"WARNING: ignoring last %zu bytes\nWARNING: if you see this message multiple times for a single file you're in trouble\n", b_read);
+            continue;
+        }
+        rrd_write(rrd_out_file, &buffer, b_read);
     }
     rrdnew.rra_def[target_rra].row_cnt += modify;
     rrd_seek(rrd_out_file,
@@ -283,6 +293,12 @@ int rrd_resize(
     rrd_close(rrd_file);    
     rrd_close(rrd_out_file);    
     rrd_free(&rrdold);
+
+    rrdnew.ds_def = NULL;
+    rrdnew.live_head = NULL;
+    rrdnew.pdp_prep = NULL;
+    rrdnew.cdp_prep = NULL;
+
     rrd_free(&rrdnew);
     return (0);
 }

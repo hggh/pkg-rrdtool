@@ -170,23 +170,27 @@ char *strchr (), *strrchr ();
 #endif
 
 /* for Solaris */
-#if (! defined(HAVE_ISINF) && defined(HAVE_FPCLASS))
-#  define HAVE_ISINF 1
-#  ifdef isinf
+#if (! defined(HAVE_ISINF) && defined(HAVE_FPCLASS)) 
+# define HAVE_ISINF 1
+# ifdef isinf
 #  undef isinf
-#  endif
-#  define isinf(a) (!!(fpclass(a) & (FP_SNAN|FP_QNAN)))
+# endif
+# define isinf(a) (fpclass(a) == FP_NINF || fpclass(a) == FP_PINF)
+#endif
 
+/* solaris 8/9 has rint but not round */
+#if (! defined(HAVE_ROUND) && defined(HAVE_RINT))
+# define round rint
 #endif
 
 /* solaris 10 it defines isnan such that only forte can compile it ... bad bad  */
-#if (defined(HAVE_ISNAN) && defined(isnan) && defined(HAVE_FPCLASS) && defined(FP_SNAN) && defined(FP_QNAN))
+#if (defined(HAVE_ISNAN) && defined(isnan) && defined(HAVE_FPCLASS))
 #  undef isnan
 #  define isnan(a) (fpclass(a) == FP_SNAN || fpclass(a) == FP_QNAN)
 #endif
 
 /* for OSF1 Digital Unix */
-#if (! defined(HAVE_ISINF) && defined(HAVE_FP_CLASS) && defined(HAVE_FP_CLASS_H) && defined(FP_NEG_INF) && defined( FP_POS_INF))
+#if (! defined(HAVE_ISINF) && defined(HAVE_FP_CLASS) && defined(HAVE_FP_CLASS_H))
 #  define HAVE_ISINF 1
 #  define isinf(a) (fp_class(a) == FP_NEG_INF || fp_class(a) == FP_POS_INF)
 #endif

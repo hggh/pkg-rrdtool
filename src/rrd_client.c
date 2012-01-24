@@ -2,18 +2,23 @@
  * RRDTool - src/rrd_client.c
  * Copyright (C) 2008 Florian octo Forster
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; only version 2 of the License is applicable.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  *
  * Authors:
  *   Florian octo Forster <octo at verplant.org>
@@ -68,30 +73,31 @@ static const char *get_path (const char *path, char *resolved_path) /* {{{ */
   const char *ret = path;
   int is_unix = 0;
 
+  if ((path == NULL) || (resolved_path == NULL) || (sd_path == NULL))
+    return (NULL);
+
   if ((*sd_path == '/')
       || (strncmp ("unix:", sd_path, strlen ("unix:")) == 0))
     is_unix = 1;
 
-  if (*path == '/') /* absolute path */
+  if (is_unix)
   {
-    if (! is_unix)
+    ret = realpath(path, resolved_path);
+    if (ret == NULL)
+      rrd_set_error("realpath(%s): %s", path, rrd_strerror(errno));
+    return ret;
+  }
+  else
+  {
+    if (*path == '/') /* not absolute path */
     {
       rrd_set_error ("absolute path names not allowed when talking "
           "to a remote daemon");
-      return (NULL);
+      return NULL;
     }
-    /* else: nothing to do */
   }
-  else /* relative path */
-  {
-    if (is_unix)
-    {
-      realpath (path, resolved_path);
-      ret = resolved_path;
-    }
-    /* else: nothing to do */
-  }
-  return (ret);
+
+  return path;
 } /* }}} char *get_path */
 
 /* One must hold `lock' when calling `close_connection'. */
@@ -222,34 +228,36 @@ static void response_free (rrdc_response_t *res) /* {{{ */
 
 static int response_read (rrdc_response_t **ret_response) /* {{{ */
 {
-  rrdc_response_t *ret;
+  rrdc_response_t *ret = NULL;
+  int status = 0;
 
   char buffer[4096];
   char *buffer_ptr;
 
   size_t i;
 
+#define DIE(code) do { status = code; goto err_out; } while(0)
+
   if (sh == NULL)
-    return (-1);
+    DIE(-1);
 
   ret = (rrdc_response_t *) malloc (sizeof (rrdc_response_t));
   if (ret == NULL)
-    return (-2);
+    DIE(-2);
   memset (ret, 0, sizeof (*ret));
   ret->lines = NULL;
   ret->lines_num = 0;
 
   buffer_ptr = fgets (buffer, sizeof (buffer), sh);
   if (buffer_ptr == NULL)
-    return (-3);
+    DIE(-3);
+
   chomp (buffer);
 
   ret->status = strtol (buffer, &ret->message, 0);
   if (buffer == ret->message)
-  {
-    response_free (ret);
-    return (-4);
-  }
+    DIE(-4);
+
   /* Skip leading whitespace of the status message */
   ret->message += strspn (ret->message, " \t");
 
@@ -257,16 +265,13 @@ static int response_read (rrdc_response_t **ret_response) /* {{{ */
   {
     if (ret->status < 0)
       rrd_set_error("rrdcached: %s", ret->message);
-    *ret_response = ret;
-    return (0);
+    goto out;
   }
 
   ret->lines = (char **) malloc (sizeof (char *) * ret->status);
   if (ret->lines == NULL)
-  {
-    response_free (ret);
-    return (-5);
-  }
+    DIE(-5);
+
   memset (ret->lines, 0, sizeof (char *) * ret->status);
   ret->lines_num = (size_t) ret->status;
 
@@ -274,22 +279,27 @@ static int response_read (rrdc_response_t **ret_response) /* {{{ */
   {
     buffer_ptr = fgets (buffer, sizeof (buffer), sh);
     if (buffer_ptr == NULL)
-    {
-      response_free (ret);
-      return (-6);
-    }
+      DIE(-6);
+
     chomp (buffer);
 
     ret->lines[i] = strdup (buffer);
     if (ret->lines[i] == NULL)
-    {
-      response_free (ret);
-      return (-7);
-    }
+      DIE(-7);
   }
 
+out:
   *ret_response = ret;
-  return (0);
+  fflush(sh);
+  return (status);
+
+err_out:
+  response_free(ret);
+  close_connection();
+  return (status);
+
+#undef DIE
+
 } /* }}} rrdc_response_t *response_read */
 
 static int request (const char *buffer, size_t buffer_size, /* {{{ */
@@ -340,7 +350,8 @@ int rrdc_is_connected(const char *daemon_addr) /* {{{ */
      * but it is not specified in the current command.
      * Daemon is only implied in this case if set in ENV
      */
-    if (getenv(ENV_RRDCACHED_ADDRESS) != NULL)
+    char *addr = getenv(ENV_RRDCACHED_ADDRESS);
+    if (addr != NULL && strcmp(addr,"") != 0)
       return 1;
     else
       return 0;
@@ -492,6 +503,8 @@ static int rrdc_connect_network (const char *addr_orig) /* {{{ */
     break;
   } /* for (ai_ptr) */
 
+  freeaddrinfo(ai_res);
+
   return (status);
 } /* }}} int rrdc_connect_network */
 
@@ -499,11 +512,14 @@ int rrdc_connect (const char *addr) /* {{{ */
 {
   int status = 0;
 
-  if (addr == NULL)
+  if (addr == NULL) {
     addr = getenv (ENV_RRDCACHED_ADDRESS);
+  }
 
-  if (addr == NULL)
-    return 0;
+  if (addr == NULL || strcmp(addr,"") == 0 ) {
+    addr = NULL;
+    return 0;   
+  }
 
   pthread_mutex_lock(&lock);
 

@@ -96,7 +96,7 @@ tar</strong> and <strong>GNU make</strong> respectively. It could be that they a
 <p>Once you have decided. Save the two locations into environment variables.</p>
 <pre>
  BUILD_DIR=/tmp/rrdbuild
- INSTALL_DIR=/opt/rrdtool-1.4.3</pre>
+ INSTALL_DIR=/opt/rrdtool-1.4.7</pre>
 <p>If your <em class="file">/tmp</em> is mounted with the option noexec (RHEL seems todo that) you have to choose
 a different directory!</p>
 <p>Now make sure the BUILD_DIR exists and go there:</p>
@@ -106,9 +106,9 @@ a different directory!</p>
 <p>Lets first assume you already have all the necessary libraries
 pre-installed.</p>
 <pre>
- wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.3.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.3.tar.gz</a>
- gunzip -c rrdtool-1.4.3.tar.gz | tar xf -
- cd rrdtool-1.4.3
+ wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz</a>
+ gunzip -c rrdtool-1.4.7.tar.gz | tar xf -
+ cd rrdtool-1.4.7
  ./configure --prefix=$INSTALL_DIR &amp;&amp; make &amp;&amp; make install</pre>
 <p>Ok, this was very optimistic. This try will probably have ended with
 <strong>configure</strong> complaining about several missing libraries.</p>
@@ -139,11 +139,6 @@ fix this:</p>
 <p>Make sure the RRDtool build system finds your new compiler</p>
 <pre>
  export PATH=/opt/SunStudioExpress/bin</pre>
-<p>Since there does not seem to be a viable msgfmt tool on OpenSolaris (short
-of installing it yourself). You have to call configure with the</p>
-<pre>
- --disable-libintl</pre>
-<p>option.</p>
 <p>
 </p>
 <h2><a name="debian___ubuntu">Debian / Ubuntu</a></h2>
@@ -357,6 +352,13 @@ config file.</p>
     CFLAGS=&quot;-O3 -fPIC&quot;
  $MAKE
  $MAKE install</pre>
+<p>When building on Solaris you may want todo</p>
+<pre>
+ ./configure --prefix=$INSTALL_DIR \
+    --enable-xlib=no \
+    --enable-xlib-render=no \
+    --enable-win32=no \
+    CFLAGS=&quot;-O3 -fPIC -D_POSIX_PTHREAD_SEMANTICS&quot;</pre>
 <p>
 </p>
 <h3><a name="building_glib">Building Glib</a></h3>
@@ -391,7 +393,7 @@ because it seems that a fair number of people have ill configured python and
 tcl setups that would prevent RRDtool from building if they are included in
 their current state.</p>
 <pre>
- cd $BUILD_DIR/rrdtool-1.4.3
+ cd $BUILD_DIR/rrdtool-1.4.7
  ./configure --prefix=$INSTALL_DIR --disable-tcl --disable-python
  $MAKE clean
  $MAKE

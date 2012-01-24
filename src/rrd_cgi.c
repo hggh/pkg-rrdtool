@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_cgi.c  RRD Web Page Generator
  *****************************************************************************/
@@ -7,6 +7,11 @@
 #include "rrd_tool.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+
+#ifdef WIN32
+   #define strcasecmp stricmp
+   #define strcasencmp strnicmp
 #endif
 
 #define MEMBLK 1024
@@ -1253,11 +1258,6 @@ int parse(
         val = func(argc, (const char **) args);
         free(args-1);
     } else {
-        /* unable to parse arguments, undo 0-termination by scanargs */
-        for (; argc > 0; argc--) {
-            *((args[argc - 1]) - 1) = ' ';
-        }
-
         /* next call, try parsing at current offset +1 */
         end = (*buf) + i + 1;
 

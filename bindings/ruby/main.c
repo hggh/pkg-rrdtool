@@ -1,4 +1,4 @@
-/* $Id: main.c 2022 2010-02-16 13:04:18Z oetiker $
+/* $Id: main.c 2246 2011-12-18 11:54:57Z oetiker $
  * Substantial penalty for early withdrawal.
  */
 
@@ -48,16 +48,16 @@ string_arr string_arr_new(
 
         switch (TYPE(v)) {
         case T_STRING:
-            a.strings[i + 1] = strdup(STR2CSTR(v));
+            a.strings[i + 1] = strdup(StringValuePtr(v));
             break;
         case T_FIXNUM:
-            snprintf(buf, 63, "%d", FIX2INT(v));
+            snprintf(buf, 63, "%ld", (long)FIX2INT(v));
             a.strings[i + 1] = strdup(buf);
             break;
         default:
             rb_raise(rb_eTypeError,
-                     "invalid argument - %s, expected T_STRING or T_FIXNUM on index %d",
-                     rb_class2name(CLASS_OF(v)), i);
+                     "invalid argument - %s, expected T_STRING or T_FIXNUM on index %ld",
+                     (long)rb_class2name(CLASS_OF(v)), i);
             break;
         }
     }
@@ -333,6 +333,7 @@ VALUE rb_rrd_xport(
     time_t start, end;
 
     a = string_arr_new(args);
+    reset_rrd_state();
     rrd_xport(a.len, a.strings, &xxsize, &start, &end, &step, &col_cnt, &legend_v, &data);
     string_arr_delete(a);
 

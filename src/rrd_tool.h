@@ -1,5 +1,5 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_tool.h   Common Header File
  *****************************************************************************/
@@ -10,10 +10,12 @@ extern    "C" {
 #ifndef _RRD_TOOL_H
 #define _RRD_TOOL_H
 
+#if defined(WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
+#include "../win32/config.h"
+#else
 #ifdef HAVE_CONFIG_H
 #include "../rrd_config.h"
-#elif defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__)
-#include "../win32/config.h"
+#endif
 #endif
 
 #include "rrd.h"
@@ -42,7 +44,7 @@ extern    "C" {
 #else
 
 /* unix-only includes */
-#if !defined isnan && !defined HAVE_ISNAN
+#if !defined(isnan) && !defined(HAVE_ISNAN)
     int       isnan(
     double value);
 #endif

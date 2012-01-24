@@ -107,7 +107,7 @@ name are resolved using <code>getaddrinfo()</code>.</p>
 <code>[address]:port</code>. If the address is an IPv4 address or a fully
 qualified domain name (i.&nbsp;e. the address contains at least one dot
 (<code>.</code>)), the square brackets can be omitted, resulting in the (simpler)
-<code>address:port</code> pattern. The default port is <strong>42217/udp</strong>. If you
+<code>address:port</code> pattern. The default port is <strong>42217/tcp</strong>. If you
 specify a network socket, it is mandatory to read the
 <a href="#security_considerations">SECURITY CONSIDERATIONS</a> section.</p>
 <p>The following formats are accepted. Please note that the address of the UNIX
@@ -132,7 +132,8 @@ may be useful in cases where you cannot easily run all RRD processes with the sa
 user privileges (e.g. graph generating CGI scripts that typically run in the
 permission context of the web server).</p>
 <p>This option affects the <em>following</em> UNIX socket addresses (the following
-<strong>-l</strong> options), i.e., you may specify different settings for different
+<strong>-l</strong> options) or the default socket (if no <strong>-l</strong> options have been
+specified), i.e., you may specify different settings for different
 sockets.</p>
 <p>The default is not to change ownership or permissions of the socket and, thus,
 use the system default.</p>
@@ -148,7 +149,8 @@ permissions are required to connect to a UNIX socket. However, many
 BSD-derived systems ignore permissions for UNIX sockets. See <em>unix(7)</em> for
 details.</p>
 <p>This option affects the <em>following</em> UNIX socket addresses (the following
-<strong>-l</strong> options), i.e., you may specify different settings for different
+<strong>-l</strong> options) or the default socket (if no <strong>-l</strong> options have been
+specified), i.e., you may specify different settings for different
 sockets.</p>
 <p>The default is not to change ownership or permissions of the socket and, thus,
 use the system default.</p>
@@ -164,7 +166,8 @@ For example, to allow the <code>FLUSH</code> and <code>PENDING</code> commands o
 <pre>
   rrdcached -P FLUSH,PENDING $MORE_ARGUMENTS</pre>
 <p>The <strong>-P</strong> option affects the <em>following</em> socket addresses (the following <strong>-l</strong>
-options). In the following example, only the IPv4 network socket (address
+options) or the default socket (if no <strong>-l</strong> options have been
+specified). In the following example, only the IPv4 network socket (address
 <code>10.0.0.1</code>) will be restricted to the <code>FLUSH</code> and <code>PENDING</code> commands:</p>
 <pre>
   rrdcached -l unix:/some/path -P FLUSH,PENDING -l 10.0.0.1</pre>
@@ -424,12 +427,13 @@ to disk.</p>
 <p>
 </p>
 <h2><a name="authentication">Authentication</a></h2>
-<p>There is no authentication.</p>
-<p>The client/server protocol does not yet have any authentication mechanism. It
-is likely that authentication and encryption will be added in a future version,
-but for the time being it is the administrator's responsibility to secure the
-traffic from/to the daemon!</p>
-<p>It is highly recommended to install a packet filter or similar mechanism to
+<p>If your rrdtool installation was built without libwrap there is no form of 
+authentication for clients connecting to the rrdcache daemon!</p>
+<p>If your rrdtool installation was built with libwrap then you can use
+hosts_access to restrict client access to the rrdcache daemon (rrdcached).  For more
+information on how to use hosts_access to restrict access to the rrdcache
+daemon you should read the <code>hosts_access(5)</code> man pages.</p>
+<p>It is still highly recommended to install a packet filter or similar mechanism to
 prevent unauthorized connections. Unless you have a dedicated VLAN or VPN for
 this, using network sockets is probably a bad idea!</p>
 <p>

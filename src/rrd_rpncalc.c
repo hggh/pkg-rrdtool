@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  ****************************************************************************
  * rrd_rpncalc.c  RPN calculator functions
  ****************************************************************************/
@@ -33,8 +33,8 @@ short rpn_compact(
     while (rpnp[*count].op != OP_END)
         (*count)++;
     if (++(*count) > DS_CDEF_MAX_RPN_NODES) {
-        rrd_set_error("Maximum %d RPN nodes permitted",
-                      DS_CDEF_MAX_RPN_NODES);
+        rrd_set_error("Maximum %d RPN nodes permitted. Got %d RPN nodes at present.",
+                      DS_CDEF_MAX_RPN_NODES-1,(*count)-1);
         return -1;
     }
 
@@ -72,10 +72,12 @@ rpnp_t   *rpn_expand(
     /* DS_CDEF_MAX_RPN_NODES is small, so at the expense of some wasted
      * memory we avoid any reallocs */
     rpnp = (rpnp_t *) calloc(DS_CDEF_MAX_RPN_NODES, sizeof(rpnp_t));
-    if (rpnp == NULL)
+    if (rpnp == NULL) {
+        rrd_set_error("failed allocating rpnp array");
         return NULL;
+    }
     for (i = 0; rpnc[i].op != OP_END; ++i) {
-        rpnp[i].op = rpnc[i].op;
+        rpnp[i].op = (enum op_en)rpnc[i].op;
         if (rpnp[i].op == OP_NUMBER) {
             rpnp[i].val = (double) rpnc[i].val;
         } else if (rpnp[i].op == OP_VARIABLE || rpnp[i].op == OP_PREV_OTHER) {
@@ -234,9 +236,11 @@ void parseCDEF_DS(
      * occur too often. */
     for (i = 0; rpnp[i].op != OP_END; i++) {
         if (rpnp[i].op == OP_TIME || rpnp[i].op == OP_LTIME ||
-            rpnp[i].op == OP_PREV || rpnp[i].op == OP_COUNT) {
+            rpnp[i].op == OP_PREV || rpnp[i].op == OP_COUNT ||
+            rpnp[i].op == OP_TREND || rpnp[i].op == OP_TRENDNAN ||
+            rpnp[i].op == OP_PREDICT || rpnp[i].op ==  OP_PREDICTSIGMA ) {
             rrd_set_error
-                ("operators time, ltime, prev and count not supported with DS COMPUTE");
+                ("operators TIME, LTIME, PREV COUNT TREND TRENDNAN PREDICT PREDICTSIGMA are not supported with DS COMPUTE");
             free(rpnp);
             return;
         }
@@ -295,7 +299,8 @@ rpnp_t   *rpn_parse(
     char      vname[MAX_VNAME_LEN + 10];
     char     *old_locale;
 
-    old_locale = setlocale(LC_NUMERIC, "C");
+    old_locale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
 
     rpnp = NULL;
     expr = (char *) expr_const;
@@ -878,7 +883,7 @@ short rpn_calc(
                 time_t    dur = (time_t) rpnstack->s[stptr];
                 time_t    step = (time_t) rpnp[rpi - 2].step;
 
-                if (output_idx > (int) ceil((float) dur / (float) step)) {
+                if (output_idx + 1 >= (int) ceil((float) dur / (float) step)) {
                     int       ignorenan = (rpnp[rpi].op == OP_TREND);
                     double    accum = 0.0;
                     int       i = 0;
