@@ -1,7 +1,7 @@
 diff a/src/rrd_create.c b/src/rrd_create.c
 --- a/src/rrd_create.c
 +++ b/src/rrd_create.c
-@@ -740,6 +740,15 @@ int rrd_create_fn(
+@@ -771,6 +771,15 @@ int rrd_create_fn(
          default:
              /* can not be zero because we don't know anything ... */
              rrd->cdp_prep->scratch[CDP_val].u_val = DNAN;
