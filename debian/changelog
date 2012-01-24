@@ -1,3 +1,11 @@
+rrdtool (1.4.7-1~1.gbpb59bb9) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @b59bb99492706d1548d6093fb8730bd3666b529e **
+
+  * [b59bb994] Merge commit 'upstream/1.4.7'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 24 Jan 2012 23:08:03 +0100
+
 rrdtool (1.4.3-3) unstable; urgency=high
 
   * Reupload to unstable, which has Tcl 8.5 by now.
