@@ -1,10 +1,12 @@
-rrdtool (1.4.7-1~1.gbpb59bb9) UNRELEASED; urgency=low
-
-  ** SNAPSHOT build @b59bb99492706d1548d6093fb8730bd3666b529e **
+rrdtool (1.4.7-1) unstable; urgency=low
 
   * [b59bb994] Merge commit 'upstream/1.4.7'
+  * [8acead25] Refreshing patches, dropping bts625631-gcc4.5.
+  * [75b42449] Ack NMU.
+    Thanks to Luk Claes (Closes: #619688)
+  * [e11e1d9e] Migrate to dh_python2.
 
- -- Bernd Zeimetz <bzed@debian.org>  Tue, 24 Jan 2012 23:08:03 +0100
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 24 Jan 2012 23:35:35 +0100
 
 rrdtool (1.4.3-3.1) unstable; urgency=low
 
