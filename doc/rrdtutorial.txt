@@ -53,7 +53,7 @@ TTUUTTOORRIIAALL
        you can go on and on and on. After a while, all the available places
        will be used and the process automatically reuses old locations. This
        way, the dataset will not grow in size and therefore requires no
-       maintenance.  RRDtool works with with Round Robin Databases (RRDs). It
+       maintenance.  RRDtool works with Round Robin Databases (RRDs). It
        stores and retrieves data from them.
 
    WWhhaatt ddaattaa ccaann bbee ppuutt iinnttoo aann RRRRDD??
@@ -309,10 +309,16 @@ TTUUTTOORRIIAALL
         920808600: 6.6666666667e-03
         920808900: 3.3333333333e-03
         920809200: nan
+        920809500: nan
 
-       If it doesn't, something may be wrong.  Perhaps your OS will print
-       "NaN" in a different form. "NaN" stands for "Not A Number".  If your OS
-       writes "U" or "UNKN" or something similar that's okay.  If something
+       Note that you might get more rows than you expect. The reason for this
+       is that you ask for a time range that ends on 920809200. The number
+       that is written behind 920809200: in the list above covers the time
+       range from 920808900 to 920809200, EXCLUDING 920809200. Hence to be on
+       the sure side, you receive the entry from 920809200 to 920809500 as
+       well since it INCLUDES 920809200. You may also see "NaN" instead of
+       "nan" this is OS dependent.  "NaN" stands for "Not A Number".  If your
+       OS writes "U" or "UNKN" or something similar that's okay.  If something
        else is wrong, it will probably be due to an error you made (assuming
        that my tutorial is correct of course :-). In that case: delete the
        database and try again.
@@ -1154,4 +1160,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2009-10-15                    RRDTUTORIAL(1)
+1.4.7                             2011-01-15                    RRDTUTORIAL(1)

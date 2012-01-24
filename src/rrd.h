@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrdlib.h   Public header file for librrd
  *****************************************************************************
- * $Id: rrd.h 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd.h 2267 2012-01-24 10:08:48Z oetiker $
  * $Log$
  * Revision 1.9  2005/02/13 16:13:33  oetiker
  * let rrd_graph return the actual value range it picked ...
@@ -57,6 +57,12 @@ extern    "C" {
 #ifndef WIN32
 #include <unistd.h>     /* for off_t */
 #else
+#ifdef _MSC_VER
+#ifndef PERLPATCHLEVEL
+	typedef int mode_t;
+#endif
+	#define strtoll _strtoi64 
+#endif
 	typedef size_t ssize_t;
 	typedef long off_t;
 #endif 
@@ -266,7 +272,8 @@ extern    "C" {
     typedef enum {
         ABSOLUTE_TIME,
         RELATIVE_TO_START_TIME,
-        RELATIVE_TO_END_TIME
+        RELATIVE_TO_END_TIME,
+        RELATIVE_TO_EPOCH
     } rrd_timetype_t;
 
 #define TIME_OK NULL

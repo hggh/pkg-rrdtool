@@ -28,8 +28,10 @@
 #endif
 #endif
 
+#ifndef WIN32
 #ifdef HAVE_CONFIG_H
 #include "../rrd_config.h"
+#endif
 #endif
 
 #include "rrd_getopt.h"
@@ -66,7 +68,11 @@
 #endif
 
 int getopt_long(int argc,
+#ifdef WIN32
                 char** argv,
+#else // WIN32
+                char* const* argv,
+#endif //WIN32
                 const char* options,
                 const struct option* long_options,
                 int* opt_index)
@@ -80,7 +86,11 @@ int getopt_long(int argc,
    instead.  */
 
 int getopt_long_only(int argc,
+#ifdef WIN32
                      char** argv,
+#else // WIN32
+                     char* const* argv,
+#endif //WIN32
                      const char* options,
                      const struct option* long_options,
                      int* opt_index)

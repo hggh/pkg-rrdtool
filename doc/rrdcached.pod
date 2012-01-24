@@ -50,7 +50,7 @@ For network sockets, a port may be specified by using the form
 C<B<[>I<address>B<]:>I<port>>. If the address is an IPv4 address or a fully
 qualified domain name (i.E<nbsp>e. the address contains at least one dot
 (C<.>)), the square brackets can be omitted, resulting in the (simpler)
-C<I<address>B<:>I<port>> pattern. The default port is B<42217/udp>. If you
+C<I<address>B<:>I<port>> pattern. The default port is B<42217/tcp>. If you
 specify a network socket, it is mandatory to read the
 L</"SECURITY CONSIDERATIONS"> section.
 
@@ -77,7 +77,8 @@ user privileges (e.g. graph generating CGI scripts that typically run in the
 permission context of the web server).
 
 This option affects the I<following> UNIX socket addresses (the following
-B<-l> options), i.e., you may specify different settings for different
+B<-l> options) or the default socket (if no B<-l> options have been
+specified), i.e., you may specify different settings for different
 sockets.
 
 The default is not to change ownership or permissions of the socket and, thus,
@@ -95,7 +96,8 @@ BSD-derived systems ignore permissions for UNIX sockets. See L<unix(7)> for
 details.
 
 This option affects the I<following> UNIX socket addresses (the following
-B<-l> options), i.e., you may specify different settings for different
+B<-l> options) or the default socket (if no B<-l> options have been
+specified), i.e., you may specify different settings for different
 sockets.
 
 The default is not to change ownership or permissions of the socket and, thus,
@@ -113,7 +115,8 @@ For example, to allow the C<FLUSH> and C<PENDING> commands one could specify:
   rrdcached -P FLUSH,PENDING $MORE_ARGUMENTS
 
 The B<-P> option affects the I<following> socket addresses (the following B<-l>
-options). In the following example, only the IPv4 network socket (address
+options) or the default socket (if no B<-l> options have been
+specified). In the following example, only the IPv4 network socket (address
 C<10.0.0.1>) will be restricted to the C<FLUSH> and C<PENDING> commands:
 
   rrdcached -l unix:/some/path -P FLUSH,PENDING -l 10.0.0.1
@@ -396,14 +399,15 @@ ASCII art rocks.
 
 =head2 Authentication
 
-There is no authentication.
+If your rrdtool installation was built without libwrap there is no form of 
+authentication for clients connecting to the rrdcache daemon!
 
-The client/server protocol does not yet have any authentication mechanism. It
-is likely that authentication and encryption will be added in a future version,
-but for the time being it is the administrator's responsibility to secure the
-traffic from/to the daemon!
+If your rrdtool installation was built with libwrap then you can use
+hosts_access to restrict client access to the rrdcache daemon (rrdcached).  For more
+information on how to use hosts_access to restrict access to the rrdcache
+daemon you should read the hosts_access(5) man pages. 
 
-It is highly recommended to install a packet filter or similar mechanism to
+It is still highly recommended to install a packet filter or similar mechanism to
 prevent unauthorized connections. Unless you have a dedicated VLAN or VPN for
 this, using network sockets is probably a bad idea!
 

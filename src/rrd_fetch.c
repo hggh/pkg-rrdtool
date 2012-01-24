@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_fetch.c  read date from an rrd to use for further processing
  *****************************************************************************
- * $Id: rrd_fetch.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_fetch.c 2267 2012-01-24 10:08:48Z oetiker $
  * $Log$
  * Revision 1.8  2004/05/18 18:53:03  oetiker
  * big spell checking patch -- slif@bellsouth.net
@@ -237,10 +237,8 @@ int rrd_fetch_fn(
 
 #ifdef HAVE_LIBDBI
     /* handle libdbi datasources */
-    if (strncmp("sql",filename,3)==0) {
-      if (filename[3]==filename[4]) {
+    if (strncmp("sql//",filename,5)==0) {
 	return rrd_fetch_fn_libdbi(filename,cf_idx,start,end,step,ds_cnt,ds_namv,data);
-      }
     }
 #endif
 

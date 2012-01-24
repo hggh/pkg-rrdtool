@@ -1,4 +1,5 @@
 #include "rrd_tool.h"
+#include "unused.h"
 #include <dbi/dbi.h>
 #include <time.h>
 
@@ -365,7 +366,7 @@ static int _inline_unescape (char* string) {
 int
 rrd_fetch_fn_libdbi(
     const char     *filename,  /* name of the rrd */
-    enum cf_en     cf_idx __attribute__((unused)), /* consolidation function */
+    enum cf_en     UNUSED(cf_idx), /* consolidation function */
     time_t         *start,
     time_t         *end,       /* which time frame do you want ?
 			        * will be changed to represent reality */
@@ -388,6 +389,7 @@ rrd_fetch_fn_libdbi(
   unsigned long minstepsize=300;
   /* by default assume unixtimestamp */
   int isunixtime=1;
+  long gmt_offset=0;
   /* the result-set */
   long r_timestamp,l_timestamp,d_timestamp;
   double r_value,l_value,d_value;
@@ -400,6 +402,7 @@ rrd_fetch_fn_libdbi(
   char where[10240];
   table_help.conn=NULL;
   table_help.where=where;
+  table_help.filename=filename;
 
   /* some loop variables */
   int i=0;
@@ -457,7 +460,22 @@ rrd_fetch_fn_libdbi(
     return -1; 
   }
   /* if we have leading '*', then we have a TIMEDATE Field*/
-  if (table_help.timestamp[0]=='*') { isunixtime=0; table_help.timestamp++; }
+  if (table_help.timestamp[0]=='*') {
+    struct tm tm;
+#ifdef HAVE_TIMEZONE
+    extern long timezone;
+#endif
+    time_t t=time(NULL);
+    localtime_r(&t,&tm);
+#ifdef HAVE_TM_GMTOFF
+    gmt_offset=tm.TM_GMTOFF;
+#else
+#ifdef HAVE_TIMEZONE
+    gmt_offset=timezone;
+#endif
+#endif
+    isunixtime=0; table_help.timestamp++;
+  }
   /* hex-unescape the value */
   if(_inline_unescape(table_help.timestamp)) { return -1; }
 
@@ -563,7 +581,7 @@ rrd_fetch_fn_libdbi(
   }
 
   /* allocate memory for resultset (with the following columns: min,avg,max,count,sigma) */
-  i=rows * sizeof(rrd_value_t)*(*ds_cnt);
+  i=(rows+1) * sizeof(rrd_value_t)*(*ds_cnt);
   if (((*data) = malloc(i))==NULL){
     /* and return error */
     rrd_set_error("malloc failed for %i bytes",i);
@@ -583,6 +601,7 @@ rrd_fetch_fn_libdbi(
   while((r_status=_sql_fetchrow(&table_help,&r_timestamp,&r_value,derive))>0) {
     /* processing of value */
     /* calculate index for the timestamp */
+    r_timestamp-=gmt_offset;
     idx=(r_timestamp-(*start))/(*step);
     /* some out of bounds checks on idx */
     if (idx<0) { idx=0;}
@@ -613,7 +632,7 @@ rrd_fetch_fn_libdbi(
 	(*data)[idx*(*ds_cnt)+1]=r_value; /* AVG */
 	(*data)[idx*(*ds_cnt)+2]=r_value; /* MAX */
 	(*data)[idx*(*ds_cnt)+3]=1;       /* COUNT */
-	(*data)[idx*(*ds_cnt)+4]=r_value; /* SIGMA */
+	(*data)[idx*(*ds_cnt)+4]=r_value*r_value; /* SIGMA */
       } else {
 	/* MIN */
 	if ((*data)[idx*(*ds_cnt)+0]>r_value) { (*data)[idx*(*ds_cnt)+0]=r_value; }

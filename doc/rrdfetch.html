@@ -189,11 +189,16 @@ full date in several numerical formats, including <strong>MM/DD/[YY]YY</strong>,
 single-number date is interpreted as MMDD[YY]YY.</p>
 <p><em>NOTE2</em>: if you specify the <em>day</em> in this way, the <em>time-of-day</em> is
 REQUIRED as well.</p>
-<p>Finally, you can use the words <strong>now</strong>, <strong>start</strong>, or <strong>end</strong> as your time
+<p>Finally, you can use the words <strong>now</strong>, <strong>start</strong>, <strong>end</strong> or <strong>epoch</strong> as your time
 reference. <strong>Now</strong> refers to the current moment (and is also the default
 time reference). <strong>Start</strong> (<strong>end</strong>) can be used to specify a time
 relative to the start (end) time for those tools that use these
-categories (<strong>rrdfetch</strong>, <a href="././rrdgraph.html">the rrdgraph manpage</a>).</p>
+categories (<strong>rrdfetch</strong>, <a href="././rrdgraph.html">the rrdgraph manpage</a>) and <strong>epoch</strong> indicates the 
+*IX epoch (*IX timestamp 0 = 1970-01-01 00:00:00 UTC). <strong>epoch</strong> is
+useful to disambiguate between a timestamp value and some forms
+of abbreviated date/time specifications, because it allows to use 
+time offset specifications using units, eg. <strong>epoch</strong>+19711205s unambiguously
+denotes timestamp 19711205 and not 1971-12-05 00:00:00 UTC.</p>
 <p>Month and day of the week names can be used in their naturally
 abbreviated form (e.g., Dec for December, Sun for Sunday, etc.). The
 words <strong>now</strong>, <strong>start</strong>, <strong>end</strong> can be abbreviated as <strong>n</strong>, <strong>s</strong>, <strong>e</strong>.</p>

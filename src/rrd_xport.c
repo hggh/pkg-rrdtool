@@ -1,5 +1,5 @@
 /****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  ****************************************************************************
  * rrd_xport.c  export RRD data 
  ****************************************************************************/
@@ -58,7 +58,6 @@ int rrd_xport(
     time_t    start_tmp = 0, end_tmp = 0;
     rrd_time_value_t start_tv, end_tv;
     char     *parsetime_error = NULL;
-    char     *opt_daemon = NULL;
 
     struct option long_options[] = {
         {"start", required_argument, 0, 's'},
@@ -66,6 +65,7 @@ int rrd_xport(
         {"maxrows", required_argument, 0, 'm'},
         {"step", required_argument, 0, 261},
         {"enumds", no_argument, 0, 262},    /* these are handled in the frontend ... */
+        {"json", no_argument, 0, 263},    /* these are handled in the frontend ... */
         {"daemon", required_argument, 0, 'd'},
         {0, 0, 0, 0}
     };
@@ -114,15 +114,15 @@ int rrd_xport(
             break;
         case 'd':
         {
-            if (opt_daemon != NULL)
+            if (im.daemon_addr != NULL)
             {
                 rrd_set_error ("You cannot specify --daemon "
                         "more than once.");
                 return (-1);
             }
 
-            opt_daemon = strdup(optarg);
-            if (opt_daemon == NULL)
+            im.daemon_addr = strdup(optarg);
+            if (im.daemon_addr == NULL)
             {
                 rrd_set_error("strdup error");
                 return -1;
@@ -169,8 +169,7 @@ int rrd_xport(
     }
 
     {   /* try to connect to rrdcached */
-        int status = rrdc_connect(opt_daemon);
-        if (opt_daemon) free(opt_daemon);
+        int status = rrdc_connect(im.daemon_addr);
         if (status != 0) return status;
     }
 
@@ -265,6 +264,7 @@ int rrd_xport_fn(
                 while (--j > -1)
                     free(legend_list[j]);
                 free(legend_list);
+                free(step_list);
                 rrd_set_error("malloc xport legend entry");
                 return (-1);
             }

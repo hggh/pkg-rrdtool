@@ -46,6 +46,7 @@
 [<strong>-e</strong>|<strong>--end</strong>&nbsp;<em>seconds</em>]
 [<strong>-m</strong>|<strong>--maxrows</strong>&nbsp;<em>rows</em>]
 [<strong>--step</strong>&nbsp;<em>value</em>]
+[<strong>--json</strong>]
 [<strong>--daemon</strong>&nbsp;<em>address</em>]
 [<strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrd</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em>]
 [<strong>CDEF:</strong><em>vname</em><strong>=</strong><em>rpn-expression</em>]
@@ -97,6 +98,11 @@ fresh data even if the daemon is configured to cache values for a long time.
 For a list of accepted formats, see the <strong>-l</strong> option in the <a href="././rrdcached.html">the rrdcached manpage</a> manual.</p>
 <pre>
   rrdtool xport --daemon unix:/var/run/rrdcached.sock ...</pre>
+</dd>
+<dt><strong><a name="json" class="item"><strong>--json</strong></a></strong></dt>
+
+<dd>
+<p>produce json formated output (instead of xml)</p>
 </dd>
 <dt><strong><a name="enumds" class="item"><strong>--enumds</strong></a></strong></dt>
 

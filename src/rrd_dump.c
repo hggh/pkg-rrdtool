@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * rrd_dump  Display a RRD
  *****************************************************************************
- * $Id: rrd_dump.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_dump.c 2267 2012-01-24 10:08:48Z oetiker $
  * $Log$
  * Revision 1.7  2004/05/25 20:53:21  oetiker
  * prevent small leak when resources are exhausted -- Mike Slifcak
@@ -103,7 +103,8 @@ int rrd_dump_cb_r(
         return (-1);
     }
 
-    old_locale = setlocale(LC_NUMERIC, "C");
+    old_locale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
 
 
     if (opt_header == 1) {

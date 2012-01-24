@@ -25,18 +25,23 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <libgen.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _MSC_VER
+#include <libgen.h>
 #include <unistd.h>
-
+#endif
 #ifdef WIN32
 #	define random() rand()
 #	define srandom(x) srand(x)
 #	define getpid() 0
 #endif /* WIN32 */
+
+#ifndef S_ISDIR
+#define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
+#endif
 
 /* make sure that the random number generator seeded EXACTLY ONCE */
 long rrd_random(void)
@@ -140,20 +145,39 @@ int rrd_mkdir_p(const char *pathname, mode_t mode)
     if (NULL == (pathname_copy = strdup(pathname)))
         return -1;
 
-    base_dir = dirname(pathname_copy);
+#ifndef _MSC_VER
+    /* the data pointedd too by dirname might change too (bsd) */
+    if (NULL == (base_dir = strdup(dirname(pathname_copy)))) {
+        free(pathname_copy);
+        return -1;
+    }
+#else
+    _splitpath(pathname_copy, NULL, base_dir, NULL, NULL);
+#endif
 
     if (0 != rrd_mkdir_p(base_dir, mode)) {
         int orig_errno = errno;
         free(pathname_copy);
+#ifndef _MSC_VER
+        free(base_dir);
+#endif
         errno = orig_errno;
         return -1;
     }
 
     free(pathname_copy);
+#ifndef _MSC_VER
+    free(base_dir);
+#endif
 
     /* keep errno as set by mkdir() */
+#ifdef _MSC_VER
+    if (0 != mkdir(pathname))
+        return -1;
+#else
     if (0 != mkdir(pathname, mode))
         return -1;
+#endif
     return 0;
 } /* rrd_mkdir_p */
 

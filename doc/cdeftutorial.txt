@@ -762,7 +762,7 @@ TThhee eexxaammpplleess ffrroomm tthhee RRRRDD ggrraapp
 
            DEF:var=database.rrd:traffic:AVERAGE
            CDEF:prev1=PREV(var)
-           CDEF:time=TIME
+           CDEF:time=var,POP,TIME
            CDEF:prevtime=PREV(time)
            CDEF:derivate=var,prev1,-,time,prevtime,-,/
            LINE3:derivate#000077:derivate
@@ -784,4 +784,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2009-02-21                   CDEFTUTORIAL(1)
+1.4.7                             2010-05-10                   CDEFTUTORIAL(1)

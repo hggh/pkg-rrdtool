@@ -1,9 +1,9 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *****************************************************************************
  * change header parameters of an rrd
  *****************************************************************************
- * $Id: rrd_tune.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_tune.c 2267 2012-01-24 10:08:48Z oetiker $
  * $Log$
  * Revision 1.6  2004/05/26 22:11:12  oetiker
  * reduce compiler warnings. Many small fixes. -- Mike Slifcak <slif@bellsouth.net>
@@ -126,7 +126,8 @@ int rrd_tune(
         optcnt++;
         switch (opt) {
         case 'h':
-            old_locale = setlocale(LC_NUMERIC, "C");
+            old_locale = setlocale(LC_NUMERIC, NULL);
+            setlocale(LC_NUMERIC, "C");
             if ((matches =
                  sscanf(optarg, DS_NAM_FMT ":%ld", ds_nam,
                         &heartbeat)) != 2) {
@@ -146,7 +147,8 @@ int rrd_tune(
             break;
 
         case 'i':
-            old_locale = setlocale(LC_NUMERIC, "C");
+            old_locale = setlocale(LC_NUMERIC, NULL);
+            setlocale(LC_NUMERIC, "C");
             if ((matches =
                  sscanf(optarg, DS_NAM_FMT ":%lf", ds_nam, &min)) < 1) {
                 rrd_set_error("invalid arguments for minimum ds value");
@@ -168,7 +170,8 @@ int rrd_tune(
             break;
 
         case 'a':
-            old_locale = setlocale(LC_NUMERIC, "C");
+            old_locale = setlocale(LC_NUMERIC, NULL);
+            setlocale(LC_NUMERIC, "C");
             if ((matches =
                  sscanf(optarg, DS_NAM_FMT ":%lf", ds_nam, &max)) < 1) {
                 rrd_set_error("invalid arguments for maximum ds value");

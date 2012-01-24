@@ -1,4 +1,4 @@
-$Id: COPYRIGHT 1843 2009-06-07 11:34:39Z oetiker $
+$Id: COPYRIGHT 2080 2010-05-11 14:55:18Z oetiker $
 RRDTOOL - Round Robin Database Tool
 A tool for fast logging of numerical data graphical display
 of this data.
@@ -81,7 +81,7 @@ MIT License (As listed in file MIT-License.txt)	-
 Mozilla Public License (MPL)	1.0/1.1
 Open Software License		2.0
 OpenSSL license (with original SSLeay license)	"2003" ("1998")
-PHP License			3.0
+PHP License			3.01
 Python license (CNRI Python License)	-
 Python Software Foundation License	2.1.1
 Sleepycat License		"1999"

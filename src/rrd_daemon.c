@@ -63,16 +63,9 @@
  * Now for some includes..
  */
 /* {{{ */
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__CYGWIN32__) && !defined(HAVE_CONFIG_H)
-#include "../win32/config.h"
-#else
-#ifdef HAVE_CONFIG_H
-#include "../rrd_config.h"
-#endif
-#endif
-
-#include "rrd.h"
+#include "rrd_tool.h"
 #include "rrd_client.h"
+#include "unused.h"
 
 #include <stdlib.h>
 
@@ -108,19 +101,20 @@
 #include <libgen.h>
 #include <grp.h>
 
+#ifdef HAVE_LIBWRAP
+#include <tcpd.h>
+#endif /* HAVE_LIBWRAP */
+
 #include <glib-2.0/glib.h>
 /* }}} */
 
 #define RRDD_LOG(severity, ...) \
   do { \
-    if (stay_foreground) \
+    if (stay_foreground) { \
       fprintf(stderr, __VA_ARGS__); \
+      fprintf(stderr, "\n"); } \
     syslog ((severity), __VA_ARGS__); \
   } while (0)
-
-#ifndef __GNUC__
-# define __attribute__(x) /**/
-#endif
 
 /*
  * Types
@@ -155,12 +149,12 @@ typedef struct listen_socket_s listen_socket_t;
 struct command_s;
 typedef struct command_s command_t;
 /* note: guard against "unused" warnings in the handlers */
-#define DISPATCH_PROTO	listen_socket_t *sock	__attribute__((unused)),\
-			time_t now		__attribute__((unused)),\
-			char  *buffer		__attribute__((unused)),\
-			size_t buffer_size	__attribute__((unused))
+#define DISPATCH_PROTO	listen_socket_t UNUSED(*sock),\
+			time_t UNUSED(now),\
+			char  UNUSED(*buffer),\
+			size_t UNUSED(buffer_size)
 
-#define HANDLER_PROTO	command_t *cmd	        __attribute__((unused)),\
+#define HANDLER_PROTO	command_t UNUSED(*cmd),\
 			DISPATCH_PROTO
 
 struct command_s {
@@ -185,7 +179,7 @@ struct cache_item_s
   char **values;
   size_t values_num;
   time_t last_flush_time;
-  time_t last_update_stamp;
+  double last_update_stamp;
 #define CI_FLAGS_IN_TREE  (1<<0)
 #define CI_FLAGS_IN_QUEUE (1<<1)
   int flags;
@@ -228,6 +222,8 @@ static uid_t daemon_uid;
 
 static listen_socket_t *listen_fds = NULL;
 static size_t listen_fds_num = 0;
+
+static listen_socket_t default_socket;
 
 enum {
   RUNNING,		/* normal operation */
@@ -301,23 +297,23 @@ static void sig_common (const char *sig) /* {{{ */
   pthread_cond_broadcast(&queue_cond);
 } /* }}} void sig_common */
 
-static void sig_int_handler (int s __attribute__((unused))) /* {{{ */
+static void sig_int_handler (int UNUSED(s)) /* {{{ */
 {
   sig_common("INT");
 } /* }}} void sig_int_handler */
 
-static void sig_term_handler (int s __attribute__((unused))) /* {{{ */
+static void sig_term_handler (int UNUSED(s)) /* {{{ */
 {
   sig_common("TERM");
 } /* }}} void sig_term_handler */
 
-static void sig_usr1_handler (int s __attribute__((unused))) /* {{{ */
+static void sig_usr1_handler (int UNUSED(s)) /* {{{ */
 {
   config_flush_at_shutdown = 1;
   sig_common("USR1");
 } /* }}} void sig_usr1_handler */
 
-static void sig_usr2_handler (int s __attribute__((unused))) /* {{{ */
+static void sig_usr2_handler (int UNUSED(s)) /* {{{ */
 {
   config_flush_at_shutdown = 0;
   sig_common("USR2");
@@ -841,7 +837,7 @@ static int flush_old_values (int max_age)
   return (0);
 } /* int flush_old_values */
 
-static void *flush_thread_main (void *args __attribute__((unused))) /* {{{ */
+static void *flush_thread_main (void UNUSED(*args)) /* {{{ */
 {
   struct timeval now;
   struct timespec next_flush;
@@ -894,7 +890,7 @@ static void *flush_thread_main (void *args __attribute__((unused))) /* {{{ */
   return NULL;
 } /* void *flush_thread_main */
 
-static void *queue_thread_main (void *args __attribute__((unused))) /* {{{ */
+static void *queue_thread_main (void UNUSED(*args)) /* {{{ */
 {
   pthread_mutex_lock (&cache_lock);
 
@@ -1324,7 +1320,7 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
 
   /* save it for the journal later */
   if (!JOURNAL_REPLAY(sock))
-    strncpy(orig_buf, buffer, buffer_size);
+    strncpy(orig_buf, buffer, min(CMD_MAX,buffer_size));
 
   status = buffer_get_field (&buffer, &buffer_size, &file);
   if (status != 0)
@@ -1415,7 +1411,7 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
   while (buffer_size > 0)
   {
     char *value;
-    time_t stamp;
+    double stamp;
     char *eostamp;
 
     status = buffer_get_field (&buffer, &buffer_size, &value);
@@ -1425,8 +1421,9 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
       break;
     }
 
-    /* make sure update time is always moving forward */
-    stamp = strtol(value, &eostamp, 10);
+    /* make sure update time is always moving forward. We use double here since
+       update does support subsecond precision for timestamps ... */
+    stamp = strtod(value, &eostamp);
     if (eostamp == value || eostamp == NULL || *eostamp != ':')
     {
       pthread_mutex_unlock(&cache_lock);
@@ -1437,8 +1434,8 @@ static int handle_request_update (HANDLER_PROTO) /* {{{ */
     {
       pthread_mutex_unlock(&cache_lock);
       return send_response(sock, RESP_ERR,
-                           "illegal attempt to update using time %ld when last"
-                           " update time is %ld (minimum one second step)\n",
+                           "illegal attempt to update using time %lf when last"
+                           " update time is %lf (minimum one second step)\n",
                            stamp, ci->last_update_stamp);
     }
     else
@@ -1720,6 +1717,26 @@ static int socket_permission_add (listen_socket_t *sock, /* {{{ */
   sock->permissions |= (1 << i);
   return (0);
 } /* }}} int socket_permission_add */
+
+static void socket_permission_clear (listen_socket_t *sock) /* {{{ */
+{
+  sock->permissions = 0;
+} /* }}} socket_permission_clear */
+
+static void socket_permission_copy (listen_socket_t *dest, /* {{{ */
+    listen_socket_t *src)
+{
+  dest->permissions = src->permissions;
+} /* }}} socket_permission_copy */
+
+static void socket_permission_set_all (listen_socket_t *sock) /* {{{ */
+{
+  size_t i;
+
+  sock->permissions = 0;
+  for (i = 0; i < list_of_commands_len; i++)
+    sock->permissions |= (1 << i);
+} /* }}} void socket_permission_set_all */
 
 /* check whether commands are received in the expected context */
 static int command_check_context(listen_socket_t *sock, command_t *cmd)
@@ -2114,6 +2131,10 @@ static void journal_init(void) /* {{{ */
   }
 
   dir = opendir(journal_dir);
+  if (!dir) {
+    RRDD_LOG(LOG_CRIT, "journal_init: opendir(%s) failed\n", journal_dir);
+    return;
+  }
   while ((dent = readdir(dir)) != NULL)
   {
     /* looks like a journal file? */
@@ -2189,6 +2210,21 @@ static void *connection_thread_main (void *args) /* {{{ */
   }
 
   pthread_mutex_lock (&connection_threads_lock);
+#ifdef HAVE_LIBWRAP
+  /* LIBWRAP does not support multiple threads! By putting this code
+     inside pthread_mutex_lock we do not have to worry about request_info
+     getting overwritten by another thread.
+  */
+  struct request_info req;
+  request_init(&req, RQ_DAEMON, "rrdcached\0", RQ_FILE, fd, NULL );
+  fromhost(&req);
+  if(!hosts_access(&req)) {
+    RRDD_LOG(LOG_INFO, "refused connection from %s", eval_client(&req));
+    pthread_mutex_unlock (&connection_threads_lock);
+    close_connection(sock);
+    return NULL;
+  }
+#endif /* HAVE_LIBWRAP */
   connection_threads_num++;
   pthread_mutex_unlock (&connection_threads_lock);
 
@@ -2525,7 +2561,7 @@ static int close_listen_sockets (void) /* {{{ */
   return (0);
 } /* }}} int close_listen_sockets */
 
-static void *listen_thread_main (void *args __attribute__((unused))) /* {{{ */
+static void *listen_thread_main (void UNUSED(*args)) /* {{{ */
 {
   struct pollfd *pollfds;
   int pollfds_num;
@@ -2662,10 +2698,14 @@ static int daemonize (void) /* {{{ */
   }
   else
   {
-    listen_socket_t sock;
-    memset(&sock, 0, sizeof(sock));
-    strncpy(sock.addr, RRDCACHED_DEFAULT_ADDRESS, sizeof(sock.addr)-1);
-    open_listen_socket (&sock);
+    strncpy(default_socket.addr, RRDCACHED_DEFAULT_ADDRESS,
+        sizeof(default_socket.addr) - 1);
+    default_socket.addr[sizeof(default_socket.addr) - 1] = '\0';
+
+    if (default_socket.permissions == 0)
+      socket_permission_set_all (&default_socket);
+
+    open_listen_socket (&default_socket);
   }
 
   if (listen_fds_num < 1)
@@ -2770,11 +2810,10 @@ static int read_options (int argc, char **argv) /* {{{ */
   int option;
   int status = 0;
 
-  char **permissions = NULL;
-  size_t permissions_len = 0;
+  socket_permission_clear (&default_socket);
 
-  gid_t  socket_group = (gid_t)-1;
-  mode_t socket_permissions = (mode_t)-1;
+  default_socket.socket_group = (gid_t)-1;
+  default_socket.socket_permissions = (mode_t)-1;
 
   while ((option = getopt(argc, argv, "gl:s:m:P:f:w:z:t:Bb:p:Fj:h?")) != -1)
   {
@@ -2799,41 +2838,19 @@ static int read_options (int argc, char **argv) /* {{{ */
         strncpy(new->addr, optarg, sizeof(new->addr)-1);
 
         /* Add permissions to the socket {{{ */
-        if (permissions_len != 0)
+        if (default_socket.permissions != 0)
         {
-          size_t i;
-          for (i = 0; i < permissions_len; i++)
-          {
-            status = socket_permission_add (new, permissions[i]);
-            if (status != 0)
-            {
-              fprintf (stderr, "read_options: Adding permission \"%s\" to "
-                  "socket failed. Most likely, this permission doesn't "
-                  "exist. Check your command line.\n", permissions[i]);
-              status = 4;
-            }
-          }
+          socket_permission_copy (new, &default_socket);
         }
-        else /* if (permissions_len == 0) */
+        else /* if (default_socket.permissions == 0) */
         {
           /* Add permission for ALL commands to the socket. */
-          size_t i;
-          for (i = 0; i < list_of_commands_len; i++)
-          {
-            status = socket_permission_add (new, list_of_commands[i].cmd);
-            if (status != 0)
-            {
-              fprintf (stderr, "read_options: Adding permission \"%s\" to "
-                  "socket failed. This should never happen, ever! Sorry.\n",
-                  permissions[i]);
-              status = 4;
-            }
-          }
+          socket_permission_set_all (new);
         }
         /* }}} Done adding permissions. */
 
-        new->socket_group = socket_group;
-        new->socket_permissions = socket_permissions;
+        new->socket_group = default_socket.socket_group;
+        new->socket_permissions = default_socket.socket_permissions;
 
         if (!rrd_add_ptr((void ***)&config_listen_address_list,
                          &config_listen_address_list_len, new))
@@ -2863,7 +2880,7 @@ static int read_options (int argc, char **argv) /* {{{ */
 
 	if (grp)
 	{
-	  socket_group = grp->gr_gid;
+	  default_socket.socket_group = grp->gr_gid;
 	}
 	else
 	{
@@ -2888,7 +2905,7 @@ static int read_options (int argc, char **argv) /* {{{ */
           return (5);
         }
 
-        socket_permissions = (mode_t)tmp;
+        default_socket.socket_permissions = (mode_t)tmp;
       }
       break;
 
@@ -2899,7 +2916,7 @@ static int read_options (int argc, char **argv) /* {{{ */
         char *dummy;
         char *ptr;
 
-        rrd_free_ptrs ((void *) &permissions, &permissions_len);
+        socket_permission_clear (&default_socket);
 
         optcopy = strdup (optarg);
         dummy = optcopy;
@@ -2907,7 +2924,14 @@ static int read_options (int argc, char **argv) /* {{{ */
         while ((ptr = strtok_r (dummy, ", ", &saveptr)) != NULL)
         {
           dummy = NULL;
-          rrd_add_strdup ((void *) &permissions, &permissions_len, ptr);
+          status = socket_permission_add (&default_socket, ptr);
+          if (status != 0)
+          {
+            fprintf (stderr, "read_options: Adding permission \"%s\" to "
+                "socket failed. Most likely, this permission doesn't "
+                "exist. Check your command line.\n", ptr);
+            status = 4;
+          }
         }
 
         free (optcopy);
@@ -3065,7 +3089,9 @@ static int read_options (int argc, char **argv) /* {{{ */
 
       case 'j':
       {
-        const char *dir = journal_dir = strdup(optarg);
+        char journal_dir_actual[PATH_MAX];
+        const char *dir;
+        dir = journal_dir = strdup(realpath((const char *)optarg, journal_dir_actual));
 
         status = rrd_mkdir_p(dir, 0777);
         if (status != 0)
@@ -3093,6 +3119,7 @@ static int read_options (int argc, char **argv) /* {{{ */
             "\n"
             "Valid options are:\n"
             "  -l <address>  Socket address to listen to.\n"
+            "                Default: "RRDCACHED_DEFAULT_ADDRESS"\n"
             "  -P <perms>    Sets the permissions to assign to all following "
                             "sockets\n"
             "  -w <seconds>  Interval in which to write data.\n"
@@ -3105,13 +3132,20 @@ static int read_options (int argc, char **argv) /* {{{ */
             "  -g            Do not fork and run in the foreground.\n"
             "  -j <dir>      Directory in which to create the journal files.\n"
             "  -F            Always flush all updates at shutdown\n"
-            "  -s <id|name>  Make socket g+rw to named group\n"
+            "  -s <id|name>  Group owner of all following UNIX sockets\n"
+            "                (the socket will also have read/write permissions "
+                            "for that group)\n"
+            "  -m <mode>     File permissions (octal) of all following UNIX "
+                            "sockets\n"
             "\n"
             "For more information and a detailed description of all options "
             "please refer\n"
             "to the rrdcached(1) manual page.\n",
             VERSION);
-        status = -1;
+        if (option == 'h')
+          status = -1;
+        else
+          status = 1;
         break;
     } /* switch (option) */
   } /* while (getopt) */
@@ -3130,8 +3164,6 @@ static int read_options (int argc, char **argv) /* {{{ */
 
   if (journal_dir == NULL)
     config_flush_at_shutdown = 1;
-
-  rrd_free_ptrs ((void *) &permissions, &permissions_len);
 
   return (status);
 } /* }}} int read_options */

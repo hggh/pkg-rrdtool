@@ -273,7 +273,7 @@ for the right axis.</p>
 <p>[<strong>--right-axis-format</strong> <em>format-string</em>]</p>
 <p>By default the format of the axis labels gets determined automatically. If
 you want to do this your self, use this option with the same %lf arguments
-you know from the PRING and GPRINT commands.</p>
+you know from the PRINT and GPRINT commands.</p>
 <p>
 </p>
 <h2><a name="legend">Legend</a></h2>
@@ -430,9 +430,9 @@ of the graph.</p>
 <p><strong>DEF:</strong><em>vname</em><strong>=</strong><em>rrdfile</em><strong>:</strong><em>ds-name</em><strong>:</strong><em>CF</em>[<strong>:step=</strong><em>step</em>][<strong>:start=</strong><em>time</em>][<strong>:end=</strong><em>time</em>]</p>
 <p><strong>CDEF:</strong><em>vname</em><strong>=</strong><em>RPN expression</em></p>
 <p><strong>VDEF:</strong><em>vname</em><strong>=</strong><em>RPN expression</em></p>
-<p>You need at least one <strong>DEF</strong> statement to generate anything. The
-other statements are useful but optional.
-See <a href="././rrdgraph_data.html">the rrdgraph_data manpage</a> and <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> for the exact format.</p>
+<p>You need at least one <strong>DEF</strong> and one <strong>LINE</strong>, <strong>AREA</strong>, <strong>GPRINT</strong>, <strong>PRINT</strong>
+statement to generate anything useful.</p>
+<p>See <a href="././rrdgraph_data.html">the rrdgraph_data manpage</a> and <a href="././rrdgraph_rpn.html">the rrdgraph_rpn manpage</a> for the exact format.</p>
 <p>NOTE: <strong>Graph and print elements</strong></p>
 <p>You need at least one graph element to generate an image and/or
 at least one print statement to generate a report.

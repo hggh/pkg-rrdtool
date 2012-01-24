@@ -83,7 +83,8 @@ would do <code>a = b, 3, +, 5, *</code> without the need for parentheses.</p>
 <p><strong>LT, LE, GT, GE, EQ, NE</strong></p>
 <p>Pop two elements from the stack, compare them for the selected condition
 and return 1 for true or 0 for false. Comparing an <em>unknown</em> or an
-<em>infinite</em> value will always result in 0 (false).</p>
+<em>infinite</em> value will result in <em>unknown</em> returned ... which will also be
+treated as false by the <strong>IF</strong> call.</p>
 <p><strong>UN, ISINF</strong></p>
 <p>Pop one element from the stack, compare this to <em>unknown</em> respectively
 to <em>positive or negative infinity</em>. Returns 1 for true or 0 for false.</p>
@@ -313,9 +314,8 @@ the first occurrence of that value in the time component.</p>
 <dt><strong><a name="last_first" class="item">LAST, FIRST</a></strong></dt>
 
 <dd>
-<p>Return the last/first value including its time.  The time for
-FIRST is actually the start of the corresponding interval, whereas
-LAST returns the end of the corresponding interval.</p>
+<p>Return the last/first non-nan or infinite value for the selected data
+stream, including its timestamp.</p>
 <p>Example: <code>VDEF:first=mydata,FIRST</code></p>
 </dd>
 <dt><strong><a name="total" class="item">TOTAL</a></strong></dt>

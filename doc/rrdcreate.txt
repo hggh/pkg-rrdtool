@@ -120,11 +120,12 @@ DDEESSCCRRIIPPTTIIOONN
        assumed to be _*_U_N_K_N_O_W_N_*.
 
        _m_i_n and _m_a_x define the expected range values for data supplied by a
-       data source. If _m_i_n and/or _m_a_x any value outside the defined range will
-       be regarded as _*_U_N_K_N_O_W_N_*. If you do not know or care about min and max,
-       set them to U for unknown. Note that min and max always refer to the
-       processed values of the DS. For a traffic-CCOOUUNNTTEERR type DS this would be
-       the maximum and minimum data-rate expected from the device.
+       data source. If _m_i_n and/or _m_a_x are specified any value outside the
+       defined range will be regarded as _*_U_N_K_N_O_W_N_*. If you do not know or care
+       about min and max, set them to U for unknown. Note that min and max
+       always refer to the processed values of the DS. For a traffic-CCOOUUNNTTEERR
+       type DS this would be the maximum and minimum data-rate expected from
+       the device.
 
        _I_f _i_n_f_o_r_m_a_t_i_o_n _o_n _m_i_n_i_m_a_l_/_m_a_x_i_m_a_l _e_x_p_e_c_t_e_d _v_a_l_u_e_s _i_s _a_v_a_i_l_a_b_l_e_, _a_l_w_a_y_s
        _s_e_t _t_h_e _m_i_n _a_n_d_/_o_r _m_a_x _p_r_o_p_e_r_t_i_e_s_. _T_h_i_s _w_i_l_l _h_e_l_p _R_R_D_t_o_o_l _i_n _d_o_i_n_g _a
@@ -531,4 +532,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2010-03-08                      RRDCREATE(1)
+1.4.7                             2011-01-06                      RRDCREATE(1)

@@ -292,6 +292,11 @@ NNOOTTEESS oonn lleeggeenndd aarrgguummeennttss
         COMMENT:\u
         COMMENT:right\r
 
+       There is also a 'nop' control for situations where you want a string to
+       actually end in a backslash character sequence \\..
+
+        COMMENT:OS\2\.
+
        When using a proportional font in your graph, the tab characters or the
        sequence \\tt will line-up legend elements. Note that the tabs inserted
        are relative to the start of the current legend element!
@@ -425,4 +430,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2010-01-25                 RRDGRAPH_GRAPH(1)
+1.4.7                             2012-01-20                 RRDGRAPH_GRAPH(1)

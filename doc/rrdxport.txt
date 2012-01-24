@@ -8,7 +8,7 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
        rrrrddttooooll xxppoorrtt [--ss|----ssttaarrtt _s_e_c_o_n_d_s] [--ee|----eenndd _s_e_c_o_n_d_s]
-       [--mm|----mmaaxxrroowwss _r_o_w_s] [----sstteepp _v_a_l_u_e] [----ddaaeemmoonn _a_d_d_r_e_s_s]
+       [--mm|----mmaaxxrroowwss _r_o_w_s] [----sstteepp _v_a_l_u_e] [----jjssoonn] [----ddaaeemmoonn _a_d_d_r_e_s_s]
        [DDEEFF::_v_n_a_m_e==_r_r_d::_d_s_-_n_a_m_e::_C_F] [CCDDEEFF::_v_n_a_m_e==_r_p_n_-_e_x_p_r_e_s_s_i_o_n]
        [XXPPOORRTT::_v_n_a_m_e[::_l_e_g_e_n_d]]
 
@@ -49,6 +49,9 @@ DDEESSCCRRIIPPTTIIOONN
            the --ll option in the rrdcached manual.
 
              rrdtool xport --daemon unix:/var/run/rrdcached.sock ...
+
+       ----jjssoonn
+           produce json formated output (instead of xml)
 
        ----eennuummddss
            The generated xml should contain the data values in enumerated
@@ -144,4 +147,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2008-09-25                       RRDXPORT(1)
+1.4.7                             2012-01-16                       RRDXPORT(1)

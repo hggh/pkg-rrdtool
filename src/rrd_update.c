@@ -1,10 +1,10 @@
 /*****************************************************************************
- * RRDtool 1.4.3  Copyright by Tobi Oetiker, 1997-2010
+ * RRDtool 1.4.7  Copyright by Tobi Oetiker, 1997-2012
  *                Copyright by Florian Forster, 2008
  *****************************************************************************
  * rrd_update.c  RRD Update Function
  *****************************************************************************
- * $Id: rrd_update.c 2042 2010-03-22 16:05:55Z oetiker $
+ * $Id: rrd_update.c 2267 2012-01-24 10:08:48Z oetiker $
  *****************************************************************************/
 
 #include "rrd_tool.h"
@@ -429,7 +429,10 @@ int rrd_update(
 
     {   /* try to connect to rrdcached */
         int status = rrdc_connect(opt_daemon);
-        if (status != 0) return status;
+        if (status != 0) {
+             rc = status;
+             goto out;
+        }
     }
 
     if ((tmplt != NULL) && rrdc_is_connected(opt_daemon))
@@ -967,7 +970,8 @@ static int get_time_from_reading(
         *current_time = tmp_time.tv_sec;
         *current_time_usec = tmp_time.tv_usec;
     } else {
-        old_locale = setlocale(LC_NUMERIC, "C");
+        old_locale = setlocale(LC_NUMERIC, NULL);
+        setlocale(LC_NUMERIC, "C");
         errno = 0;
         tmp = strtod(updvals[0], 0);
         if (errno > 0) {
@@ -1079,7 +1083,8 @@ static int update_pdp_prep(
                 }
                 break;
             case DST_ABSOLUTE:
-                old_locale = setlocale(LC_NUMERIC, "C");
+                old_locale = setlocale(LC_NUMERIC, NULL);
+                setlocale(LC_NUMERIC, "C");
                 errno = 0;
                 pdp_new[ds_idx] = strtod(updvals[ds_idx + 1], &endptr);
                 if (errno > 0) {
@@ -1097,7 +1102,8 @@ static int update_pdp_prep(
                 rate = pdp_new[ds_idx] / interval;
                 break;
             case DST_GAUGE:
-                old_locale = setlocale(LC_NUMERIC, "C");
+                old_locale = setlocale(LC_NUMERIC, NULL);
+                setlocale(LC_NUMERIC, "C");
                 errno = 0;
                 pdp_new[ds_idx] =
                     strtod(updvals[ds_idx + 1], &endptr) * interval;
@@ -1354,6 +1360,10 @@ static int process_pdp_st(
 
         rpnp =
             rpn_expand((rpn_cdefds_t *) &(rrd->ds_def[ds_idx].par[DS_cdef]));
+        if(rpnp == NULL) {
+          rpnstack_free(&rpnstack);
+          return -1;
+        }
         /* substitute data values for OP_VARIABLE nodes */
         for (i = 0; rpnp[i].op != OP_END; i++) {
             if (rpnp[i].op == OP_VARIABLE) {
@@ -1367,6 +1377,7 @@ static int process_pdp_st(
             rpnstack_free(&rpnstack);
             return -1;
         }
+        free(rpnp);
     }
 
     /* make pdp_prep ready for the next run */
@@ -1543,7 +1554,7 @@ static int update_cdp_prep(
             if (elapsed_pdp_st > 2) {
                 reset_cdp(rrd, elapsed_pdp_st, pdp_temp, last_seasonal_coef,
                           seasonal_coef, rra_idx, ds_idx, cdp_idx,
-                          current_cf);
+                          (enum cf_en)current_cf);
             }
         }
 

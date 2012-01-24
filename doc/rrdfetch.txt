@@ -132,11 +132,16 @@ DDEESSCCRRIIPPTTIIOONN
        _N_O_T_E_2: if you specify the _d_a_y in this way, the _t_i_m_e_-_o_f_-_d_a_y is REQUIRED
        as well.
 
-       Finally, you can use the words nnooww, ssttaarrtt, or eenndd as your time
+       Finally, you can use the words nnooww, ssttaarrtt, eenndd or eeppoocchh as your time
        reference. NNooww refers to the current moment (and is also the default
        time reference). SSttaarrtt (eenndd) can be used to specify a time relative to
        the start (end) time for those tools that use these categories
-       (rrrrddffeettcchh, rrdgraph).
+       (rrrrddffeettcchh, rrdgraph) and eeppoocchh indicates the *IX epoch (*IX timestamp 0
+       = 1970-01-01 00:00:00 UTC). eeppoocchh is useful to disambiguate between a
+       timestamp value and some forms of abbreviated date/time specifications,
+       because it allows to use time offset specifications using units, eg.
+       eeppoocchh+19711205s unambiguously denotes timestamp 19711205 and not
+       1971-12-05 00:00:00 UTC.
 
        Month and day of the week names can be used in their naturally
        abbreviated form (e.g., Dec for December, Sun for Sunday, etc.). The
@@ -241,4 +246,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2008-09-25                       RRDFETCH(1)
+1.4.7                             2010-11-11                       RRDFETCH(1)

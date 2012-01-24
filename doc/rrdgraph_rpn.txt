@@ -46,7 +46,8 @@ OOPPEERRAATTOORRSS
 
            Pop two elements from the stack, compare them for the selected
            condition and return 1 for true or 0 for false. Comparing an
-           _u_n_k_n_o_w_n or an _i_n_f_i_n_i_t_e value will always result in 0 (false).
+           _u_n_k_n_o_w_n or an _i_n_f_i_n_i_t_e value will result in _u_n_k_n_o_w_n returned ...
+           which will also be treated as false by the IIFF call.
 
            UUNN,, IISSIINNFF
 
@@ -332,9 +333,8 @@ VVAARRIIAABBLLEESS
            Example: "VDEF:stdev=mydata,STDEV"
 
        LAST, FIRST
-           Return the last/first value including its time.  The time for FIRST
-           is actually the start of the corresponding interval, whereas LAST
-           returns the end of the corresponding interval.
+           Return the last/first non-nan or infinite value for the selected
+           data stream, including its timestamp.
 
            Example: "VDEF:first=mydata,FIRST"
 
@@ -389,4 +389,4 @@ AAUUTTHHOORR
 
 
 
-1.4.3                             2009-10-14                   RRDGRAPH_RPN(1)
+1.4.7                             2012-01-18                   RRDGRAPH_RPN(1)
