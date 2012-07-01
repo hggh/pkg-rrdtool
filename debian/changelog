@@ -1,3 +1,11 @@
+rrdtool (1.4.7-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add ruby_bindings_format_string.patch to fix FTBFS
+    (Closes: #676081)
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Sun, 01 Jul 2012 12:37:47 +0100
+
 rrdtool (1.4.7-1) unstable; urgency=low
 
   * [b59bb994] Merge commit 'upstream/1.4.7'
