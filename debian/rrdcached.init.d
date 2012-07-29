@@ -61,6 +61,10 @@ d_start() {
 		return 0
 	fi
 
+	# make sure we have the needed directories
+	mkdir -p /var/lib/rrdcached/journal/
+	mkdir -p /var/lib/rrdcached/db/
+
 	start-stop-daemon --start --quiet --oknodo --pidfile "$PIDFILE" \
 		--exec $DAEMON -- $OPTS -p "$PIDFILE"
 }

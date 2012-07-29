@@ -1,3 +1,15 @@
+rrdtool (1.4.7-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "fails to install, postinst, invoke-rc.d rrdcached start, start-
+    stop-daemon, segfault":
+    (re-)create /var/lib/rrdcached/{journal,db} in init script.
+    (Closes: #664724)
+  * debian/rules: remove the generated bindings/perl-shared/MYMETA.yml in the
+    clean target.
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 29 Jul 2012 17:35:13 +0200
+
 rrdtool (1.4.7-1.1) unstable; urgency=low
 
   * Non-maintainer upload.
