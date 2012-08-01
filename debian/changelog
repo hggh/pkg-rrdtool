@@ -1,3 +1,15 @@
+rrdtool (1.4.7-2) unstable; urgency=low
+
+  * Ack NMUs; thanks to Jonathan Wiltshire and gregor herrmann!
+  * Added debian/patches/bts664724-rrdcached-j-segfault:
+    Fixed segfault in rrdcached when starting without having the journal
+    directory available: canonicalize the journal path after creating the
+    directory; else, realpath(3) will return NULL causing strdup() to
+    segfault. Also, check the return value of realpath(3) before further using
+    it. Thanks to Helmut Grohne for reporting this (Closes: #664724).
+
+ -- Sebastian Harl <tokkee@debian.org>  Wed, 01 Aug 2012 10:23:39 +0200
+
 rrdtool (1.4.7-1.2) unstable; urgency=low
 
   * Non-maintainer upload.
