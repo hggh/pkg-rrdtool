@@ -163,10 +163,13 @@ Description: time-series data storage and display system (Python interface)
  .
  This package contains a Python interface to RRDs.
 
-Package: librrd-ruby
-Architecture: all
-Section: ruby
-Depends: ${rubydefault:Depends}, ${misc:Depends}
+Package: ruby-rrd
+Architecture: any
+XB-Ruby-Versions: ${ruby:Versions}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter
+Replaces: librrd-ruby (<< 1.4.7-3~), librrd-ruby1.8 (<< 1.4.7-3~), librrd-ruby1.9.1 (<< 1.4.7-3~)
+Breaks: librrd-ruby (<< 1.4.7-3~), librrd-ruby1.8 (<< 1.4.7-3~), librrd-ruby1.9.1 (<< 1.4.7-3~)
+Provides: librrd-ruby, librrd-ruby1.8, librrd-ruby1.9.1
 Description: time-series data storage and display system (Ruby interface)
  The Round Robin Database Tool (RRDtool) is a system to store and display
  time-series data (e.g. network bandwidth, machine-room temperature,
@@ -175,36 +178,34 @@ Description: time-series data storage and display system (Ruby interface)
  extracted data to enforce a certain data density, allowing for useful
  graphical representation of data values.
  .
- This is a dummy package which depends on the package for Debian's default
- Ruby version.
+ This package contains a Ruby interface to RRDs.
+
+Package: librrd-ruby
+Section: oldlibs
+Priority: extra
+Architecture: all
+Depends: ${rubydefault:Depends}, ${misc:Depends}
+Description: Transitional package for ruby-fcgi / librrd-ruby
+ This is a transitional package for librrd-ruby to ease upgrades
+ to the ruby-rrd package. It can safely be removed.
 
 Package: librrd-ruby1.8
-Architecture: any
-Section: ruby
+Section: oldlibs
+Priority: extra
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: time-series data storage and display system (Ruby 1.8 interface)
- The Round Robin Database Tool (RRDtool) is a system to store and display
- time-series data (e.g. network bandwidth, machine-room temperature,
- server load average). It stores the data in Round Robin Databases (RRDs),
- a very compact way that will not expand over time. RRDtool processes the
- extracted data to enforce a certain data density, allowing for useful
- graphical representation of data values.
- .
- This package contains a Ruby 1.8 interface to RRDs.
+Description: Transitional package for ruby-fcgi / librrd-ruby1.8
+ This is a transitional package for librrd-ruby1.8 to ease upgrades
+ to the ruby-rrd package. It can safely be removed.
 
 Package: librrd-ruby1.9.1
-Architecture: any
-Section: ruby
+Section: oldlibs
+Priority: extra
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: time-series data storage and display system (Ruby 1.9.1 interface)
- The Round Robin Database Tool (RRDtool) is a system to store and display
- time-series data (e.g. network bandwidth, machine-room temperature,
- server load average). It stores the data in Round Robin Databases (RRDs),
- a very compact way that will not expand over time. RRDtool processes the
- extracted data to enforce a certain data density, allowing for useful
- graphical representation of data values.
- .
- This package contains a Ruby 1.9.1 interface to RRDs.
+Description: Transitional package for ruby-fcgi / librrd-ruby1.9.1
+ This is a transitional package for librrd-ruby1.9.1 to ease upgrades
+ to the ruby-rrd package. It can safely be removed.
 
 Package: liblua5.1-rrd0
 Architecture: any
