@@ -11,7 +11,7 @@ Build-Depends: debhelper (>= 5.0.38), groff, autotools-dev, gettext, quilt,
  tcl-dev (>= 8), tcl-dev (<= 9),
  perl (>= 5.8.0),
  python-all-dev (>= 2.6.6-3~), python-all-dbg (>= 2.6.6-3~),
- ruby1.8, ruby1.8-dev, ruby1.9.1, ruby1.9.1-dev,
+ gem2deb,
  liblua5.1-0-dev, lua5.1
 Build-Conflicts: lua50
 Homepage: http://oss.oetiker.ch/rrdtool/
