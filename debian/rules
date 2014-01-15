@@ -20,8 +20,7 @@ endif
 
 
 #Ruby versions to build for
-RUBY_VERS := 1.8 1.9.1
-RUBY_DEFAULT_VERS := 1.8
+RUBY_VERS := $(shell dh_ruby --print-supported 2> /dev/null)
 
 PY_VERS := $(shell pyversions -vr)
 
@@ -172,6 +171,7 @@ install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	               sitearchdir=$(CURDIR)/debian/librrd-ruby$$rbv`ruby$$rbv -r rbconfig -e 'print Config::CONFIG["archdir"]'` ;\
 	  make distclean ;\
 	done
+	dh_ruby --install
 
 	dh_installexamples -s
 	chmod 644 debian/rrdcached/usr/share/doc/rrdcached/examples/RRDCached.pm
@@ -193,11 +193,9 @@ install-python%: install-common-stamp
 binary-indep: build-indep install-indep
 	dh_testdir
 	dh_testroot
-	dh_link -plibrrd-ruby /usr/share/doc/librrd-ruby$(RUBY_DEFAULT_VERS) /usr/share/doc/librrd-ruby
-	dh_installchangelogs -i -Nlibrrd-ruby CHANGES
-	dh_installdocs -i -Nlibrrd-ruby -A CONTRIBUTORS NEWS
-	dh_link -i -Nlibrrd-ruby
-	echo 'rubydefault:Depends=librrd-ruby$(RUBY_DEFAULT_VERS)' >> debian/librrd-ruby.substvars
+	dh_installchangelogs -i CHANGES
+	dh_installdocs -i -A CONTRIBUTORS NEWS
+	dh_link -i
 	dh_perl -i
 	dh_compress -i
 	dh_fixperms -i
