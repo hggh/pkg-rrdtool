@@ -165,10 +165,10 @@ install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	set -e; \
 	cd bindings/ruby ;\
 	for rbv in $(RUBY_VERS); do \
-	  ruby$$rbv extconf.rb ;\
+	  $$rbv extconf.rb ;\
 	  make ;\
-	  make install sitelibdir=$(CURDIR)/debian/librrd-ruby$$rbv`ruby$$rbv -r rbconfig -e 'print Config::CONFIG["rubylibdir"]'` \
-	               sitearchdir=$(CURDIR)/debian/librrd-ruby$$rbv`ruby$$rbv -r rbconfig -e 'print Config::CONFIG["archdir"]'` ;\
+	  make install sitelibdir=$(CURDIR)/debian/ruby-rrd`$$rbv -r rbconfig -e 'print RbConfig::CONFIG["rubylibdir"]'` \
+	               sitearchdir=$(CURDIR)/debian/ruby-rrd`$$rbv -r rbconfig -e 'print RbConfig::CONFIG["archdir"]'` ;\
 	  make distclean ;\
 	done
 	dh_ruby --install
