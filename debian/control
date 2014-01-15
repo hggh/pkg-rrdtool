@@ -168,6 +168,7 @@ Package: ruby-rrd
 Section: ruby
 Architecture: any
 XB-Ruby-Versions: ${ruby:Versions}
+X-DhRuby-Root: bindings/ruby
 Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter
 Replaces: librrd-ruby (<< 1.4.7-3~), librrd-ruby1.8 (<< 1.4.7-3~), librrd-ruby1.9.1 (<< 1.4.7-3~)
 Breaks: librrd-ruby (<< 1.4.7-3~), librrd-ruby1.8 (<< 1.4.7-3~), librrd-ruby1.9.1 (<< 1.4.7-3~)

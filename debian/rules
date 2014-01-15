@@ -19,9 +19,6 @@ endif
 
 
 
-#Ruby versions to build for
-RUBY_VERS := $(shell dh_ruby --print-supported 2> /dev/null)
-
 PY_VERS := $(shell pyversions -vr)
 
 #tcl version we're building for
@@ -162,15 +159,6 @@ install-common-stamp: build-arch-stamp
 
 install-arch: install-common-stamp $(PY_VERS:%=install-python%)
 	#build and install ruby
-	set -e; \
-	cd bindings/ruby ;\
-	for rbv in $(RUBY_VERS); do \
-	  $$rbv extconf.rb ;\
-	  make ;\
-	  make install sitelibdir=$(CURDIR)/debian/ruby-rrd`$$rbv -r rbconfig -e 'print RbConfig::CONFIG["rubylibdir"]'` \
-	               sitearchdir=$(CURDIR)/debian/ruby-rrd`$$rbv -r rbconfig -e 'print RbConfig::CONFIG["archdir"]'` ;\
-	  make distclean ;\
-	done
 	dh_ruby --install
 
 	dh_installexamples -s
