@@ -1,6 +1,7 @@
 rrdtool (1.4.7-3) UNRELEASED; urgency=low
 
   * Fixed changelog of 1.4.7-2 regarding the versioned build-dep on tcl-dev.
+  * Using gem2deb to create Ruby packages (Closes: #687809, #722377)
 
  -- Sebastian Harl <tokkee@debian.org>  Sat, 18 Aug 2012 15:53:54 +0200
 
