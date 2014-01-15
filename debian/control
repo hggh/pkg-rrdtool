@@ -186,7 +186,7 @@ Package: librrd-ruby
 Section: oldlibs
 Priority: extra
 Architecture: all
-Depends: ${rubydefault:Depends}, ${misc:Depends}
+Depends: ${misc:Depends}, ruby-rrd
 Description: Transitional package for ruby-fcgi / librrd-ruby
  This is a transitional package for librrd-ruby to ease upgrades
  to the ruby-rrd package. It can safely be removed.
@@ -195,7 +195,7 @@ Package: librrd-ruby1.8
 Section: oldlibs
 Priority: extra
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends}, ruby-rrd
 Description: Transitional package for ruby-fcgi / librrd-ruby1.8
  This is a transitional package for librrd-ruby1.8 to ease upgrades
  to the ruby-rrd package. It can safely be removed.
@@ -204,7 +204,7 @@ Package: librrd-ruby1.9.1
 Section: oldlibs
 Priority: extra
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends}, ruby-rrd
 Description: Transitional package for ruby-fcgi / librrd-ruby1.9.1
  This is a transitional package for librrd-ruby1.9.1 to ease upgrades
  to the ruby-rrd package. It can safely be removed.
